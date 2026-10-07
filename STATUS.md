@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M0 Foundations and spike, on branch `m0-foundations`.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M0 is cleared; M1 starts only when the team says so.
-- **Next action:** T0.2 (store and migrations).
+- **Next action:** T0.3 (model-serving spike) — waiting for the user's OK on download sizes.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
 ## Tasks
@@ -17,7 +17,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | Task | Status | PR | Notes |
 |---|---|---|---|
 | T0.1 Repository scaffold | done | m0-foundations | Lint and tests pass locally (see Measured numbers). **CI has not yet run on GitHub**: the branch is pushed at the M0 checkpoint |
-| T0.2 Store and migrations | todo | | |
+| T0.2 Store and migrations | done | m0-foundations | All §F.1 tables in Alembic `0001_initial`; WAL + foreign keys + busy timeout on every connection; `make db` |
 | T0.3 Early model-serving spike | todo | | Needs user OK before large downloads |
 | T0.4 LLM client abstraction | todo | | |
 | T1.1 OTRF fetch | todo | | |
@@ -87,6 +87,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | T0.1 counted done on local lint and test runs; GitHub CI runs when `m0-foundations` is pushed at the M0 checkpoint | Team instruction (no pushes before the checkpoint) | T0.1 |
 | 2026-10-08 | React 18 kept as in the plan; React Router pinned to 7.x (8.x requires React ≥ 19.2.7); eslint used instead of the template's oxlint | Peer dependency of `react-router@8`; plan §C.3 names eslint | §C.3 |
 | 2026-10-08 | DuckDB pinned to 1.5.6 | The layer-2 hardening of §D.5.1 was verified on 1.5.6 | §D.5.1 |
+| 2026-10-08 | `app.db` additions beyond §F.1: `verifier_evals.manifest` and `.prompt_hash` (§D.7.1 requires the manifest and prompt hash with every row); CHECK constraints only where the plan enumerates values; `gate_decisions.run_id` and `episodes.run_id/case_id` nullable (Playground and Console calls have no run; Exp 3 window mode) | §D.7.1, §E.1 | §F.1 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -111,3 +112,6 @@ See the latest entry per task.
 | 2026-10-08 | T0.1 | `make test` | pytest 6 passed; vitest 4 passed |
 | 2026-10-08 | T0.1 | `make up` + curl | `GET /api/v1/health` → `{"api":"ok"}`; `/` and `/windows` serve the SPA (title GateBench); API listens on 127.0.0.1:8000 only; worker started and stopped on SIGTERM |
 | 2026-10-08 | T0.1 | GitHub CI | **not run yet** (branch not pushed) |
+| 2026-10-08 | T0.2 | `uv run pytest tests/unit/test_store.py` | 12 passed: upgrade creates the 14 §F.1 tables; downgrade to base and re-upgrade; migrated schema has no diff against the models; WAL and foreign keys on; `job_items`, `verifier_evals` and `annotations` unique keys; CHECK constraints; foreign key enforced |
+| 2026-10-08 | T0.2 | `make db` (twice) | `data/app.db` created at revision 0001, journal mode WAL; second run is a no-op |
+| 2026-10-08 | T0.2 | `make lint`, `make test` | lint clean (mypy: 29 files); pytest 18 passed; vitest 4 passed |

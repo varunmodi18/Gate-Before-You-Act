@@ -8,7 +8,7 @@ NVM_USE  := source $$HOME/.nvm/nvm.sh >/dev/null 2>&1 && nvm use 22 >/dev/null 2
 API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 
-.PHONY: help setup lint format test up api worker web build-web
+.PHONY: help setup db lint format test up api worker web build-web
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -17,6 +17,9 @@ setup:  ## Install Python (uv) and frontend (pnpm) dependencies, and git hooks
 	$(UV) sync
 	$(NVM_USE) cd frontend && $(PNPM) install --frozen-lockfile
 	$(UV) run pre-commit install
+
+db:  ## Create or upgrade data/app.db to the latest migration (alembic upgrade head)
+	$(UV) run python -m gbya.store.db
 
 lint:  ## ruff, mypy, eslint, prettier check
 	$(UV) run ruff check backend tests scripts
