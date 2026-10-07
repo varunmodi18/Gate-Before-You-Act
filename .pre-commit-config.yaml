@@ -1,0 +1,23 @@
+# Local hooks only: they use the project's pinned tools, so no hook repositories are downloaded.
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+      - id: guard
+        name: no data/ files and no files over 2 MB
+        entry: scripts/precommit_guard.sh
+        language: script
+      - id: frontend-prettier
+        name: prettier (frontend)
+        entry: scripts/precommit_prettier.sh
+        language: script
+        files: ^frontend/(src|tests)/.*\.(ts|tsx|css|json)$

@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 7, 7 October 2026 (aligned with the final proposal of 7 October; three consistency edits from the fourth plan review, which found no blocking issue and confirmed the plan as the implementation blueprint). Nothing in this plan has been implemented or tested yet. The second review clears repository foundations and the early hardware spike to begin (subject to Q-0).
+**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -144,6 +144,10 @@ The review found no blocking issue and asked for three consistency edits; all ar
 These three should be mentioned to the team; none changes a claim in the proposal.
 
 Substantive ambiguities and gaps **inside** the proposal (not between versions) are listed in §K.2 with the decision taken for each.
+
+### 0.8 What changed in Draft 8 (8 October 2026, team decisions at the start of implementation)
+
+Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now states that only rows dropped entirely by the 1,500-token result limit go unregistered, while a row with a shortened field is still registered. Both are recorded in the `STATUS.md` decisions log.
 
 ---
 
@@ -645,7 +649,7 @@ SET lock_configuration = true;
 
 **[V]** Tested on DuckDB 1.5.6 on 6 October 2026: before these settings a read-only connection still executed `read_csv_auto('x.csv')`. After them, `read_csv_auto`, `ATTACH`, `COPY … TO`, `INSTALL httpfs` and `SET enable_external_access = true` all failed. The implementation must pin the DuckDB version and repeat this test in CI, because these are database-level controls and not an operating-system sandbox.
 
-**Execution:** 2 s timeout (`duckdb` interrupt from a watchdog thread). Rows are serialised as `<<UNTRUSTED_LOG_DATA>> … <</UNTRUSTED_LOG_DATA>>` JSON with `record_id` first. Each field is cut at 200 characters and the rendered result at 1,500 tokens; rows that are cut off are **not** registered (§D.5.2).
+**Execution:** 2 s timeout (`duckdb` interrupt from a watchdog thread). Rows are serialised as `<<UNTRUSTED_LOG_DATA>> … <</UNTRUSTED_LOG_DATA>>` JSON with `record_id` first. Each field is cut at 200 characters and the rendered result at 1,500 tokens. Only rows **dropped entirely** by the 1,500-token limit are **not** registered (§D.5.2). A row that is shown with one or more fields shortened to 200 characters **is** registered, because the gate never uses the shown text: C2–C4 re-read the full record from the canonical database. (This display cut applies to query results shown to the proposer only; evidence given to the verifier is never cut, §D.7.1.)
 
 #### D.5.2 Canonical provenance (FR-10)
 
@@ -1688,7 +1692,7 @@ gate-before-you-act/
 |---|---|
 | Configuration | YAML in `config/` plus environment overrides `GBYA_*` (pydantic-settings). Separate `dev`, `test` (FakeLLM, temp DB) and `demo` profiles via `GBYA_ENV` |
 | Secrets | None required. `HF_TOKEN` is optional and read from the environment, never committed. `.env` is gitignored |
-| Dependencies | `uv add` only; lock file committed. Frontend uses `pnpm` with lock file. Node 20 LTS. Model weights are not in git |
+| Dependencies | `uv add` only; lock file committed. Frontend uses `pnpm` with lock file. Node 22 LTS (Draft 8; Node 20 is end-of-life). Model weights are not in git |
 | Logging | Structured JSON logs (`structlog`) with `run_id`, `episode_id`, `case_id` context; console pretty-print in dev; `logs/` rotating files |
 | Error handling | Domain exceptions in `gbya.errors` mapped to the §F.6 envelope; no bare `except` |
 | Code quality | ruff, mypy (strict on gate/scoring/analysis/cases), eslint, prettier, pre-commit; PRs require tests for the touched modules |
@@ -2429,7 +2433,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 
 Ubuntu 24.04; NVIDIA driver 580.178.04; RTX 4060 Laptop 8 GB; 16 GB RAM; about 39 GB free disk.
 
-To install: Python 3.11 (via uv), Node 20 LTS with pnpm, git, and a CUDA-enabled model server (installed by `make model-install PROFILE=…`; exact steps fixed in T0.3).
+To install: Python 3.11 (via uv), Node 22 LTS (via nvm) with pnpm, git, and a CUDA-enabled model server (installed by `make model-install PROFILE=…`; exact steps fixed in T0.3).
 
 **Disk budget (ET):**
 

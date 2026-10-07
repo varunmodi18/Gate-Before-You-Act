@@ -1,0 +1,12 @@
+# Application defaults (plan §G). Any key can be overridden with a GBYA_<KEY> environment variable.
+env: dev                      # dev | test | demo
+api_host: 127.0.0.1           # NFR-06: localhost only
+api_port: 8000
+data_dir: data
+app_db_path: data/app.db
+log_dir: logs
+frontend_dist: frontend/dist
+model_base_url: http://127.0.0.1:8001/v1
+worker_concurrency: 4         # matches the model server's 4 concurrent sequences (§F.8)
+worker_heartbeat_s: 10
+worker_stale_s: 60

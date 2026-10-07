@@ -1,0 +1,48 @@
+# Lint and tests without a GPU (plan T0.1). Live-model tests are marked `gpu` and deselected.
+name: ci
+
+on:
+  push:
+    branches: [main, "m*-*"]
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: uv python install 3.11
+      - run: uv sync --locked
+      - name: ruff
+        run: |
+          uv run ruff check backend tests scripts
+          uv run ruff format --check backend tests scripts
+      - name: mypy
+        run: uv run mypy
+      - name: pytest
+        run: uv run pytest
+
+  frontend:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

@@ -1,0 +1,92 @@
+[project]
+name = "gbya"
+version = "0.1.0"
+description = "GateBench: evidence-gated LLM security-agent experiments (Gate Before You Act)"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2",
+    "pydantic-settings",
+    "sqlalchemy>=2",
+    "alembic",
+    # Pinned: the layer-2 SQL hardening (plan §D.5.1) was verified on this version.
+    "duckdb==1.5.6",
+    "sqlglot",
+    "rank-bm25",
+    "httpx",
+    "structlog",
+    "numpy",
+    "pandas",
+    "scipy",
+    "pyyaml",
+    "sse-starlette",
+    "mcp",
+]
+
+[project.optional-dependencies]
+# CPU-only reranker (A6). Installed separately so it never touches the GPU (plan §D.3).
+rerank = [
+    "torch",
+    "sentence-transformers",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "hypothesis",
+    "ruff",
+    "mypy",
+    "pre-commit",
+    "types-pyyaml",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend/gbya"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["backend"]
+asyncio_mode = "auto"
+markers = [
+    "gpu: needs the local model server on :8001 (deselected by default)",
+]
+addopts = "-m 'not gpu'"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["backend", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+mypy_path = "backend"
+packages = ["gbya"]
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+warn_unused_configs = true
+
+# Strict on the modules that decide and measure (plan §C.3, §G).
+[[tool.mypy.overrides]]
+module = ["gbya.gate.*", "gbya.scoring.*", "gbya.analysis.*", "gbya.cases.*"]
+strict = true
