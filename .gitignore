@@ -1,0 +1,42 @@
+# Data, model weights and run outputs (never committed)
+data/*
+!data/fixtures/
+!data/splits.json
+models/
+*.gguf
+*.safetensors
+*.bin
+*.pt
+results/
+logs/
+
+# Environments and secrets
+.venv/
+.venv-*/
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+*.egg-info/
+.coverage
+htmlcov/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+.pnpm-store/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
