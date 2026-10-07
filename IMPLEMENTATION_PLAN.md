@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -147,7 +147,7 @@ Substantive ambiguities and gaps **inside** the proposal (not between versions) 
 
 ### 0.8 What changed in Draft 8 (8 October 2026, team decisions at the start of implementation)
 
-Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now states that only rows dropped entirely by the 1,500-token result limit go unregistered, while a row with a shortened field is still registered. Both are recorded in the `STATUS.md` decisions log.
+Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now states that only rows dropped entirely by the 1,500-token result limit go unregistered, while a row with a shortened field is still registered; `verifier_evals` gains `manifest` and `prompt_hash` (§F.1); React Router is pinned to 7.x (§G). All are recorded in the `STATUS.md` decisions log.
 
 ---
 
@@ -1432,7 +1432,7 @@ erDiagram
 | `episodes` | `id`, `run_id`, `case_id`, `system`, `run_idx`, `temperature`, `seed`, `status` (running/done/error), `terminal_state` (fulfilled/handed_off/ended/cap), `approvals` (json: per-call state), `retrieved` (json: registry), `outcome` (incl. `pending_adjudication`), `outcome_detail` (json), `budget_exhausted`, `unqualified_escalation`, `tokens_in`, `tokens_out` | — |
 | `steps` | `episode_id`, `idx`, `kind` (llm/tool/gate/approval/feedback), `payload` (json), `ms` | Append-only |
 | `tool_calls` | `id`, `episode_id`, `tool`, `class`, `args`, `cited`, `call_class` (permitted/prohibited/unapproved/unlisted), `escalation_class` (qualifying/unlisted/invalid, escalations only), `admitted`, `gate_decision_id` | — |
-| `verifier_evals` | `run_id`, `case_id`, `variant` (standard/rationale/none/rerank), `run_idx`, `verdict`, `output` (json), `tokens_in`, `tokens_out` | Exp 1V; unique (`run_id`, `case_id`, `variant`, `run_idx`) |
+| `verifier_evals` | `run_id`, `case_id`, `variant` (standard/rationale/none/rerank), `run_idx`, `verdict`, `output` (json), `tokens_in`, `tokens_out`, `manifest` (json, the rendering manifest of §D.7.1), `prompt_hash` | Exp 1V; unique (`run_id`, `case_id`, `variant`, `run_idx`). `manifest` and `prompt_hash` added in Draft 8 (§D.7.1 requires both with every row) |
 | `retrieval_rankings` | `case_id` or `episode_id`, `mode`, `query_hash`, `sigma_ranking` (json, ≤20 with scores), `attack_ranking` (json, ≤10) | Full rankings, so metrics can be recomputed |
 
 **Persistence and lifecycle:**
@@ -1692,7 +1692,7 @@ gate-before-you-act/
 |---|---|
 | Configuration | YAML in `config/` plus environment overrides `GBYA_*` (pydantic-settings). Separate `dev`, `test` (FakeLLM, temp DB) and `demo` profiles via `GBYA_ENV` |
 | Secrets | None required. `HF_TOKEN` is optional and read from the environment, never committed. `.env` is gitignored |
-| Dependencies | `uv add` only; lock file committed. Frontend uses `pnpm` with lock file. Node 22 LTS (Draft 8; Node 20 is end-of-life). Model weights are not in git |
+| Dependencies | `uv add` only; lock file committed. Frontend uses `pnpm` with lock file. Node 22 LTS (Draft 8; Node 20 is end-of-life). React Router is pinned to 7.x, because 8.x requires React ≥ 19.2.7 and the plan uses React 18 (Draft 8). Model weights are not in git |
 | Logging | Structured JSON logs (`structlog`) with `run_id`, `episode_id`, `case_id` context; console pretty-print in dev; `logs/` rotating files |
 | Error handling | Domain exceptions in `gbya.errors` mapped to the §F.6 envelope; no bare `except` |
 | Code quality | ruff, mypy (strict on gate/scoring/analysis/cases), eslint, prettier, pre-commit; PRs require tests for the touched modules |
