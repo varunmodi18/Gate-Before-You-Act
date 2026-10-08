@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** waiting for the team's sign-off of `policy/rules.yaml` and `policy/evidence_requirements.yaml` (T2.2). Then T2.5 → T2.7 and the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
+- **Next action:** T2.5 (checks C2, C3, C5, C6 and the gate orchestrator), then T2.6, T2.7 and the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -30,7 +30,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.6 Split selection and freeze | done | m1-data | **Accepted by the team 2026-10-08.** `data/splits.json` (seed 2026; dev 10 / test 40 / e2e 12 / unused 37) committed with `docs/splits.md` (every window: title, tactic, split, de-dup group, primary host and its share; tactic counts; acting users for dev + test). Assignment unchanged from the reviewed version after adding the host fields |
 | T1.7 Windows page | done | m1-data | `/windows` (tactic/split/text filters) and `/windows/:id` (tab per table, server pagination, `column contains` filter, record drawer with normalised + raw JSON, SQL console with typed errors). Playwright J1 + axe pass at 1280 and 768 px; checked on the real LSASS window |
 | T2.1 Trusted-context model | done | m2-gate | `gbya/context/{models,store}.py`: §F.3 schema with validators, canonical-JSON SHA-256 `context_hash`, `get_context(section)` |
-| T2.2 Policy engine and rules | blocked | m2-gate | Engine done and tested (`gbya/policy/engine.py`). **Waiting for team sign-off** of the DRAFT `policy/rules.yaml` (plan §D.8 example P1–P8 verbatim) and `policy/evidence_requirements.yaml` (plan wording for isolate_host, same pattern for the others). T2.5 cannot start before this |
+| T2.2 Policy engine and rules | done | m2-gate | **Signed off by the team 2026-10-08** with changes: P6/P7 as reversibility rules (irreversible: tier 2 allowed, tiers 0–1 need approval), new P9 (standard service account without dependents → allowed), strictest matching decision wins. `docs/policy_table.md` generated from the engine: no combination falls through to the default |
 | T2.3 Tool layer and registry | done | m2-gate | `gbya/tools/{registry,provenance,render,escalation,mock_actions,state,names}.py`, `gbya/llm/tokens.py`. AST-based retrieved-record registry, untrusted rendering with the model tokenizer, 9 tool schemas, unknown/delete counting |
 | T2.4 Typed-argument rule | done | m2-gate | `gbya/tools/typed.py` (validators), `gbya/tools/provenance.py` (typed canonical fields), `gbya/gate/checks.py` (`check_c1`, `check_schema`), `gbya/gate/types.py` (`CheckResult`) |
 | T2.5 Gate checks and orchestrator | todo | | |
@@ -151,7 +151,18 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Typed identifiers are part of the argument schemas (a bad value fails as `C1_SCHEMA`): hostname and account patterns from T2.4; PID a strict positive integer (`"4100"` and `true` rejected); IP parsed and stored in canonical form; SHA-256 64 hex. Accounts therefore never carry `DOMAIN\\` | T2.4 instructions | §D.6.2 C1 |
 | 2026-10-08 | C1 order: allow-list → schema → host/account in trusted context → internal IP → protected IP → provenance of PID, IP, hash. `request_approval` gets the same checks on its embedded action; `ask_analyst`, `draft_report` and read-only tools get the schema check only; G0 uses `check_schema` only (A-7) | §D.6.2, §D.6.2a; T2.5 adds C2–C6 and the orchestrator | §D.6.2 |
 | 2026-10-08 | C1's provenance accepts a PID in any typed PID field of a retrieved record (incl. `process_access.target_pid`); whether it has the actor role is C3's check (T2.5) | §D.5.2 "This is the C1 existence check" | §D.5.2, §D.6.2 |
+| 2026-10-08 | **Policy signed off (T2.2).** P6 `{action.reversible: false, host.tier: 2}` → allowed; P7 `{action.reversible: false, host.tier: [0, 1]}` → needs_approval (how C5 uses proposal §8's reversibility); P9 `disable_account` service + `dependents: empty` + standard → allowed (admin/domain-admin service accounts stay under P5). When several rules match, the strictest decision wins (ties: first in file order). Engine: rules may omit `tool`; new `empty` condition. Plan §D.8 and T2.2 updated | Team decision | §D.8, T2.2 |
+| 2026-10-08 | **The policy (`policy/rules.yaml`) and the evidence requirements (`policy/evidence_requirements.yaml`) cannot change once dev tuning starts** | Team decision | §D.8, §D.7 |
+| 2026-10-08 | Approval script stays visible through `get_context`, as the proposal says (listed under Limitations) | Team decision | §D.4 |
+| 2026-10-08 | Observation from the policy table: a standard human account **with** dependents is `allowed` (P4 does not consider dependents; only service accounts are checked) | `docs/policy_table.md` | §D.8 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
+
+## Limitations for the final report
+
+Collected as they are found; each must appear in the write-up's limitations.
+
+- `collection` has a single eligible window and is in no split (T1.6).
+- The agent can read the approval script through `get_context`, so it knows the approver's response in advance (proposal §8 wording kept; team decision 2026-10-08).
 
 ## Measured numbers
 
@@ -213,6 +224,8 @@ See the latest entry per task.
 | 2026-10-08 | T2.4 | `pytest tests/unit/test_c1_typed_args.py` | 31 passed: `SELECT record_id, 99999 AS pid …` then `kill_process(H, 99999)` → `C1_UNPROVENANCED_VALUE`; after `SELECT 5 AS record_id` nothing is usable; PID from a registered record passes (incl. target PID); PID of an unretrieved record fails; planted log instruction cannot select a tool; IP rules (unprovenanced, provenanced dst and src, internal, protected); 19 target/type cases; allow-list; `request_approval` embedded action checked (OK, fake PID, unknown host, schema); schema-only for other tools and G0; `CheckResult` shape; SHA-256 and IPv6 canonical provenance |
 | 2026-10-08 | T2.4 | Mutation check | Provenance replaced by "always yes": 6 tests fail (incl. the 99999 fixture); restored, 31 pass |
 | 2026-10-08 | M2 so far | `make lint`, `make test` | lint clean (mypy: 62 files); pytest 336 passed (1 gpu deselected); vitest 8 passed |
+| 2026-10-08 | T2.2 | `pytest tests/unit/test_policy.py` | 31 passed: every rule P1–P9 of the signed-off file and the default; strictest match wins (forbidden beats needs_approval beats allowed, independent of order); equally strict matches report the first rule; P3+P5 overlap on a service admin with dependents → P3; rule without `tool` applies to every tool; `empty`/`nonempty`; 7 rule-file errors; C5 only for state-changing tools; evidence requirements; **`docs/policy_table.md` equals a fresh generation** and no grid combination falls through to the default |
+| 2026-10-08 | T2.2 | `make policy-table` | 144 combinations; 0 fall through to `forbidden` |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

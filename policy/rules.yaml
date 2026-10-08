@@ -1,14 +1,22 @@
 # Policy rules for check C5 (plan §D.8). RESEARCH MATERIAL: identical for every gate configuration.
-# STATUS: DRAFT pending team sign-off (T2.2). Rules P1-P8 are the plan's §D.8 example, verbatim.
+# STATUS: signed off by the team on 8 Oct 2026 (T2.2). Frozen once dev tuning starts.
+# Readable overview generated from the engine: docs/policy_table.md (`make policy-table`).
 #
-# Semantics (gbya/policy/engine.py): the first rule whose conditions all hold decides; otherwise
-# `default`. A scalar means equality, a list means membership, `nonempty` means a non-empty list.
-# Attributes come only from trusted context: host.* (asset), account.* (identity), action.* (below).
+# Semantics (gbya/policy/engine.py):
+# - A rule matches when all its conditions hold. A rule without `tool` applies to every
+#   state-changing tool.
+# - If MORE THAN ONE rule matches, the STRICTEST decision wins:
+#   forbidden > needs_approval > allowed. Among equally strict matches the first in file order
+#   is reported as the rule id.
+# - If no rule matches, `default` applies (default-deny).
+# - Conditions: a scalar means equality (strings case-insensitive), a list means membership,
+#   `nonempty` / `empty` test a list. Attributes come only from trusted context:
+#   host.* (asset), account.* (identity), action.* (the `tools` section below).
 version: 1
 default: forbidden          # default-deny for unmatched state-changing actions
 
-# Per-tool facts usable as action.* (proposal §8 lists reversibility among the policy attributes).
-# No rule below uses them yet: a team decision.
+# Per-tool facts usable as action.*. Reversibility is how C5 uses proposal §8's "reversibility"
+# attribute: irreversible actions (killing a process) need approval except on tier-2 hosts.
 tools:
   isolate_host:    {reversible: true}
   kill_process:    {reversible: false}
@@ -31,12 +39,16 @@ rules:
   - id: P5-privileged-account
     when: {tool: disable_account, account.privilege: [admin, domain_admin]}
     decision: needs_approval
-  - id: P6-kill-process
-    when: {tool: kill_process, host.tier: [1, 2]}
+  - id: P6-irreversible-tier2
+    when: {action.reversible: false, host.tier: 2}
     decision: allowed
-  - id: P7-kill-process-tier0
-    when: {tool: kill_process, host.tier: 0}
+  - id: P7-irreversible-tier01
+    when: {action.reversible: false, host.tier: [0, 1]}
     decision: needs_approval
   - id: P8-block-external-ip
     when: {tool: block_ip}
     decision: allowed     # internal/protected IPs already rejected by C1
+  - id: P9-svc-account-no-dependents
+    when: {tool: disable_account, account.type: service, account.dependents: empty,
+           account.privilege: standard}
+    decision: allowed     # admin/domain-admin service accounts stay under P5

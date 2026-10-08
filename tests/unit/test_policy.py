@@ -47,12 +47,12 @@ ENGINE = PolicyEngine.from_file(REPO_ROOT / "policy" / "rules.yaml")
         ("disable_account", {"account": "it.admin"}, "needs_approval", "P5-privileged-account"),
         ("disable_account", {"account": "da.root"}, "needs_approval", "P5-privileged-account"),
         ("disable_account", {"account": "svc_backup"}, "needs_approval", "P5-privileged-account"),
-        ("kill_process", {"host": "wkstn-01", "pid": 4100}, "allowed", "P6-kill-process"),
-        ("kill_process", {"host": "app-01", "pid": 4100}, "allowed", "P6-kill-process"),
-        ("kill_process", {"host": "dc-01", "pid": 4100}, "needs_approval", "P7-kill-process-tier0"),
+        ("kill_process", {"host": "wkstn-01", "pid": 4100}, "allowed", "P6-irreversible-tier2"),
+        ("kill_process", {"host": "app-01", "pid": 4100}, "needs_approval", "P7-irreversible-tier01"),
+        ("kill_process", {"host": "dc-01", "pid": 4100}, "needs_approval", "P7-irreversible-tier01"),
         ("block_ip", {"ip": "203.0.113.7"}, "allowed", "P8-block-external-ip"),
+        ("disable_account", {"account": "svc_idle"}, "allowed", "P9-svc-account-no-dependents"),
         # Default-deny: no rule matches.
-        ("disable_account", {"account": "svc_idle"}, "forbidden", "default"),  # gap: see STATUS
         ("disable_account", {"account": "nobody"}, "forbidden", "default"),  # unknown account
         ("isolate_host", {"host": "unknown-host"}, "forbidden", "default"),  # unknown host
     ],
@@ -68,23 +68,74 @@ def test_every_rule_is_exercised() -> None:
     ids = {r.id for r in ENGINE.policy.rules}
     assert ids == {f"P{i}" + s for i, s in [
         (1, "-tier0-isolate"), (2, "-tier12-isolate"), (3, "-svc-account-dependents"),
-        (4, "-human-account"), (5, "-privileged-account"), (6, "-kill-process"),
-        (7, "-kill-process-tier0"), (8, "-block-external-ip")]}  # fmt: skip
+        (4, "-human-account"), (5, "-privileged-account"), (6, "-irreversible-tier2"),
+        (7, "-irreversible-tier01"), (8, "-block-external-ip"), (9, "-svc-account-no-dependents")]}  # fmt: skip
     assert ENGINE.policy.default == "forbidden"
 
 
-def test_first_match_wins_in_file_order() -> None:
-    policy = PolicyFile.model_validate(
-        {
-            "version": 1,
-            "default": "forbidden",
-            "rules": [
-                {"id": "A", "when": {"tool": "isolate_host", "host.tier": [0, 1, 2]}, "decision": "allowed"},
-                {"id": "B", "when": {"tool": "isolate_host", "host.tier": 0}, "decision": "needs_approval"},
-            ],
-        }
+def _policy(
+    rules: list[dict[str, Any]], default: str = "forbidden", tools: Any = None
+) -> PolicyEngine:
+    doc: dict[str, Any] = {"version": 1, "default": default, "rules": rules}
+    if tools:
+        doc["tools"] = tools
+    return PolicyEngine(PolicyFile.model_validate(doc))
+
+
+def test_strictest_matching_decision_wins() -> None:
+    eng = _policy(
+        [
+            {"id": "A", "when": {"tool": "isolate_host", "host.tier": [0, 1, 2]}, "decision": "allowed"},
+            {"id": "B", "when": {"tool": "isolate_host", "host.tier": 0}, "decision": "needs_approval"},
+            {"id": "C", "when": {"tool": "isolate_host", "host.role": "domain_controller"}, "decision": "forbidden"},
+        ]
     )  # fmt: skip
-    assert PolicyEngine(policy).evaluate("isolate_host", {"host": "dc-01"}, CTX).rule_id == "A"
+    # dc-01 (tier 0, domain controller) matches A, B and C: forbidden wins regardless of order
+    assert eng.evaluate("isolate_host", {"host": "dc-01"}, CTX).rule_id == "C"
+    # app-01 (tier 1) matches only A
+    assert eng.evaluate("isolate_host", {"host": "app-01"}, CTX).rule_id == "A"
+    reversed_eng = _policy(list(reversed(eng.policy.model_dump()["rules"])))
+    assert reversed_eng.evaluate("isolate_host", {"host": "dc-01"}, CTX).decision == "forbidden"
+
+
+def test_equally_strict_matches_report_the_first_rule() -> None:
+    eng = _policy(
+        [
+            {"id": "FIRST", "when": {"tool": "disable_account", "account.type": "service"}, "decision": "needs_approval"},
+            {"id": "SECOND", "when": {"tool": "disable_account", "account.privilege": "admin"}, "decision": "needs_approval"},
+        ]
+    )  # fmt: skip
+    d = eng.evaluate("disable_account", {"account": "svc_backup"}, CTX)
+    assert (d.decision, d.rule_id) == ("needs_approval", "FIRST")
+    assert [
+        r.id for r in eng.matching_rules("disable_account", {"account": "svc_backup"}, CTX)
+    ] == ["FIRST", "SECOND"]
+
+
+def test_rules_file_overlaps_resolve_by_strictness() -> None:
+    """A service admin with dependents matches P3 and P5 (both needs_approval): P3 is reported."""
+    ctx = TrustedContext.model_validate(
+        {**CTX.model_dump(mode="json"), "identities": [
+            {"account": "svc_sql", "type": "service", "privilege": "admin", "dependents": ["db"]}]}
+    )  # fmt: skip
+    args = {"account": "svc_sql"}
+    assert [r.id for r in ENGINE.matching_rules("disable_account", args, ctx)] == [
+        "P3-svc-account-dependents",
+        "P5-privileged-account",
+    ]
+    d = ENGINE.evaluate("disable_account", args, ctx)
+    assert (d.decision, d.rule_id) == ("needs_approval", "P3-svc-account-dependents")
+
+
+def test_rule_without_tool_applies_to_every_tool() -> None:
+    eng = _policy(
+        [{"id": "T0", "when": {"host.tier": 0}, "decision": "needs_approval"}], default="allowed"
+    )
+    assert eng.evaluate("isolate_host", {"host": "dc-01"}, CTX).rule_id == "T0"
+    assert eng.evaluate("kill_process", {"host": "dc-01", "pid": 1}, CTX).rule_id == "T0"
+    assert (
+        eng.evaluate("disable_account", {"account": "a.mehta"}, CTX).rule_id == "default"
+    )  # no host
 
 
 def test_action_attributes_and_nonempty() -> None:
@@ -98,6 +149,8 @@ def test_action_attributes_and_nonempty() -> None:
                                          "action.reversible": False}, "decision": "needs_approval"},
                 {"id": "DEP", "when": {"tool": "disable_account", "account.dependents": "nonempty"},
                  "decision": "forbidden"},
+                {"id": "NODEP", "when": {"tool": "disable_account", "account.dependents": "empty",
+                                         "account.type": "service"}, "decision": "needs_approval"},
             ],
         }
     )  # fmt: skip
@@ -105,13 +158,16 @@ def test_action_attributes_and_nonempty() -> None:
     assert eng.evaluate("kill_process", {"host": "wkstn-01", "pid": 1}, CTX).rule_id == "IRREV"
     assert eng.evaluate("isolate_host", {"host": "wkstn-01"}, CTX).rule_id == "default"
     assert eng.evaluate("disable_account", {"account": "svc_reports"}, CTX).rule_id == "DEP"
-    assert eng.evaluate("disable_account", {"account": "svc_idle"}, CTX).rule_id == "default"
+    assert eng.evaluate("disable_account", {"account": "svc_idle"}, CTX).rule_id == "NODEP"
+    assert (
+        eng.evaluate("disable_account", {"account": "a.mehta"}, CTX).rule_id == "default"
+    )  # human, empty
 
 
 @pytest.mark.parametrize(
     ("rules", "message"),
     [
-        ([{"id": "X", "when": {"host.tier": 0}, "decision": "allowed"}], "must name the tool"),
+        ([{"id": "X", "when": {}, "decision": "allowed"}], "at least one condition"),
         ([{"id": "X", "when": {"tool": "delete_logs"}, "decision": "allowed"}], "not a state-changing"),
         ([{"id": "X", "when": {"tool": "isolate_host", "host.colour": "red"}, "decision": "allowed"}],
          "unknown attribute"),
@@ -142,3 +198,13 @@ def test_evidence_requirements_cover_every_tool(tmp_path: Path) -> None:
     bad.write_text("requirements:\n  isolate_host: x\n")
     with pytest.raises(ValueError, match="cover exactly"):
         load_evidence_requirements(bad)
+
+
+def test_policy_table_is_up_to_date() -> None:
+    """docs/policy_table.md must equal a fresh generation from the engine (`make policy-table`)."""
+    from gbya.policy.table import OUT, generate, rows
+
+    assert OUT.read_text() == generate(), "run `make policy-table` and commit docs/policy_table.md"
+    grid = rows(ENGINE)
+    assert len(grid) == 4 * 3 * 2 * 3 * 2
+    assert [r for r in grid if r["rule"] == "default"] == []  # no fall-through to `forbidden`

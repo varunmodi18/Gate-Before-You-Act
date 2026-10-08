@@ -1,8 +1,11 @@
 """Policy engine for check C5 (plan §D.8, FR-07, T2.2).
 
-``policy/rules.yaml`` lists rules keyed by action type and trusted attributes. The first rule
-whose conditions all hold decides (file order); otherwise the file's ``default`` applies
-(``forbidden``: default-deny). Attributes come only from trusted context, never from logs:
+``policy/rules.yaml`` lists rules keyed by action type and trusted attributes. Every rule whose
+conditions all hold is a match; **the strictest matching decision wins** (``forbidden`` >
+``needs_approval`` > ``allowed``), and among equally strict matches the first in file order is
+reported. With no match the file's ``default`` applies (``forbidden``: default-deny). A rule may
+omit ``tool`` (it then applies to every state-changing tool) but needs at least one condition.
+Attributes come only from trusted context, never from logs:
 
 * ``host.<field>``    — the asset named by the call's ``host`` argument (tier, role, owner);
 * ``account.<field>`` — the identity named by ``account`` (type, privilege, dependents);
@@ -10,7 +13,7 @@ whose conditions all hold decides (file order); otherwise the file's ``default``
   (e.g. ``reversible``; proposal §8 lists reversibility among the policy attributes).
 
 Condition values: a scalar means equality (strings case-insensitive), a list means membership,
-and the string ``nonempty`` means the attribute is a non-empty list or string. If the named host
+``nonempty`` means a non-empty list or string, and ``empty`` an empty one. If the named host
 or account is not in the trusted context, its conditions are false (C1 rejects such calls first).
 """
 
@@ -27,6 +30,8 @@ from gbya.tools.names import STATE_CHANGING
 
 Decision = Literal["allowed", "needs_approval", "forbidden"]
 NONEMPTY = "nonempty"
+EMPTY = "empty"
+STRICTNESS: dict[str, int] = {"allowed": 0, "needs_approval": 1, "forbidden": 2}
 NAMESPACES = {"host": set(Asset.model_fields), "account": set(Identity.model_fields)}
 
 
@@ -54,9 +59,10 @@ class PolicyFile(BaseModel):
             raise ValueError(f"tools section names unknown tools: {sorted(unknown_tools)}")
         action_fields = {k for meta in self.tools.values() for k in meta}
         for r in self.rules:
-            if "tool" not in r.when:
-                raise ValueError(f"rule {r.id}: 'when' must name the tool")
-            tools = r.when["tool"] if isinstance(r.when["tool"], list) else [r.when["tool"]]
+            if not r.when:
+                raise ValueError(f"rule {r.id}: 'when' needs at least one condition")
+            raw = r.when.get("tool", list(STATE_CHANGING))
+            tools = raw if isinstance(raw, list) else [raw]
             if bad := [t for t in tools if t not in STATE_CHANGING]:
                 raise ValueError(f"rule {r.id}: not a state-changing tool: {bad}")
             for key in r.when:
@@ -84,6 +90,8 @@ def _holds(expected: Any, actual: Any) -> bool:
         return False
     if expected == NONEMPTY:
         return isinstance(actual, list | str) and len(actual) > 0
+    if expected == EMPTY:
+        return isinstance(actual, list | str) and len(actual) == 0
     values = actual if isinstance(actual, list) else [actual]
     wanted = expected if isinstance(expected, list) else [expected]
     return any(_norm(a) == _norm(w) for a in values for w in wanted)
@@ -110,16 +118,25 @@ class PolicyEngine:
     def evaluate(self, tool: str, args: dict[str, Any], ctx: TrustedContext) -> PolicyDecision:
         if tool not in STATE_CHANGING:
             raise ValueError(f"C5 applies to state-changing tools only, not {tool!r}")
-        for rule in self.policy.rules:
-            if not _holds(rule.when["tool"], tool):
-                continue
-            if all(
+        matches = self.matching_rules(tool, args, ctx)
+        if not matches:
+            return PolicyDecision(decision=self.policy.default, rule_id="default")
+        # strictest decision wins; ties keep file order (max() returns the first maximum)
+        best = max(matches, key=lambda r: STRICTNESS[r.decision])
+        return PolicyDecision(decision=best.decision, rule_id=best.id)
+
+    def matching_rules(self, tool: str, args: dict[str, Any], ctx: TrustedContext) -> list[Rule]:
+        """Every rule whose conditions all hold, in file order."""
+        return [
+            rule
+            for rule in self.policy.rules
+            if _holds(rule.when.get("tool", tool), tool)
+            and all(
                 _holds(expected, self._attribute(key, tool, args, ctx))
                 for key, expected in rule.when.items()
                 if key != "tool"
-            ):
-                return PolicyDecision(decision=rule.decision, rule_id=rule.id)
-        return PolicyDecision(decision=self.policy.default, rule_id="default")
+            )
+        ]
 
 
 def load_evidence_requirements(path: Path) -> dict[str, str]:
