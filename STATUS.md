@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M4 Case studio and annotation, on branch `m4-cases` (from `m3-verifier`). M3 accepted 2026-10-08; follow-ups done.
+- **Current milestone:** M4 Case studio and annotation — **tooling complete, at the checkpoint** (branch `m4-cases`). T4.5/T4.6 done-when, T4.9 and T4.10 are team work.
 - **TA approval (Q-0):** approved 2026-10-08. M3 approved by the team on 2026-10-08.
-- **Next action:** M4 (case studio and annotation tooling): T4.1 → T4.8 per §L.2; annotation (T4.9) and freezing (T4.10) are team work. Stop at the M4 checkpoint.
+- **Next action:** M4 checkpoint report. Team work next: author real scenarios with the guide (T4.5/T4.6 done-when), annotation and adjudication (T4.9), freeze (T4.10).
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
