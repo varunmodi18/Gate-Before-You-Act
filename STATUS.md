@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** T2.3 (tool layer and registry), T2.4 (typed-argument rule). Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
+- **Next action:** T2.4 (typed-argument rule). Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -31,7 +31,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.7 Windows page | done | m1-data | `/windows` (tactic/split/text filters) and `/windows/:id` (tab per table, server pagination, `column contains` filter, record drawer with normalised + raw JSON, SQL console with typed errors). Playwright J1 + axe pass at 1280 and 768 px; checked on the real LSASS window |
 | T2.1 Trusted-context model | done | m2-gate | `gbya/context/{models,store}.py`: §F.3 schema with validators, canonical-JSON SHA-256 `context_hash`, `get_context(section)` |
 | T2.2 Policy engine and rules | blocked | m2-gate | Engine done and tested (`gbya/policy/engine.py`). **Waiting for team sign-off** of the DRAFT `policy/rules.yaml` (plan §D.8 example P1–P8 verbatim) and `policy/evidence_requirements.yaml` (plan wording for isolate_host, same pattern for the others). T2.5 cannot start before this |
-| T2.3 Tool layer and registry | todo | | |
+| T2.3 Tool layer and registry | done | m2-gate | `gbya/tools/{registry,provenance,render,escalation,mock_actions,state,names}.py`, `gbya/llm/tokens.py`. AST-based retrieved-record registry, untrusted rendering with the model tokenizer, 9 tool schemas, unknown/delete counting |
 | T2.4 Typed-argument rule | todo | | |
 | T2.5 Gate checks and orchestrator | todo | | |
 | T2.6 Exp 1 core (code-only) | todo | | |
@@ -143,6 +143,11 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Policy engine: conditions on `host.*` (asset), `account.*` (identity) and `action.*` (per-tool facts in the rules file's `tools` section, e.g. `reversible`); scalar = equality (strings case-insensitive), list = membership, `nonempty`; first match in file order; else `default`. Rule files are validated on load (tool named, state-changing tools only, known attributes, unique ids) | §D.8 names the predicate kinds; proposal §8 lists reversibility among policy attributes, so the engine can express it | §D.8, FR-07 |
 | 2026-10-08 | Draft rules leave two points for the team: (1) **reversibility** is declared per tool (`kill_process` irreversible) but no rule uses it; (2) a **standard service account without dependents** matches no rule, so `disable_account` on it is `forbidden` by default | Coverage check of P1–P8 against all identity types | §D.8 |
 | 2026-10-08 | Ruff line-length (E501) not enforced under `tests/` | Hand-aligned test tables | — |
+| 2026-10-08 | `tokenizers` 0.23.2 is a main dependency; token counts use the model's `tokenizer.json` (from the default profile's `model_path`). An approximate counter exists for tests/CI only and is chosen automatically only when `GBYA_ENV=test`; otherwise a missing tokenizer is an error | §D.10.3 "token counts use the model's own tokenizer" | §D.5.1, §D.10.3 |
+| 2026-10-08 | Provenance via sqlglot `qualify` (stars expanded, columns resolved to their source alias): a projection registers only if it is a bare `record_id` column whose source is a whitelisted base table (not a CTE or subquery); queries with GROUP BY / DISTINCT / HAVING / a non-window aggregate in the projections register nothing; UNION registers a position only if direct in every branch; INTERSECT/EXCEPT and any shape mismatch register nothing; candidates confirmed in `raw_events` | §D.5.2 table | §D.5.2, FR-10 |
+| 2026-10-08 | Query rendering: JSON per row, `record_id` first, duplicate column names suffixed `#2`; fields > 200 chars shortened with the full length noted; rows that do not fit 1,500 tokens are dropped and reported in a note **outside** the untrusted block | §D.5.1 | §D.5.1 |
+| 2026-10-08 | Escalation notes are flagged when any 30-character run occurs verbatim in untrusted text shown earlier in the episode | §D.5 "flagged when it contains a verbatim log substring of 30 or more characters" | §D.5, A-5 |
+| 2026-10-08 | Mock actions go through a `Recorder` (in-memory now); the database recorder writing `tool_calls` arrives with the episode loop (T5.2) | No episodes exist before M5 | §D.5.2a |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -200,6 +205,8 @@ See the latest entry per task.
 | 2026-10-08 | T1.6 | `make splits` + comparison with the reviewed file | splits, assignment, groups and replacement order identical; new SHA-256 `1894e9d9…` (host fields added) |
 | 2026-10-08 | T2.1 | `pytest tests/unit/test_context.py` | 24 passed: plan example valid; one rejection per rule (tier out of range or missing, approval mode, ticket start ≥ end, bad regex, ticket host not in assets, naive ticket time, missing field, identity type/privilege, bad CIDR/IP, schema version, empty assets, unknown field); duplicate host/account/ticket; hash stable under key order and whitespace, changes with content; `get_context` sections; network and ticket helpers; immutability |
 | 2026-10-08 | T2.2 | `pytest tests/unit/test_policy.py` | 27 passed: every rule P1–P8 of the draft `rules.yaml` and the default (incl. unknown host/account and the dependent-less service account), first-match order, `action.*` + `nonempty`, 7 rule-file validation errors, C5 refuses non-state-changing tools, evidence requirements cover exactly the 4 tools |
+| 2026-10-08 | T2.3 | `pytest tests/unit/test_tools.py` | 46 passed on the mini window: 11 projections that register nothing (literal, expression, cast/coalesce, count, max, DISTINCT, GROUP BY, CTE, derived table, UNION with a literal branch); 12 that register exactly the expected ids (direct, `*`, `FROM`-only, alias, extra literal column, WHERE, window function, IN-subquery, UNION ALL, join of two tables, join with one direct column, LIMIT); accumulation; only rows shown are registered under the token cap; shortened-field rows registered; ids absent from `raw_events` not registered; shape mismatch safe; wrapping, `record_id` first, duplicate keys; rejected SQL; real tokenizer; 9 tools by class; no free text on state-changing tools; 6 argument errors; unknown/delete counting; trusted `get_context`; note flagging; report never sent; mock action recorded |
+| 2026-10-08 | T2.3 | Mutation check | Registry replaced by "every column is a direct record_id": 14 tests fail (all register-nothing cases among them); restored, 46 pass |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

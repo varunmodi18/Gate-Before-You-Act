@@ -23,6 +23,7 @@ dependencies = [
     "pyyaml",
     "sse-starlette",
     "mcp",
+    "tokenizers==0.23.2",
 ]
 
 [project.optional-dependencies]

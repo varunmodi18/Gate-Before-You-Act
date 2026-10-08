@@ -311,6 +311,7 @@ dependencies = [
     { name = "sqlglot" },
     { name = "sse-starlette" },
     { name = "structlog" },
+    { name = "tokenizers" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -351,6 +352,7 @@ requires-dist = [
     { name = "sqlglot" },
     { name = "sse-starlette" },
     { name = "structlog" },
+    { name = "tokenizers", specifier = "==0.23.2" },
     { name = "torch", marker = "extra == 'rerank'", index = "https://download.pytorch.org/whl/cpu" },
     { name = "uvicorn", extras = ["standard"] },
 ]
