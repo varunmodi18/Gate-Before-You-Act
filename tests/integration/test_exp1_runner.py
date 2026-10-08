@@ -221,6 +221,11 @@ def test_composition_equals_inline_gate_call(
 def test_runs_api_create_cancel_resume_and_progress(tmp_path: Path) -> None:
     settings = setup_env(tmp_path)
     client = TestClient(create_app(settings))
+    spec = client.get("/api/v1/runs/exp1-spec").json()
+    assert spec["spec"]["verifier_variants"] == ["standard", "rationale", "none", "rerank"]
+    assert spec["unavailable"] == {"rerank": "needs the CPU reranker (T3.7)"}
+    assert spec["variant_of"] == {"G3": "standard", "A2": "standard", "A3": "rationale",
+                                  "A4": "none", "A6": "rerank"}  # fmt: skip
     r = client.post("/api/v1/runs", json={"purpose": "fixture", "case_ids": CASES, "config": SPEC})
     assert r.status_code == 201, r.text
     run = r.json()

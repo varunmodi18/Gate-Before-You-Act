@@ -156,8 +156,45 @@ export interface SystemInfo {
   id: string
   checks: string[]
   capability: string
+  verifier_variant: string | null
+  retrieval_mode: string | null
   available: boolean
   reason: string | null
+}
+
+export interface VerifierOutput {
+  verdict: 'SUPPORTS' | 'INSUFFICIENT' | 'CONTRADICTED'
+  unmet_requirement: string | null
+  ticket_scope: { applies: boolean; matches: Record<string, boolean> } | null
+  reason: string
+}
+
+export interface ReferenceHit {
+  kind: 'sigma' | 'attack'
+  rank: number
+  doc_id: string
+  title: string
+  author: string | null
+  uri: string | null
+  technique_id: string | null
+  bm25: number
+  rerank: number | null
+  shown: boolean
+  gold: boolean
+}
+
+export interface VerifierCallOut {
+  variant: string
+  output: VerifierOutput | null
+  error: string | null
+  raw: unknown
+  prompt_hash: string | null
+  manifest: Record<string, unknown>
+  tokens_in: number
+  tokens_out: number
+  ms: number
+  messages: { role: string; content: string }[] | null
+  references: ReferenceHit[]
 }
 
 export interface DecisionOut {
@@ -167,6 +204,7 @@ export interface DecisionOut {
   failed_check: string | null
   checks: CheckResult[]
   verifier: Record<string, unknown> | null
+  verifier_call: VerifierCallOut | null
   approval: { code: string; message: string; accepted: boolean } | null
   message: string
   ms: number
@@ -176,5 +214,95 @@ export interface DecisionOut {
 export interface GateResponse {
   case_id: string
   expected_label: string | null
+  verifier_label: string | null
   decisions: DecisionOut[]
+}
+
+// ---- Experiments (gbya.api.routers.runs) ----
+
+export interface Progress {
+  run_id: number
+  status: string
+  done: number
+  total: number
+  errors: number
+  running: number
+  eta_s: number | null
+  tps_in: number | null
+  tps_out: number | null
+}
+
+export interface RunOut {
+  id: number
+  experiment: number
+  purpose: string
+  status: string
+  replay: boolean
+  research_eligible: boolean
+  config: { spec?: Exp1Spec; case_ids?: string[] } & Record<string, unknown>
+  config_hash: string
+  case_set_hash: string | null
+  git_sha: string | null
+  model_id: string | null
+  model_file_sha256: string | null
+  backend: string | null
+  created_at: string
+  started_at: string | null
+  finished_at: string | null
+  progress: Progress
+}
+
+export interface Exp1Spec {
+  experiment: number
+  verifier_variants: string[]
+  verifier_runs: number
+  code_only: string[]
+  composed: string[]
+}
+
+export interface Exp1SpecOut {
+  spec: Exp1Spec
+  unavailable: Record<string, string>
+  variant_of: Record<string, string>
+}
+
+export interface Accuracy {
+  n: number
+  exact_correct: number
+  binary_correct: number
+  exact_accuracy: number | null
+  binary_accuracy: number | null
+}
+
+export interface VerifierEvalOut {
+  run_id: number
+  purpose: string
+  research_eligible: boolean
+  diagnostic: Record<
+    string,
+    Accuracy & {
+      parse_errors: number
+      confusion: Record<string, Record<string, number>>
+      by_case_variant: Record<string, Accuracy>
+    }
+  >
+  gate_path: Record<
+    string,
+    {
+      packages: number
+      reached_c4: number
+      conditional: Accuracy
+      by_case_variant: Record<string, { packages: number; reached_c4: number }>
+    }
+  >
+  unlabelled_cases: string[]
+}
+
+export interface RunItem {
+  case_id: string
+  system: string
+  run_idx: number
+  status: string
+  attempts: number
+  error: string | null
 }

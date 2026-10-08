@@ -10,6 +10,7 @@ import {
 } from '../api/client'
 import { CheckPipeline } from '../components/CheckPipeline'
 import { ErrorBanner } from '../components/ErrorBanner'
+import { VerifierPanel } from '../components/VerifierPanel'
 
 export function Playground() {
   const cases = useQuery({
@@ -42,7 +43,7 @@ export function Playground() {
       </h1>
       <p className="mb-4 text-sm">
         Experiment 1 on one case: every selected gate judges the identical package once, with no
-        retries.
+        retries. Configurations with C4 call the verifier on the model server.
       </p>
       {cases.isError && <ErrorBanner error={cases.error} />}
       {systems.isError && <ErrorBanner error={systems.error} />}
@@ -116,9 +117,17 @@ export function Playground() {
           <>
             <p className="mb-2 text-sm">
               Case <span className="font-mono">{run.data.case_id}</span>; expected:{' '}
-              <strong>{run.data.expected_label ?? '—'}</strong>
+              <strong>{run.data.expected_label ?? '—'}</strong>; verifier label:{' '}
+              <strong>{run.data.verifier_label ?? '—'}</strong>
             </p>
             <CheckPipeline decisions={run.data.decisions} />
+            {run.data.decisions.map((d) => (
+              <VerifierPanel
+                key={d.config_id}
+                decision={d}
+                verifierLabel={run.data.verifier_label}
+              />
+            ))}
           </>
         )}
       </div>

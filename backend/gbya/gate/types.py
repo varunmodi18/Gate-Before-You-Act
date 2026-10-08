@@ -77,6 +77,9 @@ class VerifierCall(BaseModel):
     tokens_in: int = 0
     tokens_out: int = 0
     ms: float = 0.0
+    # The exact prompt, for the Playground's prompt viewer. Not stored: the manifest and the prompt
+    # hash make each stored input reproducible (§D.7.1).
+    messages: list[dict[str, str]] | None = None
 
 
 class ApprovalOutcome(BaseModel):

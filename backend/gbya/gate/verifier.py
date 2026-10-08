@@ -362,6 +362,7 @@ class LLMVerifier:
         base: dict[str, Any] = {
             "variant": self.variant, "prompt_hash": p.prompt_hash, "manifest": p.manifest,
             "retrieval": retrieval_record(retrieval) if retrieval else None,
+            "messages": p.messages,
         }  # fmt: skip
         t0 = time.perf_counter()
         try:

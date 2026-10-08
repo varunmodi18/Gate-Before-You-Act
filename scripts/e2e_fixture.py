@@ -4,8 +4,9 @@
 
 Catalogues the committed fixture windows (tests/fixtures/otrf and tests/fixtures/mini_window),
 normalises the mini window on the construction path, records it as ingested in split ``dev``,
-and imports the hand-made Exp 1 cases (``data/fixtures/handmade/cases.json``).
-The API is then started with ``GBYA_APP_DB_PATH=<dir>/app.db``.
+imports the hand-made Exp 1 cases (``data/fixtures/handmade/cases.json``) and builds a retrieval
+index from the synthetic test corpus (``tests/fixtures/retrieval``) into ``<dir>/index``.
+The API and worker are then started with ``GBYA_APP_DB_PATH=<dir>/app.db GBYA_DATA_DIR=<dir>``.
 """
 
 from __future__ import annotations
@@ -17,6 +18,8 @@ from pathlib import Path
 from gbya.cases.handmade import insert_fixture
 from gbya.data.catalogue import parse_metadata, scan, upsert
 from gbya.data.normalise import normalise_window
+from gbya.retrieval import index as ix
+from gbya.retrieval import sources
 from gbya.store import db
 from gbya.store.models import Window
 
@@ -47,6 +50,11 @@ def build(out: Path) -> None:
         w.ingest_status, w.split = res.status, "dev"
         s.flush()
         insert_fixture(s, duck)  # hand-made Exp 1 cases for the Gate Playground (T2.7)
+    corpus = FIXTURES / "retrieval"
+    attack = corpus / "attack"
+    src = sources.Sources(corpus / "sigma", "0" * 40, attack / "enterprise-attack-test.json",
+                          "0" * 64, attack / "LICENSE.txt")  # fmt: skip
+    ix.build(src, out / "index")
     print(f"e2e fixture ready in {out}")
 
 

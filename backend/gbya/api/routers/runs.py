@@ -17,10 +17,16 @@ from sqlalchemy import select, update
 from sqlalchemy.orm import Session, sessionmaker
 from sse_starlette.sse import EventSourceResponse
 
-from gbya.api.deps import get_session, get_settings
+from gbya.api.deps import get_deps, get_session, get_settings
 from gbya.config import Settings
 from gbya.errors import NotFound, Unprocessable
-from gbya.experiments.runner import create_exp1_run, progress
+from gbya.experiments.runner import (
+    Deps,
+    create_exp1_run,
+    load_spec,
+    progress,
+    variant_availability,
+)
 from gbya.experiments.runs import research_eligible
 from gbya.gate.config import load_configs
 from gbya.scoring.verifier_eval import CaseLabel, EvalRow, GateRow, verifier_report
@@ -97,6 +103,16 @@ def create(
         raise Unprocessable(str(exc), code="INVALID_RUN_CONFIG") from exc
     session.commit()
     return _out(session, run)
+
+
+@router.get("/exp1-spec")
+def exp1_spec(deps: Annotated[Deps, Depends(get_deps)]) -> dict[str, Any]:
+    """The default Exp 1 configuration (``experiments/exp1.yaml``), the verifier variant of each
+    composed system and which variants cannot run here, for the run-creation form."""
+    spec = load_spec()
+    unavailable = {k: v for k, v in variant_availability(deps).items() if v is not None}
+    variant_of = {sid: deps.configs[sid].verifier_variant for sid in spec.composed}
+    return {"spec": spec.model_dump(), "unavailable": unavailable, "variant_of": variant_of}
 
 
 @router.get("", response_model=list[RunOut])

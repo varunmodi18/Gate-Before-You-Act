@@ -149,7 +149,7 @@ def judge(case: Exp1Case, verifier: LLMVerifier, counter: TokenCounter) -> Verif
         con.close()
 
 
-_EVAL_SPLIT = {"manifest", "prompt_hash", "tokens_in", "tokens_out"}
+_EVAL_SPLIT = {"manifest", "prompt_hash", "tokens_in", "tokens_out", "messages"}
 
 
 def eval_row(run_id: int, case_id: str, run_idx: int, call: VerifierCall) -> VerifierEval:

@@ -145,6 +145,22 @@ class Deps:
                            live_retriever(self.index(), self.reranker))  # fmt: skip
 
 
+def variant_availability(deps: Deps) -> dict[str, str | None]:
+    """Why each verifier variant cannot run here (None = it can): retrieval variants need the
+    index (``make index``); ``rerank`` also needs the CPU reranker (never a fallback to bm25)."""
+    s = deps.settings
+    has_index = (s.resolve(s.data_dir) / "index" / "MANIFEST.json").is_file()
+    out: dict[str, str | None] = {}
+    for variant, mode in VARIANT_MODE.items():
+        if mode != "none" and not has_index:
+            out[variant] = "needs the retrieval index (make index)"
+        elif mode == "bm25_rerank" and deps.reranker is None:
+            out[variant] = "needs the CPU reranker (T3.7)"
+        else:
+            out[variant] = None
+    return out
+
+
 # ---- creating runs ------------------------------------------------------------------------------
 
 
