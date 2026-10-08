@@ -55,6 +55,19 @@ def build(out: Path) -> None:
     src = sources.Sources(corpus / "sigma", "0" * 40, attack / "enterprise-attack-test.json",
                           "0" * 64, attack / "LICENSE.txt")  # fmt: skip
     ix.build(src, out / "index")
+    # Scenarios for J3 (one per Playwright viewport: J3 adjudicates and so locks its scenario).
+    from gbya.cases.cli import generate
+    from gbya.cases.models import dump, load_scenario
+    from gbya.config import Settings
+    from gbya.llm.tokens import ApproxCounter
+
+    settings = Settings(app_db_path=app_db, data_dir=out, cases_dir=out / "cases", env="test")
+    base = load_scenario(FIXTURES / "cases" / "mini" / "scenario.json")
+    for sid in ("j3-desktop", "j3-tablet"):
+        (out / "cases" / sid).mkdir(parents=True, exist_ok=True)
+        path = out / "cases" / sid / "scenario.json"
+        path.write_text(dump(base.model_copy(update={"id": sid})))
+        generate(settings, sid, ApproxCounter())
     print(f"e2e fixture ready in {out}")
 
 

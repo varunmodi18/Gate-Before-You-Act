@@ -1448,6 +1448,7 @@ erDiagram
 | `cases` | `id` (`<scenario>:<variant>`), `scenario_id`, `set` (R/E), `variant` (E1–E5, R_pos, R_neg), `request`, `package` (json), `db_patch` (json), `case_db_path`, `approval_script`, `labels` (json), `content_hash` | `content_hash` covers request, package, patch, context and labels |
 | `annotations` | `id`, `scenario_id`, `annotator_role` (A/B), `labels` (json per case), `evidence_sets`, `submitted_at` | Unique (`scenario_id`, `role`); blind until both submitted |
 | `adjudications` | `id`, `kind` (scenario_label/unlisted_call), `ref_id`, `decision`, `by`, `at` | — |
+| `agreement_snapshots` *(Draft 8, T4.8)* | `id`, `scenario_id` (unique), `computed_at`, `values` (json: paired outcome and candidate-action items, E1 evidence Jaccard) | Written once, when the second annotator submits; never recomputed after adjudication |
 | `runs` | `id`, `experiment` (1/2/3), `purpose` (research/development/fixture/demo; Draft 8), `config` (json), `config_hash`, `case_set_hash`, `git_sha`, `model_id`, `model_file_sha256`, `backend`, `backend_flags`, `replay` (bool), `status`, timestamps | `replay=true` excluded from analysis; only `research` runs on the frozen case set count (fixture and development runs never do) |
 | `jobs` | `id`, `run_id`, `status`, `claimed_by`, `heartbeat_at` | Worker heartbeat every 10 s; stale > 60 s → re-claimable |
 | `job_items` | `run_id`, `case_id`, `system`, `run_idx`, `status`, `attempts` | **Unique (`run_id`, `case_id`, `system`, `run_idx`)**: idempotency key |

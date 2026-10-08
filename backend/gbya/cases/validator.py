@@ -413,11 +413,27 @@ def _check_h(
     if not lab.decisive:
         rep.add("h", cid, False, "no decisive entries")
         return
+    problems = decisive_problems(view, records, ids, list(lab.decisive), counter)
+    rep.add(
+        "h", cid, not problems, "; ".join(problems) or "every decisive entry holds in the prompt"
+    )
+
+
+def decisive_problems(
+    view: CaseView,
+    records: list[CitedRecord],
+    ids: set[int],
+    entries: Sequence[Any],
+    counter: TokenCounter,
+) -> list[str]:
+    """Why decisive entries do not hold in the rendered standard-variant prompt (empty: they all
+    hold). Used by check (h) and by the Annotate page's live check."""
+    case = view.case
     prompt = standard_prompt(view, records, counter)
     structured = render_cited(records, counter).structured
     tickets = {t.id for t in target_tickets(view.context, case.package.args)}
     problems = []
-    for d in lab.decisive:
+    for d in entries:
         if isinstance(d, DecisiveField):
             value = structured.get(d.record_id, {}).get(d.field)
             if d.record_id not in structured:
@@ -441,9 +457,7 @@ def _check_h(
         elif isinstance(d, DecisiveAbsent):
             if d.absent_record_id in case.package.cited or d.absent_record_id in ids:
                 problems.append(f"record {d.absent_record_id} is cited or still in the database")
-    rep.add(
-        "h", cid, not problems, "; ".join(problems) or "every decisive entry holds in the prompt"
-    )
+    return problems
 
 
 def _account_field(rec: CitedRecord) -> str | None:

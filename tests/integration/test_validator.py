@@ -17,6 +17,8 @@ from gbya.cases.store import write_case, write_scenario
 from gbya.config import Settings
 from gbya.context.models import ApprovalScript
 from gbya.llm.tokens import ApproxCounter
+from gbya.store import db
+from gbya.store.models import Window
 from tests.integration.test_builder import H, make_env
 
 COUNTER = ApproxCounter()
@@ -42,7 +44,10 @@ def base(tmp_path_factory: pytest.TempPathFactory) -> Path:
 def env(base: Path, tmp_path: Path) -> Settings:
     for d in ("cases", "data"):
         shutil.copytree(base / d, tmp_path / d)
-    shutil.copy(base / "app.db", tmp_path / "app.db")
+    # A fresh app.db: copying a WAL-mode database file alone can miss its latest writes.
+    db.upgrade(tmp_path / "app.db")
+    with db.session_scope(db.make_sessionmaker(db.make_engine(tmp_path / "app.db"))) as s:
+        s.add(Window(id="SDWIN-MINI-000001", title="mini", split="dev"))
     return Settings(app_db_path=tmp_path / "app.db", data_dir=tmp_path / "data",
                     cases_dir=tmp_path / "cases", env="test")  # fmt: skip
 

@@ -37,6 +37,7 @@ F1_TABLES = {
     "steps",
     "tool_calls",
     "verifier_evals",
+    "agreement_snapshots",
     "retrieval_rankings",
 }
 

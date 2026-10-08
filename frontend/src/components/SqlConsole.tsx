@@ -5,24 +5,30 @@ import { apiPost, type Cell, type QueryRows } from '../api/client'
 import { DataTable } from './DataTable'
 import { ErrorBanner } from './ErrorBanner'
 
-/** Guarded SQL against one window (same guard as the agent's sql_query tool). */
+/** Guarded SQL against one window, or one case database via ``queryPath`` (same guard as the
+ * agent's sql_query tool). */
 export function SqlConsole({
   windowId,
+  queryPath,
   onOpenRecord,
+  title = 'SQL console',
 }: {
-  windowId: string
+  windowId?: string
+  queryPath?: string
   onOpenRecord: (recordId: number) => void
+  title?: string
 }) {
+  const path = queryPath ?? `/windows/${windowId ?? ''}/query`
   const [sql, setSql] = useState('SELECT * FROM process_access LIMIT 20')
   const run = useMutation({
-    mutationFn: (text: string) => apiPost<QueryRows>(`/windows/${windowId}/query`, { sql: text }),
+    mutationFn: (text: string) => apiPost<QueryRows>(path, { sql: text }),
   })
   const recordCol = run.data?.columns.indexOf('record_id') ?? -1
 
   return (
     <section aria-labelledby="sql-title" className="mt-6">
       <h2 id="sql-title" className="mb-2 text-lg font-semibold">
-        SQL console
+        {title}
       </h2>
       <form
         onSubmit={(e) => {

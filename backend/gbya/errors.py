@@ -47,6 +47,11 @@ class NotFound(GbyaError):
     http_status = 404
 
 
+class Forbidden(GbyaError):
+    code = "FORBIDDEN"
+    http_status = 403
+
+
 class Conflict(GbyaError):
     code = "CONFLICT"
     http_status = 409

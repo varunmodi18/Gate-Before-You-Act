@@ -9,11 +9,12 @@ import { NotBuilt } from './pages/NotBuilt'
 import { Playground } from './pages/Playground'
 import { Experiments } from './pages/Experiments'
 import { Scenarios } from './pages/Scenarios'
+import { Annotate, AnnotateScenario } from './pages/Annotate'
 import { ScenarioDetail } from './pages/ScenarioDetail'
 import { ExperimentRun } from './pages/ExperimentRun'
 import { PAGES } from './pages/routes'
 
-const BUILT = new Set(['/', '/windows', '/playground', '/experiments', '/scenarios'])
+const BUILT = new Set(['/', '/windows', '/playground', '/experiments', '/scenarios', '/annotate'])
 
 export function App({ queryClient }: { queryClient?: QueryClient }) {
   const client = queryClient ?? new QueryClient()
@@ -28,6 +29,8 @@ export function App({ queryClient }: { queryClient?: QueryClient }) {
           <Route path="experiments" element={<Experiments />} />
           <Route path="scenarios" element={<Scenarios />} />
           <Route path="scenarios/:sid" element={<ScenarioDetail />} />
+          <Route path="annotate" element={<Annotate />} />
+          <Route path="annotate/:sid" element={<AnnotateScenario />} />
           <Route path="experiments/:runId" element={<ExperimentRun />} />
           {PAGES.filter((p) => !BUILT.has(p.path)).map((p) => (
             <Route key={p.path} path={`${p.path.slice(1)}/*`} element={<NotBuilt page={p} />} />

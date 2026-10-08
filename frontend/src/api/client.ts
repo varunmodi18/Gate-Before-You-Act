@@ -442,3 +442,79 @@ export interface CaseDetail {
   } | null
   diff: DbDiffJson | null
 }
+
+// ---- Annotation (gbya.api.routers.annotate) ----
+
+export interface AnnotateCase {
+  id: string
+  variant: string
+  request: { text: string; objective: string; target: Record<string, unknown> }
+  package: { tool: string; args: Record<string, unknown>; cited: number[] }
+  prompt: {
+    messages: { role: string; content: string }[]
+    manifest: Record<string, unknown>
+    reference_available: boolean
+  }
+  structured: Record<string, Record<string, Cell>>
+  suspicious: {
+    record_id: number
+    table: string | null
+    host: string | null
+    account: string | null
+    command: string | null
+    ts: string | null
+  }[]
+  tickets: Ticket[]
+  policy: { decision: string; rule_id: string }
+  approval_script: string
+  e4_kind: string | null
+}
+
+export interface AnnotationOut {
+  role: string
+  labels: Record<string, Record<string, unknown>>
+  notes: Record<string, unknown>
+  submitted_at: string | null
+}
+
+export interface Workspace {
+  scenario: { id: string; status: string; split: string | null; target_host: string | null }
+  cases: AnnotateCase[]
+  own: AnnotationOut | null
+  other_submitted: boolean
+  both_submitted: boolean
+}
+
+export interface AnnotateOverview {
+  id: string
+  status: string
+  split: string | null
+  cases: number
+  A: string
+  B: string
+}
+
+export interface Comparison {
+  A: AnnotationOut
+  B: AnnotationOut
+  disagreements: Record<string, string[]>
+}
+
+export interface AgreementSummary {
+  scenarios: number
+  kappa_outcome: number | null
+  outcome_items: number
+  outcome_agreement: number | null
+  kappa_actions: number | null
+  action_items: number
+  action_agreement: number | null
+  jaccard_e1_mean: number | null
+  jaccard_n: number
+}
+
+export interface AgreementReport {
+  split: string | null
+  pooled: AgreementSummary
+  per_scenario: (AgreementSummary & { scenario_id: string; split: string | null })[]
+  note: string
+}

@@ -32,12 +32,13 @@ from gbya.context.models import TrustedContext
 from gbya.data.connection import open_case_db
 from gbya.gate.checks import GateEnv
 from gbya.gate.config import GateConfig, load_configs
-from gbya.gate.evidence import read_cited, render_cited, window_time_range
+from gbya.gate.evidence import RenderedEvidence, read_cited, render_cited, window_time_range
 from gbya.gate.gate import Gate
 from gbya.gate.types import Claim, GateDecision, VerifierCall
-from gbya.gate.verifier import LLMVerifier
+from gbya.gate.verifier import LLMVerifier, VerifierPrompt
 from gbya.llm.tokens import TokenCounter
 from gbya.policy.engine import PolicyEngine
+from gbya.retrieval.index import Retrieval
 from gbya.store.models import Case, GateDecisionRow, Scenario, VerifierEval
 from gbya.tools.names import ALL_TOOLS
 from gbya.tools.state import EpisodeState
@@ -133,8 +134,11 @@ def verifier_summary(call: VerifierCall | None) -> dict[str, Any] | None:
 # ---- Exp 1V and composition (T3.5) -------------------------------------------------------------
 
 
-def judge(case: Exp1Case, verifier: LLMVerifier, counter: TokenCounter) -> VerifierCall:
-    """Exp 1V: the verifier on the package exactly as C4 would see it, regardless of C1-C3."""
+def verifier_input(
+    case: Exp1Case, verifier: LLMVerifier, counter: TokenCounter
+) -> tuple[VerifierPrompt, Retrieval | None, RenderedEvidence]:
+    """The prompt C4 would receive for the package (same records, order, rendering, claim and
+    tickets as the gate), without calling the model. Used by Exp 1V and the Annotate page."""
     con = open_case_db(case.db_path)
     try:
         cited = list(case.package.cited)
@@ -145,9 +149,15 @@ def judge(case: Exp1Case, verifier: LLMVerifier, counter: TokenCounter) -> Verif
             case.package.tool, case.package.call_args(), records, evidence, case.context,
             counter, claim_of(case),
         )  # fmt: skip
-        return verifier.call(prompt, retrieval)
+        return prompt, retrieval, evidence
     finally:
         con.close()
+
+
+def judge(case: Exp1Case, verifier: LLMVerifier, counter: TokenCounter) -> VerifierCall:
+    """Exp 1V: the verifier on the package exactly as C4 would see it, regardless of C1-C3."""
+    prompt, retrieval, _ = verifier_input(case, verifier, counter)
+    return verifier.call(prompt, retrieval)
 
 
 _EVAL_SPLIT = {"manifest", "prompt_hash", "tokens_in", "tokens_out", "messages"}

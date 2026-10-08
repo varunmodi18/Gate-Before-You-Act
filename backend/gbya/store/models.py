@@ -148,6 +148,18 @@ class Annotation(Base):
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
+class AgreementSnapshot(Base):
+    """κ and Jaccard items of one scenario, stored before adjudication (T4.8, 0006)."""
+
+    __tablename__ = "agreement_snapshots"
+    __table_args__ = (UniqueConstraint("scenario_id"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    scenario_id: Mapped[str] = mapped_column(ForeignKey("scenarios.id"))
+    computed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+    values: Mapped[dict[str, Any]] = mapped_column()
+
+
 class Adjudication(Base):
     __tablename__ = "adjudications"
     __table_args__ = (
