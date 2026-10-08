@@ -13,6 +13,7 @@ authoritative; known plan/proposal differences are in §0.7. Any other conflict:
 - Commits start with the task ID (`T0.2: store and migrations`). One branch per milestone (`m0-foundations`, …).
   Never commit `data/` (except `data/fixtures/`, `data/splits.json`), weights, venvs or secrets.
   No push, merge to `main` or force-push unless the user asks.
+- `data/splits.json` is not ignored by git but is committed only after the team accepts the split (T1.6). Stage files by name; do not `git add -A` while it is pending.
 - Never use sudo. If a system package is missing, give the user the exact command.
 - Never invent results: only numbers and test outcomes actually produced. Say so when something was not run.
 - Not for the coding agent: annotation (T4.9), adjudication, freezing (T4.10), starting research runs (T9.x).
