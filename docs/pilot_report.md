@@ -23,8 +23,8 @@ All flag names were taken from `vllm serve --help=all` of the installed version.
 
 | Plan setting | Used | Why (evidence) | Status |
 |---|---|---|---|
-| FP8 KV cache | **FP16 KV (`auto`)** | With `--kv-cache-dtype fp8` the model's output was garbled at every prompt length tried (452, 879, 1,892, 2,853 and 4,418 tokens, with and without a JSON schema), e.g. `{"thought": "That485, ", … "technique_id": "c,  aki5i"}` and long runs of `c c c`. With FP16 KV and **no other change**, the same prompts gave coherent output (see the probe below). vLLM logs that FP8 KV "may cause accuracy drop without a proper scaling factor"; this version has no option to calculate scales | **Pending team confirmation.** Same model file, so no claim changes; it is a deviation from the proposal's §13 wording |
-| (not specified) | `--generation-config vllm` | Otherwise vLLM silently applies the model's `generation_config.json` sampling defaults (top_p 0.8, top_k 20, repetition_penalty 1.05) to every request; with this flag only the parameters each request sends apply | Decision for the team to note |
+| FP8 KV cache | **FP16 KV (`auto`)** | With `--kv-cache-dtype fp8` the model's output was garbled at every prompt length tried (452, 879, 1,892, 2,853 and 4,418 tokens, with and without a JSON schema), e.g. `{"thought": "That485, ", … "technique_id": "c,  aki5i"}` and long runs of `c c c`. With FP16 KV and **no other change**, the same prompts gave coherent output (see the probe below). vLLM logs that FP8 KV "may cause accuracy drop without a proper scaling factor"; this version has no option to calculate scales | **Accepted by the team (8 Oct)** as a deviation from proposal §13. Same model file, so no claim changes. Consequence: about 2.6 requests of 8,192 tokens fit in the KV cache at once, so long requests queue |
+| (not specified) | `--generation-config vllm` | Otherwise vLLM silently applies the model's `generation_config.json` sampling defaults (top_p 0.8, top_k 20, repetition_penalty 1.05) to every request; with this flag only the parameters each request sends apply | Kept by the team (8 Oct): sampling stays explicit |
 | (not specified) | xgrammar with `disable_any_whitespace` | Without it the JSON grammar allows unlimited whitespace and the model produced only whitespace after `"thought"` until `max_tokens` (risk R7) | Needed for JSON-constrained output |
 
 ### FP8 vs FP16 KV quality probe (temperature 0, same prompts, same server flags otherwise)
@@ -97,11 +97,31 @@ The same workload repeated in rounds of 4 concurrent episodes for 30.7 minutes (
 
 The AC adapter was connected (checked right after the soak: adapter online, battery full). Before the server started, the only process on the GPU was Xorg (4 MiB).
 
+## Re-run with Qwen's default repetition penalty (8 October, team request)
+
+`--generation-config vllm` also removes Qwen's default `repetition_penalty` of 1.05. To test whether that
+caused the invalid outputs, the 20 synthetic episodes were re-run with `repetition_penalty: 1.05` sent
+with every request; everything else unchanged (temperature 0.2, `max_tokens` 400, same prompts and
+seeds, same server). Raw results: [`docs/pilot/vllm-awq-rp105.json`](pilot/vllm-awq-rp105.json).
+
+| | No repetition penalty (first run) | `repetition_penalty` 1.05 |
+|---|---|---|
+| Schema-valid calls | **78 / 80** (2.5% invalid) | **73 / 80** (8.75% invalid) |
+| Calls ending at `max_tokens` | 2 | 7 |
+| Mean completion tokens per call | 200.0 | 231.4 |
+| Input / output tok/s | 1,229.2 / 55.4 | 1,168.0 / 60.9 |
+| Latency p50 / p95 | 14.0 / 19.0 s | 13.65 / 23.84 s |
+| Long request (7,745-token prompt) | valid | ended at `max_tokens` (350), not valid |
+
+The penalty did not bring the invalid rate to about 1% or less; with 80 calls per run the two rates
+are imprecise, but the direction is not an improvement. Per the team's rule, 1.05 is **not** added to
+the profile, and T0.3 is passed with a known issue (below).
+
 ## Verification against T0.3
 
 | Check | Result |
 |---|---|
-| 20/20 episodes return schema-valid JSON | **Not fully met: 78/80 calls valid.** Both failures are output truncated at `max_tokens` by a repetition loop, not a structured-output failure (every completed output parsed and validated). In research runs such outputs get one re-ask and are then counted per §D.6/§D.10 |
+| 20/20 episodes return schema-valid JSON | **Not fully met: 78/80 calls valid** (soak: 459/480). Every failure is output truncated at `max_tokens` by a repetition loop, not a structured-output failure: every completed output parsed and validated. **Team decision (8 Oct): T0.3 passed with a known issue**; T5.1 must reach ≥ 99% valid on the same synthetic run with the real proposer schema |
 | No OOM, including the 7,800-token request | Met (7,850-token prompt) |
 | Numbers compared with the assumptions | Done above; F1 not triggered |
 

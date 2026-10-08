@@ -149,7 +149,21 @@ Substantive ambiguities and gaps **inside** the proposal (not between versions) 
 
 Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now states that only rows dropped entirely by the 1,500-token result limit go unregistered, while a row with a shortened field is still registered; `verifier_evals` gains `manifest` and `prompt_hash` (§F.1); React Router is pinned to 7.x (§G). All are recorded in the `STATUS.md` decisions log.
 
-**T0.3 results that change serving settings (Draft 8; see `docs/pilot_report.md`).** (1) The FP8 KV cache named in T0.3 and in the proposal's §13 garbled the model's output in the pilot; the measured profile uses an FP16 KV cache instead, **pending team confirmation** (same model file, so no claim changes, but the proposal's wording differs). (2) The server runs with `--generation-config vllm`, so only per-request sampling parameters apply. (3) JSON-constrained output needs xgrammar with `disable_any_whitespace` (risk R7). (4) The vLLM venv lives at a path without spaces, because FlashInfer's kernel build does not quote paths.
+**T0.3 results that change serving settings (Draft 8; see `docs/pilot_report.md`).**
+
+*Deviation from the final proposal §13 (accepted by the team, 8 October 2026): FP16 KV cache instead of FP8.* The proposal and T0.3 name an FP8 KV cache. In the pilot, FP8 (e4m3 without calibrated scales, vLLM 0.31.0 with FlashInfer) garbled the model's output at every prompt length tried; FP16 (`--kv-cache-dtype auto`) with no other change was coherent. The model file is unchanged, so no claim changes. Evidence (temperature 0, same prompts and server flags otherwise; first characters of the output):
+
+| Prompt tokens | FP8 KV | FP16 KV |
+|---|---|---|
+| 452, no schema | `` ```  record 1      c `` | `` ```json { "thought": "The suspicious activities include running commands with encoded parameters and executing LSASS… `` |
+| 452, JSON schema | `{"thought": " thought record work: 1", "tool": "sql_query", "args": {" c work": 1111, …` | `{"thought": "The suspicious activities include running commands with encoded parameters and executing LSASS…` |
+| 1,892, no schema | `{"record work": 4337c "ts": "22 21 1 2 1 1 1 …` | `` ```json { "thought": "The host shows suspicious activity, particularly with commands like 'whoami -enc'… `` |
+| 4,418, JSON schema | `{"thought": "soc_responder',', 4902c ", "tool": "ask_analyst", …` | `{"thought": "The host is exhibiting suspicious behavior, particularly with the execution of obfuscated commands…` |
+| 3,189, plain English | `…requiress careful attention to the relationships and commands between parent-child elements…` | `…requires careful attention to process creation, parent-child relationships, and command lines.` |
+
+Consequence: the FP16 KV cache holds 21,520 tokens, so only about **2.6 requests of 8,192 tokens fit at once** (vLLM reports 2.63×). Four concurrent requests of the Exp 2 shape (~4.7k tokens) fit, but when several requests approach the 8k limit, the extra requests queue. This is reflected in measured throughput, not hidden.
+
+*Other serving settings from T0.3.* (1) The server runs with `--generation-config vllm`, so only per-request sampling parameters apply (Qwen's default `repetition_penalty` 1.05 is not applied; sending it explicitly made schema validity worse, 73/80 vs 78/80). (2) JSON-constrained output needs xgrammar with `disable_any_whitespace` (risk R7). (3) The vLLM venv lives at a path without spaces, because FlashInfer's kernel build does not quote paths. (4) T0.3 passed with a known issue: about 2.5–4.4% of synthetic proposer-shaped outputs hit `max_tokens` in a repetition loop; T5.1 carries an acceptance check for this.
 
 ---
 
@@ -1780,7 +1794,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Prerequisites:** T0.1; NVIDIA driver (present: 580.178.04 per user's report); internet for weights.
 - **Files:** `config/model_profiles.yaml`, `scripts/pilot.py`, `docs/pilot_report.md`.
 - **Instructions:**
-  1. Profile `vllm-awq`: install vLLM into a **separate** venv (`.venv-vllm`) to avoid dependency conflicts. Serve `Qwen/Qwen2.5-7B-Instruct-AWQ` on port 8001 with: max context 8192, GPU memory utilisation 0.90, FP8 KV cache, max 4 concurrent sequences. *(Draft 8: FP8 KV garbled the output in the pilot; FP16 KV is used pending team confirmation. See §0.8 and `docs/pilot_report.md`.)*
+  1. Profile `vllm-awq`: install vLLM into a **separate** venv (`.venv-vllm`) to avoid dependency conflicts. Serve `Qwen/Qwen2.5-7B-Instruct-AWQ` on port 8001 with: max context 8192, GPU memory utilisation 0.90, FP8 KV cache, max 4 concurrent sequences. *(Draft 8: FP8 KV garbled the output in the pilot; the team accepted FP16 KV as a deviation from proposal §13. See §0.8 and `docs/pilot_report.md`.)*
   2. Confirm the **exact flag names against the installed vLLM version's `--help`**. Record the working command in `model_profiles.yaml`.
   3. Test JSON-schema-constrained output through the OpenAI-compatible API (`response_format` with `json_schema`, or vLLM's guided decoding parameter). Record which form works.
   4. If OOM or unsupported, use profile `llamacpp-q4`: build or install `llama-server` with CUDA; Q4_K_M GGUF of Qwen2.5-7B-Instruct; `-c 32768 -np 4 -ngl 99`; JSON schema via `response_format`. Confirm flags with `--help`.
@@ -2126,8 +2140,8 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Files:** `agent/prompts/proposer.md`, `agent/proposer.py`.
 - **Instructions:** §D.10, including the `end_episode` control action and the history policy of §D.10.3.
 - **Deliverables:** —
-- **Verification:** snapshot test; schema-constrained live smoke; a test that an over-long history is reduced to the limit with stubs and that the latest gate feedback survives.
-- **Done when:** it passes.
+- **Verification:** snapshot test; schema-constrained live smoke; a test that an over-long history is reduced to the limit with stubs and that the latest gate feedback survives. **Acceptance check (Draft 8, from T0.3):** with the real proposer schema, the synthetic 20-episode run of `scripts/pilot.py` (same prompts, temperature 0.2, `max_tokens` 400) must give **at least 99% schema-valid outputs** (T0.3 measured 78/80 with the pilot schema). Typed per-tool `args` and bounded arrays are the expected levers.
+- **Done when:** it passes, including the 99% acceptance check.
 
 **T5.2 Episode loop**
 - **Prerequisites:** T5.1, T3.3.

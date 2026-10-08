@@ -195,11 +195,14 @@ class Sampler:
 
 
 class Pilot:
-    def __init__(self, base_url: str, model: str, timeout: float) -> None:
+    def __init__(
+        self, base_url: str, model: str, timeout: float, extra: dict[str, Any] | None = None
+    ) -> None:
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.client = httpx.AsyncClient(timeout=timeout)
         self.tokens_per_line = 0.0
+        self.extra = extra or {}  # extra sampling parameters sent with every request
 
     async def chat(
         self, messages: list[dict[str, str]], max_tokens: int, schema: bool = True
@@ -210,6 +213,7 @@ class Pilot:
             "max_tokens": max_tokens,
             "temperature": 0.2,
             "seed": 11,
+            **self.extra,
             "stream": True,
             "stream_options": {"include_usage": True},
         }
@@ -379,11 +383,15 @@ def gpu_summary(samples: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 async def amain(args: argparse.Namespace) -> dict[str, Any]:
-    pilot = Pilot(args.base_url, args.model, timeout=args.timeout)
+    extra = (
+        {} if args.repetition_penalty is None else {"repetition_penalty": args.repetition_penalty}
+    )
+    pilot = Pilot(args.base_url, args.model, timeout=args.timeout, extra=extra)
     sampler = Sampler()
     sampler.start()
     report: dict[str, Any] = {
         "model": args.model,
+        "request_extra": extra,
         "base_url": args.base_url,
         "started": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
     }
@@ -464,6 +472,7 @@ def main() -> None:
     ap.add_argument("--long-max-tokens", type=int, default=350)
     ap.add_argument("--soak-minutes", type=float, default=0)
     ap.add_argument("--timeout", type=float, default=600)
+    ap.add_argument("--repetition-penalty", type=float, default=None)
     ap.add_argument("--out", type=Path, required=True)
     args = ap.parse_args()
     report = asyncio.run(amain(args))

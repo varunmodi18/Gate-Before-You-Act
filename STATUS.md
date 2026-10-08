@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M0 Foundations and spike, on branch `m0-foundations`.
-- **TA approval (Q-0):** approved; recorded 2026-10-08. M0 is cleared; M1 starts only when the team says so.
-- **Next action:** M0 checkpoint report. Waiting on the team for: FP16 vs FP8 KV cache (T0.3), the 78/80 schema-valid result (T0.3), and the go-ahead for M1.
+- **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
+- **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
+- **Next action:** T1.1 (OTRF fetch), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -19,7 +19,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 |---|---|---|---|
 | T0.1 Repository scaffold | done | m0-foundations | Lint and tests pass locally (see Measured numbers). **CI has not yet run on GitHub**: the branch is pushed at the M0 checkpoint |
 | T0.2 Store and migrations | done | m0-foundations | All §F.1 tables in Alembic `0001_initial`; WAL + foreign keys + busy timeout on every connection; `make db` |
-| T0.3 Early model-serving spike | blocked | m0-foundations | All measurements done (`docs/pilot_report.md`). Blocked on team decisions: (1) FP16 KV cache instead of the planned FP8, which garbled output; (2) verification "20/20 schema-valid" not fully met — 78/80 calls valid, the 2 failures hit `max_tokens` in a repetition loop. Throughput: F1 not triggered |
+| T0.3 Early model-serving spike | done (known issue) | m0-foundations | `docs/pilot_report.md`. FP16 KV accepted (deviation from proposal §13). Known issue: 78/80 schema-valid (soak 459/480; with repetition_penalty 1.05: 73/80), all failures are repetition loops hitting `max_tokens`; T5.1 must reach ≥ 99%. F1 not triggered |
 | T0.4 LLM client abstraction | done | m0-foundations | Live (httpx, retries 2/8/30 s), Fake (hash or regex rules), Replay + recorder; 13 unit tests and the `gpu` live smoke test pass against the `vllm-awq` profile |
 | T1.1 OTRF fetch | todo | | |
 | T1.2 Catalogue | todo | | |
@@ -53,7 +53,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T4.8 Agreement and adjudication | todo | | |
 | T4.9 Annotation execution | todo | | **Team work** — not done by the coding agent |
 | T4.10 Freeze | todo | | **Team work** — not done by the coding agent |
-| T5.1 Proposer prompt and schema | todo | | |
+| T5.1 Proposer prompt and schema | todo | | Acceptance check from T0.3: ≥ 99% schema-valid on the synthetic 20-episode pilot run with the real proposer schema |
 | T5.2 Episode loop | todo | | |
 | T5.3 Outcome classifier | todo | | |
 | T5.4 Exp 2 runner | todo | | |
@@ -92,8 +92,11 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | vLLM 0.31.0 installed in a separate venv: torch, torchvision, torchaudio, torchcodec, Triton, `cuda-toolkit` and 14 NVIDIA wheels from the official PyTorch index (cu130; NVIDIA entries served from `pypi.nvidia.com`), the rest from PyPI; versions exactly as vLLM 0.31.0 resolves (198 packages, `config/vllm-requirements.lock`) | Team instruction; GPU check (matmul + Triton JIT) passed before the PyPI part | T0.3 |
 | 2026-10-08 | The vLLM venv lives at `~/.local/share/gbya/venv-vllm`; `.venv-vllm` is a symlink to it | FlashInfer's JIT build passes include paths unquoted; the repo path has spaces (`nvcc fatal: A single input file is required`). The venv was copied and its 58 `bin/` launchers rewritten; package list identical | T0.3, §0.8 |
 | 2026-10-08 | `CUDA_HOME=/usr/local/cuda-13.0` for the model server | System nvcc 13.0 matches the driver's CUDA 13.0 | T0.3 |
-| 2026-10-08 | **FP16 KV cache (`--kv-cache-dtype auto`) instead of FP8 — pending team confirmation** | FP8 KV garbled the output at all prompt lengths tried (452–4,418 tokens); FP16 with no other change was coherent (`docs/pilot_report.md`). Same model file | T0.3, §0.8; proposal §13 wording differs |
-| 2026-10-08 | `--generation-config vllm` | Otherwise the model's `generation_config.json` silently sets top_p 0.8, top_k 20 and repetition_penalty 1.05 for every request; with it only per-request parameters apply. For the team to note | T0.3, §0.8 |
+| 2026-10-08 | **FP16 KV cache (`--kv-cache-dtype auto`) instead of FP8 — accepted by the team as a deviation from proposal §13** | FP8 KV garbled the output at all prompt lengths tried (452–4,418 tokens); FP16 with no other change was coherent. Probe table in `docs/pilot_report.md` and plan §0.8. Same model file. Consequence: the KV cache holds 21,520 tokens, about 2.6 requests of 8,192 tokens at once (vLLM: 2.63×), so long requests queue | T0.3, §0.8; proposal §13 |
+| 2026-10-08 | `--generation-config vllm` kept (team decision) | Otherwise the model's `generation_config.json` silently sets top_p 0.8, top_k 20 and repetition_penalty 1.05 for every request; with it only per-request parameters apply | T0.3, §0.8 |
+| 2026-10-08 | `repetition_penalty` 1.05 **not** added to the request defaults | Team rule: add it only if the invalid rate drops to about 1% or less. Re-run of the 20 synthetic episodes with 1.05: 73/80 valid (7 hit `max_tokens`) vs 78/80 without | T0.3 |
+| 2026-10-08 | T0.3 passed with a known issue; T5.1 gains an acceptance check: ≥ 99% schema-valid on the same synthetic run with the real proposer schema | Team decision | T0.3, T5.1 |
+| 2026-10-08 | `uv cache prune` run | Freed 0.9 GB (183 files); 8.3 GB of cache is still referenced by the installed environments (`uv cache clean` would remove it, at the cost of slow re-downloads from PyPI) | — |
 | 2026-10-08 | `--structured-outputs-config '{"backend": "xgrammar", "disable_any_whitespace": true}'` | Without it the model emitted only whitespace inside the JSON until `max_tokens` (risk R7). vLLM accepts the option only with an explicit backend | T0.3, §0.8 |
 | 2026-10-08 | Model fetched with `scripts/fetch_model.py` at a pinned commit; each file's SHA-256 checked against Hugging Face and stored in `models/<name>/MANIFEST.json` | §L.4 item 7 (same file, recorded checksum) | T0.3 |
 | 2026-10-08 | Fallback F1 **not** set | Measured 1,229 input tok/s and 55.4 output tok/s; neither is below half of the 800 / 80 assumption | T0.3, §F.8 |
@@ -107,7 +110,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | Item | Value |
 |---|---|
 | GPU | NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB, driver 580.178.04 (CUDA 13.0); display on iGPU (`prime-select` = on-demand), 15 MiB used at idle |
-| RAM / disk | 15,606 MB RAM; 51 GB free on `/` at the start, 27 GB after T0.3 (vLLM venv 8.0 GB, model 5.2 GB, uv cache 9.2 GB) |
+| RAM / disk | 15,606 MB RAM; 51 GB free on `/` at the start, 27 GB after T0.3 (vLLM venv 8.0 GB, model 5.2 GB, uv cache 9.2 GB); 29 GB after `uv cache prune` (cache 8.3 GB) |
 | Toolchain | uv 0.12.23; Python 3.11.17 (uv-managed); Node 22.23.3 (nvm); pnpm 12.10.1; CUDA 13.0 toolkit at `/usr/local/cuda-13.0` (nvcc 13.0.48), **not on PATH** — the session-start note "no nvcc" was wrong |
 | Network | PyPI CDN ≈ 0.11 MB/s; Hugging Face ≈ 7.4 MB/s; npm ≈ 0.7 MB/s (single measurements) |
 
@@ -132,14 +135,15 @@ See the latest entry per task.
 | 2026-10-08 | T0.4 | `uv run pytest tests/unit/test_llm_client.py` | 13 passed (Fake, Live with mock transport incl. retries and 4xx, Replay and recorder) |
 | 2026-10-08 | T0.4 | `make gpu-test` against the `vllm-awq` profile | 1 passed (live JSON-schema call) |
 | 2026-10-08 | M0 | `make lint`, `make test` | lint clean (mypy: 34 files); pytest 31 passed (1 `gpu` deselected); vitest 4 passed |
+| 2026-10-08 | T0.3 | `scripts/pilot.py --repetition-penalty 1.05` (20 episodes, no soak) | 80/80 calls OK, **73/80 schema-valid** (7 ended at `max_tokens`); mean completion 231.4 tokens; 1,168.0 input / 60.9 output tok/s; p50/p95 13.65/23.84 s |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 
 | Metric | Value |
 |---|---|
-| Profile | `vllm-awq`: vLLM 0.31.0, Qwen2.5-7B-Instruct-AWQ @ `b2503754`, ctx 8192, util 0.90, **FP16 KV** (21,520 tokens), 4 seqs |
+| Profile | `vllm-awq`: vLLM 0.31.0, Qwen2.5-7B-Instruct-AWQ @ `b2503754`, ctx 8192, util 0.90, **FP16 KV** (21,520 tokens ≈ 2.6 × 8,192-token requests), 4 seqs |
 | Input / output throughput (20 episodes, 4 concurrent) | 1,229.2 / 55.4 tok/s (assumed ≥ 800 / ≥ 80) |
 | Measured wall vs budget formula `in/800 + out/80` | 288.7 s vs 643.6 s (0.45×) |
-| Schema-valid | 78/80 calls (20 episodes); 459/480 in the soak |
+| Schema-valid | 78/80 calls (20 episodes); 459/480 in the soak; 73/80 with repetition_penalty 1.05 |
 | Peak VRAM / host RAM | 7,249 MiB / 8,201 MB |
 | 30-min soak | 30.7 min; input 1,161 tok/s mean; output 56.0 tok/s mean; max 80 °C; no thermal throttling flag |
