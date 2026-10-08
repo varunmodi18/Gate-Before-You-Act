@@ -1,5 +1,6 @@
 # Gate configurations (plan §D.6.4). Data, not code: runners never special-case a configuration.
-# T2.5: G0, G1, G2, G3, A1. T3.4 adds A2-A6; T5.7 adds A7; T5.8 adds A8.
+# T2.5: G0, G1, G2, G3, A1; T3.4: A2-A6. T5.7 adds A7; T5.8 adds A8. Every configuration states
+# retrieval_mode, recovery_budget and transport (null where C4 is absent).
 # Every configuration shares the same tool environment (allow-list = the case's toolset), the
 # same approval service and the same policy file; only the checks differ (§L.4 items 1 and 20).
 G0:
@@ -37,3 +38,38 @@ A1:
   recovery_budget: null
   transport: in_process
   capability: "reasoning: no LLM verifier"
+A2:
+  checks: [C1, C2, C4, C5, C6]   # no C3: the verifier alone must catch a wrong target
+  verifier_variant: standard
+  retrieval_mode: bm25
+  recovery_budget: 2
+  transport: in_process
+  capability: "reasoning: no target match"
+A3:
+  checks: [C1, C2, C3, C4, C5, C6]
+  verifier_variant: rationale    # the verifier also sees the agent's rationale
+  retrieval_mode: bm25
+  recovery_budget: 2
+  transport: in_process
+  capability: "reasoning: persuasion"
+A4:
+  checks: [C1, C2, C3, C4, C5, C6]
+  verifier_variant: none         # no reference text
+  retrieval_mode: none
+  recovery_budget: 2
+  transport: in_process
+  capability: "RAG: no RAG"
+A5:
+  checks: [C1, C2, C3, C4, C5, C6]
+  verifier_variant: standard
+  retrieval_mode: bm25
+  recovery_budget: 0             # no recovery queries after INSUFFICIENT (Exp 2 only)
+  transport: in_process
+  capability: "agentic: no recovery"
+A6:
+  checks: [C1, C2, C3, C4, C5, C6]
+  verifier_variant: rerank       # BM25 top-20 re-scored by the CPU cross-encoder
+  retrieval_mode: bm25_rerank
+  recovery_budget: 2
+  transport: in_process
+  capability: "RAG: reranker"

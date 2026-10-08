@@ -12,6 +12,13 @@ from gbya.gate.types import CheckName
 
 CONFIGS_PATH = Path(__file__).with_name("configs.yaml")
 CHECK_ORDER: tuple[CheckName, ...] = ("C1", "C2", "C3", "C4", "C5", "C6")
+# The retrieval mode each verifier variant uses (§D.7.2; mirrors gbya.gate.verifier.VARIANT_MODE).
+VARIANT_RETRIEVAL = {
+    "standard": "bm25",
+    "rationale": "bm25",
+    "none": "none",
+    "rerank": "bm25_rerank",
+}
 
 
 class GateConfig(BaseModel):
@@ -39,8 +46,13 @@ class GateConfig(BaseModel):
                 raise ValueError(f"{self.id}: C4 needs a verifier variant and a recovery budget")
             if self.recovery_budget not in (0, 1, 2):
                 raise ValueError(f"{self.id}: recovery budget must be 0, 1 or 2")
-        elif self.verifier_variant is not None:
-            raise ValueError(f"{self.id}: verifier variant without C4")
+            if self.retrieval_mode != VARIANT_RETRIEVAL[self.verifier_variant]:
+                want = VARIANT_RETRIEVAL[self.verifier_variant]
+                raise ValueError(
+                    f"{self.id}: verifier variant {self.verifier_variant} uses retrieval {want}"
+                )
+        elif self.verifier_variant is not None or self.retrieval_mode is not None:
+            raise ValueError(f"{self.id}: verifier variant or retrieval mode without C4")
         return self
 
     @property
