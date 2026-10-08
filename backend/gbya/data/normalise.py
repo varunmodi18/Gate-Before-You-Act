@@ -145,6 +145,34 @@ def _frame(table: str, rows: list[dict[str, Any]]) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
+RawRow = tuple[int, str | None, int | None, str]
+
+
+def derive_record(
+    record_id: int, raw: dict[str, Any]
+) -> tuple[RawRow, str | None, dict[str, Any] | None]:
+    """One raw event → its ``raw_events`` row and, if routed, its table and normalised row.
+
+    The single derivation used by the normaliser and the case patcher (T4.2), so a patched
+    record's normalised row always agrees with its raw JSON."""
+    canon = fm.canonical(raw)
+    channel, event_id = fm.channel_of(canon), fm.event_id_of(canon)
+    raw_row: RawRow = (record_id, channel, event_id, fm.raw_json(raw))
+    routed = fm.route(canon)
+    if routed is None:
+        return raw_row, None, None
+    table, extract = routed
+    row: dict[str, Any] = {
+        "record_id": record_id,
+        "ts": fm.parse_ts(fm.timestamp_source(canon)[1]),
+        "host": fm.host_of(canon),
+        "channel": channel,
+        "event_id": event_id,
+    }
+    row.update(extract(canon))
+    return raw_row, table, row
+
+
 def normalise_window(entry: WindowEntry, repo_root: Path, out_path: Path) -> IngestResult:
     result = IngestResult(entry.id, out_path)
     raw_events, result.skipped_lines = read_events(repo_root, entry.host_files)
@@ -163,19 +191,13 @@ def normalise_window(entry: WindowEntry, repo_root: Path, out_path: Path) -> Ing
 
     raw_rows: list[tuple[int, str | None, int | None, str]] = []
     table_rows: dict[str, list[dict[str, Any]]] = {t: [] for t in fm.TABLES}
-    for record_id, (ts, _line, raw, canon) in enumerate(prepared, start=1):
-        channel, event_id = fm.channel_of(canon), fm.event_id_of(canon)
-        raw_rows.append((record_id, channel, event_id, fm.raw_json(raw)))
-        routed = fm.route(canon)
-        if routed is None:
+    for record_id, (_ts, _line, raw, canon) in enumerate(prepared, start=1):
+        raw_row, table, row = derive_record(record_id, raw)
+        raw_rows.append(raw_row)
+        if table is None or row is None:
             continue
-        table, extract = routed
-        row = {"record_id": record_id, "ts": ts, "host": fm.host_of(canon), "channel": channel}
-        row["event_id"] = event_id
-        fields = extract(canon)
-        if fm.pid_from_message(canon, fields.get("pid")):
+        if fm.pid_from_message(canon, row.get("pid")):
             result.pid_from_message += 1
-        row.update(fields)
         table_rows[table].append(row)
 
     result.events = len(raw_rows)

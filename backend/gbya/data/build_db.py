@@ -50,3 +50,34 @@ def build_database(final_path: Path) -> Iterator[duckdb.DuckDBPyConnection]:
     if final_path.exists():
         final_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
     os.replace(tmp, final_path)
+
+
+@contextmanager
+def patch_copy(src: Path, final_path: Path) -> Iterator[duckdb.DuckDBPyConnection]:
+    """Copy ``src`` and patch the copy; the result is mode 0444 at ``final_path`` (T4.2).
+
+    Like ``build_database``: written under a temporary name, made read-only, then moved into
+    place, so a half-patched file is never visible under the final name."""
+    import shutil
+
+    final_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = final_path.with_name(final_path.name + ".patching")
+    for leftover in (tmp, tmp.with_name(tmp.name + ".wal")):
+        if leftover.exists():
+            leftover.chmod(stat.S_IRUSR | stat.S_IWUSR)
+            leftover.unlink()
+    shutil.copyfile(src, tmp)
+    tmp.chmod(stat.S_IRUSR | stat.S_IWUSR)
+    con = open_for_build(tmp)
+    try:
+        yield con
+        con.execute("CHECKPOINT")
+    except BaseException:
+        con.close()
+        tmp.unlink(missing_ok=True)
+        raise
+    con.close()
+    tmp.chmod(READ_ONLY_MODE)
+    if final_path.exists():
+        final_path.chmod(stat.S_IRUSR | stat.S_IWUSR)
+    os.replace(tmp, final_path)
