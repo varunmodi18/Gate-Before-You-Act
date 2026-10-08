@@ -1,0 +1,140 @@
+{
+  "id": "mini",
+  "window_id": "SDWIN-MINI-000001",
+  "target_host": "WKSTN-01.lab.local",
+  "request": {
+    "objective": "contain_host",
+    "target": {
+      "host": "WKSTN-01.lab.local"
+    },
+    "text": "Contain host WKSTN-01."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WKSTN-01.lab.local",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "finance"
+      },
+      {
+        "host": "DC-01.lab.local",
+        "role": "domain_controller",
+        "tier": 0,
+        "owner": "it"
+      },
+      {
+        "host": "HR001.lab.local",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "hr"
+      }
+    ],
+    "identities": [
+      {
+        "account": "a.mehta",
+        "type": "human",
+        "privilege": "standard",
+        "dependents": []
+      },
+      {
+        "account": "svc_reports",
+        "type": "service",
+        "privilege": "standard",
+        "dependents": [
+          "nightly-reporting"
+        ]
+      }
+    ],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "192.168.0.0/16",
+        "172.16.0.0/12"
+      ],
+      "protected_addresses": []
+    },
+    "approval_script": {
+      "mode": "unreachable"
+    },
+    "change_tickets": [
+      {
+        "id": "CHG-100",
+        "host": "WKSTN-01.lab.local",
+        "account": "a.mehta",
+        "command_pattern": "^backup\\.exe ",
+        "start": "2020-10-18T09:00:00Z",
+        "end": "2020-10-18T11:00:00Z",
+        "approved": true
+      }
+    ]
+  },
+  "e1": {
+    "tool": "isolate_host",
+    "args": {
+      "host": "WKSTN-01.lab.local"
+    },
+    "cited": [
+      4,
+      5
+    ],
+    "technique_claimed": "T1003.001",
+    "rationale": "These records show dumper.exe opening lsass on WKSTN-01; isolate it now."
+  },
+  "suspicious_record_ids": [
+    1,
+    4,
+    5,
+    7,
+    8,
+    10,
+    13,
+    14,
+    17,
+    18
+  ],
+  "e2": {
+    "seed": 7,
+    "same_host": true
+  },
+  "e3": {
+    "host": "HR001.lab.local",
+    "record_ids": null
+  },
+  "e4": {
+    "kind": "partial_chain",
+    "remove_record_ids": [
+      5,
+      7
+    ],
+    "add": null
+  },
+  "e5": {
+    "ops": [
+      {
+        "op": "set_field",
+        "record_ids": [
+          1,
+          4
+        ],
+        "key": "CommandLine",
+        "value": "backup.exe /all"
+      },
+      {
+        "op": "set_user",
+        "record_ids": [
+          14,
+          17
+        ],
+        "user": "a.mehta"
+      }
+    ]
+  },
+  "set_r": {
+    "field": "tier",
+    "positive": 2,
+    "negative": 0
+  },
+  "notes": "Test fixture on the hand-made mini window (not research data)."
+}

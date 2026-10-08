@@ -112,6 +112,7 @@ class Scenario(Base):
     context_hash: Mapped[str | None] = mapped_column(String)
     status: Mapped[str] = mapped_column(String, default="draft")
     version: Mapped[int] = mapped_column(Integer, default=1)
+    spec: Mapped[dict[str, Any] | None] = mapped_column()  # scenario.json (0005)
 
 
 class Case(Base):
@@ -129,6 +130,7 @@ class Case(Base):
     approval_script: Mapped[dict[str, Any] | None] = mapped_column()
     labels: Mapped[dict[str, Any] | None] = mapped_column()
     content_hash: Mapped[str | None] = mapped_column(String)
+    r_edit: Mapped[dict[str, Any] | None] = mapped_column()  # Set R edit (0005)
 
 
 class Annotation(Base):

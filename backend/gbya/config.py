@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     api_host: str = "127.0.0.1"
     api_port: int = 8000
     data_dir: Path = Path("data")
+    cases_dir: Path = Path("cases")  # scenario and case JSON files (in git)
     app_db_path: Path = Path("data/app.db")
     log_dir: Path = Path("logs")
     frontend_dist: Path = Path("frontend/dist")

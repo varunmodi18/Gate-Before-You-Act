@@ -26,6 +26,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from gbya.cases.models import REdit, effective_context, effective_toolset
 from gbya.config import Settings
 from gbya.context.models import TrustedContext
 from gbya.data.connection import open_case_db
@@ -235,10 +236,15 @@ def load_case(session: Session, case_id: str, settings: Settings) -> Exp1Case:
     if not row.case_db_path:
         raise ValueError(f"{case_id}: no case database")
     pkg = row.package
+    ctx = TrustedContext.model_validate(scenario.trusted_context)
+    edit = REdit.model_validate(row.r_edit) if row.r_edit else None
+    if edit is not None:  # Set R: the one edited field (tier, approval script or toolset)
+        ctx = effective_context(ctx, str(scenario.target_host), edit)
     return Exp1Case(
         case_id=row.id,
         db_path=settings.resolve(Path(row.case_db_path)),
-        context=TrustedContext.model_validate(scenario.trusted_context),
+        context=ctx,
+        toolset=tuple(effective_toolset(edit)),
         package=Package(
             tool=str(pkg["tool"]),
             args=dict(pkg["args"]),
