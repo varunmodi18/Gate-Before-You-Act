@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
-- **Next action:** T1.7 (Windows page), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
+- **Next action:** T1.6 (split selection), then T1.7 (Windows page). T1.6 ends at a team review of the split list. T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -26,7 +26,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.3 Normaliser and field map | done | m1-data | `make normalise`: 99 windows ingested (757,375 events, 0 skipped lines), 1 `missing_host_file`; 2.3 GB of DuckDB files, mode 0444; 35 s. Field map and coverage in `docs/fieldmap.md` |
 | T1.3a SQL guard and hardened connection | done | m1-data | `gbya/tools/sql_guard.py` (layer 1 + 2 s watchdog) and `gbya/data/connection.py` (`open_case_db`, layer 2). Both suites pass on DuckDB 1.5.6 |
 | T1.4 Windows API | done | m1-data | `GET /windows` (split/tactic/q filters), `GET /windows/{id}`, `GET /windows/{id}/tables/{table}` (pagination, `column:text` filters), `GET /windows/{id}/records/{record_id}`, `POST /windows/{id}/query` (shared guard). Real app.db: lists 100 windows (closes the T1.2 check) |
-| T1.5 De-duplication and eligibility | todo | | |
+| T1.5 De-duplication and eligibility | done | m1-data | `make dedup`: 99 ingested windows → 94 groups (5 pairs with J > 0.5); `windows.dedup_group` set for all 99. Eligibility (reading A, see decisions): 99/99 eligible; only 37 are single-host. Report: `data/dedup_report.json` |
 | T1.6 Split selection and freeze | todo | | Team review of the split list |
 | T1.7 Windows page | todo | | |
 | T2.1 Trusted-context model | todo | | |
@@ -122,6 +122,9 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Table filters are `filter=column:text` (case-insensitive contains, ANDed, column names validated, value bound as a parameter) | §F.5 names `filter=` without a format | §F.5 |
 | 2026-10-08 | FastAPI validation errors (422) and unknown routes (404) also use the §F.6 envelope (`VALIDATION_ERROR`, `NOT_FOUND`) | One error shape for the UI | §F.6 |
 | 2026-10-08 | `open_case_db` passes the six hardening settings as connection-time `config` instead of `SET` statements (plan §D.5.1 updated in Draft 8) | Found in T1.5: DuckDB shares one instance per file in a process, so a second `open_case_db` of the same file failed on the locked configuration (would break concurrent API requests). New tests: repeated and 8 concurrent opens succeed; all layer-2 attacks still blocked; an unhardened connection to the same file is refused while a hardened one is open | §D.5.1 |
+| 2026-10-08 | **Eligibility reading A (team to confirm at the T1.6 review):** "≥1 event in process_create or process_access on a single primary host" read as "designate one primary host per window (most process_create + process_access events; ties → more events, then name) and require ≥1 such event on it", plus ≥30 events. Result: 99/99 eligible. Reading B ("all events on one host") would leave only 37 windows (< 62 needed → Q-2) | §D.2 step 1 is ambiguous; 63 of 99 windows were collected from 2–5 hosts | §D.2, FR-03, Q-2 |
+| 2026-10-08 | Signature per table = (event_id, image, normalised command line, parent image, target), with image/target: process_create image/–; process_access source_image/target_image; network image/`dst_ip:dst_port`; registry image/target_object; file image/target_filename; logon process_name/target_user; share_access –/`share\\relative_target`. Normalisation: lower-case; GUID → `<guid>`; `0x…` → `<hex>`; component under a Temp folder → `<tmp>`; digit runs > 4 → `<n>` | §D.2 step 2 names the tuple but not the per-table fields | §D.2 |
+| 2026-10-08 | Observation for the team: the 5 grouped pairs are different techniques recorded in the same lab sessions (e.g. "Lsass Memory Dump via Comsvcs.dll" ↔ "Windows Vault Web Credentials", J = 0.508), i.e. shared background events, not replays. Grouping only keeps them in the same split, so it is conservative; median pairwise J is 0.026 and 22 of 4,851 pairs exceed 0.4 | Measured on all 99 windows | §D.2 step 3 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -168,6 +171,8 @@ See the latest entry per task.
 | 2026-10-08 | T1.4 | `pytest tests/integration/test_windows_api.py` | 23 passed: listing and filters (split, tactic by name or ID, text, technique); unknown window 404; table rows, pagination, filters, injection attempt treated as text, bad filter 400, `_meta` not browsable, limit > 500 → 422 envelope, not-ingested window 404; record detail (normalised + raw, raw-only, missing); guarded query OK; DROP, read_csv_auto, multi-statement and `_meta` rejected with `SQL_REJECTED`; DROP had no effect |
 | 2026-10-08 | T1.4 | uvicorn on the real app.db + curl | `/windows` lists 100 (99 ingested, 21 credential access); `credential_access` + "lsass" → 3 windows; J1 query on SDWIN-201018225619 returns 20 rows; DROP → SQL_REJECTED envelope |
 | 2026-10-08 | T1.4 | `make lint`, `make test` | see the M1 checkpoint row |
+| 2026-10-08 | T1.5 | `pytest tests/unit/test_dedup.py` | 15 passed: synthetic boundary (J 0.6 grouped, 0.4 not); J = 0.5 not grouped (strict); union-find transitive with smallest-id group; hypothesis property (150 examples): groups are exactly the connected components; normalisation rules; eligibility (< 30 events; no process events on the primary host); deterministic signatures |
+| 2026-10-08 | T1.5 | `make dedup` | 99 windows, 94 groups, 5 pairs (J 0.508–0.608), 99 eligible, 37 single-host; 3 s |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

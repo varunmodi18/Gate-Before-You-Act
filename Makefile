@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: help setup db data data-fetch catalogue normalise lint format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: help setup db data data-fetch catalogue normalise dedup lint format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -31,7 +31,10 @@ catalogue:  ## Catalogue the 100 SDWIN datasets into app.db (windows table)
 normalise:  ## Normalise every catalogued window into data/duckdb/windows/<id>.duckdb (read-only)
 	$(UV) run python -m gbya.data.normalise
 
-data: data-fetch catalogue normalise  ## Fetch OTRF, catalogue, normalise
+dedup:  ## Eligibility + de-duplication groups (windows.dedup_group; data/dedup_report.json)
+	$(UV) run python -m gbya.data.dedup
+
+data: data-fetch catalogue normalise dedup  ## Fetch OTRF, catalogue, normalise, de-duplicate
 
 lint:  ## ruff, mypy, eslint, prettier check
 	$(UV) run ruff check backend tests scripts
