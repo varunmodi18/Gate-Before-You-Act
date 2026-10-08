@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: help setup db lint format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: help setup db data-fetch lint format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -21,6 +21,9 @@ setup:  ## Install Python (uv) and frontend (pnpm) dependencies, and git hooks
 
 db:  ## Create or upgrade data/app.db to the latest migration (alembic upgrade head)
 	$(UV) run python -m gbya.store.db
+
+data-fetch:  ## Fetch OTRF at the pinned commit d9d40ef (sparse) into data/raw/otrf
+	$(UV) run python -m gbya.data.fetch
 
 lint:  ## ruff, mypy, eslint, prettier check
 	$(UV) run ruff check backend tests scripts
