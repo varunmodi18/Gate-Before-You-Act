@@ -64,6 +64,15 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   return parse<T>(resp)
 }
 
+export async function apiPut<T>(path: string, body: unknown): Promise<T> {
+  const resp = await fetch(`${API_BASE}${path}`, {
+    method: 'PUT',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  return parse<T>(resp)
+}
+
 // ---- Types mirroring the backend models (gbya.api.routers.*) ----
 
 export interface Health {
@@ -331,4 +340,105 @@ export interface RetrievalOut {
     { overall: RetrievalSummary; by_case_variant: Record<string, RetrievalSummary> }
   >
   note: string
+}
+
+// ---- Scenario Studio (gbya.api.routers.scenarios) ----
+
+export interface ScenarioSummary {
+  id: string
+  window_id: string | null
+  target_host: string | null
+  status: string
+  cases: string[]
+  error: string | null
+}
+
+export interface Asset {
+  host: string
+  role: string
+  tier: number
+  owner?: string | null
+}
+
+export interface Ticket {
+  id: string
+  host: string
+  account: string
+  command_pattern: string
+  start: string
+  end: string
+  approved: boolean
+}
+
+export interface TrustedContextJson {
+  schema_version: number
+  assets: Asset[]
+  identities: Record<string, unknown>[]
+  network: Record<string, unknown>
+  approval_script: { mode: string }
+  change_tickets: Ticket[]
+}
+
+export interface ScenarioJson {
+  id: string
+  window_id: string
+  target_host: string
+  request: { objective: string; target: Record<string, unknown>; text: string }
+  trusted_context: TrustedContextJson
+  e1: {
+    tool: string
+    args: Record<string, unknown>
+    cited: number[]
+    technique_claimed: string | null
+    rationale: string | null
+  }
+  suspicious_record_ids: number[]
+  [key: string]: unknown
+}
+
+export interface ScenarioDetail {
+  id: string
+  status: string
+  scenario: ScenarioJson
+  cases: { id: string; variant: string; cited: number[]; db_patch: boolean; labelled: boolean }[]
+}
+
+export interface ValidationCheck {
+  check: string
+  case_id: string | null
+  status: 'pass' | 'fail' | 'pending'
+  message: string
+}
+
+export interface ValidationReport {
+  scenario_id: string
+  valid: boolean
+  complete: boolean
+  tokenizer: string
+  checks: ValidationCheck[]
+}
+
+export interface DbDiffJson {
+  removed: number[]
+  added: { record_id: number; table: string | null; row: Record<string, Cell> | null }[]
+  changed: { record_id: number; table: string | null; fields: Record<string, [Cell, Cell]> }[]
+}
+
+export interface CaseDetail {
+  case: {
+    id: string
+    variant: string
+    package: { tool: string; args: Record<string, unknown>; cited: number[] }
+    db_patch: unknown
+    r_edit: unknown
+    labels: Record<string, unknown>
+  }
+  db: string
+  prefix: {
+    profile: string
+    queries: { sql: string; result: string; registered: number[] }[]
+    findings: string
+    retrieved: number[]
+  } | null
+  diff: DbDiffJson | null
 }

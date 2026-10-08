@@ -22,7 +22,8 @@ export default defineConfig({
       `pnpm build && cd .. && uv run python scripts/e2e_fixture.py data/e2e && ` +
       `export GBYA_ENV=test GBYA_APP_DB_PATH=$PWD/data/e2e/app.db GBYA_DATA_DIR=$PWD/data/e2e ` +
       `GBYA_LOG_DIR=$PWD/data/e2e/logs GBYA_LLM_BACKEND=fake GBYA_FAKE_LLM_DELAY_MS=50 ` +
-      `GBYA_WORKER_HEARTBEAT_S=1 GBYA_RERANKER_DIR=$PWD/data/e2e/no-reranker && ` +
+      `GBYA_WORKER_HEARTBEAT_S=1 GBYA_RERANKER_DIR=$PWD/data/e2e/no-reranker ` +
+      `GBYA_CASES_DIR=$PWD/data/e2e/cases && ` +
       `(uv run python -m gbya.worker &) && ` +
       `uv run uvicorn gbya.api.main:app --app-dir backend --host 127.0.0.1 --port ${PORT}`,
     url: `http://127.0.0.1:${PORT}/api/v1/health`,
