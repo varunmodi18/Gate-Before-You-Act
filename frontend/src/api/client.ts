@@ -130,3 +130,51 @@ export const TACTICS: { id: string; name: string }[] = [
   { id: 'TA0010', name: 'exfiltration' },
   { id: 'TA0040', name: 'impact' },
 ]
+
+// ---- Gate Playground (gbya.api.routers.playground) ----
+
+export interface CheckResult {
+  check: string
+  passed: boolean
+  code: string
+  message: string
+  details: Record<string, unknown>
+  duration_ms: number
+}
+
+export interface PlaygroundCase {
+  id: string
+  scenario_id: string
+  set: string
+  variant: string
+  request: { objective?: string; target?: Record<string, unknown>; text?: string }
+  package: { tool: string; args: Record<string, unknown>; cited: number[] }
+  expected_label: string | null
+}
+
+export interface SystemInfo {
+  id: string
+  checks: string[]
+  capability: string
+  available: boolean
+  reason: string | null
+}
+
+export interface DecisionOut {
+  config_id: string
+  verdict: string
+  admitted: boolean
+  failed_check: string | null
+  checks: CheckResult[]
+  verifier: Record<string, unknown> | null
+  approval: { code: string; message: string; accepted: boolean } | null
+  message: string
+  ms: number
+  correct: boolean | null
+}
+
+export interface GateResponse {
+  case_id: string
+  expected_label: string | null
+  decisions: DecisionOut[]
+}

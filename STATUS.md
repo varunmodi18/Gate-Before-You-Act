@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
-- **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** T2.7 (Gate Playground page, code-only), then the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
+- **Current milestone:** M2 Deterministic gate — **complete**, on branch `m2-gate`. Waiting at the M2 checkpoint.
+- **TA approval (Q-0):** approved 2026-10-08.
+- **Next action:** M2 checkpoint report; M3 (verifier and Exp 1) starts when the team says so.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -35,7 +35,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T2.4 Typed-argument rule | done | m2-gate | `gbya/tools/typed.py` (validators), `gbya/tools/provenance.py` (typed canonical fields), `gbya/gate/checks.py` (`check_c1`, `check_schema`), `gbya/gate/types.py` (`CheckResult`) |
 | T2.5 Gate checks and orchestrator | done | m2-gate | `gbya/gate/{gate,checks,approval,evidence,config,types}.py`, `configs.yaml` (G0, G1, G2, G3, A1). C1–C6 by tool class, first failure decides; approval contract of §D.6.2a; C4 pluggable (scripted in tests until M3); mypy strict clean |
 | T2.6 Exp 1 core (code-only) | done | m2-gate | `gbya/experiments/exp1.py` (`decide`, `run_code_only`, `load_case`), hand-made 3-case fixture `data/fixtures/handmade/cases.json` + importer `gbya/cases/handmade.py`. Deterministic; stores `gate_decisions` rows |
-| T2.7 Gate Playground page | todo | | |
+| T2.7 Gate Playground page | done | m2-gate | `/playground` (case picker, system checkboxes with C4 systems disabled, check-pipeline matrix with ✓/✕ + code text, verdict, correctness badge, feedback) over `GET /playground/cases`, `GET /playground/systems`, `POST /playground/gate` (same `exp1.decide`). Playwright J4 (code-only) at 1280 and 768 px |
 | T3.1 Retrieval index | todo | | Q-4 licences |
 | T3.2 Verifier prompt and evidence format | todo | | Team review of snapshots |
 | T3.3 C4 integration | todo | | |
@@ -166,6 +166,8 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Until the prefix builder exists (T4.3), an Exp 1 case's retrieved registry is its package's cited ids, as T2.6 instructs; `Exp1Case.prefix_retrieved` takes the stored registry later | T2.6 instructions; §D.5.2 "Exp 1 packages" | T2.6, T4.3 |
 | 2026-10-08 | Hand-made 3-case fixture (`hm:E1`, `hm:E3`, `hm:R_neg`) on the mini window, imported by `gbya/cases/handmade.py`, for T2.6/T2.7/e2e until real scenarios exist; variant-like only (no database patches) | T2.6 "hand-made 3-case fixture"; T4.1 brings the general importer | T2.6, T2.7 |
 | 2026-10-08 | Stored check results keep `duration_ms`; determinism comparisons (and the later reproduce/export path, NFR-04) leave timings out | Timings vary between runs | NFR-04 |
+| 2026-10-08 | Playground API: `GET /playground/cases`, `GET /playground/systems` and `POST /playground/gate` (§F.5) through `exp1.decide`, each call with a fresh episode state; systems with C4 refused with `VERIFIER_UNAVAILABLE` until M3; correctness = admitted ↔ `initial_gate_label == "admit"` | §E.1 row 5, §F.5 | T2.7 |
+| 2026-10-08 | The Playwright web server runs with `GBYA_ENV=test` so CI (no model files) uses the test-only token counter; locally and in research runs the model tokenizer is used | §D.10.3; CI has no model | §I.3 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Limitations for the final report
@@ -241,6 +243,10 @@ See the latest entry per task.
 | 2026-10-08 | T2.5 | Mutation checks | "any PID role is the actor": 2 fail; "C6 never enforces": 6 fail; restored, 56 pass |
 | 2026-10-08 | T2.5 | `make lint`, `make test` | lint clean, mypy strict on `gbya/gate` clean (67 files); pytest 396 passed (1 gpu deselected); vitest 8 passed |
 | 2026-10-08 | T2.6 | `pytest tests/integration/test_exp1_code_only.py` | 5 passed: 3 cases × G0/G1/G2/A1 give the expected verdicts (hm:E3 admitted by G0/G1/G2, rejected by A1 at C3 without retry; hm:R_neg converted to approval by every gate with C6); two runs give identical rows (ids and timings excluded); 12 rows stored with the expected checks; every system sees the identical package; systems with C4 refused until M3 |
+| 2026-10-08 | T2.7 | `pytest tests/integration/test_playground_api.py` | 9 passed: system list (C4 systems unavailable with reason), case list, hm:E3 matrix (G1 admitted/incorrect, A1 C3_HOST_MISMATCH/correct), hm:R_neg approval conversion (NO_RESPONSE) and G0 admission, fresh state per call, 4 error envelopes |
+| 2026-10-08 | T2.7 | `pnpm test` (vitest) | 9 passed (incl. Playground: pipeline shows "failed: CODE" text, correctness badges, disabled G3) |
+| 2026-10-08 | T2.7 | `make e2e` | 10 passed = (J1 × 3 + J4 code-only × 2) × 2 viewports; axe 0 serious/critical on the Playground |
+| 2026-10-08 | M2 | `make lint`, `make test`, `make e2e` | lint clean (ruff, mypy strict on gate: 70 files, eslint, prettier, tsc); pytest 410 passed (1 gpu deselected); vitest 9 passed; Playwright 10 passed |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

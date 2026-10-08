@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from gbya.api.routers import health, windows
+from gbya.api.routers import health, playground, windows
 from gbya.config import Settings, get_settings
 from gbya.errors import GbyaError, NotFound
 from gbya.store.db import make_engine, make_sessionmaker
@@ -46,6 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(health.router, prefix=API_PREFIX)
     app.include_router(windows.router, prefix=API_PREFIX)
+    app.include_router(playground.router, prefix=API_PREFIX)
 
     dist = settings.resolve(settings.frontend_dist)
     if (dist / "index.html").is_file():

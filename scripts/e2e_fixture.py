@@ -3,7 +3,8 @@
     uv run python scripts/e2e_fixture.py data/e2e
 
 Catalogues the committed fixture windows (tests/fixtures/otrf and tests/fixtures/mini_window),
-normalises the mini window on the construction path, and records it as ingested in split ``dev``.
+normalises the mini window on the construction path, records it as ingested in split ``dev``,
+and imports the hand-made Exp 1 cases (``data/fixtures/handmade/cases.json``).
 The API is then started with ``GBYA_APP_DB_PATH=<dir>/app.db``.
 """
 
@@ -13,6 +14,7 @@ import shutil
 import sys
 from pathlib import Path
 
+from gbya.cases.handmade import insert_fixture
 from gbya.data.catalogue import parse_metadata, scan, upsert
 from gbya.data.normalise import normalise_window
 from gbya.store import db
@@ -43,6 +45,8 @@ def build(out: Path) -> None:
         assert w is not None
         w.duckdb_path, w.event_count, w.hosts = str(duck), res.events, res.hosts
         w.ingest_status, w.split = res.status, "dev"
+        s.flush()
+        insert_fixture(s, duck)  # hand-made Exp 1 cases for the Gate Playground (T2.7)
     print(f"e2e fixture ready in {out}")
 
 

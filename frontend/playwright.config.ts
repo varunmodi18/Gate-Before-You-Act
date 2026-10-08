@@ -18,7 +18,7 @@ export default defineConfig({
   webServer: {
     command:
       `pnpm build && cd .. && uv run python scripts/e2e_fixture.py data/e2e && ` +
-      `GBYA_APP_DB_PATH=$PWD/data/e2e/app.db GBYA_DATA_DIR=$PWD/data/e2e ` +
+      `GBYA_ENV=test GBYA_APP_DB_PATH=$PWD/data/e2e/app.db GBYA_DATA_DIR=$PWD/data/e2e ` +
       `uv run uvicorn gbya.api.main:app --app-dir backend --host 127.0.0.1 --port ${PORT}`,
     url: `http://127.0.0.1:${PORT}/api/v1/health`,
     reuseExistingServer: false,
