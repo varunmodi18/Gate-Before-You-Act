@@ -13,10 +13,11 @@ from gbya.config import REPO_ROOT, Settings
 from gbya.data.catalogue import parse_metadata
 from gbya.data.normalise import normalise_window
 from gbya.experiments.exp1 import CODE_ONLY, comparable, load_case, run_code_only
+from gbya.experiments.runs import create_run, research_eligible
 from gbya.llm.tokens import ApproxCounter
 from gbya.policy.engine import PolicyEngine
 from gbya.store import db
-from gbya.store.models import GateDecisionRow, Run
+from gbya.store.models import GateDecisionRow
 
 MINI = Path(__file__).resolve().parents[1] / "fixtures" / "mini_window"
 POLICY = PolicyEngine.from_file(REPO_ROOT / "policy" / "rules.yaml")
@@ -37,9 +38,9 @@ def setup(tmp_path: Path) -> Any:
 
 def _run(factory: Any, ids: list[str], settings: Settings) -> tuple[int, list[dict[str, Any]]]:
     with db.session_scope(factory) as s:
-        run = Run(experiment=1, config={"systems": list(CODE_ONLY)}, config_hash="test")
-        s.add(run)
-        s.flush()
+        run = create_run(s, experiment=1, config={"systems": list(CODE_ONLY)}, config_hash="test",
+                         purpose="fixture", case_ids=ids)  # fmt: skip
+        assert not research_eligible(run)  # the hand-made fixture can never be research
         cases = [load_case(s, cid, settings) for cid in ids]
         rows = run_code_only(s, cases, policy=POLICY, counter=ApproxCounter(), run_id=run.id)
         return run.id, [comparable(r) for r in rows]

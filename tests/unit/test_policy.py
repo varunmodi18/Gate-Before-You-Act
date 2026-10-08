@@ -28,6 +28,7 @@ CTX = TrustedContext.model_validate(
             {"account": "it.admin", "type": "human", "privilege": "admin"},
             {"account": "da.root", "type": "human", "privilege": "domain_admin"},
             {"account": "svc_backup", "type": "service", "privilege": "admin"},
+            {"account": "h.deps", "type": "human", "privilege": "standard", "dependents": ["payroll-export"]},
         ],
         "network": {"internal_cidrs": ["10.0.0.0/8"]},
         "approval_script": {"mode": "grant"},
@@ -42,8 +43,9 @@ ENGINE = PolicyEngine.from_file(REPO_ROOT / "policy" / "rules.yaml")
         ("isolate_host", {"host": "dc-01"}, "needs_approval", "P1-tier0-isolate"),
         ("isolate_host", {"host": "wkstn-01"}, "allowed", "P2-tier12-isolate"),
         ("isolate_host", {"host": "APP-01"}, "allowed", "P2-tier12-isolate"),  # case-insensitive
-        ("disable_account", {"account": "svc_reports"}, "needs_approval", "P3-svc-account-dependents"),
+        ("disable_account", {"account": "svc_reports"}, "needs_approval", "P3-account-dependents"),
         ("disable_account", {"account": "LAB\\a.mehta"}, "allowed", "P4-human-account"),
+        ("disable_account", {"account": "h.deps"}, "needs_approval", "P3-account-dependents"),  # human + dependents
         ("disable_account", {"account": "it.admin"}, "needs_approval", "P5-privileged-account"),
         ("disable_account", {"account": "da.root"}, "needs_approval", "P5-privileged-account"),
         ("disable_account", {"account": "svc_backup"}, "needs_approval", "P5-privileged-account"),
@@ -67,7 +69,7 @@ def test_every_rule_and_the_default(
 def test_every_rule_is_exercised() -> None:
     ids = {r.id for r in ENGINE.policy.rules}
     assert ids == {f"P{i}" + s for i, s in [
-        (1, "-tier0-isolate"), (2, "-tier12-isolate"), (3, "-svc-account-dependents"),
+        (1, "-tier0-isolate"), (2, "-tier12-isolate"), (3, "-account-dependents"),
         (4, "-human-account"), (5, "-privileged-account"), (6, "-irreversible-tier2"),
         (7, "-irreversible-tier01"), (8, "-block-external-ip"), (9, "-svc-account-no-dependents")]}  # fmt: skip
     assert ENGINE.policy.default == "forbidden"
@@ -120,11 +122,11 @@ def test_rules_file_overlaps_resolve_by_strictness() -> None:
     )  # fmt: skip
     args = {"account": "svc_sql"}
     assert [r.id for r in ENGINE.matching_rules("disable_account", args, ctx)] == [
-        "P3-svc-account-dependents",
+        "P3-account-dependents",
         "P5-privileged-account",
     ]
     d = ENGINE.evaluate("disable_account", args, ctx)
-    assert (d.decision, d.rule_id) == ("needs_approval", "P3-svc-account-dependents")
+    assert (d.decision, d.rule_id) == ("needs_approval", "P3-account-dependents")
 
 
 def test_rule_without_tool_applies_to_every_tool() -> None:

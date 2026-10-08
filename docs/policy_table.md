@@ -19,17 +19,17 @@ None: every combination is decided by a rule.
 | kill_process | tier=1 | needs_approval | P7-irreversible-tier01 |
 | kill_process | tier=2 | allowed | P6-irreversible-tier2 |
 | disable_account | type=human, privilege=standard, dependents=empty | allowed | P4-human-account |
-| disable_account | type=human, privilege=standard, dependents=nonempty | allowed | P4-human-account |
+| disable_account | type=human, privilege=standard, dependents=nonempty | needs_approval | P3-account-dependents |
 | disable_account | type=human, privilege=admin, dependents=empty | needs_approval | P5-privileged-account |
-| disable_account | type=human, privilege=admin, dependents=nonempty | needs_approval | P5-privileged-account |
+| disable_account | type=human, privilege=admin, dependents=nonempty | needs_approval | P3-account-dependents |
 | disable_account | type=human, privilege=domain_admin, dependents=empty | needs_approval | P5-privileged-account |
-| disable_account | type=human, privilege=domain_admin, dependents=nonempty | needs_approval | P5-privileged-account |
+| disable_account | type=human, privilege=domain_admin, dependents=nonempty | needs_approval | P3-account-dependents |
 | disable_account | type=service, privilege=standard, dependents=empty | allowed | P9-svc-account-no-dependents |
-| disable_account | type=service, privilege=standard, dependents=nonempty | needs_approval | P3-svc-account-dependents |
+| disable_account | type=service, privilege=standard, dependents=nonempty | needs_approval | P3-account-dependents |
 | disable_account | type=service, privilege=admin, dependents=empty | needs_approval | P5-privileged-account |
-| disable_account | type=service, privilege=admin, dependents=nonempty | needs_approval | P3-svc-account-dependents |
+| disable_account | type=service, privilege=admin, dependents=nonempty | needs_approval | P3-account-dependents |
 | disable_account | type=service, privilege=domain_admin, dependents=empty | needs_approval | P5-privileged-account |
-| disable_account | type=service, privilege=domain_admin, dependents=nonempty | needs_approval | P3-svc-account-dependents |
+| disable_account | type=service, privilege=domain_admin, dependents=nonempty | needs_approval | P3-account-dependents |
 | block_ip | (none) | allowed | P8-block-external-ip |
 
 ## Full grid (144 combinations of tool, tier, account type, privilege and dependents)
@@ -109,41 +109,41 @@ None: every combination is decided by a rule.
 | kill_process | 2 | service | domain_admin | empty | allowed | P6-irreversible-tier2 | P6-irreversible-tier2 |
 | kill_process | 2 | service | domain_admin | nonempty | allowed | P6-irreversible-tier2 | P6-irreversible-tier2 |
 | disable_account | 0 | human | standard | empty | allowed | P4-human-account | P4-human-account |
-| disable_account | 0 | human | standard | nonempty | allowed | P4-human-account | P4-human-account |
+| disable_account | 0 | human | standard | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P4-human-account |
 | disable_account | 0 | human | admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 0 | human | admin | nonempty | needs_approval | P5-privileged-account | P5-privileged-account |
+| disable_account | 0 | human | admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 0 | human | domain_admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 0 | human | domain_admin | nonempty | needs_approval | P5-privileged-account | P5-privileged-account |
+| disable_account | 0 | human | domain_admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 0 | service | standard | empty | allowed | P9-svc-account-no-dependents | P9-svc-account-no-dependents |
-| disable_account | 0 | service | standard | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents |
+| disable_account | 0 | service | standard | nonempty | needs_approval | P3-account-dependents | P3-account-dependents |
 | disable_account | 0 | service | admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 0 | service | admin | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents, P5-privileged-account |
+| disable_account | 0 | service | admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 0 | service | domain_admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 0 | service | domain_admin | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents, P5-privileged-account |
+| disable_account | 0 | service | domain_admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 1 | human | standard | empty | allowed | P4-human-account | P4-human-account |
-| disable_account | 1 | human | standard | nonempty | allowed | P4-human-account | P4-human-account |
+| disable_account | 1 | human | standard | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P4-human-account |
 | disable_account | 1 | human | admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 1 | human | admin | nonempty | needs_approval | P5-privileged-account | P5-privileged-account |
+| disable_account | 1 | human | admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 1 | human | domain_admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 1 | human | domain_admin | nonempty | needs_approval | P5-privileged-account | P5-privileged-account |
+| disable_account | 1 | human | domain_admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 1 | service | standard | empty | allowed | P9-svc-account-no-dependents | P9-svc-account-no-dependents |
-| disable_account | 1 | service | standard | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents |
+| disable_account | 1 | service | standard | nonempty | needs_approval | P3-account-dependents | P3-account-dependents |
 | disable_account | 1 | service | admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 1 | service | admin | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents, P5-privileged-account |
+| disable_account | 1 | service | admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 1 | service | domain_admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 1 | service | domain_admin | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents, P5-privileged-account |
+| disable_account | 1 | service | domain_admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 2 | human | standard | empty | allowed | P4-human-account | P4-human-account |
-| disable_account | 2 | human | standard | nonempty | allowed | P4-human-account | P4-human-account |
+| disable_account | 2 | human | standard | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P4-human-account |
 | disable_account | 2 | human | admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 2 | human | admin | nonempty | needs_approval | P5-privileged-account | P5-privileged-account |
+| disable_account | 2 | human | admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 2 | human | domain_admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 2 | human | domain_admin | nonempty | needs_approval | P5-privileged-account | P5-privileged-account |
+| disable_account | 2 | human | domain_admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 2 | service | standard | empty | allowed | P9-svc-account-no-dependents | P9-svc-account-no-dependents |
-| disable_account | 2 | service | standard | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents |
+| disable_account | 2 | service | standard | nonempty | needs_approval | P3-account-dependents | P3-account-dependents |
 | disable_account | 2 | service | admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 2 | service | admin | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents, P5-privileged-account |
+| disable_account | 2 | service | admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | disable_account | 2 | service | domain_admin | empty | needs_approval | P5-privileged-account | P5-privileged-account |
-| disable_account | 2 | service | domain_admin | nonempty | needs_approval | P3-svc-account-dependents | P3-svc-account-dependents, P5-privileged-account |
+| disable_account | 2 | service | domain_admin | nonempty | needs_approval | P3-account-dependents | P3-account-dependents, P5-privileged-account |
 | block_ip | 0 | human | standard | empty | allowed | P8-block-external-ip | P8-block-external-ip |
 | block_ip | 0 | human | standard | nonempty | allowed | P8-block-external-ip | P8-block-external-ip |
 | block_ip | 0 | human | admin | empty | allowed | P8-block-external-ip | P8-block-external-ip |

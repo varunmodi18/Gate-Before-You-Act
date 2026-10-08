@@ -50,6 +50,9 @@ class Base(DeclarativeBase):
 SPLITS = ["dev", "test", "e2e", "unused"]
 SCENARIO_STATUS = ["draft", "annotating", "adjudicated", "frozen"]
 RUN_STATUS = ["queued", "running", "completed", "cancelled", "failed"]  # §F.7
+# Only "research" runs on the frozen case set can feed research results (NFR-12; team decision of
+# 8 Oct 2026: runs on the hand-made fixture are tagged "fixture" and can never be research).
+RUN_PURPOSES = ["research", "development", "fixture", "demo"]
 EPISODE_STATUS = ["running", "done", "error"]
 TERMINAL_STATES = ["fulfilled", "handed_off", "ended", "cap"]  # §D.10.1 T1-T4
 OUTCOMES = [
@@ -160,10 +163,14 @@ class Run(Base):
     __table_args__ = (
         CheckConstraint(_in("experiment", [1, 2, 3]), name="experiment"),
         CheckConstraint(_in("status", RUN_STATUS), name="status"),
+        CheckConstraint(_in("purpose", RUN_PURPOSES), name="purpose"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     experiment: Mapped[int] = mapped_column(Integer)
+    purpose: Mapped[str] = mapped_column(
+        String, default="development", server_default="development"
+    )
     config: Mapped[dict[str, Any]] = mapped_column()
     config_hash: Mapped[str] = mapped_column(String)
     case_set_hash: Mapped[str | None] = mapped_column(String)

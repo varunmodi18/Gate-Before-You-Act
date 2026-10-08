@@ -30,9 +30,9 @@ rules:
   - id: P2-tier12-isolate
     when: {tool: isolate_host, host.tier: [1, 2]}
     decision: allowed
-  - id: P3-svc-account-dependents
-    when: {tool: disable_account, account.type: service, account.dependents: nonempty}
-    decision: needs_approval
+  - id: P3-account-dependents
+    when: {tool: disable_account, account.dependents: nonempty}
+    decision: needs_approval   # any account type (widened 8 Oct 2026; last change before freeze)
   - id: P4-human-account
     when: {tool: disable_account, account.type: human, account.privilege: [standard]}
     decision: allowed

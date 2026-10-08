@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M2 Deterministic gate — **complete**, on branch `m2-gate`. Waiting at the M2 checkpoint.
-- **TA approval (Q-0):** approved 2026-10-08.
-- **Next action:** M2 checkpoint report; M3 (verifier and Exp 1) starts when the team says so.
+- **Current milestone:** M3 Verifier and Exp 1, on branch `m3-verifier` (from `m2-gate`). M2 accepted and pushed.
+- **TA approval (Q-0):** approved 2026-10-08. M3 approved by the team on 2026-10-08.
+- **Next action:** T3.1 (retrieval index: SigmaHQ + ATT&CK pinned, licences checked), then T3.2 → T3.7. Stop at the M3 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -46,7 +46,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T4.1 Case models and files | todo | | |
 | T4.2 DB patcher | todo | | |
 | T4.3 Variant and prefix builders | todo | | |
-| T4.4 Validator | todo | | |
+| T4.4 Validator | todo | | Includes check (i) (team decision 2026-10-08): a permitted `kill_process` PID must appear as the acting process in `evidence_retrievable` |
 | T4.5 Scenario Studio page | todo | | |
 | T4.6 Case-authoring guide | todo | | |
 | T4.7 Annotation page | todo | | |
@@ -168,6 +168,9 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Stored check results keep `duration_ms`; determinism comparisons (and the later reproduce/export path, NFR-04) leave timings out | Timings vary between runs | NFR-04 |
 | 2026-10-08 | Playground API: `GET /playground/cases`, `GET /playground/systems` and `POST /playground/gate` (§F.5) through `exp1.decide`, each call with a fresh episode state; systems with C4 refused with `VERIFIER_UNAVAILABLE` until M3; correctness = admitted ↔ `initial_gate_label == "admit"` | §E.1 row 5, §F.5 | T2.7 |
 | 2026-10-08 | The Playwright web server runs with `GBYA_ENV=test` so CI (no model files) uses the test-only token counter; locally and in research runs the model tokenizer is used | §D.10.3; CI has no model | §I.3 |
+| 2026-10-08 | **P3 widened** to `disable_account` with nonempty dependents for **every account type** (id `P3-account-dependents`); a standard human account with dependents now needs approval (P3 beats P4 by strictness). `docs/policy_table.md` regenerated: still no fall-through. **Last policy change before the freeze** | Team decision (M2 checkpoint) | §D.8 |
+| 2026-10-08 | Parent PIDs: keep the behaviour (a PID only seen as `ppid` fails C1). New validator check (i) for T4.4: if `permitted` includes `kill_process` on a PID, a record in `evidence_retrievable` must show that PID as the acting process — otherwise the labelled correct action could never be admitted, and the case would penalise every gate | Team decision (M2 checkpoint) | §D.11, T4.4 |
+| 2026-10-08 | **Runs carry a `purpose`** (research / development / fixture / demo; migration `0002`). `create_run` refuses `research` unless every case is in the frozen case set (`cases/FROZEN.json`) and the run is not a replay; runs on the hand-made fixture are `fixture` and can never be research results | Team decision (M2 checkpoint); NFR-12 | §F.1, NFR-12 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Limitations for the final report
@@ -247,6 +250,7 @@ See the latest entry per task.
 | 2026-10-08 | T2.7 | `pnpm test` (vitest) | 9 passed (incl. Playground: pipeline shows "failed: CODE" text, correctness badges, disabled G3) |
 | 2026-10-08 | T2.7 | `make e2e` | 10 passed = (J1 × 3 + J4 code-only × 2) × 2 viewports; axe 0 serious/critical on the Playground |
 | 2026-10-08 | M2 | `make lint`, `make test`, `make e2e` | lint clean (ruff, mypy strict on gate: 70 files, eslint, prettier, tsc); pytest 410 passed (1 gpu deselected); vitest 9 passed; Playwright 10 passed |
+| 2026-10-08 | M2 follow-ups | `pytest tests/unit/test_policy.py tests/unit/test_runs.py tests/integration/test_exp1_code_only.py tests/unit/test_store.py` | policy 32 passed (incl. human + dependents → P3; table fresh, no fall-through); runs 7 passed (fixture never research; research refused before freeze, for cases outside the frozen set and for replay; accepted only when all cases frozen; purpose constrained; default development); Exp 1 fixture run tagged `fixture`; store 12 passed with migration 0002 |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 
