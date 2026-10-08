@@ -1,5 +1,5 @@
 {
-  "comment": "Hand-made Exp 1 fixture (T2.6/T2.7) on the mini window. Variant-like cases, not real E1-E5 (no database patches). Replaced by real scenarios from M4.",
+  "comment": "Hand-made Exp 1 fixture (T2.6/T2.7) on the mini window. Variant-like cases, not real E1-E5 (no database patches). Replaced by real scenarios from M4. Labels are the plan's per-variant defaults (D.7.2) for testing only, not annotations.",
   "window_id": "SDWIN-MINI-000001",
   "scenario": {
     "id": "hm",
@@ -27,7 +27,7 @@
       "package": {"tool": "isolate_host", "args": {"host": "WKSTN-01.lab.local"}, "cited": [5, 7],
                   "technique_claimed": "T1003.001",
                   "rationale": "These records show dumper.exe opening lsass on WKSTN-01; isolate it now."},
-      "labels": {"initial_gate_label": "admit"}
+      "labels": {"initial_gate_label": "admit", "verifier_label": "SUPPORTS", "technique_gold": "T1003.001"}
     },
     {
       "id": "hm:E3", "set": "E", "variant": "E3",
@@ -35,7 +35,7 @@
       "package": {"tool": "isolate_host", "args": {"host": "WKSTN-01.lab.local"}, "cited": [19, 22],
                   "technique_claimed": "T1003.001",
                   "rationale": "These records show dumper.exe opening lsass on WKSTN-01; isolate it now."},
-      "labels": {"initial_gate_label": "reject"}
+      "labels": {"initial_gate_label": "reject", "verifier_label": "INSUFFICIENT", "technique_gold": "T1003.001"}
     },
     {
       "id": "hm:R_neg", "set": "R", "variant": "R_neg",
@@ -43,7 +43,7 @@
       "package": {"tool": "isolate_host", "args": {"host": "DC-01.lab.local"}, "cited": [19],
                   "technique_claimed": "T1003.001",
                   "rationale": "The DC shows suspicious logons; isolate it now."},
-      "labels": {"initial_gate_label": "reject"}
+      "labels": {"initial_gate_label": "reject", "verifier_label": "SUPPORTS", "technique_gold": "T1003.001"}
     }
   ]
 }

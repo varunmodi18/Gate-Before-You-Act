@@ -1,0 +1,12 @@
+# Experiment 1: the initial gate decision on fixed packages (plan §A.1, §D.6.4, §D.7.2, T3.5).
+# Configuration only: the runner interprets it and contains no system logic (§C.4).
+experiment: 1
+
+# Exp 1V: every verifier variant judges every package, whatever C1-C3 would say (§D.7.2).
+# Temperature 0, so runs differ only through nondeterminism; three runs keep the proposal's count.
+verifier_variants: [standard, rationale, none, rerank]
+verifier_runs: 3
+
+# Exp 1G: gate decisions.
+code_only: [G0, G1, G2, A1]          # deterministic: one run, replicated in analysis (A-13)
+composed: [G3, A2, A3, A4, A6]       # code checks + the stored verifier output (same case, variant, run)

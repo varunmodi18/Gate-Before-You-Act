@@ -19,6 +19,7 @@ from sqlalchemy import (
     Integer,
     MetaData,
     String,
+    Text,
     UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -206,8 +207,10 @@ class JobItem(Base):
     case_id: Mapped[str] = mapped_column(String)
     system: Mapped[str] = mapped_column(String)
     run_idx: Mapped[int] = mapped_column(Integer)
-    status: Mapped[str] = mapped_column(String, default="queued")
+    status: Mapped[str] = mapped_column(String, default="queued")  # queued/running/done/error
     attempts: Mapped[int] = mapped_column(Integer, default=0)
+    error: Mapped[str | None] = mapped_column(Text)
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class Episode(Base):

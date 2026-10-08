@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     log_dir: Path = Path("logs")
     frontend_dist: Path = Path("frontend/dist")
     model_base_url: str = "http://127.0.0.1:8001/v1"
+    # LLM backend for the API and worker: the model server (live), a scripted fake (tests and the
+    # Playwright profile; never research) or a recorded cassette (replay; never research).
+    llm_backend: Literal["live", "fake", "replay"] = "live"
+    fake_llm_delay_ms: int = 0
+    replay_cassette: Path | None = None
     worker_concurrency: int = 4
     worker_heartbeat_s: int = 10
     worker_stale_s: int = 60
