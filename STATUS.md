@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** T2.5 (checks C2, C3, C5, C6 and the gate orchestrator), then T2.6, T2.7 and the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
+- **Next action:** T2.6 (Exp 1 core, code-only gates), then T2.7 and the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -33,7 +33,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T2.2 Policy engine and rules | done | m2-gate | **Signed off by the team 2026-10-08** with changes: P6/P7 as reversibility rules (irreversible: tier 2 allowed, tiers 0–1 need approval), new P9 (standard service account without dependents → allowed), strictest matching decision wins. `docs/policy_table.md` generated from the engine: no combination falls through to the default |
 | T2.3 Tool layer and registry | done | m2-gate | `gbya/tools/{registry,provenance,render,escalation,mock_actions,state,names}.py`, `gbya/llm/tokens.py`. AST-based retrieved-record registry, untrusted rendering with the model tokenizer, 9 tool schemas, unknown/delete counting |
 | T2.4 Typed-argument rule | done | m2-gate | `gbya/tools/typed.py` (validators), `gbya/tools/provenance.py` (typed canonical fields), `gbya/gate/checks.py` (`check_c1`, `check_schema`), `gbya/gate/types.py` (`CheckResult`) |
-| T2.5 Gate checks and orchestrator | todo | | |
+| T2.5 Gate checks and orchestrator | done | m2-gate | `gbya/gate/{gate,checks,approval,evidence,config,types}.py`, `configs.yaml` (G0, G1, G2, G3, A1). C1–C6 by tool class, first failure decides; approval contract of §D.6.2a; C4 pluggable (scripted in tests until M3); mypy strict clean |
 | T2.6 Exp 1 core (code-only) | todo | | |
 | T2.7 Gate Playground page | todo | | |
 | T3.1 Retrieval index | todo | | Q-4 licences |
@@ -155,6 +155,13 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | **The policy (`policy/rules.yaml`) and the evidence requirements (`policy/evidence_requirements.yaml`) cannot change once dev tuning starts** | Team decision | §D.8, §D.7 |
 | 2026-10-08 | Approval script stays visible through `get_context`, as the proposal says (listed under Limitations) | Team decision | §D.4 |
 | 2026-10-08 | Observation from the policy table: a standard human account **with** dependents is `allowed` (P4 does not consider dependents; only service accounts are checked) | `docs/policy_table.md` | §D.8 |
+| 2026-10-08 | C1's "configuration's allow-list" = the case's toolset, identical for every configuration (a Set R case may restrict it); configurations differ only in their checks | §L.4 items 1 and 20; Set R edits include the toolset | §D.6.2 C1, §D.11 |
+| 2026-10-08 | Retry: one retry per **normalised call** (tool + normalised target, `cited` excluded): its first C1–C3 failure → `rejected_retryable`, the next → `rejected`; a different call has its own retry; `retries=False` (Exp 1) → `rejected` at once | "retry_left_c1_c3 = 1 per proposed action" | §D.6.2a |
+| 2026-10-08 | Recovery budget is granted once per episode, at the first C4 `INSUFFICIENT` (later INSUFFICIENTs do not reset it); the episode loop spends it | "≤2 extra queries" (proposal) | §D.6.2a, §D.10 |
+| 2026-10-08 | C2 window range = min/max `ts` over the mapped tables; a cited raw-only record (no `ts`) passes the time check. Raw-only records can be cited; their evidence rendering has record_id, host (from raw JSON), channel, event_id and a note that the raw event is omitted | §D.6.2 C2; §D.7.1 lists fields only for mapped tables | §D.6.2, §D.7.1 |
+| 2026-10-08 | `kill_process(H, P)` where P is the actor only on another host → `C3_PID_NOT_FOUND`. A PID that occurs only as `ppid` never reaches C3: `ppid` is not a canonical PID field (§D.5.2), so C1 rejects it as unprovenanced | Consequence of §D.5.2 + §D.6.2 | §D.6.2 |
+| 2026-10-08 | Evidence rendering of §D.7.1 (selected fields, no truncation, budget 8 records / 3,200 tokens) is implemented now in `gbya/gate/evidence.py` because C2 needs it; T3.2 adds the manifest and the prompt | C2 depends on the rendered size | §D.7.1, T3.2 |
+| 2026-10-08 | The approval service applies full C1 (incl. the typed-argument rule) to every request in every configuration, G0 included; G0's gate itself checks the schema only | §D.6.2a "C1 fails for the request or for the embedded action" | §D.6.2a |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Limitations for the final report
@@ -226,6 +233,9 @@ See the latest entry per task.
 | 2026-10-08 | M2 so far | `make lint`, `make test` | lint clean (mypy: 62 files); pytest 336 passed (1 gpu deselected); vitest 8 passed |
 | 2026-10-08 | T2.2 | `pytest tests/unit/test_policy.py` | 31 passed: every rule P1–P9 of the signed-off file and the default; strictest match wins (forbidden beats needs_approval beats allowed, independent of order); equally strict matches report the first rule; P3+P5 overlap on a service admin with dependents → P3; rule without `tool` applies to every tool; `empty`/`nonempty`; 7 rule-file errors; C5 only for state-changing tools; evidence requirements; **`docs/policy_table.md` equals a fresh generation** and no grid combination falls through to the default |
 | 2026-10-08 | T2.2 | `make policy-table` | 144 combinations; 0 fall through to `forbidden` |
+| 2026-10-08 | T2.5 | `pytest tests/unit/test_gate.py` | 56 passed: configuration snapshot; C4 config without verifier refused; C2 (empty, unknown id, not retrieved, 9 records, out of window, token budget without trimming, OK); C3 per action type (host, actor PID vs target PID, wrong host, acting user incl. 4624 target_user and 4648 subject_user, network dst) and the parent-PID rule; proposal §8 worked example → `C3_ACTING_USER_MISMATCH`; canonical re-read despite tampered model-visible text; C5 forbidden → blocked; C6 first table (allowed, granted, none → converted for grant/deny/unreachable, pending, denied, no second request); approval service rows 1–6 in G0, G1 and A1; G0 records but never enforces approvals; C4 SUPPORTS / INSUFFICIENT (budget once) / CONTRADICTED / parse error; C4 not reached after C3 failure; first failure decides; retry counters; G1/G2 admit what A1 rejects at C3; C1-only for read-only and escalation tools; hard rule; G0 rejects unparseable calls; feedback message |
+| 2026-10-08 | T2.5 | Mutation checks | "any PID role is the actor": 2 fail; "C6 never enforces": 6 fail; restored, 56 pass |
+| 2026-10-08 | T2.5 | `make lint`, `make test` | lint clean, mypy strict on `gbya/gate` clean (67 files); pytest 396 passed (1 gpu deselected); vitest 8 passed |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

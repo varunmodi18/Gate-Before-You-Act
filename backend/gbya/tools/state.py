@@ -17,6 +17,9 @@ class EpisodeState:
     approval_requests: int = 0
     #: recovery queries left after an INSUFFICIENT verdict (§D.6.2a; set from the configuration)
     recovery_queries_left: int = 0
+    recovery_granted: bool = False  # the budget is granted once, at the first INSUFFICIENT
+    #: C1-C3 failures per normalised call (one retry per proposed action, §D.6.2a)
+    call_failures: dict[str, int] = field(default_factory=dict)
     log_deletion_attempts: int = 0
     unknown_tool_calls: int = 0
     #: untrusted text shown to the model (tool results), to flag verbatim copies in notes (§D.5)

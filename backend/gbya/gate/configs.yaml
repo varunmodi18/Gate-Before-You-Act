@@ -1,0 +1,39 @@
+# Gate configurations (plan §D.6.4). Data, not code: runners never special-case a configuration.
+# T2.5: G0, G1, G2, G3, A1. T3.4 adds A2-A6; T5.7 adds A7; T5.8 adds A8.
+# Every configuration shares the same tool environment (allow-list = the case's toolset), the
+# same approval service and the same policy file; only the checks differ (§L.4 items 1 and 20).
+G0:
+  checks: []                 # schema only (A-7)
+  verifier_variant: null
+  retrieval_mode: null
+  recovery_budget: null
+  transport: in_process
+  capability: floor
+G1:
+  checks: [C1, C5, C6]       # C1 keeps full target validation and the typed-argument rule (A-8)
+  verifier_variant: null
+  retrieval_mode: null
+  recovery_budget: null
+  transport: in_process
+  capability: policy-only baseline
+G2:
+  checks: [C1, C2, C5, C6]
+  verifier_variant: null
+  retrieval_mode: null
+  recovery_budget: null
+  transport: in_process
+  capability: citation only
+G3:
+  checks: [C1, C2, C3, C4, C5, C6]
+  verifier_variant: standard
+  retrieval_mode: bm25
+  recovery_budget: 2
+  transport: in_process
+  capability: proposed system
+A1:
+  checks: [C1, C2, C3, C5, C6]
+  verifier_variant: null
+  retrieval_mode: null
+  recovery_budget: null
+  transport: in_process
+  capability: "reasoning: no LLM verifier"
