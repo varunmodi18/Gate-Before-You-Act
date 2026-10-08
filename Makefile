@@ -57,7 +57,7 @@ api:  ## Run the API on 127.0.0.1:8000
 worker:  ## Run the experiment worker
 	$(UV) run python -m gbya.worker
 
-up: build-web  ## Build the SPA, then run API (serving the SPA) and worker together
+up: db build-web  ## Migrate app.db, build the SPA, then run API (serving the SPA) and worker together
 	@trap 'kill 0' INT TERM EXIT; \
 	$(MAKE) --no-print-directory worker & \
 	$(MAKE) --no-print-directory api & \
