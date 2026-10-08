@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
-- **Next action:** T1.3a (SQL guard and hardened connection), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
+- **Next action:** T1.4 (Windows API), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -24,7 +24,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.1 OTRF fetch | done | m1-data | `make data-fetch`: HEAD `d9d40ef123d2c87d5d3df28c96bcab4f0faccc87`, 100 SDWIN metadata files, 165 Windows data files, 207 MB |
 | T1.2 Catalogue | done | m1-data | `make catalogue`: 100 windows, checksum `da6d27b0…` identical on re-run. **1 window (SDWIN-230718150800, "Dumping NTDS.dit from Volume Shadow Copy") has its Host file missing at the pinned commit** — catalogued as `missing_host_file` (team question at the M1 checkpoint). The API listing is checked in T1.4 |
 | T1.3 Normaliser and field map | done | m1-data | `make normalise`: 99 windows ingested (757,375 events, 0 skipped lines), 1 `missing_host_file`; 2.3 GB of DuckDB files, mode 0444; 35 s. Field map and coverage in `docs/fieldmap.md` |
-| T1.3a SQL guard and hardened connection | todo | | |
+| T1.3a SQL guard and hardened connection | done | m1-data | `gbya/tools/sql_guard.py` (layer 1 + 2 s watchdog) and `gbya/data/connection.py` (`open_case_db`, layer 2). Both suites pass on DuckDB 1.5.6 |
 | T1.4 Windows API | todo | | |
 | T1.5 De-duplication and eligibility | todo | | |
 | T1.6 Split selection and freeze | todo | | Team review of the split list |
@@ -115,6 +115,9 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | `__MACOSX/` and `._*` archive members excluded (not counted as skipped lines) | They are macOS resource forks in 14 zips, not event data | §D.1 failure behaviour |
 | 2026-10-08 | Each window DuckDB file also has a `_meta` table (window id, OTRF commit, source files, counts, ordering, timestamp sources, hosts) | Provenance of each built database; not part of §F.2's 7 tables + `raw_events` | §F.2 |
 | 2026-10-08 | Database build: written to `<id>.duckdb.building`, closed, chmod 0444, then renamed into place | A half-built file is never visible under the final name | §D.1.1 |
+| 2026-10-08 | SQL guard: only `SELECT` and `UNION` of selects (INTERSECT/EXCEPT rejected, as §D.5.1 names only UNION); table functions, qualified names and quoted table identifiers rejected; DML/DDL searched for in the whole tree (catches DML inside CTEs); accepted SQL regenerated from the AST before wrapping, so comments cannot escape the wrapper | §D.5.1; sqlglot 30.21 parses `WITH d AS (DELETE …) SELECT` as a Select and `FROM read_csv(...)` as a table | §D.5.1 |
+| 2026-10-08 | Function denylist = §D.5.1 list (`read_*`, copy, attach, install, load, pragma, system, getenv) plus `glob`, `query`, `query_table`, `sniff_csv`, `current_setting`, `getvariable`, `set_variable`, `iceberg_scan`, `delta_scan` and the prefixes `parquet_`, `duckdb_`, `pragma_` | These also read files, run SQL text or expose engine settings | §D.5.1 |
+| 2026-10-08 | `raw_events` is on the query whitelist (agent may search raw JSON); `_meta` is not | Provenance table is not log data | §D.5.1 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -157,6 +160,7 @@ See the latest entry per task.
 | 2026-10-08 | T1.3 | `pytest tests/unit/test_normalise.py tests/integration/test_normalise_real.py` | 30 passed: golden test on the hand-crafted `mini_window` fixture (25 events, 2 bad lines; every mapped event type and all 4 formats; record-ID order; PID sources; users; channels; raw JSON; `_meta`; rebuild identical; zip and tar.gz with `__MACOSX` debris; parsers); LSASS smoke test: 118 events = 95 Sysmon + 23 Security, `process_access` 48 rows, Dumpert PID 6772 in 4688 and Sysmon 1 |
 | 2026-10-08 | T1.3 | `make normalise` | 99 ingested, 1 missing_host_file; 757,375 events; 0 skipped; 231 PIDs from Message; 35 s; 2.3 GB |
 | 2026-10-08 | T1.3 | `make lint`, `pytest` | lint clean (mypy: 40 files); 76 passed, 1 gpu deselected |
+| 2026-10-08 | T1.3a | `pytest tests/unit/test_sql_guard.py` | 70 passed: 9 accepted selects; 38 layer-1 negatives (DML/DDL, multiple statements, read_csv/read_csv_auto/'file' FROM, glob, ATTACH, PRAGMA, COPY, INSTALL, LOAD, SET, DML in CTEs, unknown/qualified/quoted tables, denylisted functions, INTERSECT, DESCRIBE, SHOW, CALL, VALUES, SELECT INTO, garbage, empty); comment cannot escape the wrapper; layer 2 with layer 1 bypassed blocks read_csv_auto, ATTACH, COPY … TO, INSTALL, SET enable_external_access, SET lock_configuration, SET memory_limit, LOAD, CREATE, INSERT (errors: file system operations disabled / configuration locked / database read-only); plain read-only connection still reads a CSV (reproduces the plan's [V]); settings applied; DuckDB 1.5.6; LIMIT 50; 0.5 s timeout interrupts a 3-way cross join and the connection stays usable; write through `open_case_db` fails; built file 0444; `duckdb.connect` only in the two factories; 13 execution-path modules imported in fresh interpreters never load `build_db` (the check reports `True` for `gbya.data.normalise`) |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 
