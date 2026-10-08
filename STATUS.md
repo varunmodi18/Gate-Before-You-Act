@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M3 Verifier and Exp 1, on branch `m3-verifier` (from `m2-gate`). M2 accepted and pushed.
+- **Current milestone:** M3 Verifier and Exp 1 — **complete, at the checkpoint** (branch `m3-verifier`). Awaiting team review of the verifier prompt snapshots (T3.2).
 - **TA approval (Q-0):** approved 2026-10-08. M3 approved by the team on 2026-10-08.
-- **Next action:** T3.7 (reranker, retrieval cache, retrieval metrics), then the M3 checkpoint.
+- **Next action:** M3 checkpoint report to the team (T3.1–T3.7 done). Then M4 after the team's go-ahead.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -42,7 +42,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T3.4 Configuration completion | done | m3-verifier | A2–A6 added; ten configurations, nine of them in Exp 1 (A5 is Exp 2 only) |
 | T3.5 Exp 1 runner via worker | done | m3-verifier | Demo-set (hand-made fixture) Exp 1 completed through the worker with the live model; `/runs/{id}/verifier-eval` returns denominators by variant. `rerank`/A6 wait for T3.7 |
 | T3.6 Playground with C4, Experiments page | done | m3-verifier | Playground with live C4 (nine Exp 1 configurations, verifier panel, references, prompt viewer); Experiments list/create and run page (SSE progress, provenance, Exp 1V tables). J4 complete, J6 partial |
-| T3.7 Reranker, retrieval cache, metrics | doing | m3-verifier | Reranker, read-through retrieval cache, metrics and `/runs/{id}/retrieval` done and tested; live demo run with A4/G3/A6 next |
+| T3.7 Reranker, retrieval cache, metrics | done | m3-verifier | Demo-set Exp 1 ran A4, G3 and A6 (all four verifier variants) through the worker with the live model and the real reranker; the run page shows the three retrieval levels |
 | T4.1 Case models and files | todo | | |
 | T4.2 DB patcher | todo | | |
 | T4.3 Variant and prefix builders | todo | | |
@@ -301,6 +301,8 @@ See the latest entry per task.
 | 2026-10-08 | T3.7 | `pytest tests/unit/test_retrieval_metrics.py` (+ runner/Playground integration) | 10 passed: **20 gold rules, 5 retrieved and relevant → Recall@5 = 0.25, Hit@5 = 1** (nDCG@5 = 1, MRR@20 = 1); hand-computed nDCG/MRR incl. a gold rule at rank 21 (MRR@20 = 0) and 16; report excludes empty gold sets and counts them, mean \|G\|, ceiling, ATT&CK top-1 (parent counts); cache stores the full rankings and serves them again; **every metric recomputed from stored rankings equals the live value**; stale index or other reranker never served; a cache hit never loads the reranker, a different loaded reranker is refused; **the reranker process sees no GPU** (fresh interpreter: `torch.cuda.is_available()` False, 0 devices, model on `cpu`, LSASS document scored above an unrelated one); `/runs/{id}/retrieval` on the fixture run |
 | 2026-10-08 | T3.7 | Reranker cost (i7-13620H, 10 torch threads, CPU only; demo cases) | model load 3.4 s; **≈ 7.0 s per case** to rerank 30 pairs (Sigma 20 + ATT&CK 10; 6.56–7.39 s over 6 timings); BM25 alone 0.024 s per case; **peak RSS ≈ 2.0 GB** (1,989–2,038 MB) while reranking; GPU: only vLLM (7,224 MiB) in `nvidia-smi` |
 | 2026-10-08 | T3.7 | `make lint`, `make test`, `make e2e` | lint clean (mypy 88 files); pytest 500 passed (2 gpu deselected; the no-GPU reranker test ran with the real model); vitest 11 passed; Playwright 14 passed |
+| 2026-10-08 | T3.7 | `make retrieval-cache` on a fresh `data/demo/app.db` | bm25 0.024 s/case; bm25_rerank 7.46 s/case mean (first case 10.25 s incl. model load); peak RSS 1,992 MB |
+| 2026-10-08 | T3.7 | Live demo-set Exp 1, full `experiments/exp1.yaml` (worker, vLLM, real index and reranker, run 1, purpose `fixture`, git `9722fac`, clean tree) | `completed`: 93/93 units, 0 errors in 20 s (36 verifier calls incl. `rerank`, 12 code-only, 45 composed decisions; 3,225 prompt tok/s, 155 output tok/s). Verifier n = 9 for each of standard / rationale / none / rerank, all outputs parsed; G3, A3, A4, A6 reach C4 on 6 of 9 packages, A2 on 9 of 9. `/runs/1/retrieval` (reranker `2cfc18c`, nothing missing): bm25 Recall@5 0.023, Hit@5 0.333, nDCG@5 0.333, MRR@20 0.333, ATT&CK top-1 0.333; bm25_rerank Recall@5 0.019, Hit@5 0.333, nDCG@5 0.277, MRR@20 0.333, ATT&CK top-1 0.333; mean \|G\| 71 (Recall@5 ceiling 0.070). Run page rendered with headless Chromium shows the three levels. **Three hand-made cases with default labels (two of them cite DC logon records under an LSASS gold technique): a plumbing check, not a retrieval or verifier result** |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 
