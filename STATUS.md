@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** T2.4 (typed-argument rule). Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
+- **Next action:** waiting for the team's sign-off of `policy/rules.yaml` and `policy/evidence_requirements.yaml` (T2.2). Then T2.5 → T2.7 and the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -32,7 +32,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T2.1 Trusted-context model | done | m2-gate | `gbya/context/{models,store}.py`: §F.3 schema with validators, canonical-JSON SHA-256 `context_hash`, `get_context(section)` |
 | T2.2 Policy engine and rules | blocked | m2-gate | Engine done and tested (`gbya/policy/engine.py`). **Waiting for team sign-off** of the DRAFT `policy/rules.yaml` (plan §D.8 example P1–P8 verbatim) and `policy/evidence_requirements.yaml` (plan wording for isolate_host, same pattern for the others). T2.5 cannot start before this |
 | T2.3 Tool layer and registry | done | m2-gate | `gbya/tools/{registry,provenance,render,escalation,mock_actions,state,names}.py`, `gbya/llm/tokens.py`. AST-based retrieved-record registry, untrusted rendering with the model tokenizer, 9 tool schemas, unknown/delete counting |
-| T2.4 Typed-argument rule | todo | | |
+| T2.4 Typed-argument rule | done | m2-gate | `gbya/tools/typed.py` (validators), `gbya/tools/provenance.py` (typed canonical fields), `gbya/gate/checks.py` (`check_c1`, `check_schema`), `gbya/gate/types.py` (`CheckResult`) |
 | T2.5 Gate checks and orchestrator | todo | | |
 | T2.6 Exp 1 core (code-only) | todo | | |
 | T2.7 Gate Playground page | todo | | |
@@ -148,6 +148,9 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Query rendering: JSON per row, `record_id` first, duplicate column names suffixed `#2`; fields > 200 chars shortened with the full length noted; rows that do not fit 1,500 tokens are dropped and reported in a note **outside** the untrusted block | §D.5.1 | §D.5.1 |
 | 2026-10-08 | Escalation notes are flagged when any 30-character run occurs verbatim in untrusted text shown earlier in the episode | §D.5 "flagged when it contains a verbatim log substring of 30 or more characters" | §D.5, A-5 |
 | 2026-10-08 | Mock actions go through a `Recorder` (in-memory now); the database recorder writing `tool_calls` arrives with the episode loop (T5.2) | No episodes exist before M5 | §D.5.2a |
+| 2026-10-08 | Typed identifiers are part of the argument schemas (a bad value fails as `C1_SCHEMA`): hostname and account patterns from T2.4; PID a strict positive integer (`"4100"` and `true` rejected); IP parsed and stored in canonical form; SHA-256 64 hex. Accounts therefore never carry `DOMAIN\\` | T2.4 instructions | §D.6.2 C1 |
+| 2026-10-08 | C1 order: allow-list → schema → host/account in trusted context → internal IP → protected IP → provenance of PID, IP, hash. `request_approval` gets the same checks on its embedded action; `ask_analyst`, `draft_report` and read-only tools get the schema check only; G0 uses `check_schema` only (A-7) | §D.6.2, §D.6.2a; T2.5 adds C2–C6 and the orchestrator | §D.6.2 |
+| 2026-10-08 | C1's provenance accepts a PID in any typed PID field of a retrieved record (incl. `process_access.target_pid`); whether it has the actor role is C3's check (T2.5) | §D.5.2 "This is the C1 existence check" | §D.5.2, §D.6.2 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -207,6 +210,9 @@ See the latest entry per task.
 | 2026-10-08 | T2.2 | `pytest tests/unit/test_policy.py` | 27 passed: every rule P1–P8 of the draft `rules.yaml` and the default (incl. unknown host/account and the dependent-less service account), first-match order, `action.*` + `nonempty`, 7 rule-file validation errors, C5 refuses non-state-changing tools, evidence requirements cover exactly the 4 tools |
 | 2026-10-08 | T2.3 | `pytest tests/unit/test_tools.py` | 46 passed on the mini window: 11 projections that register nothing (literal, expression, cast/coalesce, count, max, DISTINCT, GROUP BY, CTE, derived table, UNION with a literal branch); 12 that register exactly the expected ids (direct, `*`, `FROM`-only, alias, extra literal column, WHERE, window function, IN-subquery, UNION ALL, join of two tables, join with one direct column, LIMIT); accumulation; only rows shown are registered under the token cap; shortened-field rows registered; ids absent from `raw_events` not registered; shape mismatch safe; wrapping, `record_id` first, duplicate keys; rejected SQL; real tokenizer; 9 tools by class; no free text on state-changing tools; 6 argument errors; unknown/delete counting; trusted `get_context`; note flagging; report never sent; mock action recorded |
 | 2026-10-08 | T2.3 | Mutation check | Registry replaced by "every column is a direct record_id": 14 tests fail (all register-nothing cases among them); restored, 46 pass |
+| 2026-10-08 | T2.4 | `pytest tests/unit/test_c1_typed_args.py` | 31 passed: `SELECT record_id, 99999 AS pid …` then `kill_process(H, 99999)` → `C1_UNPROVENANCED_VALUE`; after `SELECT 5 AS record_id` nothing is usable; PID from a registered record passes (incl. target PID); PID of an unretrieved record fails; planted log instruction cannot select a tool; IP rules (unprovenanced, provenanced dst and src, internal, protected); 19 target/type cases; allow-list; `request_approval` embedded action checked (OK, fake PID, unknown host, schema); schema-only for other tools and G0; `CheckResult` shape; SHA-256 and IPv6 canonical provenance |
+| 2026-10-08 | T2.4 | Mutation check | Provenance replaced by "always yes": 6 tests fail (incl. the 99999 fixture); restored, 31 pass |
+| 2026-10-08 | M2 so far | `make lint`, `make test` | lint clean (mypy: 62 files); pytest 336 passed (1 gpu deselected); vitest 8 passed |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

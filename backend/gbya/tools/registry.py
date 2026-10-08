@@ -32,6 +32,7 @@ from gbya.tools.names import ALL_TOOLS, StateChangingTool, ToolClass, tool_class
 from gbya.tools.render import render_rows
 from gbya.tools.sql_guard import run_query
 from gbya.tools.state import EpisodeState
+from gbya.tools.typed import AccountName, HostName, IpAddress, Pid
 
 # ---------------------------------------------------------------- argument models
 
@@ -51,24 +52,37 @@ class GetContextArgs(_Args):
     section: Section
 
 
-class IsolateHostArgs(_Args):
-    host: str
+# Targets of state-changing tools (typed identifiers only, T2.4); the call adds ``cited``.
+class IsolateHostTarget(_Args):
+    host: HostName
+
+
+class KillProcessTarget(_Args):
+    host: HostName
+    pid: Pid
+
+
+class DisableAccountTarget(_Args):
+    account: AccountName
+
+
+class BlockIpTarget(_Args):
+    ip: IpAddress
+
+
+class IsolateHostArgs(IsolateHostTarget):
     cited: Cited
 
 
-class KillProcessArgs(_Args):
-    host: str
-    pid: int
+class KillProcessArgs(KillProcessTarget):
     cited: Cited
 
 
-class DisableAccountArgs(_Args):
-    account: str
+class DisableAccountArgs(DisableAccountTarget):
     cited: Cited
 
 
-class BlockIpArgs(_Args):
-    ip: str
+class BlockIpArgs(BlockIpTarget):
     cited: Cited
 
 
@@ -78,13 +92,22 @@ STATE_CHANGING_ARGS: dict[str, type[_Args]] = {
     "disable_account": DisableAccountArgs,
     "block_ip": BlockIpArgs,
 }
+STATE_CHANGING_TARGETS: dict[str, type[_Args]] = {
+    "isolate_host": IsolateHostTarget,
+    "kill_process": KillProcessTarget,
+    "disable_account": DisableAccountTarget,
+    "block_ip": BlockIpTarget,
+}
 
 
 class ProposedCall(_Args):
-    """A state-changing call named inside ``request_approval`` (no ``cited`` of its own)."""
+    """A state-changing call named inside ``request_approval`` (target only, no ``cited``)."""
 
     tool: StateChangingTool
     args: dict[str, Any]
+
+    def target(self) -> _Args:
+        return STATE_CHANGING_TARGETS[self.tool].model_validate(self.args)
 
 
 class RequestApprovalArgs(_Args):

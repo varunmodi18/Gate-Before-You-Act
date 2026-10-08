@@ -149,3 +149,70 @@ def register(
     """Record ids to add to ``EpisodeState.retrieved`` for one query result."""
     candidates = candidate_ids(direct_record_id_positions(tree), columns, rows_shown)
     return confirm_in_raw_events(con, candidates)
+
+
+# ---------------------------------------------------------------- typed canonical fields (T2.4)
+
+# §D.5.2: an identifier argument is provenanced only if it equals one of these typed fields of a
+# record in the episode's retrieved-record registry, re-read from the canonical database.
+PID_FIELDS: dict[str, tuple[str, ...]] = {
+    "process_create": ("pid",),
+    "process_access": ("source_pid", "target_pid"),
+    "network": ("pid",),
+    "registry": ("pid",),
+    "file": ("pid",),
+}
+IP_FIELDS: dict[str, tuple[str, ...]] = {
+    "network": ("dst_ip", "src_ip"),
+    "logon": ("src_ip",),
+    "share_access": ("src_ip",),
+}
+
+
+def _canonical_values(
+    con: duckdb.DuckDBPyConnection, retrieved: set[int], fields: dict[str, tuple[str, ...]]
+) -> list[Any]:
+    if not retrieved:
+        return []
+    ids = sorted(retrieved)
+    placeholders = ", ".join("?" for _ in ids)
+    values: list[Any] = []
+    for table, cols in fields.items():
+        sel = ", ".join(f'"{c}"' for c in cols)
+        rows = con.execute(
+            f'SELECT {sel} FROM "{table}" WHERE record_id IN ({placeholders})', ids
+        ).fetchall()
+        values += [v for row in rows for v in row if v is not None]
+    return values
+
+
+def pid_provenanced(con: duckdb.DuckDBPyConnection, retrieved: set[int], pid: int) -> bool:
+    return any(v == pid for v in _canonical_values(con, retrieved, PID_FIELDS))
+
+
+def ip_provenanced(con: duckdb.DuckDBPyConnection, retrieved: set[int], ip: str) -> bool:
+    import ipaddress
+
+    want = ipaddress.ip_address(ip)
+    for v in _canonical_values(con, retrieved, IP_FIELDS):
+        try:
+            if ipaddress.ip_address(str(v).strip()) == want:
+                return True
+        except ValueError:
+            continue
+    return False
+
+
+def parse_hashes(value: str) -> set[str]:
+    """``SHA256=AB…,MD5=CD…,IMPHASH=…`` → lower-case hex values."""
+    out = set()
+    for part in value.split(","):
+        _, sep, digest = part.partition("=")
+        if sep and digest.strip():
+            out.add(digest.strip().lower())
+    return out
+
+
+def hash_provenanced(con: duckdb.DuckDBPyConnection, retrieved: set[int], digest: str) -> bool:
+    values = _canonical_values(con, retrieved, {"process_create": ("hashes",)})
+    return any(digest.lower() in parse_hashes(str(v)) for v in values)
