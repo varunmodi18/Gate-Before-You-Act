@@ -29,8 +29,18 @@ from gbya.experiments.runner import (
 )
 from gbya.experiments.runs import research_eligible
 from gbya.gate.config import load_configs
+from gbya.retrieval.gold import GoldMap
+from gbya.retrieval.metrics import RankedCase, retrieval_report
 from gbya.scoring.verifier_eval import CaseLabel, EvalRow, GateRow, verifier_report
-from gbya.store.models import Case, GateDecisionRow, Job, JobItem, Run, VerifierEval
+from gbya.store.models import (
+    Case,
+    GateDecisionRow,
+    Job,
+    JobItem,
+    RetrievalRanking,
+    Run,
+    VerifierEval,
+)
 
 router = APIRouter(prefix="/runs", tags=["runs"])
 TERMINAL = {"completed", "cancelled", "failed"}
@@ -219,3 +229,48 @@ def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]
     report = verifier_report(evals, gates, labels)
     return {"run_id": run_id, "purpose": run.purpose, "research_eligible": research_eligible(run),
             "replay": run.replay, "backend": run.backend, **report}  # fmt: skip
+
+
+@router.get("/{run_id}/retrieval")
+def retrieval(
+    run_id: int,
+    session: Annotated[Session, Depends(get_session)],
+    deps: Annotated[Deps, Depends(get_deps)],
+) -> dict[str, Any]:
+    """Retrieval metrics by mode and case variant, from the stored rankings of the run's cases
+    (§D.3): Recall@5, Hit@5, nDCG@5, MRR@20, ATT&CK top-1, mean |G|, exclusions."""
+    run = _run(session, run_id)
+    s = deps.settings
+    index_dir = s.resolve(s.data_dir) / "index"
+    if not (index_dir / "MANIFEST.json").is_file():
+        raise Unprocessable("No retrieval index", code="NO_INDEX", hint="make index")
+    index_sha = str(deps.index().manifest["content_sha256"])
+    gold = GoldMap.load(index_dir)
+    ranked, missing, rerankers = [], [], set()
+    for cid in run.config.get("case_ids", []):
+        case = session.get(Case, cid)
+        if case is None:
+            continue
+        labels = case.labels or {}
+        for mode in ("bm25", "bm25_rerank"):
+            row = session.scalars(select(RetrievalRanking).where(
+                RetrievalRanking.case_id == cid, RetrievalRanking.mode == mode,
+                RetrievalRanking.index_sha256 == index_sha,
+            ).order_by(RetrievalRanking.id.desc())).first()  # fmt: skip
+            if row is None:
+                missing.append({"case_id": cid, "mode": mode})
+                continue
+            if row.reranker:
+                rerankers.add(row.reranker)
+            ranked.append(RankedCase(
+                cid, case.variant, labels.get("technique_gold"), mode,
+                [h["doc_id"] for h in row.sigma_ranking],
+                row.attack_ranking[0]["doc_id"] if row.attack_ranking else None,
+            ))  # fmt: skip
+    return {
+        "run_id": run_id, "purpose": run.purpose, "research_eligible": research_eligible(run),
+        "index_sha256": index_sha, "rerankers": sorted(rerankers), "missing": missing,
+        "modes": retrieval_report(ranked, gold),
+        "note": "Technique tags are proxy relevance labels: technique-level retrieval, not "
+        "event-level relevance. Proportions.",
+    }  # fmt: skip

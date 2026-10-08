@@ -9,7 +9,7 @@ test('J4 (code-only): compare G1 and A1 on a wrong-target package', async ({ pag
   await expect(page.getByRole('option', { name: /hm:E3/ })).toBeAttached()
   await page.getByLabel('Case').selectOption('hm:E3')
   await expect(page.getByText(/citing \[19, 22\]/)).toBeVisible()
-  await expect(page.getByRole('checkbox', { name: /^A6/ })).toBeDisabled() // reranker: T3.7
+  await expect(page.getByRole('checkbox', { name: /^A6/ })).toBeDisabled() // no reranker in the e2e profile
   await page.getByRole('button', { name: 'Run gates' }).click()
 
   const table = page.getByRole('table', { name: /Gate decisions/ })

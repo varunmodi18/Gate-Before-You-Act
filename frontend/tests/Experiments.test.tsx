@@ -13,7 +13,7 @@ const SPEC = {
     code_only: ['G0', 'G1', 'G2', 'A1'],
     composed: ['G3', 'A2', 'A3', 'A4', 'A6'],
   },
-  unavailable: { rerank: 'needs the CPU reranker (T3.7)' },
+  unavailable: { rerank: 'needs the reranker model in models/bge-reranker-base' },
   variant_of: { G3: 'standard', A2: 'standard', A3: 'rationale', A4: 'none', A6: 'rerank' },
 }
 const progress = { run_id: 7, status: 'completed', done: 75, total: 75, errors: 0, running: 0,
@@ -67,6 +67,21 @@ const EVAL = {
   unlabelled_cases: [],
 }
 
+const summary = (recall: number) => ({ cases: 2, sigma_n: 2, excluded_empty_gold: 0,
+  recall_at_5: recall, hit_at_5: 1, ndcg_at_5: 0.9, mrr_at_20: 1, mean_gold_size: 71,
+  mean_recall_ceiling: 0.07, attack_n: 2, attack_top1: 1 }) // prettier-ignore
+const RETRIEVAL = {
+  run_id: 7,
+  index_sha256: 'x',
+  rerankers: ['BAAI/bge-reranker-base@2cfc18c'],
+  missing: [],
+  modes: {
+    bm25: { overall: summary(0.0423), by_case_variant: {} },
+    bm25_rerank: { overall: summary(0.0704), by_case_variant: {} },
+  },
+  note: 'Technique tags are proxy relevance labels.',
+}
+
 afterEach(() => {
   cleanup()
   vi.unstubAllGlobals()
@@ -87,6 +102,7 @@ describe('Experiments', () => {
         if (url.endsWith('/runs')) return new Response(JSON.stringify([]))
         if (url.endsWith('/runs/7')) return new Response(JSON.stringify(RUN))
         if (url.endsWith('/runs/7/verifier-eval')) return new Response(JSON.stringify(EVAL))
+        if (url.endsWith('/runs/7/retrieval')) return new Response(JSON.stringify(RETRIEVAL))
         return new Response('{}', { status: 404 })
       }),
     )
@@ -99,7 +115,7 @@ describe('Experiments', () => {
     expect(await screen.findByText('No runs yet.')).toBeInTheDocument()
     const rerank = await screen.findByRole('checkbox', { name: /rerank/ })
     expect(rerank).toBeDisabled()
-    expect(screen.getByText(/needs the CPU reranker/)).toBeInTheDocument()
+    expect(screen.getByText(/needs the reranker model/)).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('Purpose'), { target: { value: 'fixture' } })
     fireEvent.click(screen.getByRole('button', { name: 'Create and start' }))
     expect(await screen.findByRole('heading', { name: 'Run 7: Experiment 1' })).toBeInTheDocument()
@@ -119,5 +135,9 @@ describe('Experiments', () => {
     expect(within(diag).getAllByRole('row', { name: /standard/ })[0]).toHaveTextContent('9')
     const path = screen.getByRole('table', { name: /C4 invocation counts/ })
     expect(within(path).getByRole('row', { name: /G3/ })).toHaveTextContent('96')
+    const levels = await screen.findByRole('table', { name: /per retrieval level/ })
+    expect(within(levels).getByRole('row', { name: /No RAG \(A4\)/ })).toHaveTextContent('n/a')
+    expect(within(levels).getByRole('row', { name: /BM25 \(G3\)/ })).toHaveTextContent('0.042')
+    expect(within(levels).getByRole('row', { name: /rerank \(A6\)/ })).toHaveTextContent('0.070')
   })
 })

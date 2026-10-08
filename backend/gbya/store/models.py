@@ -16,6 +16,7 @@ from sqlalchemy import (
     DateTime,
     Float,
     ForeignKey,
+    Index,
     Integer,
     MetaData,
     String,
@@ -324,6 +325,7 @@ class RetrievalRanking(Base):
     __table_args__ = (
         CheckConstraint("case_id IS NOT NULL OR episode_id IS NOT NULL", name="owner"),
         CheckConstraint(_in("mode", RETRIEVAL_MODES), name="mode"),
+        Index("ix_retrieval_rankings_lookup", "case_id", "mode", "query_hash", "index_sha256"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -333,4 +335,6 @@ class RetrievalRanking(Base):
     query_hash: Mapped[str] = mapped_column(String)
     sigma_ranking: Mapped[list[Any]] = mapped_column(default=list)  # <=20, with scores
     attack_ranking: Mapped[list[Any]] = mapped_column(default=list)  # <=10, with scores
+    index_sha256: Mapped[str | None] = mapped_column(String)  # index content hash (0004)
+    reranker: Mapped[str | None] = mapped_column(String)  # repo@revision for bm25_rerank (0004)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

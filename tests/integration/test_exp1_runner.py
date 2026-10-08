@@ -43,7 +43,7 @@ from gbya.policy.engine import PolicyEngine, PolicyFile
 from gbya.retrieval import index as ix
 from gbya.retrieval import sources
 from gbya.store import db
-from gbya.store.models import GateDecisionRow, Job, JobItem, Run, VerifierEval
+from gbya.store.models import GateDecisionRow, Job, JobItem, RetrievalRanking, Run, VerifierEval
 
 MINI = Path(__file__).resolve().parents[1] / "fixtures" / "mini_window"
 FIX = Path(__file__).resolve().parents[1] / "fixtures" / "retrieval"
@@ -77,7 +77,8 @@ def setup_env(tmp: Path, **settings: Any) -> Settings:
     ix.build(sources.Sources(FIX / "sigma", "f" * 40, FIX / "attack/enterprise-attack-test.json",
                              "0" * 64, FIX / "attack/LICENSE.txt"), tmp / "index")  # fmt: skip
     return Settings(app_db_path=app_db, data_dir=tmp, frontend_dist=tmp / "none", env="test",
-                    llm_backend="fake", worker_concurrency=2, **settings)  # fmt: skip
+                    llm_backend="fake", worker_concurrency=2, reranker_dir=tmp / "no-reranker",
+                    **settings)  # fmt: skip
 
 
 @pytest.fixture(scope="module")
@@ -223,7 +224,7 @@ def test_runs_api_create_cancel_resume_and_progress(tmp_path: Path) -> None:
     client = TestClient(create_app(settings))
     spec = client.get("/api/v1/runs/exp1-spec").json()
     assert spec["spec"]["verifier_variants"] == ["standard", "rationale", "none", "rerank"]
-    assert spec["unavailable"] == {"rerank": "needs the CPU reranker (T3.7)"}
+    assert set(spec["unavailable"]) == {"rerank"} and "reranker" in spec["unavailable"]["rerank"]
     assert spec["variant_of"] == {"G3": "standard", "A2": "standard", "A3": "rationale",
                                   "A4": "none", "A6": "rerank"}  # fmt: skip
     r = client.post("/api/v1/runs", json={"purpose": "fixture", "case_ids": CASES, "config": SPEC})
@@ -350,3 +351,18 @@ def test_worker_kill_and_resume_has_no_duplicates(tmp_path: Path) -> None:
         f"\nkilled after {at_kill} done units; units retried after the kill: "
         f"{sum(1 for a in attempts if a > 1)}"
     )
+
+
+def test_retrieval_metrics_from_the_runs_stored_rankings(env: tuple[Settings, Any, int]) -> None:
+    settings, factory, run_id = env
+    with db.session_scope(factory) as s:  # the run filled the cache: one bm25 ranking per case
+        rows = s.scalars(select(RetrievalRanking)).all()
+        assert sorted((r.case_id, r.mode) for r in rows) == [(c, "bm25") for c in CASES]
+    body = TestClient(create_app(settings)).get(f"/api/v1/runs/{run_id}/retrieval").json()
+    bm = body["modes"]["bm25"]["overall"]
+    assert body["missing"] == [{"case_id": c, "mode": "bm25_rerank"} for c in CASES]
+    assert bm["cases"] == 3 and bm["sigma_n"] == 3 and bm["mean_gold_size"] == 1  # fixture: 1 rule
+    assert (
+        bm["attack_n"] == 3 and 0 <= bm["recall_at_5"] <= 1 and bm["recall_at_5"] == bm["hit_at_5"]
+    )
+    assert set(body["modes"]["bm25"]["by_case_variant"]) == {"E1", "E3", "R_neg"}

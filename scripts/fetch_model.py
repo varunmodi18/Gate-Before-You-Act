@@ -67,7 +67,10 @@ def main() -> int:
         if entry.get("type") != "file":
             continue
         name = entry["path"]
-        if args.include and not any(s in name for s in args.include) and name.endswith(".gguf"):
+        # With --include, only matching files; without it, everything except .gguf files.
+        if args.include and not any(s in name for s in args.include):
+            continue
+        if not args.include and name.endswith(".gguf"):
             continue
         lfs = entry.get("lfs") or {}
         size = int(lfs.get("size") or entry.get("size") or 0)

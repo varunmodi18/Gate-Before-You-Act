@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: index retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -44,6 +44,9 @@ data: data-fetch catalogue normalise dedup  ## Fetch OTRF, catalogue, normalise,
 
 index:  ## Fetch SigmaHQ (r2026-07-01) + ATT&CK 19.2 at pinned versions, check licences, build data/index
 	$(UV) run python -m gbya.retrieval.index
+
+retrieval-cache:  ## Store bm25 and bm25_rerank rankings for every case of app.db (CPU reranker; Exp 1 reads them)
+	$(UV) run python -m gbya.retrieval.cache
 
 policy-table:  ## Regenerate docs/policy_table.md from policy/rules.yaml with the engine
 	$(UV) run python -m gbya.policy.table

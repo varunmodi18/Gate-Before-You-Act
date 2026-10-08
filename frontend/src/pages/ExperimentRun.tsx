@@ -8,6 +8,7 @@ import {
   apiPost,
   type Accuracy,
   type Progress,
+  type RetrievalOut,
   type RunItem,
   type RunOut,
   type VerifierEvalOut,
@@ -50,6 +51,12 @@ export function ExperimentRun() {
     queryKey: ['verifier-eval', runId, progress?.status],
     queryFn: () => apiGet<VerifierEvalOut>(`/runs/${runId}/verifier-eval`),
     enabled: finished,
+  })
+  const retrievalQ = useQuery({
+    queryKey: ['retrieval', runId, progress?.status],
+    queryFn: () => apiGet<RetrievalOut>(`/runs/${runId}/retrieval`),
+    enabled: finished,
+    retry: false,
   })
   const errors = useQuery({
     queryKey: ['run-errors', runId, progress?.errors],
@@ -136,6 +143,9 @@ export function ExperimentRun() {
         </>
       )}
       {evalQ.data && <VerifierEval data={evalQ.data} />}
+      {evalQ.data && retrievalQ.data && (
+        <RetrievalLevels verifier={evalQ.data} retrieval={retrievalQ.data} />
+      )}
     </section>
   )
 }
@@ -216,6 +226,69 @@ function VerifierEval({ data }: { data: VerifierEvalOut }) {
               <AccuracyCells a={g.conditional} />
             </tr>
           ))}
+        </tbody>
+      </table>
+    </>
+  )
+}
+
+// The three retrieval levels of the RAG ablation (§D.3): no reference (A4), BM25 (G3), BM25 +
+// cross-encoder rerank (A6) — retrieval quality and the verifier accuracy it leads to.
+const LEVELS = [
+  { label: 'No RAG (A4)', mode: null, variant: 'none' },
+  { label: 'BM25 (G3)', mode: 'bm25', variant: 'standard' },
+  { label: 'BM25 + rerank (A6)', mode: 'bm25_rerank', variant: 'rerank' },
+] as const
+
+function RetrievalLevels({
+  verifier,
+  retrieval,
+}: {
+  verifier: VerifierEvalOut
+  retrieval: RetrievalOut
+}) {
+  const th = 'border-b border-gray-400 px-2 py-1 text-left'
+  const heads = ['Level', 'Recall@5', 'Hit@5', 'nDCG@5', 'MRR@20', 'ATT&CK top-1', 'Mean |G|',
+    'Excluded', 'Verifier n', 'Verifier exact', 'Verifier binary'] // prettier-ignore
+  return (
+    <>
+      <h2 className="mt-4 mb-1 text-lg font-semibold">Retrieval levels (RAG ablation)</h2>
+      <p className="mb-1 text-xs text-gray-700">{retrieval.note}</p>
+      <table className="min-w-full border-collapse text-sm">
+        <caption className="sr-only">
+          Retrieval metrics and verifier accuracy per retrieval level
+        </caption>
+        <thead>
+          <tr>
+            {heads.map((h) => (
+              <th key={h} scope="col" className={th}>
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {LEVELS.map((lv) => {
+            const m = lv.mode ? retrieval.modes[lv.mode]?.overall : undefined
+            const v = verifier.diagnostic[lv.variant]
+            return (
+              <tr key={lv.label} className="border-b border-gray-200">
+                <th scope="row" className="px-2 py-1 text-left">
+                  {lv.label}
+                </th>
+                <td className="px-2 py-1">{m ? pct(m.recall_at_5) : 'n/a'}</td>
+                <td className="px-2 py-1">{m ? pct(m.hit_at_5) : 'n/a'}</td>
+                <td className="px-2 py-1">{m ? pct(m.ndcg_at_5) : 'n/a'}</td>
+                <td className="px-2 py-1">{m ? pct(m.mrr_at_20) : 'n/a'}</td>
+                <td className="px-2 py-1">{m ? pct(m.attack_top1) : 'n/a'}</td>
+                <td className="px-2 py-1">{m?.mean_gold_size?.toFixed(1) ?? 'n/a'}</td>
+                <td className="px-2 py-1">{m ? m.excluded_empty_gold : 'n/a'}</td>
+                <td className="px-2 py-1">{v ? v.n : '—'}</td>
+                <td className="px-2 py-1">{v ? pct(v.exact_accuracy) : '—'}</td>
+                <td className="px-2 py-1">{v ? pct(v.binary_accuracy) : '—'}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </>

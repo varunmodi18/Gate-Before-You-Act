@@ -12,10 +12,10 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 
 from gbya.api.deps import get_deps, get_session, get_settings
 from gbya.config import Settings
@@ -159,7 +159,9 @@ def run_gate(
     settings: Annotated[Settings, Depends(get_settings)],
     counter: Annotated[TokenCounter, Depends(get_counter)],
     deps: Annotated[Deps, Depends(get_deps)],
+    request: Request,
 ) -> GateResponse:
+    factory: sessionmaker[Session] = request.app.state.sessionmaker
     configs = _exp1_configs(deps)
     unknown = [s for s in body.systems if s not in configs]
     if unknown:
@@ -181,7 +183,9 @@ def run_gate(
     decisions = []
     for sid in dict.fromkeys(body.systems):
         cfg = configs[sid]
-        verifier = deps.verifier(cfg.verifier_variant) if cfg.verifier_variant else None
+        verifier = None
+        if cfg.verifier_variant:
+            verifier = deps.verifier(cfg.verifier_variant, case.case_id, factory)
         d, ms = decide(case, Gate(cfg, deps.policy, verifier), counter)
         correct = None
         if case.expected in ("admit", "reject"):

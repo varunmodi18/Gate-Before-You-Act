@@ -21,7 +21,7 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -37,6 +37,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
 
 from gbya.config import REPO_ROOT, Settings
+from gbya.data.connection import open_case_db
 from gbya.errors import NotFound, Unprocessable
 from gbya.experiments.exp1 import (
     Exp1Case,
@@ -50,6 +51,7 @@ from gbya.experiments.exp1 import (
 )
 from gbya.experiments.runs import Purpose, create_run
 from gbya.gate.config import GateConfig, load_configs
+from gbya.gate.evidence import read_cited
 from gbya.gate.gate import Gate
 from gbya.gate.verifier import VARIANT_MODE, LLMVerifier, Variant, live_retriever
 from gbya.llm.client import LLMClient
@@ -57,8 +59,11 @@ from gbya.llm.factory import model_provenance
 from gbya.llm.tokens import TokenCounter
 from gbya.logging import get_logger
 from gbya.policy.engine import PolicyEngine, load_evidence_requirements
+from gbya.retrieval.cache import RetrievalCache, reranker_name
 from gbya.retrieval.index import Reranker, RetrievalIndex
 from gbya.retrieval.index import load as load_index
+from gbya.retrieval.query import build_query
+from gbya.retrieval.rerank import RERANKER_ID, unavailable_reason
 from gbya.store.db import session_scope
 from gbya.store.models import Case, Job, JobItem, Run, VerifierEval, utcnow
 
@@ -127,8 +132,9 @@ class Deps:
             REPO_ROOT / "policy" / "evidence_requirements.yaml"
         )
     )
-    reranker: Reranker | None = None  # the CPU cross-encoder (T3.7)
+    reranker: Reranker | None = None  # injected, or loaded on first use (CPU cross-encoder)
     _index: RetrievalIndex | None = None
+    _caches: dict[int, RetrievalCache] = field(default_factory=dict)
     _lock: Lock = field(default_factory=Lock)
 
     def index(self) -> RetrievalIndex:
@@ -138,11 +144,64 @@ class Deps:
                 self._index = load_index(s.resolve(s.data_dir) / "index")
             return self._index
 
-    def verifier(self, variant: Variant) -> LLMVerifier:
+    def get_reranker(self) -> Reranker:
+        """The reranker, loaded once; raises ``RerankerUnavailable`` (never a bm25 fallback)."""
+        with self._lock:
+            if self.reranker is None:
+                from gbya.retrieval.rerank import load_reranker
+
+                s = self.settings
+                self.reranker = load_reranker(s.resolve(s.reranker_dir))
+            return self.reranker
+
+    def reranker_name(self) -> str | None:
+        return reranker_name(self.reranker)
+
+    def cache(self, factory: sessionmaker[Session]) -> RetrievalCache:
+        with self._lock:
+            key = id(factory)
+            if key not in self._caches:
+                rid = (
+                    reranker_name(self.reranker) or RERANKER_ID
+                )  # the pinned model, if not injected
+                self._caches[key] = RetrievalCache(
+                    factory, self.index_unlocked(), self.get_reranker, reranker_id=rid
+                )
+            return self._caches[key]
+
+    def index_unlocked(self) -> RetrievalIndex:
+        if self._index is None:
+            s = self.settings
+            self._index = load_index(s.resolve(s.data_dir) / "index")
+        return self._index
+
+    def verifier(
+        self, variant: Variant, case_id: str | None = None,
+        factory: sessionmaker[Session] | None = None,
+    ) -> LLMVerifier:  # fmt: skip
+        """The verifier for ``variant``. With a case and a session factory, retrieval goes
+        through the retrieval cache (Exp 1, Playground); otherwise it is live."""
         if VARIANT_MODE[variant] == "none":
             return LLMVerifier(self.client, variant, self.requirements, None)
-        return LLMVerifier(self.client, variant, self.requirements,
-                           live_retriever(self.index(), self.reranker))  # fmt: skip
+        if case_id is not None and factory is not None:
+            retriever = self.cache(factory).retriever(case_id)
+        else:
+            mode = VARIANT_MODE[variant]
+            rr = self.get_reranker() if mode == "bm25_rerank" else None
+            retriever = live_retriever(self.index(), rr)
+        return LLMVerifier(self.client, variant, self.requirements, retriever)
+
+
+def case_query(case: Exp1Case, requirements: Mapping[str, str]) -> str:
+    """The retrieval query of a case's package, exactly as C4 builds it (§D.3)."""
+    con = open_case_db(case.db_path)
+    try:
+        cited = list(case.package.cited)
+        by_id = read_cited(con, cited)
+        records = [by_id[i] for i in dict.fromkeys(cited) if i in by_id]
+        return build_query(case.package.tool, records, requirements)
+    finally:
+        con.close()
 
 
 def variant_availability(deps: Deps) -> dict[str, str | None]:
@@ -155,7 +214,7 @@ def variant_availability(deps: Deps) -> dict[str, str | None]:
         if mode != "none" and not has_index:
             out[variant] = "needs the retrieval index (make index)"
         elif mode == "bm25_rerank" and deps.reranker is None:
-            out[variant] = "needs the CPU reranker (T3.7)"
+            out[variant] = unavailable_reason(s.resolve(s.reranker_dir))
         else:
             out[variant] = None
     return out
@@ -298,7 +357,7 @@ def run_item(
         case = cases.get(item.case_id)
         if item.system.startswith(V_PREFIX):
             variant: Variant = item.system[len(V_PREFIX) :]  # type: ignore[assignment]
-            call = judge(case, deps.verifier(variant), deps.counter)
+            call = judge(case, deps.verifier(variant, case.case_id, factory), deps.counter)
             rows: list[Any] = [eval_row(run_id, case.case_id, item.run_idx, call)]
         else:
             config = deps.configs[item.system]

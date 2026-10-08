@@ -306,3 +306,29 @@ export interface RunItem {
   attempts: number
   error: string | null
 }
+
+export interface RetrievalSummary {
+  cases: number
+  sigma_n: number
+  excluded_empty_gold: number
+  recall_at_5: number | null
+  hit_at_5: number | null
+  ndcg_at_5: number | null
+  mrr_at_20: number | null
+  mean_gold_size: number | null
+  mean_recall_ceiling: number | null
+  attack_n: number
+  attack_top1: number | null
+}
+
+export interface RetrievalOut {
+  run_id: number
+  index_sha256: string
+  rerankers: string[]
+  missing: { case_id: string; mode: string }[]
+  modes: Record<
+    string,
+    { overall: RetrievalSummary; by_case_variant: Record<string, RetrievalSummary> }
+  >
+  note: string
+}

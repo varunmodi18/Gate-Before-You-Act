@@ -41,7 +41,12 @@ def make_client(tmp: Path, *, with_index: bool) -> TestClient:
     if with_index:
         ix.build(sources.Sources(FIX / "sigma", "f" * 40, FIX / "attack/enterprise-attack-test.json",
                                  "0" * 64, FIX / "attack/LICENSE.txt"), tmp / "index")  # fmt: skip
-    settings = Settings(app_db_path=app_db, data_dir=tmp, frontend_dist=tmp / "none")
+    settings = Settings(
+        app_db_path=app_db,
+        data_dir=tmp,
+        frontend_dist=tmp / "none",
+        reranker_dir=tmp / "no-reranker",
+    )
     app = create_app(settings)
     app.dependency_overrides[get_counter] = ApproxCounter
     fake = FakeLLMClient([FakeRule([SUPPORTS])])
@@ -128,7 +133,8 @@ def test_errors_use_the_envelope(client: TestClient, payload: dict, status: int,
 def test_c4_systems_available_with_an_index_except_rerank(c4_client: TestClient) -> None:
     systems = {s["id"]: s for s in c4_client.get("/api/v1/playground/systems").json()}
     assert {k for k, v in systems.items() if not v["available"]} == {"A6"}
-    assert systems["A6"]["reason"] == "needs the CPU reranker (T3.7)"
+    reason = systems["A6"]["reason"]  # libraries or model missing, depending on the machine
+    assert reason.startswith("needs the") and "reranker" in reason
 
 
 def test_g3_runs_c4_and_returns_the_verifier_panel_data(c4_client: TestClient) -> None:

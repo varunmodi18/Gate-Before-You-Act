@@ -136,7 +136,7 @@ class RetrievalIndex:
             a_rank = [Hit(d.doc_id, r, s) for r, (d, s) in enumerate(attack, 1)]
         else:
             if reranker is None:
-                raise RerankerUnavailable("bm25_rerank needs the CPU reranker (T3.7)")
+                raise RerankerUnavailable("bm25_rerank needs the CPU reranker")
             s_rank, a_rank = _rerank(query, sigma, reranker), _rerank(query, attack, reranker)
         warnings = [f"no {name} document matches the query"
                     for name, r in (("Sigma", s_rank), ("ATT&CK", a_rank)) if not r]  # fmt: skip
