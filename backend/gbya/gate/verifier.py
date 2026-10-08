@@ -21,19 +21,28 @@ state: none of them is an input of ``build_prompt``.
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping, Sequence
+import time
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
+
+from pydantic import ValidationError
 
 from gbya.context.models import ChangeTicket, TrustedContext
-from gbya.errors import GbyaError
-from gbya.gate.evidence import OMITTED_FIELDS, RenderedEvidence
-from gbya.gate.types import Claim
+from gbya.errors import GbyaError, ModelOutputInvalid
+from gbya.gate.evidence import OMITTED_FIELDS, CitedRecord, RenderedEvidence
+from gbya.gate.types import Claim, VerifierCall, VerifierOutput
+from gbya.llm.client import LLMClient
 from gbya.llm.schemas import JsonSchema, Message, prompt_hash
 from gbya.llm.tokens import TokenCounter
 from gbya.retrieval.corpus import Doc
+from gbya.retrieval.index import Reranker, Retrieval, RetrievalIndex
+from gbya.retrieval.query import build_query
+
+if TYPE_CHECKING:
+    from gbya.gate.checks import GateEnv
 
 Variant = Literal["standard", "rationale", "none", "rerank"]
 VARIANT_MODE: dict[str, Literal["none", "bm25", "bm25_rerank"]] = {
@@ -262,3 +271,117 @@ def build_prompt(
         "prompt_hash": phash,
     }
     return VerifierPrompt(variant, messages, blocks, manifest, phash)
+
+
+# ---- the LLM verifier (T3.3) -------------------------------------------------------------------
+
+# A retriever maps (query, mode) to the retrieval and the documents shown (Sigma top-5, then the
+# ATT&CK top-1). Live: ``live_retriever``; Exp 1 reads the retrieval cache instead (T3.7).
+Retriever = Callable[[str, Literal["bm25", "bm25_rerank"]], tuple[Retrieval, list[Doc]]]
+
+
+def shown_docs(index: RetrievalIndex, retrieval: Retrieval) -> list[Doc]:
+    docs = [index.doc(h.doc_id) for h in retrieval.sigma_top5]
+    if retrieval.attack_top1 is not None:
+        docs.append(index.doc(retrieval.attack_top1.doc_id))
+    return docs
+
+
+def live_retriever(index: RetrievalIndex, reranker: Reranker | None = None) -> Retriever:
+    def retrieve(query: str, mode: Literal["bm25", "bm25_rerank"]) -> tuple[Retrieval, list[Doc]]:
+        r = index.retrieve(query, mode, reranker=reranker)
+        return r, shown_docs(index, r)
+
+    return retrieve
+
+
+def retrieval_record(r: Retrieval) -> dict[str, Any]:
+    return {"mode": r.mode, "query_hash": r.query_hash, "warnings": r.warnings,
+            "sigma_ranking": [h.to_json() for h in r.sigma_ranking],
+            "attack_ranking": [h.to_json() for h in r.attack_ranking]}  # fmt: skip
+
+
+@dataclass
+class LLMVerifier:
+    """C4 through ``LLMClient.chat_json``: temperature 0, ``max_tokens`` 200, schema-constrained.
+
+    An output that does not parse or does not match the schema is a ``VerifierCall`` without
+    output, which the gate maps to ``C4_PARSE_ERROR`` (a rejection). Retrieval or budget errors
+    (``RerankerUnavailable``, ``PromptBudgetError``) propagate: the item is an error, never a
+    silent downgrade."""
+
+    client: LLMClient
+    variant: Variant
+    requirements: Mapping[str, str]
+    retriever: Retriever | None = None  # not needed for the ``none`` variant
+    counter: TokenCounter | None = None  # default: the gate environment's counter
+
+    def __post_init__(self) -> None:
+        if VARIANT_MODE[self.variant] != "none" and self.retriever is None:
+            raise ValueError(f"verifier variant {self.variant} needs a retriever")
+
+    def prompt(
+        self,
+        tool: str,
+        args: Mapping[str, Any],
+        records: list[CitedRecord],
+        evidence: RenderedEvidence,
+        ctx: TrustedContext,
+        counter: TokenCounter,
+        claim: Claim,
+    ) -> tuple[VerifierPrompt, Retrieval | None]:
+        mode = VARIANT_MODE[self.variant]
+        retrieval: Retrieval | None = None
+        docs: list[Doc] = []
+        if mode != "none":
+            assert self.retriever is not None
+            retrieval, docs = self.retriever(build_query(tool, records, self.requirements), mode)
+        p = build_prompt(
+            variant=self.variant, tool=tool, args=args, claim=claim,
+            requirement=self.requirements.get(tool, ""), evidence=evidence, reference=docs,
+            tickets=target_tickets(ctx, args), counter=counter,
+            query_hash=retrieval.query_hash if retrieval else None,
+        )  # fmt: skip
+        return p, retrieval
+
+    def __call__(
+        self,
+        tool: str,
+        args: Mapping[str, Any],
+        records: list[CitedRecord],
+        evidence: RenderedEvidence,
+        env: GateEnv,
+        *,
+        claim: Claim,
+    ) -> VerifierCall:
+        counter = self.counter or env.counter
+        p, retrieval = self.prompt(tool, args, records, evidence, env.ctx, counter, claim)
+        return self.call(p, retrieval)
+
+    def call(self, p: VerifierPrompt, retrieval: Retrieval | None) -> VerifierCall:
+        base: dict[str, Any] = {
+            "variant": self.variant, "prompt_hash": p.prompt_hash, "manifest": p.manifest,
+            "retrieval": retrieval_record(retrieval) if retrieval else None,
+        }  # fmt: skip
+        t0 = time.perf_counter()
+        try:
+            obj, usage = self.client.chat_json(p.messages, p.schema, temperature=TEMPERATURE,
+                                               seed=None, max_tokens=MAX_TOKENS)  # fmt: skip
+        except ModelOutputInvalid as exc:
+            used = exc.details.get("usage") or {}
+            return VerifierCall(
+                **base, output=None, error=exc.details.get("error", exc.message),
+                raw=exc.details.get("raw"), tokens_in=int(used.get("prompt_tokens", 0)),
+                tokens_out=int(used.get("completion_tokens", 0)),
+                ms=round((time.perf_counter() - t0) * 1000, 1),
+            )  # fmt: skip
+        ms = round((time.perf_counter() - t0) * 1000, 1)
+        try:
+            out = VerifierOutput.model_validate(obj)
+        except ValidationError as exc:  # schema-valid but not a VerifierOutput (defensive)
+            return VerifierCall(
+                **base, output=None, error=str(exc), raw=obj, ms=ms,
+                tokens_in=usage.prompt_tokens, tokens_out=usage.completion_tokens,
+            )  # fmt: skip
+        return VerifierCall(**base, output=out, raw=obj, ms=ms, tokens_in=usage.prompt_tokens,
+                            tokens_out=usage.completion_tokens)  # fmt: skip

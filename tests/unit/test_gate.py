@@ -87,7 +87,8 @@ class Scripted:
         self.calls: list[tuple[str, dict[str, Any], list[int], str]] = []
 
     def __call__(self, tool: str, args: Mapping[str, Any], records: list[CitedRecord],
-                 evidence: RenderedEvidence, env: GateEnv) -> VerifierOutput | None:  # fmt: skip
+                 evidence: RenderedEvidence, env: GateEnv, *, claim: Any = None,
+                 ) -> VerifierOutput | None:  # fmt: skip
         self.calls.append((tool, dict(args), [r.record_id for r in records], evidence.text))
         return self.outs.pop(0) if len(self.outs) > 1 else self.outs[0]
 
@@ -105,10 +106,64 @@ def test_configuration_snapshot() -> None:
         "G2": ["C1", "C2", "C5", "C6"],
         "G3": ["C1", "C2", "C3", "C4", "C5", "C6"],
         "A1": ["C1", "C2", "C3", "C5", "C6"],
+        "A2": ["C1", "C2", "C4", "C5", "C6"],
+        "A3": ["C1", "C2", "C3", "C4", "C5", "C6"],
+        "A4": ["C1", "C2", "C3", "C4", "C5", "C6"],
+        "A5": ["C1", "C2", "C3", "C4", "C5", "C6"],
+        "A6": ["C1", "C2", "C3", "C4", "C5", "C6"],
     }
-    g3 = CONFIGS["G3"]
-    assert (g3.verifier_variant, g3.retrieval_mode, g3.recovery_budget, g3.transport) == (
-        "standard", "bm25", 2, "in_process")  # fmt: skip
+    fields = {cid: (c.verifier_variant, c.retrieval_mode, c.recovery_budget, c.transport)
+              for cid, c in CONFIGS.items()}  # fmt: skip
+    assert fields == {
+        "G0": (None, None, None, "in_process"),
+        "G1": (None, None, None, "in_process"),
+        "G2": (None, None, None, "in_process"),
+        "G3": ("standard", "bm25", 2, "in_process"),
+        "A1": (None, None, None, "in_process"),
+        "A2": ("standard", "bm25", 2, "in_process"),
+        "A3": ("rationale", "bm25", 2, "in_process"),
+        "A4": ("none", "none", 2, "in_process"),
+        "A5": ("standard", "bm25", 0, "in_process"),
+        "A6": ("rerank", "bm25_rerank", 2, "in_process"),
+    }
+    exp1 = [c for c in CONFIGS if c != "A5"]  # A5 differs from G3 only inside an episode
+    assert len(exp1) == 9
+
+
+def test_variants_differ_from_g3_only_as_specified() -> None:
+    g3 = CONFIGS["G3"].model_dump(exclude={"id", "capability"})
+    differences = {
+        cid: {
+            k
+            for k, v in CONFIGS[cid].model_dump(exclude={"id", "capability"}).items()
+            if g3[k] != v
+        }
+        for cid in ("A2", "A3", "A4", "A5", "A6")
+    }
+    assert differences == {
+        "A2": {"checks"},
+        "A3": {"verifier_variant"},
+        "A4": {"verifier_variant", "retrieval_mode"},
+        "A5": {"recovery_budget"},
+        "A6": {"verifier_variant", "retrieval_mode"},
+    }
+
+
+@pytest.mark.parametrize(
+    ("body", "error"),
+    [
+        ({"verifier_variant": "none", "retrieval_mode": "bm25"}, "uses retrieval none"),
+        ({"verifier_variant": "rerank", "retrieval_mode": "bm25"}, "uses retrieval bm25_rerank"),
+        ({"checks": ["C1", "C5", "C6"], "verifier_variant": None, "retrieval_mode": "bm25",
+          "recovery_budget": None}, "without C4"),
+    ],
+)  # fmt: skip
+def test_inconsistent_configuration_is_refused(body: dict[str, Any], error: str) -> None:
+    from gbya.gate.config import GateConfig
+
+    base = CONFIGS["G3"].model_dump()
+    with pytest.raises(ValueError, match=error):
+        GateConfig.model_validate({**base, **body})
 
 
 def test_c4_configuration_needs_a_verifier() -> None:

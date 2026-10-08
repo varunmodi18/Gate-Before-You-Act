@@ -27,7 +27,7 @@ from gbya.gate.checks import GateEnv
 from gbya.gate.config import GateConfig, load_configs
 from gbya.gate.evidence import window_time_range
 from gbya.gate.gate import Gate
-from gbya.gate.types import GateDecision
+from gbya.gate.types import Claim, GateDecision
 from gbya.llm.tokens import TokenCounter
 from gbya.policy.engine import PolicyEngine
 from gbya.store.models import Case, GateDecisionRow, Scenario
@@ -77,7 +77,11 @@ def decide(case: Exp1Case, gate: Gate, counter: TokenCounter) -> tuple[GateDecis
             window=window_time_range(con),
         )
         t0 = time.perf_counter()
-        decision = gate.evaluate(case.package.tool, case.package.call_args(), env, retries=False)
+        claim = Claim(technique_claimed=case.package.technique_claimed,
+                      rationale=case.package.rationale)  # fmt: skip
+        decision = gate.evaluate(
+            case.package.tool, case.package.call_args(), env, retries=False, claim=claim
+        )
         return decision, round((time.perf_counter() - t0) * 1000, 3)
     finally:
         con.close()

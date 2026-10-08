@@ -13,7 +13,9 @@ one); C4 CONTRADICTED or unparseable → ``rejected``; C5 forbidden → ``blocke
 ``blocked``). All pass → ``admitted``.
 
 ``Gate.request_approval`` handles explicit ``request_approval`` calls in every configuration.
-C4 is a pluggable callable (the verifier, M3); a configuration with C4 refuses to run without one.
+C4 is a pluggable callable (the LLM verifier of ``verifier.py``, or a scripted stand-in in tests);
+a configuration with C4 refuses to run without one. The agent's ``Claim`` (claimed technique and
+rationale) travels with the call to the verifier only.
 """
 
 from __future__ import annotations
@@ -36,8 +38,10 @@ from gbya.gate.evidence import CitedRecord, RenderedEvidence, read_cited
 from gbya.gate.types import (
     ApprovalOutcome,
     CheckResult,
+    Claim,
     GateDecision,
     GateVerdict,
+    VerifierCall,
     VerifierOutput,
     normalised_call,
 )
@@ -46,7 +50,8 @@ from gbya.tools.names import ALL_TOOLS, STATE_CHANGING
 
 
 class Verifier(Protocol):
-    """C4: returns the verifier's output, or None when its output could not be parsed."""
+    """C4: returns the call record (``output`` None when unparseable). Scripted stand-ins may
+    return the bare output (or None); the gate wraps it."""
 
     def __call__(
         self,
@@ -55,7 +60,9 @@ class Verifier(Protocol):
         records: list[CitedRecord],
         evidence: RenderedEvidence,
         env: GateEnv,
-    ) -> VerifierOutput | None: ...
+        *,
+        claim: Claim,
+    ) -> VerifierCall | VerifierOutput | None: ...
 
 
 class GateConfigError(RuntimeError):
@@ -82,6 +89,7 @@ class Gate:
         checks: list[CheckResult],
         verifier: VerifierOutput | None = None,
         approval_outcome: ApprovalOutcome | None = None,
+        verifier_call: VerifierCall | None = None,
     ) -> GateDecision:
         failed = next((c.check for c in checks if not c.passed), None)
         return GateDecision(
@@ -92,6 +100,7 @@ class Gate:
             checks=checks,
             failed_check=failed,
             verifier=verifier,
+            verifier_call=verifier_call,
             approval=approval_outcome,
         )
 
@@ -104,9 +113,16 @@ class Gate:
     # ------------------------------------------------------------ evaluation
 
     def evaluate(
-        self, tool: str, args: Mapping[str, Any], env: GateEnv, *, retries: bool = True
+        self,
+        tool: str,
+        args: Mapping[str, Any],
+        env: GateEnv,
+        *,
+        retries: bool = True,
+        claim: Claim | None = None,
     ) -> GateDecision:
         args = dict(args)
+        claim = claim or Claim()
         key = normalised_call(tool, args)
         if tool not in ALL_TOOLS:  # hard rule: no delete tool exists; attempts are counted
             env.state.unknown_tool_calls += 1
@@ -131,6 +147,7 @@ class Gate:
         by_id: dict[int, CitedRecord] = {}
         evidence: RenderedEvidence | None = None
         verifier_out: VerifierOutput | None = None
+        vcall: VerifierCall | None = None
         policy_decision: PolicyDecision | None = None
         cited: list[int] = []
 
@@ -157,22 +174,27 @@ class Gate:
                 if not result.passed:
                     return self._decision(tool, key, self._retry_verdict(key, env, retries), checks)
             elif name == "C4":
-                checks_c4, verifier_out, verdict = self._c4(tool, args, records, evidence, env)
-                checks.append(checks_c4)
+                c4, vcall, verdict = self._c4(tool, args, records, evidence, env, claim)
+                checks.append(c4)
+                verifier_out = vcall.output
                 if verdict is not None:
-                    return self._decision(tool, key, verdict, checks, verifier_out)
+                    return self._decision(tool, key, verdict, checks, verifier_out,
+                                          verifier_call=vcall)  # fmt: skip
             elif name == "C5":
                 result, policy_decision = check_c5(tool, args, env.ctx, self.policy)
                 checks.append(result)
                 if not result.passed:
-                    return self._decision(tool, key, GateVerdict.BLOCKED, checks, verifier_out)
+                    return self._decision(tool, key, GateVerdict.BLOCKED, checks, verifier_out,
+                                          verifier_call=vcall)  # fmt: skip
             elif name == "C6":
                 assert policy_decision is not None  # configs guarantee C5 before C6
                 result, verdict, outcome = self._c6(tool, args, key, cited, policy_decision, env)
                 checks.append(result)
                 if verdict is not None:
-                    return self._decision(tool, key, verdict, checks, verifier_out, outcome)
-        return self._decision(tool, key, GateVerdict.ADMITTED, checks, verifier_out)
+                    return self._decision(tool, key, verdict, checks, verifier_out, outcome,
+                                          verifier_call=vcall)  # fmt: skip
+        return self._decision(tool, key, GateVerdict.ADMITTED, checks, verifier_out,
+                              verifier_call=vcall)  # fmt: skip
 
     def _c4(
         self,
@@ -181,21 +203,28 @@ class Gate:
         records: list[CitedRecord],
         evidence: RenderedEvidence | None,
         env: GateEnv,
-    ) -> tuple[CheckResult, VerifierOutput | None, GateVerdict | None]:
+        claim: Claim,
+    ) -> tuple[CheckResult, VerifierCall, GateVerdict | None]:
         assert self.verifier is not None
         if evidence is None:  # C4 without C2 (A2 keeps C2, so this only guards misuse)
             from gbya.gate.evidence import render_cited
 
             evidence = render_cited(records, env.counter)
-        out = self.verifier(tool, args, records, evidence, env)
+        res = self.verifier(tool, args, records, evidence, env, claim=claim)
+        call = res if isinstance(res, VerifierCall) else VerifierCall(
+            variant=self.config.verifier_variant or "scripted", output=res,
+            error=None if res is not None else "unparseable",
+        )  # fmt: skip
+        out = call.output
         if out is None:
             return (
                 CheckResult(check="C4", passed=False, code="C4_PARSE_ERROR",
-                            message="The verifier's output could not be parsed."),
-                None, GateVerdict.REJECTED,
+                            message="The verifier's output could not be parsed.",
+                            details={"error": call.error}),
+                call, GateVerdict.REJECTED,
             )  # fmt: skip
         if out.verdict == "SUPPORTS":
-            return CheckResult(check="C4", passed=True, code="OK", message=out.reason), out, None
+            return CheckResult(check="C4", passed=True, code="OK", message=out.reason), call, None
         if out.verdict == "INSUFFICIENT":
             if not env.state.recovery_granted:
                 env.state.recovery_granted = True
@@ -204,12 +233,12 @@ class Gate:
             return (
                 CheckResult(check="C4", passed=False, code="C4_INSUFFICIENT", message=msg,
                             details={"recovery_queries_left": env.state.recovery_queries_left}),
-                out, GateVerdict.INSUFFICIENT,
+                call, GateVerdict.INSUFFICIENT,
             )  # fmt: skip
         return (
             CheckResult(check="C4", passed=False, code="C4_CONTRADICTED",
                         message=f"Evidence contradicts the action: {out.reason}"),
-            out, GateVerdict.REJECTED,
+            call, GateVerdict.REJECTED,
         )  # fmt: skip
 
     def _c6(
