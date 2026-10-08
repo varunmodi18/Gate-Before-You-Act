@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
-- **Next action:** T1.3 (normaliser and field map), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
+- **Next action:** T1.3a (SQL guard and hardened connection), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -23,7 +23,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T0.4 LLM client abstraction | done | m0-foundations | Live (httpx, retries 2/8/30 s), Fake (hash or regex rules), Replay + recorder; 13 unit tests and the `gpu` live smoke test pass against the `vllm-awq` profile |
 | T1.1 OTRF fetch | done | m1-data | `make data-fetch`: HEAD `d9d40ef123d2c87d5d3df28c96bcab4f0faccc87`, 100 SDWIN metadata files, 165 Windows data files, 207 MB |
 | T1.2 Catalogue | done | m1-data | `make catalogue`: 100 windows, checksum `da6d27b0…` identical on re-run. **1 window (SDWIN-230718150800, "Dumping NTDS.dit from Volume Shadow Copy") has its Host file missing at the pinned commit** — catalogued as `missing_host_file` (team question at the M1 checkpoint). The API listing is checked in T1.4 |
-| T1.3 Normaliser and field map | todo | | |
+| T1.3 Normaliser and field map | done | m1-data | `make normalise`: 99 windows ingested (757,375 events, 0 skipped lines), 1 `missing_host_file`; 2.3 GB of DuckDB files, mode 0444; 35 s. Field map and coverage in `docs/fieldmap.md` |
 | T1.3a SQL guard and hardened connection | todo | | |
 | T1.4 Windows API | todo | | |
 | T1.5 De-duplication and eligibility | todo | | |
@@ -107,6 +107,14 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Tactics stored as ATT&CK IDs (e.g. TA0006) as in the metadata; `TACTIC_NAMES` maps them to short names for filtering | The metadata uses IDs | §F.1 `windows` |
 | 2026-10-08 | Plan §D.1 [V] says 99 of 100 datasets map to one technique; measured: 98 have one mapping entry, SDWIN-201022042947 has 4 techniques and SDWIN-210611210814 has 2 (T1134.001, T1134.002). All are stored | Survey of the 100 files at d9d40ef | §D.1 edge cases |
 | 2026-10-08 | T1.2 marked done on the database check; its "Windows API lists them" is verified in T1.4, which comes later in §L.2 | Ordering in the plan | T1.2, T1.4 |
+| 2026-10-08 | Normaliser reads 4 collection formats (nxlog, `TimeCreated` UTC, `TimeCreated` local, old Winlogbeat flattened from `event_data`) | Field survey of all 99 windows (`docs/fieldmap.md`) | §D.1, §F.2 |
+| 2026-10-08 | PID rule: in nxlog events `ProcessID` and `ExecutionProcessID` are never used (they are the writer's / Sysmon's own PID); when `ProcessId` is absent the PID is read from the event's own `Message`, else NULL | Real events show nxlog `ProcessID: 4` vs `Process ID: 716` in the message; using it would give C3 a wrong PID role | §D.5.2, §D.6.2 (PID roles) |
+| 2026-10-08 | `channel` stored with canonical spelling (`Security`, `Microsoft-Windows-Sysmon/Operational`); original in `raw_events.json` | Exports use both `Security` and `security` | §F.2 |
+| 2026-10-08 | Users: besides lower-case and `DOMAIN\` stripping, `-` and empty become NULL. 4688 `user` = `TargetUserName`, else `SubjectUserName` | `-` means "no account" in Windows logs | §F.2 |
+| 2026-10-08 | Security 4656/4663 mapped only for `ObjectType` Process (→ `process_access`) and File (4663 → `file`); other object types stay in `raw_events` | §F.2 names only process and file objects | §F.2 |
+| 2026-10-08 | `__MACOSX/` and `._*` archive members excluded (not counted as skipped lines) | They are macOS resource forks in 14 zips, not event data | §D.1 failure behaviour |
+| 2026-10-08 | Each window DuckDB file also has a `_meta` table (window id, OTRF commit, source files, counts, ordering, timestamp sources, hosts) | Provenance of each built database; not part of §F.2's 7 tables + `raw_events` | §F.2 |
+| 2026-10-08 | Database build: written to `<id>.duckdb.building`, closed, chmod 0444, then renamed into place | A half-built file is never visible under the final name | §D.1.1 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -146,6 +154,9 @@ See the latest entry per task.
 | 2026-10-08 | T1.1 | `make data-fetch` (twice) | HEAD d9d40ef…; 100 SDWIN metadata files; 4 min 6 s for 207 MB; second run reports already present |
 | 2026-10-08 | T1.2 | `pytest tests/unit/test_catalogue.py tests/integration/test_catalogue_real.py` | 11 passed (3 fixture YAMLs: sub-technique join, network files ignored, multi-mapping, missing Host file, id check; idempotent upsert keeps later fields; real data: 100 windows, stable checksum, LSASS window T1003.001, only SDWIN-230718150800 missing) |
 | 2026-10-08 | T1.2 | `make catalogue` (twice) | 100 windows; inserted 100 then updated 100; checksum `da6d27b076b40d2ad15c6cd14549c97b2ac0fbd7d4de70f87d3770462851c3ae` both times |
+| 2026-10-08 | T1.3 | `pytest tests/unit/test_normalise.py tests/integration/test_normalise_real.py` | 30 passed: golden test on the hand-crafted `mini_window` fixture (25 events, 2 bad lines; every mapped event type and all 4 formats; record-ID order; PID sources; users; channels; raw JSON; `_meta`; rebuild identical; zip and tar.gz with `__MACOSX` debris; parsers); LSASS smoke test: 118 events = 95 Sysmon + 23 Security, `process_access` 48 rows, Dumpert PID 6772 in 4688 and Sysmon 1 |
+| 2026-10-08 | T1.3 | `make normalise` | 99 ingested, 1 missing_host_file; 757,375 events; 0 skipped; 231 PIDs from Message; 35 s; 2.3 GB |
+| 2026-10-08 | T1.3 | `make lint`, `pytest` | lint clean (mypy: 40 files); 76 passed, 1 gpu deselected |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

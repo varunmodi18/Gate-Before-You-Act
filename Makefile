@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: help setup db data-fetch catalogue lint format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: help setup db data data-fetch catalogue normalise lint format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -27,6 +27,11 @@ data-fetch:  ## Fetch OTRF at the pinned commit d9d40ef (sparse) into data/raw/o
 
 catalogue:  ## Catalogue the 100 SDWIN datasets into app.db (windows table)
 	$(UV) run python -m gbya.data.catalogue
+
+normalise:  ## Normalise every catalogued window into data/duckdb/windows/<id>.duckdb (read-only)
+	$(UV) run python -m gbya.data.normalise
+
+data: data-fetch catalogue normalise  ## Fetch OTRF, catalogue, normalise
 
 lint:  ## ruff, mypy, eslint, prettier check
 	$(UV) run ruff check backend tests scripts
