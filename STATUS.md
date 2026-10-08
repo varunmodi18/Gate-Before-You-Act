@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** T2.2 (policy engine and rules), then T2.3, T2.4. T2.5 needs T2.2 done, i.e. the team's sign-off on `policy/rules.yaml`.
+- **Next action:** T2.3 (tool layer and registry), T2.4 (typed-argument rule). Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -30,7 +30,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.6 Split selection and freeze | done | m1-data | **Accepted by the team 2026-10-08.** `data/splits.json` (seed 2026; dev 10 / test 40 / e2e 12 / unused 37) committed with `docs/splits.md` (every window: title, tactic, split, de-dup group, primary host and its share; tactic counts; acting users for dev + test). Assignment unchanged from the reviewed version after adding the host fields |
 | T1.7 Windows page | done | m1-data | `/windows` (tactic/split/text filters) and `/windows/:id` (tab per table, server pagination, `column contains` filter, record drawer with normalised + raw JSON, SQL console with typed errors). Playwright J1 + axe pass at 1280 and 768 px; checked on the real LSASS window |
 | T2.1 Trusted-context model | done | m2-gate | `gbya/context/{models,store}.py`: §F.3 schema with validators, canonical-JSON SHA-256 `context_hash`, `get_context(section)` |
-| T2.2 Policy engine and rules | todo | | Team sign-off on `rules.yaml` |
+| T2.2 Policy engine and rules | blocked | m2-gate | Engine done and tested (`gbya/policy/engine.py`). **Waiting for team sign-off** of the DRAFT `policy/rules.yaml` (plan §D.8 example P1–P8 verbatim) and `policy/evidence_requirements.yaml` (plan wording for isolate_host, same pattern for the others). T2.5 cannot start before this |
 | T2.3 Tool layer and registry | todo | | |
 | T2.4 Typed-argument rule | todo | | |
 | T2.5 Gate checks and orchestrator | todo | | |
@@ -140,6 +140,9 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Trusted context, beyond §F.3's rules: unknown fields rejected; `type` ∈ {human, service} and `privilege` ∈ {standard, admin, domain_admin} (the values the policy rules match); unique hosts, accounts and ticket ids; ticket times must carry a time zone | Unambiguous lookups; rule typos cannot silently miss | §F.3 |
 | 2026-10-08 | Host lookup is case-insensitive; account lookup strips `DOMAIN\\` and lower-cases (same normalisation as log users) | Windows names are case-insensitive; logs store normalised users | §F.3, §D.6.2 C1 |
 | 2026-10-08 | `get_context` sections: assets, identities, network, approval_script, change_tickets. The approval script is visible to the agent | Proposal §8 lists the approval script among the facts `get_context` provides. **Flag for the team** | §D.4, §D.5 |
+| 2026-10-08 | Policy engine: conditions on `host.*` (asset), `account.*` (identity) and `action.*` (per-tool facts in the rules file's `tools` section, e.g. `reversible`); scalar = equality (strings case-insensitive), list = membership, `nonempty`; first match in file order; else `default`. Rule files are validated on load (tool named, state-changing tools only, known attributes, unique ids) | §D.8 names the predicate kinds; proposal §8 lists reversibility among policy attributes, so the engine can express it | §D.8, FR-07 |
+| 2026-10-08 | Draft rules leave two points for the team: (1) **reversibility** is declared per tool (`kill_process` irreversible) but no rule uses it; (2) a **standard service account without dependents** matches no rule, so `disable_account` on it is `forbidden` by default | Coverage check of P1–P8 against all identity types | §D.8 |
+| 2026-10-08 | Ruff line-length (E501) not enforced under `tests/` | Hand-aligned test tables | — |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -196,6 +199,7 @@ See the latest entry per task.
 | 2026-10-08 | T1.6 | `pytest tests/unit/test_window_stats.py test_dedup.py test_split.py` | 37 passed: acting users on the mini window (11 records on the workstation, logon 4648 → subject_user; DC: 4624/4625 → target_user), built-in filter, primary host chosen by process activity with the share over all raw events (incl. old-Winlogbeat `computer_name`), docs renderer (pairs shown on both members, pipes escaped) |
 | 2026-10-08 | T1.6 | `make splits` + comparison with the reviewed file | splits, assignment, groups and replacement order identical; new SHA-256 `1894e9d9…` (host fields added) |
 | 2026-10-08 | T2.1 | `pytest tests/unit/test_context.py` | 24 passed: plan example valid; one rejection per rule (tier out of range or missing, approval mode, ticket start ≥ end, bad regex, ticket host not in assets, naive ticket time, missing field, identity type/privilege, bad CIDR/IP, schema version, empty assets, unknown field); duplicate host/account/ticket; hash stable under key order and whitespace, changes with content; `get_context` sections; network and ticket helpers; immutability |
+| 2026-10-08 | T2.2 | `pytest tests/unit/test_policy.py` | 27 passed: every rule P1–P8 of the draft `rules.yaml` and the default (incl. unknown host/account and the dependent-less service account), first-match order, `action.*` + `nonempty`, 7 rule-file validation errors, C5 refuses non-state-changing tools, evidence requirements cover exactly the 4 tools |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

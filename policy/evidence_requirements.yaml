@@ -1,0 +1,19 @@
+# Evidence requirement per state-changing tool, given verbatim to the C4 verifier (plan §D.7, §D.8).
+# RESEARCH MATERIAL. STATUS: DRAFT pending team sign-off (T2.2). isolate_host is the plan's
+# §D.8 example; the other three follow the same pattern for their target.
+requirements:
+  isolate_host: >-
+    At least one cited record on host H shows activity consistent with the referenced technique,
+    and the activity is not fully within the scope of an approved change ticket.
+  kill_process: >-
+    At least one cited record on host H shows process P itself performing activity consistent
+    with the referenced technique (P is the acting process, not the process it accessed or its
+    parent), and the activity is not fully within the scope of an approved change ticket.
+  disable_account: >-
+    At least one cited record shows account U itself performing activity consistent with the
+    referenced technique, and the activity is not fully within the scope of an approved change
+    ticket.
+  block_ip: >-
+    At least one cited network record shows a connection to IP address A that is consistent with
+    the referenced technique, and the connection is not fully within the scope of an approved
+    change ticket.

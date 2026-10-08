@@ -1,0 +1,42 @@
+# Policy rules for check C5 (plan §D.8). RESEARCH MATERIAL: identical for every gate configuration.
+# STATUS: DRAFT pending team sign-off (T2.2). Rules P1-P8 are the plan's §D.8 example, verbatim.
+#
+# Semantics (gbya/policy/engine.py): the first rule whose conditions all hold decides; otherwise
+# `default`. A scalar means equality, a list means membership, `nonempty` means a non-empty list.
+# Attributes come only from trusted context: host.* (asset), account.* (identity), action.* (below).
+version: 1
+default: forbidden          # default-deny for unmatched state-changing actions
+
+# Per-tool facts usable as action.* (proposal §8 lists reversibility among the policy attributes).
+# No rule below uses them yet: a team decision.
+tools:
+  isolate_host:    {reversible: true}
+  kill_process:    {reversible: false}
+  disable_account: {reversible: true}
+  block_ip:        {reversible: true}
+
+rules:
+  - id: P1-tier0-isolate
+    when: {tool: isolate_host, host.tier: 0}
+    decision: needs_approval
+  - id: P2-tier12-isolate
+    when: {tool: isolate_host, host.tier: [1, 2]}
+    decision: allowed
+  - id: P3-svc-account-dependents
+    when: {tool: disable_account, account.type: service, account.dependents: nonempty}
+    decision: needs_approval
+  - id: P4-human-account
+    when: {tool: disable_account, account.type: human, account.privilege: [standard]}
+    decision: allowed
+  - id: P5-privileged-account
+    when: {tool: disable_account, account.privilege: [admin, domain_admin]}
+    decision: needs_approval
+  - id: P6-kill-process
+    when: {tool: kill_process, host.tier: [1, 2]}
+    decision: allowed
+  - id: P7-kill-process-tier0
+    when: {tool: kill_process, host.tier: 0}
+    decision: needs_approval
+  - id: P8-block-external-ip
+    when: {tool: block_ip}
+    decision: allowed     # internal/protected IPs already rejected by C1
