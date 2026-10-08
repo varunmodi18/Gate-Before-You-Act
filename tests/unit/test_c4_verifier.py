@@ -61,7 +61,7 @@ def test_three_verdicts_map_to_the_gate(con: Any, index: ix.RetrievalIndex, verd
     assert c4.code == code and (d.verdict is gate_verdict or (verdict == "SUPPORTS" and c4.passed))
     call = client.calls[0]
     assert (call.temperature, call.max_tokens, call.seed) == (0.0, 200, None)
-    assert call.schema == vf.VERIFIER_SCHEMA
+    assert call.schema == vf.schema_for([])  # no approved ticket in this context: fixed scope
     vc = d.verifier_call
     assert vc is not None and vc.output is not None and vc.output.verdict == verdict
     assert vc.prompt_hash == call.prompt_hash and vc.manifest["prompt_hash"] == call.prompt_hash

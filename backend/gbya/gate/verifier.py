@@ -84,6 +84,32 @@ VERIFIER_SCHEMA: JsonSchema = {
     "additionalProperties": False,
 }
 
+
+def schema_for(tickets: Sequence[ChangeTicket]) -> JsonSchema:
+    """The output schema for one call. With no approved target ticket, ``ticket_scope`` is fixed
+    to applies false and all four matches false (team decision after M3: the model reported
+    matches without any ticket). Otherwise the general schema."""
+    if any(t.approved for t in tickets):
+        return VERIFIER_SCHEMA
+    false = {"const": False}
+    scope = {
+        "type": "object",
+        "properties": {
+            "applies": false,
+            "matches": {
+                "type": "object",
+                "properties": dict.fromkeys(("host", "account", "command", "time"), false),
+                "required": ["host", "account", "command", "time"],
+                "additionalProperties": False,
+            },
+        },
+        "required": ["applies", "matches"],
+        "additionalProperties": False,
+    }
+    return {**VERIFIER_SCHEMA,
+            "properties": {**VERIFIER_SCHEMA["properties"], "ticket_scope": scope}}  # fmt: skip
+
+
 # Placeholders of policy/evidence_requirements.yaml bound to the call's target arguments.
 REQUIREMENT_BINDINGS: dict[str, tuple[tuple[str, str], ...]] = {
     "isolate_host": (("H", "host"),),
@@ -271,7 +297,9 @@ def build_prompt(
     user = "\n\n".join(blocks.values())
     messages: list[Message] = [{"role": "system", "content": system},
                                {"role": "user", "content": user}]  # fmt: skip
-    phash = prompt_hash(messages, VERIFIER_SCHEMA)
+    schema = schema_for(tickets)
+    constrained = schema is not VERIFIER_SCHEMA
+    phash = prompt_hash(messages, schema)
     manifest = {
         "variant": variant,
         "retrieval_mode": mode,
@@ -282,11 +310,12 @@ def build_prompt(
         "reference_doc_limit_tokens": DOC_TOKENS,
         "tickets": [t.id for t in tickets],
         "rationale_included": rationale,
+        "ticket_scope_constrained": constrained,  # no approved ticket: schema fixes it to false
         "tokens": {**tokens, "total": counter.count(system) + counter.count(user)},
         "tokenizer": counter.name,
         "prompt_hash": phash,
     }
-    return VerifierPrompt(variant, messages, blocks, manifest, phash)
+    return VerifierPrompt(variant, messages, blocks, manifest, phash, schema)
 
 
 # ---- the LLM verifier (T3.3) -------------------------------------------------------------------

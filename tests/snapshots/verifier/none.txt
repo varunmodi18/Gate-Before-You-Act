@@ -105,6 +105,7 @@ CHANGE_TICKETS (times in UTC, as in the records)
  "reference": [],
  "reference_doc_limit_tokens": 300,
  "retrieval_mode": "none",
+ "ticket_scope_constrained": false,
  "tickets": [
   "CHG-1001"
  ],

@@ -193,6 +193,7 @@ These records show credential dumping on WKSTN-01; isolate it now.
  ],
  "reference_doc_limit_tokens": 300,
  "retrieval_mode": "bm25",
+ "ticket_scope_constrained": false,
  "tickets": [
   "CHG-1001"
  ],

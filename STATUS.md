@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M3 Verifier and Exp 1 — **complete, at the checkpoint** (branch `m3-verifier`). Awaiting team review of the verifier prompt snapshots (T3.2).
+- **Current milestone:** M4 Case studio and annotation, on branch `m4-cases` (from `m3-verifier`). M3 accepted 2026-10-08; follow-ups done.
 - **TA approval (Q-0):** approved 2026-10-08. M3 approved by the team on 2026-10-08.
-- **Next action:** M3 checkpoint report to the team (T3.1–T3.7 done). Then M4 after the team's go-ahead.
+- **Next action:** M4 (case studio and annotation tooling): T4.1 → T4.8 per §L.2; annotation (T4.9) and freezing (T4.10) are team work. Stop at the M4 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -203,6 +203,8 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | `EVIDENCE_REQUIREMENT` is its own block and appears in the manifest's `block_order` (prompt text unchanged; action + requirement keep one 200-token budget) | Team decision (M3 checkpoint) | §D.7.1 |
 | 2026-10-08 | **ATT&CK index: Windows techniques only** (platforms include Windows): 697 → **474** documents; index rebuilt (content SHA-256 `afa01fa8…`); retrieval cache refilled for the demo cases (rows of the old index stay but are never served: the lookup includes the index hash) | Team decision (M3 checkpoint) | §D.3 |
 | 2026-10-08 | **Research runs refuse the test-only token counter** (`approx-test-only`, or no model tokenizer), checked when the run is created and again when the worker executes it, alongside the existing refusal of fake and replay backends; the run's `backend_flags.tokenizer` records the counter | Team decision (M3 checkpoint); §D.10.3 | §F.1 |
+| 2026-10-08 | **Ticket scope constrained by the output schema when the target has no approved ticket** (team decision, after the wording change alone did not work): that call's schema fixes `applies` and all four matches to `false` (`const`); otherwise the general schema. **For the report:** without the constraint, the model marked `host` (and sometimes `time`) as matching in **4 of 12** no-ticket outputs of the demo Exp 1V (run 2) and in **all 3** smoke-test runs, with `applies` always correct (false). Conditions met: (1) **`verdict` precedes `ticket_scope`** in the schema's property and `required` order (`verdict`, `unmet_requirement`, `ticket_scope`, `reason`), so the constraint applies only after the verdict has been generated and cannot affect it — tested for both schemas, and the stored outputs show `verdict` emitted first; (2) the constraint depends only on the target's tickets, so it is **identical across every configuration that uses C4** (G3, A2, A3, A4, A6 and their variants) — tested. The manifest records `ticket_scope_constrained`; the schema is part of the prompt hash; the Exp 1V agreement diagnostic excludes constrained calls. `reason` is generated after `ticket_scope`, so its wording can differ under the constraint | Team decision (M3 follow-up) | §D.7 |
+| 2026-10-08 | Observation: after the Windows-only ATT&CK rebuild, `rerank` judged hm:R_neg INSUFFICIENT in all 3 runs (was SUPPORTS): its ATT&CK top-1 changed and the verifier noted that record 19 (a DC logon) does not show the claimed activity. The fixture's SUPPORTS label is only the per-variant default, so this is a fixture artefact, not a regression | Fixture data | — |
 
 ## Limitations for the final report
 
@@ -313,6 +315,9 @@ See the latest entry per task.
 | 2026-10-08 | M3 follow-ups | `pytest tests/unit/test_ticket_scope.py tests/unit/test_verifier_prompt.py tests/integration/test_exp1_runner.py` | 16 + 16 + 17 passed: four-field matching and each field failing; DOMAIN/case normalisation; records without command line; only approved tickets; best pair; agreement; **gate decision identical for outputs differing only in ticket_scope** (3 verdicts); research refused for approx/unavailable counters and fake/replay backends (unit and via `create_exp1_run`); snapshots regenerated (wording, separate requirement block, `CHANGE_TICKETS: none`, duplicate whoami fixture rule dropped); de-duplication manifest; shared action+requirement budget |
 | 2026-10-08 | M3 follow-ups | `pytest -m gpu -s tests/integration/test_c4_live.py` ×3 (vLLM, Windows-only index) | 3 passed; ticket block `CHANGE_TICKETS: none`; model `ticket_scope` = `applies: false, host: true, account: false, command: false, time: true` in all three runs; code `ticket_scope` all false. **The no-ticket case does not come back all false** — reported to the team |
 | 2026-10-08 | M3 follow-ups | `make index`; `make lint`; `make test` | 2,403 Sigma rules, 474 ATT&CK techniques, built in 3.7 s; gold T1003.001 still 71 rules; lint clean; pytest 520 passed (2 gpu deselected); vitest 11 passed |
+| 2026-10-08 | M3 follow-ups | Live demo Exp 1 before the constraint (run 2, git `5550e78`, `data/demo/app.db`) | 93/93 units, 0 errors. Ticket-scope agreement (model vs code, n = 9 per variant, all no-ticket): `applies` 1.0 in every variant; `host` 0.33–0.67; `time` 0.67–1.0; all fields 0.33–0.67. 4 of 12 run-1 outputs marked `host` (2 also `time`) without any ticket |
+| 2026-10-08 | M3 follow-ups | `pytest -m gpu -s tests/integration/test_c4_live.py` ×3 **with the schema constraint** | 3 passed; `CHANGE_TICKETS: none`; model `ticket_scope` **all false** in all three runs (= code); verdict SUPPORTS and gate `admitted` as before; 2,219 prompt / 94 output tokens |
+| 2026-10-08 | M3 follow-ups | `pytest` | 524 passed (2 gpu deselected), incl. verdict-before-ticket_scope order, constrained schema rejects `host: true`, other properties identical to the general schema, identical schema and flag across the four variants |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

@@ -24,7 +24,7 @@ from gbya.store import db
 MINI = Path(__file__).resolve().parents[1] / "fixtures" / "mini_window"
 FIX = Path(__file__).resolve().parents[1] / "fixtures" / "retrieval"
 SUPPORTS = {"verdict": "SUPPORTS", "unmet_requirement": None,
-            "ticket_scope": {"applies": False, "matches": {"host": True, "account": False,
+            "ticket_scope": {"applies": False, "matches": {"host": False, "account": False,
                                                            "command": False, "time": False}},
             "reason": "Records 5 and 7 show dumper.exe opening lsass."}  # fmt: skip
 
@@ -146,7 +146,8 @@ def test_g3_runs_c4_and_returns_the_verifier_panel_data(c4_client: TestClient) -
     assert g3["verdict"] == "admitted" and g3["correct"] is True
     vc = g3["verifier_call"]
     assert vc["output"]["verdict"] == "SUPPORTS" and vc["variant"] == "standard"
-    assert vc["output"]["ticket_scope"]["matches"]["host"] is True
+    assert vc["output"]["ticket_scope"]["matches"]["host"] is False
+    assert vc["manifest"]["ticket_scope_constrained"] is True  # hm has no approved ticket
     system, user = vc["messages"]
     assert system["role"] == "system" and "CITED_RECORDS" in user["content"]
     assert vc["manifest"]["prompt_hash"] == vc["prompt_hash"]

@@ -10,7 +10,8 @@ configuration actually sent to C4.
   treats it (``C4_PARSE_ERROR`` rejects).
 * A case without ``labels.verifier_label`` is left out of the accuracy and counted as unlabelled.
 * Ticket-scope agreement (diagnostic): the model's ``ticket_scope`` against the one computed in
-  code (``gbya.gate.ticket_scope``), field by field, over rows where both exist. The gate never
+  code (``gbya.gate.ticket_scope``), field by field, over rows where both exist and the schema did
+  not fix it (calls whose target has no approved ticket are excluded). The gate never
   uses either; it decides on the verdict alone.
 """
 

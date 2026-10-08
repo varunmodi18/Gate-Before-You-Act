@@ -214,6 +214,8 @@ def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]
     for ev in session.scalars(select(VerifierEval).where(VerifierEval.run_id == run_id)):
         out = ev.output or {}
         model_scope = (out.get("output") or {}).get("ticket_scope")
+        if (ev.manifest or {}).get("ticket_scope_constrained"):
+            model_scope = None  # fixed by the schema: nothing to compare
         evals.append(EvalRow(ev.case_id, ev.variant, ev.run_idx, ev.verdict,
                              agreement(model_scope, out.get("ticket_scope_code"))))  # fmt: skip
     configs = load_configs()

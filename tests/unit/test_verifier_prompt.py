@@ -265,3 +265,49 @@ def test_ticket_block_lists_target_tickets_or_says_none() -> None:
     block = vf._ticket_block(tickets)
     assert block.startswith("CHANGE_TICKETS (times in UTC, as in the records)\n")
     assert '"start": "2020-10-18T09:00:00"' in block and '"approved": true' in block
+
+
+def test_verdict_is_generated_before_ticket_scope() -> None:
+    """Properties are generated in schema order, so the ticket-scope constraint is applied only
+    after the verdict exists and cannot influence it."""
+    for schema in (vf.VERIFIER_SCHEMA, vf.schema_for([])):
+        order = list(schema["properties"])
+        assert order[0] == "verdict" and order.index("verdict") < order.index("ticket_scope")
+        assert schema["required"][0] == "verdict"
+
+
+def test_ticket_scope_fixed_false_without_an_approved_ticket() -> None:
+    import jsonschema
+
+    tickets = vf.target_tickets(context(), {"host": H})  # CHG-1001, approved
+    assert vf.schema_for(tickets) is vf.VERIFIER_SCHEMA
+    unapproved = [t.model_copy(update={"approved": False}) for t in tickets]
+    for ts in ([], unapproved):
+        schema = vf.schema_for(ts)
+        assert schema is not vf.VERIFIER_SCHEMA
+        out = {"verdict": "SUPPORTS", "unmet_requirement": None, "reason": "r",
+               "ticket_scope": {"applies": False, "matches": dict.fromkeys(
+                   ("host", "account", "command", "time"), False)}}  # fmt: skip
+        jsonschema.validate(out, schema)
+        out["ticket_scope"]["matches"]["host"] = True  # what the model produced before
+        with pytest.raises(jsonschema.ValidationError):
+            jsonschema.validate(out, schema)
+        # every other property is exactly the general schema's
+        assert {k: v for k, v in schema["properties"].items() if k != "ticket_scope"} == {
+            k: v for k, v in vf.VERIFIER_SCHEMA["properties"].items() if k != "ticket_scope"
+        }
+
+
+@pytest.mark.parametrize("tickets", [[], "context"])
+def test_schema_identical_across_every_c4_variant(index: ix.RetrievalIndex, tickets: Any) -> None:
+    ts = [] if tickets == [] else vf.target_tickets(context(), {"host": H})
+    schemas, flags = [], []
+    for variant in ("standard", "rationale", "none", "rerank"):
+        p = vf.build_prompt(variant=variant, tool="isolate_host", args={"host": H, "cited": [7]},
+                            claim=CLAIM, requirement=REQS["isolate_host"],
+                            evidence=render_cited([ACCESS], COUNTER), reference=[], tickets=ts,
+                            counter=COUNTER)  # fmt: skip
+        schemas.append(p.schema)
+        flags.append(p.manifest["ticket_scope_constrained"])
+    assert all(s == schemas[0] for s in schemas) and len(set(flags)) == 1
+    assert flags[0] is (ts == [])
