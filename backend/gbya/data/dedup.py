@@ -1,8 +1,10 @@
 """Eligibility and de-duplication of windows (plan §D.2 steps 1-3, T1.5).
 
-1. **Eligibility:** the window has ≥ 30 events and its *primary host* has ≥ 1 event in
-   ``process_create`` or ``process_access``. The primary host is the host with the most
-   ``process_create`` + ``process_access`` events (ties: more events overall, then name).
+1. **Eligibility:** the window has ≥ 30 events and its *primary host* itself has ≥ 1 event in
+   ``process_create`` or ``process_access`` (events on other hosts do not count). The primary host
+   is the host with the most ``process_create`` + ``process_access`` events (ties: more events
+   overall, then name). Its share of all the window's events is reported so multi-host windows are
+   visible (team decision, 8 Oct 2026).
 2. **Signatures:** per window, the *set* of tuples
    ``(event_id, image, normalised command line, parent image, target)`` over the mapped tables,
    lower-cased, with GUIDs, hex addresses, digit runs longer than 4 and temp-path components
@@ -134,6 +136,8 @@ class Eligibility:
     primary_host_process_events: int
     hosts: int
     reason: str
+    primary_host_events: int = 0  # all events (raw_events) whose host is the primary host
+    primary_host_share: float = 0.0  # primary_host_events / events
 
 
 def eligibility(window_id: str, con: duckdb.DuckDBPyConnection) -> Eligibility:
@@ -157,6 +161,19 @@ def eligibility(window_id: str, con: duckdb.DuckDBPyConnection) -> Eligibility:
         """
     ).fetchall()
     primary, proc_n = (per_host[0][0], int(per_host[0][1])) if per_host else (None, 0)
+    primary_events = 0
+    if primary is not None:
+        # Every event, mapped or not: the host as written in the raw JSON (all four formats).
+        row = con.execute(
+            """
+            SELECT count(*) FROM raw_events
+            WHERE coalesce(json_extract_string(json, '$.Hostname'),
+                           json_extract_string(json, '$.Computer'),
+                           json_extract_string(json, '$.computer_name')) = ?
+            """,
+            [primary],
+        ).fetchone()
+        primary_events = int(row[0]) if row else 0
     reasons = []
     if events < MIN_EVENTS:
         reasons.append(f"only {events} events (< {MIN_EVENTS})")
@@ -170,6 +187,8 @@ def eligibility(window_id: str, con: duckdb.DuckDBPyConnection) -> Eligibility:
         primary_host_process_events=proc_n,
         hosts=len(per_host),
         reason="; ".join(reasons) or "eligible",
+        primary_host_events=primary_events,
+        primary_host_share=round(primary_events / events, 4) if events else 0.0,
     )
 
 

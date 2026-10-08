@@ -5,9 +5,9 @@ Updated in the same commit that completes a task (plan §L.6).
 
 ## Where we are
 
-- **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
-- **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
-- **Next action:** M1 checkpoint report. Waiting on the team for: the split review (T1.6), eligibility reading A/B, and SDWIN-230718150800 (missing Host file). T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
+- **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
+- **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
+- **Next action:** T2.1 (trusted-context model), then T2.2 → T2.7. Stop at the M2 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -27,7 +27,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.3a SQL guard and hardened connection | done | m1-data | `gbya/tools/sql_guard.py` (layer 1 + 2 s watchdog) and `gbya/data/connection.py` (`open_case_db`, layer 2). Both suites pass on DuckDB 1.5.6 |
 | T1.4 Windows API | done | m1-data | `GET /windows` (split/tactic/q filters), `GET /windows/{id}`, `GET /windows/{id}/tables/{table}` (pagination, `column:text` filters), `GET /windows/{id}/records/{record_id}`, `POST /windows/{id}/query` (shared guard). Real app.db: lists 100 windows (closes the T1.2 check) |
 | T1.5 De-duplication and eligibility | done | m1-data | `make dedup`: 99 ingested windows → 94 groups (5 pairs with J > 0.5); `windows.dedup_group` set for all 99. Eligibility (reading A, see decisions): 99/99 eligible; only 37 are single-host. Report: `data/dedup_report.json` |
-| T1.6 Split selection and freeze | blocked | m1-data | Code and tests done; `make splits` wrote `data/splits.json` (seed 2026, SHA-256 `1a355e65…`, identical on re-run): dev 10 / test 40 / e2e 12 / unused 37. **Waiting for the team to review and accept the split list** (plan done-when); `data/splits.json` is not committed until then |
+| T1.6 Split selection and freeze | done | m1-data | **Accepted by the team 2026-10-08.** `data/splits.json` (seed 2026; dev 10 / test 40 / e2e 12 / unused 37) committed with `docs/splits.md` (every window: title, tactic, split, de-dup group, primary host and its share; tactic counts; acting users for dev + test). Assignment unchanged from the reviewed version after adding the host fields |
 | T1.7 Windows page | done | m1-data | `/windows` (tactic/split/text filters) and `/windows/:id` (tab per table, server pagination, `column contains` filter, record drawer with normalised + raw JSON, SQL console with typed errors). Playwright J1 + axe pass at 1280 and 768 px; checked on the real LSASS window |
 | T2.1 Trusted-context model | todo | | |
 | T2.2 Policy engine and rules | todo | | Team sign-off on `rules.yaml` |
@@ -132,6 +132,11 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | e2e data: `scripts/e2e_fixture.py` builds a throw-away `app.db` + the mini-window database in `data/e2e`; the API serves the built SPA on port 8010 against it | CI-safe J1 without OTRF data or a GPU | §I.3 |
 | 2026-10-08 | Table cells longer than 160 characters are shortened **for display only**, with the full length shown; the record drawer shows every value in full | Readable P1 tables. Not evidence: the verifier's evidence is never truncated (§D.7.1) | §E.1 |
 | 2026-10-08 | Playwright browsers were already installed (`~/.cache/ms-playwright`, Chromium 1243 for Playwright 1.63); nothing was downloaded | — | T1.7 |
+| 2026-10-08 | **Split accepted (T1.6).** `collection` has a single eligible window (SDWIN-200609225055, `unused`) and is in no split; **to be listed in the final report's limitations** | Team decision; `docs/splits.md` | T1.6, §D.2 |
+| 2026-10-08 | **Eligibility reading A accepted**: primary host = most process_create + process_access events; the process event must be on that host itself (`dedup.eligibility` counts only rows whose `host` is the primary host; tested with a window whose busiest host has no process events). Each window's primary host and its share of all events are stored in `splits.json` and `docs/splits.md`; 16 of 99 windows have a share below 50% (lowest 7.7%, SDWIN-190518200432). Plan §D.2 step 1 updated | Team decision; proposal §10 asks only for host-level evidence | §D.2 |
+| 2026-10-08 | **Data issue: SDWIN-230718150800 excluded; 99 of the 100 windows were ingested.** Its Host file is absent at the pinned commit; the similarly named file is not substituted | Team decision | §D.1, FR-01/02 |
+| 2026-10-08 | **De-duplication accepted as is.** Shared lab-session background events push different attacks over J = 0.5; grouping only keeps each pair in the same split (cautious) | Team decision | §D.2 step 3 |
+| 2026-10-08 | Acting users for `disable_account` cases (dev + test, on the primary host): 48 of 50 windows have ≥1 record naming an acting user; 45 name a non-built-in account. No acting user: SDWIN-190625133822 (dev), SDWIN-190518182022 (test). Only built-ins (system, machine accounts …): SDWIN-190319020729, SDWIN-190518221344, SDWIN-200806015757 (all test) | `docs/splits.md`; `gbya/data/window_stats.py` | §D.6.2 C3, T4.x |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -185,6 +190,8 @@ See the latest entry per task.
 | 2026-10-08 | T1.7 | `make e2e` (Playwright, Chromium) | 6 passed = 3 journeys × 2 viewports (1280×800, 768×1024): J1 (Windows → credential_access → window → `SELECT * FROM process_access LIMIT 20` → open record), rejected query shows the typed error, table filter + keyboard tab navigation; **axe: 0 serious/critical violations** on the list, detail and open drawer |
 | 2026-10-08 | T1.7 | Headless browser on the real app.db (port 8011) | LSASS window detail shows 48 `process_access` rows; query for lsass.exe targets → 6 rows; record 86 drawer: Security 4663, Outflank-Dumpert.exe, `source_pid` 6772 from raw `ProcessId` `0x1a74` |
 | 2026-10-08 | M1 | `make lint`, `make test`, `make e2e` | lint clean (ruff, mypy: 46 files, eslint, prettier, tsc); pytest 195 passed (1 `gpu` deselected); vitest 8 passed; Playwright 6 passed |
+| 2026-10-08 | T1.6 | `pytest tests/unit/test_window_stats.py test_dedup.py test_split.py` | 37 passed: acting users on the mini window (11 records on the workstation, logon 4648 → subject_user; DC: 4624/4625 → target_user), built-in filter, primary host chosen by process activity with the share over all raw events (incl. old-Winlogbeat `computer_name`), docs renderer (pairs shown on both members, pipes escaped) |
+| 2026-10-08 | T1.6 | `make splits` + comparison with the reviewed file | splits, assignment, groups and replacement order identical; new SHA-256 `1894e9d9…` (host fields added) |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -163,7 +163,7 @@ Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now sta
 
 Consequence: the FP16 KV cache holds 21,520 tokens, so only about **2.6 requests of 8,192 tokens fit at once** (vLLM reports 2.63×). Four concurrent requests of the Exp 2 shape (~4.7k tokens) fit, but when several requests approach the 8k limit, the extra requests queue. This is reflected in measured throughput, not hidden.
 
-*Implementation notes from M1.* §D.5.1's hardening settings are applied as DuckDB connection-time configuration rather than `SET` statements (same settings; needed for repeated opens of one file in a process).
+*Implementation notes from M1.* §D.5.1's hardening settings are applied as DuckDB connection-time configuration rather than `SET` statements (same settings; needed for repeated opens of one file in a process). §D.2 step 1 states the accepted eligibility reading (primary host = most process activity; the process event must be on that host).
 
 *Other serving settings from T0.3.* (1) The server runs with `--generation-config vllm`, so only per-request sampling parameters apply (Qwen's default `repetition_penalty` 1.05 is not applied; sending it explicitly made schema validity worse, 73/80 vs 78/80). (2) JSON-constrained output needs xgrammar with `disable_any_whitespace` (risk R7). (3) The vLLM venv lives at a path without spaces, because FlashInfer's kernel build does not quote paths. (4) T0.3 passed with a known issue: about 2.5–4.4% of synthetic proposer-shaped outputs hit `max_tokens` in a repetition loop; T5.1 carries an acceptance check for this.
 
@@ -542,7 +542,7 @@ Tests:
 ### D.2 `gbya.data.split` — selection, de-duplication, splits
 
 **Logic:**
-1. **Eligibility:** ≥1 event in `process_create` or `process_access` on a single primary host, and ≥30 events.
+1. **Eligibility:** ≥30 events, and ≥1 event in `process_create` or `process_access` **on the window's primary host itself** (events on other hosts do not count). The primary host is the host with the most `process_create` + `process_access` events (ties: more events overall, then name). Multi-host windows are eligible; each window's primary host and that host's share of all its events are stored in `data/splits.json` and shown in `docs/splits.md` (Draft 8, team decision of 8 October 2026; proposal §10 asks for host-level evidence. The stricter reading, all events on one host, would leave 37 windows).
 2. **Signatures:** the set of tuples `(event_id, lower(image), normalised command_line, lower(parent_image), lower(target))`. Normalisation strips GUIDs, hex addresses, digits longer than 4, and temp paths.
 3. **Grouping:** pairwise Jaccard; union-find for pairs with J > 0.5.
 4. **Assignment:** seeded, stratified by primary tactic. Groups are assigned whole to dev (10), test (40) or e2e (12) by window count; leftover windows go to `unused`.

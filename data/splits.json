@@ -1,0 +1,1294 @@
+{
+  "version": 1,
+  "seed": 2026,
+  "targets": {
+    "dev": 10,
+    "test": 40,
+    "e2e": 12
+  },
+  "otrf_commit": "d9d40ef123d2c87d5d3df28c96bcab4f0faccc87",
+  "method": "Units are de-duplication groups (never divided). Stratum = primary tactic of the group's smallest-id window. Groups shuffled with the seed within each stratum, strata interleaved round-robin (largest first). Each split has a per-tactic quota proportional to stratum sizes; walking the order, each group goes to the split with the largest unmet quota for its tactic among placements that keep an exact final fill possible, otherwise unused. Unused windows in this order form the replacement queue.",
+  "splits": {
+    "dev": [
+      "SDWIN-190518210125",
+      "SDWIN-190519005224",
+      "SDWIN-190625133822",
+      "SDWIN-191027055035",
+      "SDWIN-191027223020",
+      "SDWIN-200806035621",
+      "SDWIN-201019224718",
+      "SDWIN-201219070027",
+      "SDWIN-210611210814",
+      "SDWIN-220705170038"
+    ],
+    "test": [
+      "SDWIN-190301125905",
+      "SDWIN-190301174830",
+      "SDWIN-190319020729",
+      "SDWIN-190319021158",
+      "SDWIN-190319024742",
+      "SDWIN-190319145126",
+      "SDWIN-190518182022",
+      "SDWIN-190518201207",
+      "SDWIN-190518203650",
+      "SDWIN-190518211052",
+      "SDWIN-190518221344",
+      "SDWIN-190518235535",
+      "SDWIN-190625103712",
+      "SDWIN-200721232741",
+      "SDWIN-200806015757",
+      "SDWIN-200806022635",
+      "SDWIN-200806030120",
+      "SDWIN-200806115603",
+      "SDWIN-200806130039",
+      "SDWIN-200807103913",
+      "SDWIN-200917174542",
+      "SDWIN-200921001437",
+      "SDWIN-200921230246",
+      "SDWIN-201009183000",
+      "SDWIN-201019232515",
+      "SDWIN-201020013208",
+      "SDWIN-201021001911",
+      "SDWIN-201021204544",
+      "SDWIN-201022002145",
+      "SDWIN-201022035214",
+      "SDWIN-201022042947",
+      "SDWIN-201023023651",
+      "SDWIN-201023031210",
+      "SDWIN-201029001615",
+      "SDWIN-201219075059",
+      "SDWIN-210314014019",
+      "SDWIN-220630130349",
+      "SDWIN-220703123711",
+      "SDWIN-220803205800",
+      "SDWIN-230720004300"
+    ],
+    "e2e": [
+      "SDWIN-190403133337",
+      "SDWIN-190518213907",
+      "SDWIN-190518230752",
+      "SDWIN-200805020926",
+      "SDWIN-200805034820",
+      "SDWIN-200904032946",
+      "SDWIN-201012183248",
+      "SDWIN-201019033054",
+      "SDWIN-201021232814",
+      "SDWIN-201022022144",
+      "SDWIN-201022025808",
+      "SDWIN-201029202324"
+    ],
+    "unused": [
+      "SDWIN-190319020147",
+      "SDWIN-190319023812",
+      "SDWIN-190319131123",
+      "SDWIN-190518184306",
+      "SDWIN-190518200432",
+      "SDWIN-190518201922",
+      "SDWIN-190518202151",
+      "SDWIN-190518210652",
+      "SDWIN-190518211456",
+      "SDWIN-190518224039",
+      "SDWIN-191225045202",
+      "SDWIN-200609225055",
+      "SDWIN-200722001847",
+      "SDWIN-200724174200",
+      "SDWIN-200806012009",
+      "SDWIN-200806031938",
+      "SDWIN-200914080546",
+      "SDWIN-200916232559",
+      "SDWIN-200918145959",
+      "SDWIN-200921175806",
+      "SDWIN-200922042230",
+      "SDWIN-201009173318",
+      "SDWIN-201017061100",
+      "SDWIN-201018195009",
+      "SDWIN-201018225619",
+      "SDWIN-201019002900",
+      "SDWIN-201022013121",
+      "SDWIN-201022015432",
+      "SDWIN-201023020513",
+      "SDWIN-201026235835",
+      "SDWIN-201028191914",
+      "SDWIN-201102041306",
+      "SDWIN-201102163918",
+      "SDWIN-210427020247",
+      "SDWIN-220708104215",
+      "SDWIN-220708104300",
+      "SDWIN-230718151900"
+    ],
+    "ineligible": []
+  },
+  "replacement_order": [
+    "SDWIN-200609225055",
+    "SDWIN-201026235835",
+    "SDWIN-200722001847",
+    "SDWIN-190518224039",
+    "SDWIN-190518200432",
+    "SDWIN-200806012009",
+    "SDWIN-190319023812",
+    "SDWIN-190319020147",
+    "SDWIN-200916232559",
+    "SDWIN-190518184306",
+    "SDWIN-200921175806",
+    "SDWIN-201102163918",
+    "SDWIN-200806031938",
+    "SDWIN-190518210652",
+    "SDWIN-200918145959",
+    "SDWIN-201009173318",
+    "SDWIN-210427020247",
+    "SDWIN-190319131123",
+    "SDWIN-201102041306",
+    "SDWIN-191225045202",
+    "SDWIN-200914080546",
+    "SDWIN-220708104215",
+    "SDWIN-230718151900",
+    "SDWIN-200724174200",
+    "SDWIN-190518201922",
+    "SDWIN-201018195009",
+    "SDWIN-201028191914",
+    "SDWIN-190518211456",
+    "SDWIN-201022015432",
+    "SDWIN-190518202151",
+    "SDWIN-220708104300",
+    "SDWIN-201018225619",
+    "SDWIN-201022013121",
+    "SDWIN-201023020513",
+    "SDWIN-201019002900",
+    "SDWIN-201017061100",
+    "SDWIN-200922042230"
+  ],
+  "tactic_coverage": {
+    "dev": {
+      "credential_access": 2,
+      "defense_evasion": 2,
+      "discovery": 1,
+      "execution": 2,
+      "lateral_movement": 1,
+      "persistence": 1,
+      "privilege_escalation": 1
+    },
+    "e2e": {
+      "credential_access": 3,
+      "defense_evasion": 3,
+      "discovery": 1,
+      "execution": 2,
+      "lateral_movement": 1,
+      "persistence": 1,
+      "privilege_escalation": 1
+    },
+    "test": {
+      "credential_access": 9,
+      "defense_evasion": 9,
+      "discovery": 4,
+      "execution": 6,
+      "lateral_movement": 5,
+      "persistence": 4,
+      "privilege_escalation": 3
+    },
+    "unused": {
+      "collection": 1,
+      "credential_access": 6,
+      "defense_evasion": 9,
+      "discovery": 3,
+      "execution": 6,
+      "lateral_movement": 5,
+      "persistence": 4,
+      "privilege_escalation": 3
+    }
+  },
+  "windows": {
+    "SDWIN-190301125905": {
+      "split": "test",
+      "dedup_group": "SDWIN-190301125905",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1222.001"
+      ],
+      "events": 9002,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8327
+    },
+    "SDWIN-190301174830": {
+      "split": "test",
+      "dedup_group": "SDWIN-190301174830",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.006"
+      ],
+      "events": 8465,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9556
+    },
+    "SDWIN-190319020147": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190319020147",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1069.001"
+      ],
+      "events": 884,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.4853
+    },
+    "SDWIN-190319020729": {
+      "split": "test",
+      "dedup_group": "SDWIN-190319020729",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1087.001"
+      ],
+      "events": 1907,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.7116
+    },
+    "SDWIN-190319021158": {
+      "split": "test",
+      "dedup_group": "SDWIN-190319021158",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1087.002"
+      ],
+      "events": 633,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8562
+    },
+    "SDWIN-190319023812": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190319023812",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1547.001"
+      ],
+      "events": 40569,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8356
+    },
+    "SDWIN-190319024742": {
+      "split": "test",
+      "dedup_group": "SDWIN-190319024742",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1053.005"
+      ],
+      "events": 1297,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.788
+    },
+    "SDWIN-190319131123": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190319131123",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1550.002"
+      ],
+      "events": 10271,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.4414
+    },
+    "SDWIN-190319145126": {
+      "split": "test",
+      "dedup_group": "SDWIN-190319145126",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.003"
+      ],
+      "events": 1179,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.6489
+    },
+    "SDWIN-190403133337": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-190403133337",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1574.001"
+      ],
+      "events": 6349,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.4257
+    },
+    "SDWIN-190518182022": {
+      "split": "test",
+      "dedup_group": "SDWIN-190518182022",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1059.005"
+      ],
+      "events": 2067,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.18
+    },
+    "SDWIN-190518184306": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518184306",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1546.003"
+      ],
+      "events": 79896,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8978
+    },
+    "SDWIN-190518200432": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518200432",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1055.003"
+      ],
+      "events": 5898,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.0768
+    },
+    "SDWIN-190518201207": {
+      "split": "test",
+      "dedup_group": "SDWIN-190518201207",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1069.002"
+      ],
+      "events": 1749,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.5203
+    },
+    "SDWIN-190518201922": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518201922",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1112"
+      ],
+      "events": 2710,
+      "primary_host": "HR001.shire.com",
+      "primary_host_share": 0.9185
+    },
+    "SDWIN-190518202151": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518202151",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.001"
+      ],
+      "events": 6026,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8609
+    },
+    "SDWIN-190518203650": {
+      "split": "test",
+      "dedup_group": "SDWIN-190518203650",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1112"
+      ],
+      "events": 2668,
+      "primary_host": "HR001.shire.com",
+      "primary_host_share": 0.8793
+    },
+    "SDWIN-190518210125": {
+      "split": "dev",
+      "dedup_group": "SDWIN-190518210125",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 7504,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.6339
+    },
+    "SDWIN-190518210652": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518210652",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1021"
+      ],
+      "events": 4348,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.6684
+    },
+    "SDWIN-190518211052": {
+      "split": "test",
+      "dedup_group": "SDWIN-190518211052",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1021.003"
+      ],
+      "events": 32706,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.9604
+    },
+    "SDWIN-190518211456": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518211456",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1021.006"
+      ],
+      "events": 2744,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.73
+    },
+    "SDWIN-190518213907": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-190518213907",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1047"
+      ],
+      "events": 4559,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.6462
+    },
+    "SDWIN-190518221344": {
+      "split": "test",
+      "dedup_group": "SDWIN-190518221344",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1055.001"
+      ],
+      "events": 12200,
+      "primary_host": "MORDORDC.mordor.local",
+      "primary_host_share": 0.8389
+    },
+    "SDWIN-190518224039": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518224039",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1069.001"
+      ],
+      "events": 4570,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9425
+    },
+    "SDWIN-190518230752": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-190518230752",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.004"
+      ],
+      "events": 13199,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.6061
+    },
+    "SDWIN-190518235535": {
+      "split": "test",
+      "dedup_group": "SDWIN-190518235535",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003"
+      ],
+      "events": 7887,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.979
+    },
+    "SDWIN-190519005224": {
+      "split": "dev",
+      "dedup_group": "SDWIN-190519005224",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1049"
+      ],
+      "events": 5047,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.2921
+    },
+    "SDWIN-190625103712": {
+      "split": "test",
+      "dedup_group": "SDWIN-190625103712",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.002"
+      ],
+      "events": 12349,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9822
+    },
+    "SDWIN-190625133822": {
+      "split": "dev",
+      "dedup_group": "SDWIN-190625133822",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.002"
+      ],
+      "events": 738,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.4539
+    },
+    "SDWIN-191027055035": {
+      "split": "dev",
+      "dedup_group": "SDWIN-191027055035",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.001"
+      ],
+      "events": 5489,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8872
+    },
+    "SDWIN-191027223020": {
+      "split": "dev",
+      "dedup_group": "SDWIN-191027223020",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.004"
+      ],
+      "events": 1730,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.5734
+    },
+    "SDWIN-191225045202": {
+      "split": "unused",
+      "dedup_group": "SDWIN-191225045202",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1112"
+      ],
+      "events": 1635,
+      "primary_host": "IT001.shire.com",
+      "primary_host_share": 0.8037
+    },
+    "SDWIN-200609225055": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200609225055",
+      "primary_tactic": "TA0009",
+      "techniques": [
+        "T1123"
+      ],
+      "events": 6202,
+      "primary_host": "WORKSTATION6.mordor.local",
+      "primary_host_share": 0.7017
+    },
+    "SDWIN-200721232741": {
+      "split": "test",
+      "dedup_group": "SDWIN-200721232741",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.010"
+      ],
+      "events": 2390,
+      "primary_host": "WORKSTATION5.mordor.local",
+      "primary_host_share": 0.8887
+    },
+    "SDWIN-200722001847": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200722001847",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1547.001"
+      ],
+      "events": 657,
+      "primary_host": "WORKSTATION5.mordor.local",
+      "primary_host_share": 0.5312
+    },
+    "SDWIN-200724174200": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200724174200",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1047"
+      ],
+      "events": 3719,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.7083
+    },
+    "SDWIN-200805020926": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-200805020926",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.006"
+      ],
+      "events": 869,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.4684
+    },
+    "SDWIN-200805034820": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-200805034820",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 629,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.717
+    },
+    "SDWIN-200806012009": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200806012009",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 349,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.2292
+    },
+    "SDWIN-200806015757": {
+      "split": "test",
+      "dedup_group": "SDWIN-200806015757",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 506,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.4822
+    },
+    "SDWIN-200806022635": {
+      "split": "test",
+      "dedup_group": "SDWIN-200806022635",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 3390,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.5861
+    },
+    "SDWIN-200806030120": {
+      "split": "test",
+      "dedup_group": "SDWIN-200806030120",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 6046,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.0978
+    },
+    "SDWIN-200806031938": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200806031938",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.002"
+      ],
+      "events": 1264,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.3402
+    },
+    "SDWIN-200806035621": {
+      "split": "dev",
+      "dedup_group": "SDWIN-200806035621",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1047"
+      ],
+      "events": 2343,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.6953
+    },
+    "SDWIN-200806115603": {
+      "split": "test",
+      "dedup_group": "SDWIN-200806115603",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1021.006"
+      ],
+      "events": 4284,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.76
+    },
+    "SDWIN-200806130039": {
+      "split": "test",
+      "dedup_group": "SDWIN-200806130039",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1069.002"
+      ],
+      "events": 619,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.588
+    },
+    "SDWIN-200807103913": {
+      "split": "test",
+      "dedup_group": "SDWIN-200807103913",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.001"
+      ],
+      "events": 6982,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9056
+    },
+    "SDWIN-200904032946": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-200904032946",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1548.002"
+      ],
+      "events": 4139,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9577
+    },
+    "SDWIN-200914080546": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200914080546",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1047"
+      ],
+      "events": 12278,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9167
+    },
+    "SDWIN-200916232559": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200916232559",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1210"
+      ],
+      "events": 790,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.5544
+    },
+    "SDWIN-200917174542": {
+      "split": "test",
+      "dedup_group": "SDWIN-200917174542",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.003"
+      ],
+      "events": 8121,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.8698
+    },
+    "SDWIN-200918145959": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200918145959",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.003"
+      ],
+      "events": 5504,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.3914
+    },
+    "SDWIN-200921001437": {
+      "split": "test",
+      "dedup_group": "SDWIN-200921001437",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1047"
+      ],
+      "events": 6383,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.2688
+    },
+    "SDWIN-200921175806": {
+      "split": "unused",
+      "dedup_group": "SDWIN-190518184306",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1053.005"
+      ],
+      "events": 59399,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8874
+    },
+    "SDWIN-200921230246": {
+      "split": "test",
+      "dedup_group": "SDWIN-200921230246",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.003"
+      ],
+      "events": 3590,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.6443
+    },
+    "SDWIN-200922042230": {
+      "split": "unused",
+      "dedup_group": "SDWIN-200922042230",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.002"
+      ],
+      "events": 1182,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.7758
+    },
+    "SDWIN-201009173318": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201009173318",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1047"
+      ],
+      "events": 8947,
+      "primary_host": "MORDORDC.theshire.local",
+      "primary_host_share": 0.8373
+    },
+    "SDWIN-201009183000": {
+      "split": "test",
+      "dedup_group": "SDWIN-201009183000",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T1021.003"
+      ],
+      "events": 37814,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.9344
+    },
+    "SDWIN-201012183248": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-201012183248",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218"
+      ],
+      "events": 1326,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.5158
+    },
+    "SDWIN-201017061100": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201017061100",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1220"
+      ],
+      "events": 1364,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201018195009": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201018195009",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.001"
+      ],
+      "events": 184,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201018225619": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201018225619",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.001"
+      ],
+      "events": 118,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201019002900": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201019002900",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.002"
+      ],
+      "events": 915,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201019033054": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-201019033054",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.004"
+      ],
+      "events": 286,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201019224718": {
+      "split": "dev",
+      "dedup_group": "SDWIN-201019224718",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1037.001"
+      ],
+      "events": 122,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201019232515": {
+      "split": "test",
+      "dedup_group": "SDWIN-201019232515",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1055"
+      ],
+      "events": 509,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201020013208": {
+      "split": "test",
+      "dedup_group": "SDWIN-201020013208",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1056.002"
+      ],
+      "events": 163,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201021001911": {
+      "split": "test",
+      "dedup_group": "SDWIN-201021001911",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.004"
+      ],
+      "events": 2366,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201021204544": {
+      "split": "test",
+      "dedup_group": "SDWIN-201021204544",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1543.003"
+      ],
+      "events": 437,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201021232814": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-201021232814",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1518"
+      ],
+      "events": 68,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022002145": {
+      "split": "test",
+      "dedup_group": "SDWIN-201022002145",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.001"
+      ],
+      "events": 1221,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022013121": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201022013121",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.002"
+      ],
+      "events": 1291,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022015432": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201022015432",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.003"
+      ],
+      "events": 1166,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022022144": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-201022022144",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.005"
+      ],
+      "events": 1151,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022025808": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-201022025808",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.005"
+      ],
+      "events": 1127,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022035214": {
+      "split": "test",
+      "dedup_group": "SDWIN-201022002145",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218.005"
+      ],
+      "events": 1553,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201022042947": {
+      "split": "test",
+      "dedup_group": "SDWIN-201022042947",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1110.003",
+        "T1558.003",
+        "T1135",
+        "T1021.006"
+      ],
+      "events": 25993,
+      "primary_host": "WORKSTATION7.theshire.local",
+      "primary_host_share": 0.1028
+    },
+    "SDWIN-201023020513": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201022013121",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1218"
+      ],
+      "events": 1316,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201023023651": {
+      "split": "test",
+      "dedup_group": "SDWIN-201023023651",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1197"
+      ],
+      "events": 424,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201023031210": {
+      "split": "test",
+      "dedup_group": "SDWIN-201023031210",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1055.002"
+      ],
+      "events": 692,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201026235835": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201026235835",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1055"
+      ],
+      "events": 282,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201028191914": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201018195009",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1055"
+      ],
+      "events": 120,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201029001615": {
+      "split": "test",
+      "dedup_group": "SDWIN-201029001615",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1059"
+      ],
+      "events": 2395,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201029202324": {
+      "split": "e2e",
+      "dedup_group": "SDWIN-201029202324",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1059"
+      ],
+      "events": 267,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201102041306": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201102041306",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1059.001"
+      ],
+      "events": 110,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201102163918": {
+      "split": "unused",
+      "dedup_group": "SDWIN-201102163918",
+      "primary_tactic": "TA0007",
+      "techniques": [
+        "T1012"
+      ],
+      "events": 451,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-201219070027": {
+      "split": "dev",
+      "dedup_group": "SDWIN-201219070027",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1053.005"
+      ],
+      "events": 1041,
+      "primary_host": "WORKSTATION6.theshire.local",
+      "primary_host_share": 0.4755
+    },
+    "SDWIN-201219075059": {
+      "split": "test",
+      "dedup_group": "SDWIN-201219075059",
+      "primary_tactic": "TA0002",
+      "techniques": [
+        "T1053.005"
+      ],
+      "events": 2657,
+      "primary_host": "WORKSTATION5.theshire.local",
+      "primary_host_share": 0.8009
+    },
+    "SDWIN-210314014019": {
+      "split": "test",
+      "dedup_group": "SDWIN-210314014019",
+      "primary_tactic": "TA0003",
+      "techniques": [
+        "T1505.003"
+      ],
+      "events": 10487,
+      "primary_host": "MXS01.azsentinel.local",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-210427020247": {
+      "split": "unused",
+      "dedup_group": "SDWIN-210427020247",
+      "primary_tactic": "TA0008",
+      "techniques": [
+        "T0000"
+      ],
+      "events": 285,
+      "primary_host": "ADFS01.blacksmith.local",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-210611210814": {
+      "split": "dev",
+      "dedup_group": "SDWIN-210611210814",
+      "primary_tactic": "TA0004",
+      "techniques": [
+        "T1134.002",
+        "T1134.001"
+      ],
+      "events": 2611,
+      "primary_host": "WORKSTATION5",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-220630130349": {
+      "split": "test",
+      "dedup_group": "SDWIN-220630130349",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.002"
+      ],
+      "events": 13645,
+      "primary_host": "pedro-computer",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-220703123711": {
+      "split": "test",
+      "dedup_group": "SDWIN-220630130349",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.002"
+      ],
+      "events": 21457,
+      "primary_host": "pedro-computer",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-220705170038": {
+      "split": "dev",
+      "dedup_group": "SDWIN-220705170038",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.002"
+      ],
+      "events": 25208,
+      "primary_host": "DESKTOP-CQF82L6",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-220708104215": {
+      "split": "unused",
+      "dedup_group": "SDWIN-220708104215",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.002"
+      ],
+      "events": 17926,
+      "primary_host": "Pedro01",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-220708104300": {
+      "split": "unused",
+      "dedup_group": "SDWIN-220708104300",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.002"
+      ],
+      "events": 55321,
+      "primary_host": "Pedro01",
+      "primary_host_share": 0.9994
+    },
+    "SDWIN-220803205800": {
+      "split": "test",
+      "dedup_group": "SDWIN-220803205800",
+      "primary_tactic": "TA0005",
+      "techniques": [
+        "T1562.002"
+      ],
+      "events": 47496,
+      "primary_host": "Pedro01",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-230718151900": {
+      "split": "unused",
+      "dedup_group": "SDWIN-230718151900",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.003"
+      ],
+      "events": 11184,
+      "primary_host": "DC01.pandalab.com",
+      "primary_host_share": 1.0
+    },
+    "SDWIN-230720004300": {
+      "split": "test",
+      "dedup_group": "SDWIN-230720004300",
+      "primary_tactic": "TA0006",
+      "techniques": [
+        "T1003.003"
+      ],
+      "events": 13969,
+      "primary_host": "DC01.pandalab.com",
+      "primary_host_share": 1.0
+    }
+  }
+}

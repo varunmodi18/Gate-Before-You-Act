@@ -57,6 +57,9 @@ class WindowInfo:
     primary_tactic: str
     eligible: bool = True
     techniques: tuple[str, ...] = ()
+    events: int | None = None
+    primary_host: str | None = None
+    primary_host_share: float | None = None
 
 
 @dataclass
@@ -206,6 +209,9 @@ def to_json(result: SplitResult, windows: list[WindowInfo], extra: dict[str, Any
                 "dedup_group": by_id[wid].dedup_group,
                 "primary_tactic": by_id[wid].primary_tactic,
                 "techniques": list(by_id[wid].techniques),
+                "events": by_id[wid].events,
+                "primary_host": by_id[wid].primary_host,
+                "primary_host_share": by_id[wid].primary_host_share,
             }
             for wid in sorted(result.assignment)
         },
@@ -241,7 +247,7 @@ def main() -> None:
                 continue  # not ingested (e.g. missing Host file)
             con = open_case_db(settings.resolve(Path(r.duckdb_path)))
             try:
-                elig = eligibility(r.id, con).eligible
+                elig = eligibility(r.id, con)
             finally:
                 con.close()
             infos.append(
@@ -249,8 +255,11 @@ def main() -> None:
                     id=r.id,
                     dedup_group=str(r.dedup_group),
                     primary_tactic=(r.tactics or ["unknown"])[0],
-                    eligible=elig,
+                    eligible=elig.eligible,
                     techniques=tuple(r.techniques or []),
+                    events=elig.events,
+                    primary_host=elig.primary_host,
+                    primary_host_share=elig.primary_host_share,
                 )
             )
     result = assign_splits(infos, seed=args.seed)
