@@ -44,10 +44,16 @@ def acting_user(rec: CitedRecord) -> str | None:
     return account_key(str(v)) if v else None
 
 
-def record_matches(rec: CitedRecord, ticket: ChangeTicket) -> dict[str, bool]:
+def record_matches(
+    rec: CitedRecord, ticket: ChangeTicket, command: str | None = None
+) -> dict[str, bool]:
+    """``command`` overrides the record's own command line (the validator passes the acting
+    process's command line, found through the PID lineage, for records that have none)."""
     host = rec.host
     user = acting_user(rec)
-    cmd = rec.values.get("command_line") if rec.table else None
+    cmd = (
+        command if command is not None else (rec.values.get("command_line") if rec.table else None)
+    )
     ts = rec.ts
     return {
         "host": host is not None and host_key(host) == host_key(ticket.host),
