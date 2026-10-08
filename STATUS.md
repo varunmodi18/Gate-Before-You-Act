@@ -20,7 +20,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T0.1 Repository scaffold | done | m0-foundations | Lint and tests pass locally (see Measured numbers). **CI has not yet run on GitHub**: the branch is pushed at the M0 checkpoint |
 | T0.2 Store and migrations | done | m0-foundations | All §F.1 tables in Alembic `0001_initial`; WAL + foreign keys + busy timeout on every connection; `make db` |
 | T0.3 Early model-serving spike | blocked | m0-foundations | All measurements done (`docs/pilot_report.md`). Blocked on team decisions: (1) FP16 KV cache instead of the planned FP8, which garbled output; (2) verification "20/20 schema-valid" not fully met — 78/80 calls valid, the 2 failures hit `max_tokens` in a repetition loop. Throughput: F1 not triggered |
-| T0.4 LLM client abstraction | doing | m0-foundations | |
+| T0.4 LLM client abstraction | done | m0-foundations | Live (httpx, retries 2/8/30 s), Fake (hash or regex rules), Replay + recorder; 13 unit tests and the `gpu` live smoke test pass against the `vllm-awq` profile |
 | T1.1 OTRF fetch | todo | | |
 | T1.2 Catalogue | todo | | |
 | T1.3 Normaliser and field map | todo | | |
@@ -97,6 +97,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | `--structured-outputs-config '{"backend": "xgrammar", "disable_any_whitespace": true}'` | Without it the model emitted only whitespace inside the JSON until `max_tokens` (risk R7). vLLM accepts the option only with an explicit backend | T0.3, §0.8 |
 | 2026-10-08 | Model fetched with `scripts/fetch_model.py` at a pinned commit; each file's SHA-256 checked against Hugging Face and stored in `models/<name>/MANIFEST.json` | §L.4 item 7 (same file, recorded checksum) | T0.3 |
 | 2026-10-08 | Fallback F1 **not** set | Measured 1,229 input tok/s and 55.4 output tok/s; neither is below half of the 800 / 80 assumption | T0.3, §F.8 |
+| 2026-10-08 | LLM retries: 3 retries after the first attempt, waiting 2, 8 and 30 s (4 attempts in total); 4xx responses are not retried | §F.8 lists three delays; read as three retries | T0.4, §F.8 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -128,6 +129,9 @@ See the latest entry per task.
 | 2026-10-08 | T0.3 | `uv pip check` + comparison with vLLM's resolution | 198 packages, identical to the resolution; all compatible |
 | 2026-10-08 | T0.3 | Server starts | Attempt 1: `ninja` not on PATH. Attempt 2: FlashInfer JIT broke on the path with spaces. Attempt 3 (venv moved, CUDA_HOME set): up. Two later restarts failed on launcher/config errors (`str.format` on the JSON argument; whitespace option needs an explicit backend), then up. FP16-KV diagnostic: first start failed (cold start left 0.36 GiB for KV, 0.44 GiB needed), second start up |
 | 2026-10-08 | T0.3 | `make pilot` (20 episodes + long request + 30-min soak), profile `vllm-awq` with FP16 KV | 80/80 calls OK, **78/80 schema-valid**; 1,229.2 input tok/s, 55.4 output tok/s; p50/p95 latency 14.0/19.0 s; peak VRAM 7,249 MiB; peak host RAM 8,201 MB; long request 7,850-token prompt OK; soak 30.7 min: 480 calls, 459 valid, input 1,161 tok/s mean (min 1,030), output 56.0 (min 53.0), max 80 °C, only the SW power-cap throttle flag |
+| 2026-10-08 | T0.4 | `uv run pytest tests/unit/test_llm_client.py` | 13 passed (Fake, Live with mock transport incl. retries and 4xx, Replay and recorder) |
+| 2026-10-08 | T0.4 | `make gpu-test` against the `vllm-awq` profile | 1 passed (live JSON-schema call) |
+| 2026-10-08 | M0 | `make lint`, `make test` | lint clean (mypy: 34 files); pytest 31 passed (1 `gpu` deselected); vitest 4 passed |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 
