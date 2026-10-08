@@ -1700,7 +1700,7 @@ gate-before-you-act/
 │  └─ tests/ (vitest)
 ├─ scripts/                   # one-off CLIs (pilot.py, token_audit.py, budget.py, record_replay.py, sensitivity.py)
 ├─ tests/
-│  ├─ unit/ integration/ e2e/ (Playwright)  fixtures/
+│  ├─ unit/ integration/ fixtures/   (Playwright specs live in frontend/tests/e2e/, Draft 8: they import @playwright/test from frontend/node_modules)
 ├─ data/                      # gitignored except data/fixtures/
 │  ├─ raw/ duckdb/ index/ app.db  fixtures/{mini_window,demo}/
 └─ results/                   # gitignored exports
@@ -1712,7 +1712,7 @@ gate-before-you-act/
 |---|---|
 | Configuration | YAML in `config/` plus environment overrides `GBYA_*` (pydantic-settings). Separate `dev`, `test` (FakeLLM, temp DB) and `demo` profiles via `GBYA_ENV` |
 | Secrets | None required. `HF_TOKEN` is optional and read from the environment, never committed. `.env` is gitignored |
-| Dependencies | `uv add` only; lock file committed. Frontend uses `pnpm` with lock file. Node 22 LTS (Draft 8; Node 20 is end-of-life). React Router is pinned to 7.x, because 8.x requires React ≥ 19.2.7 and the plan uses React 18 (Draft 8). Model weights are not in git |
+| Dependencies | `uv add` only; lock file committed. Frontend uses `pnpm` with lock file. Node 22 LTS (Draft 8; Node 20 is end-of-life). React Router is pinned to 7.x, because 8.x requires React ≥ 19.2.7 and the plan uses React 18; TanStack Table is pinned to 8.x, whose API the pages use (9.x changed it) (Draft 8). Model weights are not in git |
 | Logging | Structured JSON logs (`structlog`) with `run_id`, `episode_id`, `case_id` context; console pretty-print in dev; `logs/` rotating files |
 | Error handling | Domain exceptions in `gbya.errors` mapped to the §F.6 envelope; no bare `except` |
 | Code quality | ruff, mypy (strict on gate/scoring/analysis/cases), eslint, prettier, pre-commit; PRs require tests for the touched modules |

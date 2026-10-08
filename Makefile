@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: help setup db data data-fetch catalogue normalise dedup splits lint format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: help setup db data data-fetch catalogue normalise dedup splits lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -53,6 +53,9 @@ format:  ## Apply ruff and prettier formatting
 test:  ## Python unit + integration tests (no GPU) and frontend unit tests
 	$(UV) run pytest
 	$(NVM_USE) cd frontend && $(PNPM) test
+
+e2e:  ## Playwright journeys (fixture data, no GPU) at 1280 and 768 px, with axe checks
+	$(NVM_USE) cd frontend && $(PNPM) e2e
 
 build-web:  ## Build the SPA into frontend/dist (served by the API)
 	$(NVM_USE) cd frontend && $(PNPM) build

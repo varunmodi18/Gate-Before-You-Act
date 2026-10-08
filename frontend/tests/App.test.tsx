@@ -57,8 +57,8 @@ describe('SPA shell', () => {
       'fetch',
       vi.fn(() => new Promise(() => {})),
     )
-    renderAt('/windows')
-    expect(screen.getByRole('heading', { name: 'Windows' })).toBeInTheDocument()
-    expect(screen.getByText(/task T1\.7/)).toBeInTheDocument()
+    renderAt('/playground')
+    expect(screen.getByRole('heading', { name: 'Gate Playground' })).toBeInTheDocument()
+    expect(screen.getByText(/task T2\.7/)).toBeInTheDocument()
   })
 })
