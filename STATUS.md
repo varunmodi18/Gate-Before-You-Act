@@ -121,6 +121,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Added `GET /windows/{id}` and `GET /windows/{id}/records/{record_id}` (normalised row + original JSON) to the §F.5 contract | The Windows page's record drawer (§E.1 row 2) needs them | §F.5 |
 | 2026-10-08 | Table filters are `filter=column:text` (case-insensitive contains, ANDed, column names validated, value bound as a parameter) | §F.5 names `filter=` without a format | §F.5 |
 | 2026-10-08 | FastAPI validation errors (422) and unknown routes (404) also use the §F.6 envelope (`VALIDATION_ERROR`, `NOT_FOUND`) | One error shape for the UI | §F.6 |
+| 2026-10-08 | `open_case_db` passes the six hardening settings as connection-time `config` instead of `SET` statements (plan §D.5.1 updated in Draft 8) | Found in T1.5: DuckDB shares one instance per file in a process, so a second `open_case_db` of the same file failed on the locked configuration (would break concurrent API requests). New tests: repeated and 8 concurrent opens succeed; all layer-2 attacks still blocked; an unhardened connection to the same file is refused while a hardened one is open | §D.5.1 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers

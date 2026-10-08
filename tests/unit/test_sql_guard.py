@@ -201,7 +201,45 @@ def test_hardening_settings_are_applied(case_db: Path) -> None:
         "threads": "2",
         "lock_configuration": "true",
     }
-    assert HARDENING[-1] == "SET lock_configuration = true"  # locked last
+    assert list(HARDENING)[-1] == "lock_configuration"  # locked last
+
+
+def test_repeated_and_concurrent_opens(case_db: Path) -> None:
+    """DuckDB shares one instance per file in a process; every open must still work."""
+    import threading
+
+    first = open_case_db(case_db)
+    second = open_case_db(case_db)
+    try:
+        assert second.execute("SELECT count(*) FROM network").fetchone() == (1,)
+    finally:
+        first.close()
+        second.close()
+    errors: list[str] = []
+
+    def worker() -> None:
+        try:
+            con = open_case_db(case_db)
+            con.execute("SELECT count(*) FROM process_access").fetchall()
+            con.close()
+        except Exception as exc:  # collected and asserted below
+            errors.append(repr(exc))
+
+    threads = [threading.Thread(target=worker) for _ in range(8)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert errors == []
+
+
+def test_unhardened_connection_refused_while_hardened_open(case_db: Path) -> None:
+    con = open_case_db(case_db)
+    try:
+        with pytest.raises(duckdb.ConnectionException):
+            duckdb.connect(str(case_db), read_only=True)
+    finally:
+        con.close()
 
 
 def test_pinned_duckdb_version() -> None:

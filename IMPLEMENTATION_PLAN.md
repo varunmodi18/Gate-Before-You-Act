@@ -163,6 +163,8 @@ Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now sta
 
 Consequence: the FP16 KV cache holds 21,520 tokens, so only about **2.6 requests of 8,192 tokens fit at once** (vLLM reports 2.63×). Four concurrent requests of the Exp 2 shape (~4.7k tokens) fit, but when several requests approach the 8k limit, the extra requests queue. This is reflected in measured throughput, not hidden.
 
+*Implementation notes from M1.* §D.5.1's hardening settings are applied as DuckDB connection-time configuration rather than `SET` statements (same settings; needed for repeated opens of one file in a process).
+
 *Other serving settings from T0.3.* (1) The server runs with `--generation-config vllm`, so only per-request sampling parameters apply (Qwen's default `repetition_penalty` 1.05 is not applied; sending it explicitly made schema validity worse, 73/80 vs 78/80). (2) JSON-constrained output needs xgrammar with `disable_any_whitespace` (risk R7). (3) The vLLM venv lives at a path without spaces, because FlashInfer's kernel build does not quote paths. (4) T0.3 passed with a known issue: about 2.5–4.4% of synthetic proposer-shaped outputs hit `max_tokens` in a repetition loop; T5.1 carries an acceptance check for this.
 
 ---
@@ -662,6 +664,8 @@ SET memory_limit = '1GB';
 SET threads = 2;
 SET lock_configuration = true;
 ```
+
+*(Draft 8, T1.3a: the same six settings are passed as connection-time configuration — `duckdb.connect(path, read_only=True, config={…})` — instead of `SET` statements after opening. DuckDB shares one database instance per file within a process, so a second hardened open of the same file failed on the already-locked configuration. With connection-time configuration, repeated and concurrent opens work, every block below still holds (tests repeat them), and an unhardened connection to the same file in the same process is refused.)*
 
 **[V]** Tested on DuckDB 1.5.6 on 6 October 2026: before these settings a read-only connection still executed `read_csv_auto('x.csv')`. After them, `read_csv_auto`, `ATTACH`, `COPY … TO`, `INSTALL httpfs` and `SET enable_external_access = true` all failed. The implementation must pin the DuckDB version and repeat this test in CI, because these are database-level controls and not an operating-system sandbox.
 
