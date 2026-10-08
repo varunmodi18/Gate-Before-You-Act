@@ -253,7 +253,20 @@ def load_case(session: Session, case_id: str, settings: Settings) -> Exp1Case:
             rationale=pkg.get("rationale"),
         ),
         expected=(row.labels or {}).get("initial_gate_label"),
+        prefix_retrieved=_prefix_retrieved(settings, row.id),
     )
+
+
+def _prefix_retrieved(settings: Settings, case_id: str) -> frozenset[int]:
+    """The registry of the case's deterministic prefix (T4.3), if one was generated; otherwise
+    empty, and the package's citations stand in for it (hand-made fixture)."""
+    import json
+
+    sid, variant = case_id.split(":", 1)
+    path = settings.resolve(settings.cases_dir) / sid / "prefixes" / f"{variant}.json"
+    if not path.is_file():
+        return frozenset()
+    return frozenset(int(i) for i in json.loads(path.read_text())["retrieved"])
 
 
 def comparable(row: GateDecisionRow) -> dict[str, Any]:

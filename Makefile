@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: index generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -47,6 +47,9 @@ index:  ## Fetch SigmaHQ (r2026-07-01) + ATT&CK 19.2 at pinned versions, check l
 
 import-cases:  ## Import cases/<scenario>/scenario.json and cases/*.json into app.db (content hashes)
 	$(UV) run python -m gbya.cases.store
+
+generate-variants:  ## Build E1-E5 and Set R for SID (case files, patched DBs, prefixes, import)
+	$(UV) run python -m gbya.cases.cli generate $(SID)
 
 retrieval-cache:  ## Store bm25 and bm25_rerank rankings for every case of app.db (CPU reranker; Exp 1 reads them)
 	$(UV) run python -m gbya.retrieval.cache
