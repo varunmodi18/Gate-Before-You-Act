@@ -914,6 +914,8 @@ In G1, **C1 keeps its full target validation and typed-argument rule** so that G
 
 **Decoding:** temperature 0, `max_tokens` 200, JSON-schema constrained. The whole prompt must fit the per-request limit in §D.10.3.
 
+*Draft 8 notes (T3.2).* The requirement's placeholders are bound on a `Target values` line; `CHANGE_TICKETS` shows every trusted ticket whose host or account matches the target, with its `approved` flag and times in naive UTC like the records; reference documents are rendered from the ID-stripped index text. Over-budget per-call blocks raise `VERIFIER_PROMPT_TOO_LARGE` (never trimmed); the fixed system prompt's budget is checked by a test with the model tokenizer.
+
 #### D.7.1 Deterministic evidence format (review 2, 4.1)
 
 The verifier receives the selected normalised fields listed below, rendered in full without truncation. It does not receive the whole raw record. This is the final proposal's wording (§8). A silent cut-off could remove the very detail a label depends on, so the format guarantees that the selected fields are never cut. (Historical note: v4 said "cited records verbatim"; that wording is withdrawn.)

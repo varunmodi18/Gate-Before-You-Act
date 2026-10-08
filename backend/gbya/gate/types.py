@@ -50,6 +50,35 @@ class VerifierOutput(BaseModel):
     reason: str = ""
 
 
+class Claim(BaseModel):
+    """The agent's claim that travels with a call (§D.3 information boundary).
+
+    ``technique_claimed`` is shown to the verifier as a claim and is never a retrieval or lookup
+    key; ``rationale`` is shown only to the ``rationale`` verifier variant (A3)."""
+
+    model_config = ConfigDict(frozen=True)
+    technique_claimed: str | None = None
+    rationale: str | None = None
+
+
+class VerifierCall(BaseModel):
+    """One C4 call with its I/O, stored with the gate decision (T3.3) and in ``verifier_evals``.
+
+    ``output`` is None when the model's output could not be parsed (``C4_PARSE_ERROR``)."""
+
+    model_config = ConfigDict(frozen=True)
+    variant: str
+    output: VerifierOutput | None
+    error: str | None = None
+    raw: Any = None  # the parsed object, or the raw text when it did not parse
+    prompt_hash: str | None = None
+    manifest: dict[str, Any] = Field(default_factory=dict)
+    retrieval: dict[str, Any] | None = None  # mode, query hash and rankings
+    tokens_in: int = 0
+    tokens_out: int = 0
+    ms: float = 0.0
+
+
 class ApprovalOutcome(BaseModel):
     """Result of a request_approval, explicit or converted by C6 (§D.6.2a second table)."""
 
@@ -70,6 +99,7 @@ class GateDecision(BaseModel):
     checks: list[CheckResult]
     failed_check: str | None = None
     verifier: VerifierOutput | None = None
+    verifier_call: VerifierCall | None = None  # the C4 I/O, when C4 ran
     approval: ApprovalOutcome | None = None  # set when C6 converted the call
 
     @property
