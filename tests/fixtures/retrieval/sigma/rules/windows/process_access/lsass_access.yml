@@ -1,0 +1,18 @@
+# Synthetic test rule (not from SigmaHQ).
+title: Test LSASS Memory Access T1003.001
+id: 00000000-0000-4000-8000-000000000001
+status: test
+description: Detects a process opening lsass.exe with read access (attack.t1003.001), as T1003 tools do.
+author: Test Author
+tags:
+    - attack.credential-access
+    - attack.t1003.001
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection:
+        TargetImage|endswith: '\lsass.exe'
+        GrantedAccess: '0x1010'
+    condition: selection
+level: high

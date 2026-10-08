@@ -1,0 +1,14 @@
+# Synthetic test rule (not from SigmaHQ). Same score profile as whoami for the tie-break test.
+title: Test Whoami Discovery
+id: 00000000-0000-4000-8000-000000000000
+status: test
+description: Detects whoami used for owner and user discovery.
+author: Test Author
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\whoami.exe'
+    condition: selection
+level: low

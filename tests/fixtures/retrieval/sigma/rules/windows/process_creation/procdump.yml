@@ -1,0 +1,17 @@
+# Synthetic test rule (not from SigmaHQ).
+title: Test Procdump Dumping LSASS
+id: 00000000-0000-4000-8000-000000000002
+status: test
+description: Detects procdump writing a memory dump of lsass.
+author: Test Author
+tags:
+    - attack.t1003
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\procdump.exe'
+        CommandLine|contains: ' -ma '
+    condition: selection
+level: high

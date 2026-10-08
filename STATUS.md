@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M3 Verifier and Exp 1, on branch `m3-verifier` (from `m2-gate`). M2 accepted and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M3 approved by the team on 2026-10-08.
-- **Next action:** T3.1 (retrieval index: SigmaHQ + ATT&CK pinned, licences checked), then T3.2 → T3.7. Stop at the M3 checkpoint.
+- **Next action:** T3.2 → T3.7 (T3.1 done). Stop at the M3 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -36,7 +36,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T2.5 Gate checks and orchestrator | done | m2-gate | `gbya/gate/{gate,checks,approval,evidence,config,types}.py`, `configs.yaml` (G0, G1, G2, G3, A1). C1–C6 by tool class, first failure decides; approval contract of §D.6.2a; C4 pluggable (scripted in tests until M3); mypy strict clean |
 | T2.6 Exp 1 core (code-only) | done | m2-gate | `gbya/experiments/exp1.py` (`decide`, `run_code_only`, `load_case`), hand-made 3-case fixture `data/fixtures/handmade/cases.json` + importer `gbya/cases/handmade.py`. Deterministic; stores `gate_decisions` rows |
 | T2.7 Gate Playground page | done | m2-gate | `/playground` (case picker, system checkboxes with C4 systems disabled, check-pipeline matrix with ✓/✕ + code text, verdict, correctness badge, feedback) over `GET /playground/cases`, `GET /playground/systems`, `POST /playground/gate` (same `exp1.decide`). Playwright J4 (code-only) at 1280 and 768 px |
-| T3.1 Retrieval index | todo | | Q-4 licences |
+| T3.1 Retrieval index | done | m3-verifier | SigmaHQ `r2026-07-01` (`552f3fe`, 2,403 `rules/windows` rules) + ATT&CK 19.2 (697 techniques), licences checked (Q-4); index builds in 3.5 s; never committed |
 | T3.2 Verifier prompt and evidence format | todo | | Team review of snapshots |
 | T3.3 C4 integration | todo | | |
 | T3.4 Configuration completion | todo | | |
@@ -172,6 +172,11 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Parent PIDs: keep the behaviour (a PID only seen as `ppid` fails C1). New validator check (i) for T4.4: if `permitted` includes `kill_process` on a PID, a record in `evidence_retrievable` must show that PID as the acting process — otherwise the labelled correct action could never be admitted, and the case would penalise every gate | Team decision (M2 checkpoint) | §D.11, T4.4 |
 | 2026-10-08 | **Runs carry a `purpose`** (research / development / fixture / demo; migration `0002`). `create_run` refuses `research` unless every case is in the frozen case set (`cases/FROZEN.json`) and the run is not a replay; runs on the hand-made fixture are `fixture` and can never be research results | Team decision (M2 checkpoint); NFR-12 | §F.1, NFR-12 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
+| 2026-10-08 | **Q-4 resolved.** Sources pinned: SigmaHQ release `r2026-07-01` = commit `552f3fee420ef232a8e5790c4fae591847e32347` (sparse: `rules/windows`, `LICENSE`); ATT&CK Enterprise STIX `enterprise-attack-19.2.json` from `mitre-attack/attack-stix-data` tag `v19.2`, SHA-256 `dc1639caa5501d720e280cf1cbd8fbe009884a0c9b3e6e9ed9d0c25166c3d8f4` (git blob `8b8a9c8` matches GitHub's). Licence files read at those versions: Sigma rules **DRL 1.1**; ATT&CK **MITRE's ATT&CK licence (terms of use)** — both the approved terms, so no stop. `make index` re-checks both licence texts on every fetch and stops (`LicenceError`) if they change. Index and rule files stay under git-ignored `data/` | Team decision Q-4 | §D.3, R10 |
+| 2026-10-08 | DRL 1.1 requires that "messages based on matches with the Rules" keep the rule's `author`. Every retrieved rule therefore carries `author` and a link to the file at the pinned commit as metadata; the UI shows title, author and link wherever a rule is shown (T3.6). The verifier prompt shows title, description and detection only (§D.7) | Licence condition | §D.3, §D.7 |
+| 2026-10-08 | ATT&CK v18+ removed `x_mitre_detection` and data sources from techniques. The plan's "detection and data-source text" is read as: the names of the technique's detection strategies (`detects` relationships), the descriptions and log sources of their **Windows** analytics, and the names of the data components those analytics reference. All 697 non-revoked, non-deprecated techniques are indexed (all platforms); citations, URLs and markdown link targets are removed from ATT&CK prose | Data-model change in ATT&CK 18 | §D.3 |
+| 2026-10-08 | Gold rule set for a **technique** (no sub-technique) gold label: rules tagged with the technique **or any of its sub-techniques**; for a sub-technique: rules tagged with it, else rules tagged with its parent (plan wording). ATT&CK top-1 stays literal: the retrieved document is the gold technique or its parent | Plan leaves the technique-level case open | §D.3 |
+| 2026-10-08 | Retrieval details: BM25Okapi (k1 1.5, b 0.75, ε 0.25, `rank-bm25`); only documents sharing a query token are ranked; ties broken by document id; query = values only (no field labels), duplicates kept. The gold map is a separate file (`gold_map.json`) that `retrieve` never reads; tags and technique IDs (case-insensitive) are removed from every indexed field, and empty brackets left by the removal are dropped | Determinism; hold-out | §D.3, §L.4 item 10 |
 
 ## Limitations for the final report
 
@@ -179,6 +184,14 @@ Collected as they are found; each must appear in the write-up's limitations.
 
 - `collection` has a single eligible window and is in no split (T1.6).
 - The agent can read the approval script through `get_context`, so it knows the approver's response in advance (proposal §8 wording kept; team decision 2026-10-08).
+
+## Third-party attribution (for the final report)
+
+The same text is in `README.md`. Nothing below is redistributed: each user rebuilds the index from source.
+
+- **Sigma rules:** SigmaHQ, <https://github.com/SigmaHQ/sigma>, release `r2026-07-01` (commit `552f3fee420ef232a8e5790c4fae591847e32347`), `rules/windows/` only. Licensed under the Detection Rule License (DRL) 1.1, <https://github.com/SigmaHQ/Detection-Rule-License>. Retrieved rules are shown with their title, author(s) from the rule's `author` field and a link to the rule at the pinned commit; the indexed text has ATT&CK tags and technique IDs removed.
+- **MITRE ATT&CK®:** Enterprise ATT&CK STIX 2.1, version 19.2 (`enterprise-attack-19.2.json`, <https://github.com/mitre-attack/attack-stix-data>, tag `v19.2`), used under MITRE's ATT&CK terms of use: "© 2026 The MITRE Corporation. This work is reproduced and distributed with the permission of The MITRE Corporation." ATT&CK® is a registered trademark of The MITRE Corporation.
+- **Security-Datasets:** OTRF, <https://github.com/OTRF/Security-Datasets>, commit `d9d40ef123d2c87d5d3df28c96bcab4f0faccc87`.
 
 ## Measured numbers
 
@@ -189,7 +202,7 @@ Collected as they are found; each must appear in the write-up's limitations.
 | GPU | NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB, driver 580.178.04 (CUDA 13.0); display on iGPU (`prime-select` = on-demand), 15 MiB used at idle |
 | RAM / disk | 15,606 MB RAM; 51 GB free on `/` at the start, 27 GB after T0.3 (vLLM venv 8.0 GB, model 5.2 GB, uv cache 9.2 GB); 29 GB after `uv cache prune` (cache 8.3 GB) |
 | Toolchain | uv 0.12.23; Python 3.11.17 (uv-managed); Node 22.23.3 (nvm); pnpm 12.10.1; CUDA 13.0 toolkit at `/usr/local/cuda-13.0` (nvcc 13.0.48), **not on PATH** — the session-start note "no nvcc" was wrong |
-| Network | PyPI CDN ≈ 0.11 MB/s; Hugging Face ≈ 7.4 MB/s; npm ≈ 0.7 MB/s (single measurements) |
+| Network | PyPI CDN ≈ 0.11 MB/s; Hugging Face ≈ 7.4 MB/s; npm ≈ 0.7 MB/s; raw.githubusercontent.com ≈ 0.034 MB/s (ATT&CK 19.2, 53.8 MB in 26.5 min) (single measurements) |
 
 ### Test runs
 
@@ -251,6 +264,9 @@ See the latest entry per task.
 | 2026-10-08 | T2.7 | `make e2e` | 10 passed = (J1 × 3 + J4 code-only × 2) × 2 viewports; axe 0 serious/critical on the Playground |
 | 2026-10-08 | M2 | `make lint`, `make test`, `make e2e` | lint clean (ruff, mypy strict on gate: 70 files, eslint, prettier, tsc); pytest 410 passed (1 gpu deselected); vitest 9 passed; Playwright 10 passed |
 | 2026-10-08 | M2 follow-ups | `pytest tests/unit/test_policy.py tests/unit/test_runs.py tests/integration/test_exp1_code_only.py tests/unit/test_store.py` | policy 32 passed (incl. human + dependents → P3; table fresh, no fall-through); runs 7 passed (fixture never research; research refused before freeze, for cases outside the frozen set and for replay; accepted only when all cases frozen; purpose constrained; default development); Exp 1 fixture run tagged `fixture`; store 12 passed with migration 0002 |
+| 2026-10-08 | T3.1 | `pytest tests/unit/test_retrieval.py` | 22 passed: ID/tag stripping; **hold-out** (no tag or technique ID in any indexed field or token, fixture and real index); tags never indexed; author/link kept as metadata; ATT&CK detection text from Windows analytics only, citations/URLs removed; gold map (sub-technique, parent fallback, technique incl. subs, empty) and ATT&CK top-1; retriever works without `gold_map.json`; `build_query` uses only canonical fields (no PID, host, user, claim); BM25 ranking, tie-break by id, unmatched docs not ranked; modes (`none` empty without warning; empty result → 2 warnings; `bm25_rerank` without reranker raises, never falls back); **determinism** (two builds byte-identical; repeated retrieval equal); modified index refused; licence check accepts DRL 1.1 / MITRE text and stops on others; pinned SHA-256 enforced; real index: **gold map for T1003.001 non-empty (71 rules)** |
+| 2026-10-08 | T3.1 | Mutation check | ID stripping removed from the corpus: the hold-out test fails; restored, 22 pass |
+| 2026-10-08 | T3.1 | `make index` (`/usr/bin/time -v`) | 2,403 Sigma rules, 697 ATT&CK techniques, content SHA-256 `7afe3a9b…`; build 3.4 s, `make index` 3.66 s wall, peak RSS 322 MB; a second build in a temp dir gives the same content hash; 0 hold-out violations; 2,155 rules carry technique tags |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

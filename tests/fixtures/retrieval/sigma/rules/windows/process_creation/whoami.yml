@@ -1,0 +1,17 @@
+# Synthetic test rule (not from SigmaHQ).
+title: Test Whoami Discovery
+id: 00000000-0000-4000-8000-000000000003
+status: test
+description: Detects whoami used for owner and user discovery.
+author: Test Author
+tags:
+    - attack.discovery
+    - attack.t1033
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        Image|endswith: '\whoami.exe'
+    condition: selection
+level: low

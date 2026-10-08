@@ -1,0 +1,129 @@
+{
+ "type": "bundle",
+ "id": "bundle--test",
+ "objects": [
+  {
+   "type": "attack-pattern",
+   "id": "attack-pattern--0001",
+   "name": "OS Credential Dumping",
+   "description": "Adversaries may dump credentials (Citation: Example) using [Mimikatz](https://attack.mitre.org/software/S0002). See T1003.001.",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1003",
+     "url": "https://attack.mitre.org/techniques/T1003"
+    }
+   ],
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_platforms": [
+    "Windows"
+   ],
+   "revoked": false,
+   "x_mitre_deprecated": false
+  },
+  {
+   "type": "attack-pattern",
+   "id": "attack-pattern--0002",
+   "name": "LSASS Memory",
+   "description": "Adversaries may access lsass process memory to obtain credentials.",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1003.001",
+     "url": "https://attack.mitre.org/techniques/T1003/001"
+    }
+   ],
+   "x_mitre_is_subtechnique": true,
+   "x_mitre_platforms": [
+    "Windows"
+   ],
+   "revoked": false,
+   "x_mitre_deprecated": false
+  },
+  {
+   "type": "attack-pattern",
+   "id": "attack-pattern--0003",
+   "name": "System Owner/User Discovery",
+   "description": "Adversaries may run whoami to identify the primary user.",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1033",
+     "url": "https://attack.mitre.org/techniques/T1033"
+    }
+   ],
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_platforms": [
+    "Windows"
+   ],
+   "revoked": false,
+   "x_mitre_deprecated": false
+  },
+  {
+   "type": "attack-pattern",
+   "id": "attack-pattern--0004",
+   "name": "Deprecated Thing",
+   "description": "lsass lsass lsass",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1999",
+     "url": "https://attack.mitre.org/techniques/T1999"
+    }
+   ],
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_platforms": [
+    "Windows"
+   ],
+   "revoked": false,
+   "x_mitre_deprecated": true
+  },
+  {
+   "type": "x-mitre-detection-strategy",
+   "id": "x-mitre-detection-strategy--0001",
+   "name": "Detect LSASS memory access",
+   "x_mitre_analytic_refs": [
+    "x-mitre-analytic--0001",
+    "x-mitre-analytic--0002"
+   ]
+  },
+  {
+   "type": "x-mitre-analytic",
+   "id": "x-mitre-analytic--0001",
+   "name": "Analytic 1",
+   "x_mitre_platforms": [
+    "Windows"
+   ],
+   "description": "Monitor process access to lsass.exe with GrantedAccess 0x1010 (attack.t1003.001).",
+   "x_mitre_log_source_references": [
+    {
+     "x_mitre_data_component_ref": "x-mitre-data-component--0001",
+     "name": "WinEventLog:Sysmon",
+     "channel": "EventCode=10"
+    }
+   ]
+  },
+  {
+   "type": "x-mitre-analytic",
+   "id": "x-mitre-analytic--0002",
+   "name": "Analytic 2",
+   "x_mitre_platforms": [
+    "Linux"
+   ],
+   "description": "Monitor ptrace on linux processes.",
+   "x_mitre_log_source_references": []
+  },
+  {
+   "type": "x-mitre-data-component",
+   "id": "x-mitre-data-component--0001",
+   "name": "Process Access"
+  },
+  {
+   "type": "relationship",
+   "id": "relationship--0001",
+   "relationship_type": "detects",
+   "source_ref": "x-mitre-detection-strategy--0001",
+   "target_ref": "attack-pattern--0002"
+  }
+ ]
+}
