@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M2 Deterministic gate, on branch `m2-gate` (from `m1-data`). M0 and M1 complete and pushed.
 - **TA approval (Q-0):** approved 2026-10-08. M2 approved by the team on 2026-10-08.
-- **Next action:** T2.6 (Exp 1 core, code-only gates), then T2.7 and the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
+- **Next action:** T2.7 (Gate Playground page, code-only), then the M2 checkpoint. Then stop: T2.5 needs T2.2 done, i.e. the team's sign-off on the policy files.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -34,7 +34,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T2.3 Tool layer and registry | done | m2-gate | `gbya/tools/{registry,provenance,render,escalation,mock_actions,state,names}.py`, `gbya/llm/tokens.py`. AST-based retrieved-record registry, untrusted rendering with the model tokenizer, 9 tool schemas, unknown/delete counting |
 | T2.4 Typed-argument rule | done | m2-gate | `gbya/tools/typed.py` (validators), `gbya/tools/provenance.py` (typed canonical fields), `gbya/gate/checks.py` (`check_c1`, `check_schema`), `gbya/gate/types.py` (`CheckResult`) |
 | T2.5 Gate checks and orchestrator | done | m2-gate | `gbya/gate/{gate,checks,approval,evidence,config,types}.py`, `configs.yaml` (G0, G1, G2, G3, A1). C1–C6 by tool class, first failure decides; approval contract of §D.6.2a; C4 pluggable (scripted in tests until M3); mypy strict clean |
-| T2.6 Exp 1 core (code-only) | todo | | |
+| T2.6 Exp 1 core (code-only) | done | m2-gate | `gbya/experiments/exp1.py` (`decide`, `run_code_only`, `load_case`), hand-made 3-case fixture `data/fixtures/handmade/cases.json` + importer `gbya/cases/handmade.py`. Deterministic; stores `gate_decisions` rows |
 | T2.7 Gate Playground page | todo | | |
 | T3.1 Retrieval index | todo | | Q-4 licences |
 | T3.2 Verifier prompt and evidence format | todo | | Team review of snapshots |
@@ -162,6 +162,10 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | `kill_process(H, P)` where P is the actor only on another host → `C3_PID_NOT_FOUND`. A PID that occurs only as `ppid` never reaches C3: `ppid` is not a canonical PID field (§D.5.2), so C1 rejects it as unprovenanced | Consequence of §D.5.2 + §D.6.2 | §D.6.2 |
 | 2026-10-08 | Evidence rendering of §D.7.1 (selected fields, no truncation, budget 8 records / 3,200 tokens) is implemented now in `gbya/gate/evidence.py` because C2 needs it; T3.2 adds the manifest and the prompt | C2 depends on the rendered size | §D.7.1, T3.2 |
 | 2026-10-08 | The approval service applies full C1 (incl. the typed-argument rule) to every request in every configuration, G0 included; G0's gate itself checks the schema only | §D.6.2a "C1 fails for the request or for the embedded action" | §D.6.2a |
+| 2026-10-08 | Exp 1 G0 "always admit" reference runs through the same gate (schema-only), which admits every well-formed package — no special-cased shortcut | §L.4 item 1 | T2.6, §D.6.4 |
+| 2026-10-08 | Until the prefix builder exists (T4.3), an Exp 1 case's retrieved registry is its package's cited ids, as T2.6 instructs; `Exp1Case.prefix_retrieved` takes the stored registry later | T2.6 instructions; §D.5.2 "Exp 1 packages" | T2.6, T4.3 |
+| 2026-10-08 | Hand-made 3-case fixture (`hm:E1`, `hm:E3`, `hm:R_neg`) on the mini window, imported by `gbya/cases/handmade.py`, for T2.6/T2.7/e2e until real scenarios exist; variant-like only (no database patches) | T2.6 "hand-made 3-case fixture"; T4.1 brings the general importer | T2.6, T2.7 |
+| 2026-10-08 | Stored check results keep `duration_ms`; determinism comparisons (and the later reproduce/export path, NFR-04) leave timings out | Timings vary between runs | NFR-04 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Limitations for the final report
@@ -236,6 +240,7 @@ See the latest entry per task.
 | 2026-10-08 | T2.5 | `pytest tests/unit/test_gate.py` | 56 passed: configuration snapshot; C4 config without verifier refused; C2 (empty, unknown id, not retrieved, 9 records, out of window, token budget without trimming, OK); C3 per action type (host, actor PID vs target PID, wrong host, acting user incl. 4624 target_user and 4648 subject_user, network dst) and the parent-PID rule; proposal §8 worked example → `C3_ACTING_USER_MISMATCH`; canonical re-read despite tampered model-visible text; C5 forbidden → blocked; C6 first table (allowed, granted, none → converted for grant/deny/unreachable, pending, denied, no second request); approval service rows 1–6 in G0, G1 and A1; G0 records but never enforces approvals; C4 SUPPORTS / INSUFFICIENT (budget once) / CONTRADICTED / parse error; C4 not reached after C3 failure; first failure decides; retry counters; G1/G2 admit what A1 rejects at C3; C1-only for read-only and escalation tools; hard rule; G0 rejects unparseable calls; feedback message |
 | 2026-10-08 | T2.5 | Mutation checks | "any PID role is the actor": 2 fail; "C6 never enforces": 6 fail; restored, 56 pass |
 | 2026-10-08 | T2.5 | `make lint`, `make test` | lint clean, mypy strict on `gbya/gate` clean (67 files); pytest 396 passed (1 gpu deselected); vitest 8 passed |
+| 2026-10-08 | T2.6 | `pytest tests/integration/test_exp1_code_only.py` | 5 passed: 3 cases × G0/G1/G2/A1 give the expected verdicts (hm:E3 admitted by G0/G1/G2, rejected by A1 at C3 without retry; hm:R_neg converted to approval by every gate with C6); two runs give identical rows (ids and timings excluded); 12 rows stored with the expected checks; every system sees the identical package; systems with C4 refused until M3 |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

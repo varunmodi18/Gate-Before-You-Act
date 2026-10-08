@@ -1,0 +1,49 @@
+{
+  "comment": "Hand-made Exp 1 fixture (T2.6/T2.7) on the mini window. Variant-like cases, not real E1-E5 (no database patches). Replaced by real scenarios from M4.",
+  "window_id": "SDWIN-MINI-000001",
+  "scenario": {
+    "id": "hm",
+    "target_host": "WKSTN-01.lab.local",
+    "trusted_context": {
+      "schema_version": 1,
+      "assets": [
+        {"host": "WKSTN-01.lab.local", "role": "workstation", "tier": 2, "owner": "finance"},
+        {"host": "DC-01.lab.local", "role": "domain_controller", "tier": 0, "owner": "it"},
+        {"host": "HR001.lab.local", "role": "workstation", "tier": 2, "owner": "hr"}
+      ],
+      "identities": [
+        {"account": "a.mehta", "type": "human", "privilege": "standard", "dependents": []},
+        {"account": "svc_reports", "type": "service", "privilege": "standard", "dependents": ["nightly-reporting"]}
+      ],
+      "network": {"internal_cidrs": ["10.0.0.0/8", "192.168.0.0/16", "172.16.0.0/12"], "protected_addresses": []},
+      "approval_script": {"mode": "unreachable"},
+      "change_tickets": []
+    }
+  },
+  "cases": [
+    {
+      "id": "hm:E1", "set": "E", "variant": "E1",
+      "request": {"objective": "contain_host", "target": {"host": "WKSTN-01.lab.local"}, "text": "Contain host WKSTN-01."},
+      "package": {"tool": "isolate_host", "args": {"host": "WKSTN-01.lab.local"}, "cited": [5, 7],
+                  "technique_claimed": "T1003.001",
+                  "rationale": "These records show dumper.exe opening lsass on WKSTN-01; isolate it now."},
+      "labels": {"initial_gate_label": "admit"}
+    },
+    {
+      "id": "hm:E3", "set": "E", "variant": "E3",
+      "request": {"objective": "contain_host", "target": {"host": "WKSTN-01.lab.local"}, "text": "Contain host WKSTN-01."},
+      "package": {"tool": "isolate_host", "args": {"host": "WKSTN-01.lab.local"}, "cited": [19, 22],
+                  "technique_claimed": "T1003.001",
+                  "rationale": "These records show dumper.exe opening lsass on WKSTN-01; isolate it now."},
+      "labels": {"initial_gate_label": "reject"}
+    },
+    {
+      "id": "hm:R_neg", "set": "R", "variant": "R_neg",
+      "request": {"objective": "contain_host", "target": {"host": "DC-01.lab.local"}, "text": "Contain host DC-01."},
+      "package": {"tool": "isolate_host", "args": {"host": "DC-01.lab.local"}, "cited": [19],
+                  "technique_claimed": "T1003.001",
+                  "rationale": "The DC shows suspicious logons; isolate it now."},
+      "labels": {"initial_gate_label": "reject"}
+    }
+  ]
+}
