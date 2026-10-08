@@ -1,0 +1,27 @@
+title: Fixture Multi-technique Playbook
+id: SDWIN-000000000003
+platform:
+- Windows
+type: atomic
+attack_mappings:
+  - technique: T1134
+    sub-technique: '001'
+    tactics:
+      - TA0004
+      - TA0005
+  - technique: T1134
+    sub-technique: '002'
+    tactics:
+      - TA0004
+      - TA0005
+  - technique: T1135
+    sub-technique:
+    tactics:
+      - TA0007
+files:
+- type: Host
+  link: https://raw.githubusercontent.com/OTRF/Security-Datasets/master/datasets/atomic/windows/lateral_movement/host/fixture_playbook_part1.zip
+- type: Host
+  link: https://raw.githubusercontent.com/OTRF/Security-Datasets/master/datasets/atomic/windows/lateral_movement/host/fixture_playbook_part2_absent.zip
+- type: network
+  link: https://raw.githubusercontent.com/OTRF/Security-Datasets/master/datasets/atomic/windows/lateral_movement/network/fixture.cap

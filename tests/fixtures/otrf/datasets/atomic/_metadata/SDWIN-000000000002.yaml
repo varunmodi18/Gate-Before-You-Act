@@ -1,0 +1,15 @@
+title: Fixture Registry Modification
+id: SDWIN-000000000002
+platform:
+- Windows
+type: atomic
+attack_mappings:
+  - technique: T1112
+    sub-technique:
+    tactics:
+      - TA0005
+files:
+- type: Host
+  link: https://raw.githubusercontent.com/OTRF/Security-Datasets/master/datasets/atomic/windows/defense_evasion/host/fixture_registry.tar.gz
+- type: Network
+  link: https://raw.githubusercontent.com/OTRF/Security-Datasets/master/datasets/atomic/windows/defense_evasion/network/fixture_registry.zip

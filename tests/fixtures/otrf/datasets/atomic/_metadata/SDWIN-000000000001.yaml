@@ -1,0 +1,13 @@
+title: Fixture LSASS Memory Dump
+id: SDWIN-000000000001
+platform:
+- Windows
+type: atomic
+attack_mappings:
+  - technique: T1003
+    sub-technique: '001'
+    tactics:
+      - TA0006
+files:
+- type: Host
+  link: https://raw.githubusercontent.com/OTRF/Security-Datasets/master/datasets/atomic/windows/credential_access/host/fixture_lsass.zip

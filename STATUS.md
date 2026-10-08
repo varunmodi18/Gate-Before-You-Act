@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
-- **Next action:** T1.2 (catalogue), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
+- **Next action:** T1.3 (normaliser and field map), then T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -22,7 +22,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T0.3 Early model-serving spike | done (known issue) | m0-foundations | `docs/pilot_report.md`. FP16 KV accepted (deviation from proposal §13). Known issue: 78/80 schema-valid (soak 459/480; with repetition_penalty 1.05: 73/80), all failures are repetition loops hitting `max_tokens`; T5.1 must reach ≥ 99%. F1 not triggered |
 | T0.4 LLM client abstraction | done | m0-foundations | Live (httpx, retries 2/8/30 s), Fake (hash or regex rules), Replay + recorder; 13 unit tests and the `gpu` live smoke test pass against the `vllm-awq` profile |
 | T1.1 OTRF fetch | done | m1-data | `make data-fetch`: HEAD `d9d40ef123d2c87d5d3df28c96bcab4f0faccc87`, 100 SDWIN metadata files, 165 Windows data files, 207 MB |
-| T1.2 Catalogue | todo | | |
+| T1.2 Catalogue | done | m1-data | `make catalogue`: 100 windows, checksum `da6d27b0…` identical on re-run. **1 window (SDWIN-230718150800, "Dumping NTDS.dit from Volume Shadow Copy") has its Host file missing at the pinned commit** — catalogued as `missing_host_file` (team question at the M1 checkpoint). The API listing is checked in T1.4 |
 | T1.3 Normaliser and field map | todo | | |
 | T1.3a SQL guard and hardened connection | todo | | |
 | T1.4 Windows API | todo | | |
@@ -102,6 +102,11 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | Fallback F1 **not** set | Measured 1,229 input tok/s and 55.4 output tok/s; neither is below half of the 800 / 80 assumption | T0.3, §F.8 |
 | 2026-10-08 | LLM retries: 3 retries after the first attempt, waiting 2, 8 and 30 s (4 attempts in total); 4xx responses are not retried | §F.8 lists three delays; read as three retries | T0.4, §F.8 |
 | 2026-10-08 | OTRF fetched by full SHA `d9d40ef123d2c87d5d3df28c96bcab4f0faccc87` (`git init` + `fetch --depth 1 --filter=blob:none <sha>` + sparse checkout) instead of `clone --depth 1` | A depth-1 clone only contains the branch tip; fetching the pinned SHA directly gets exactly that commit. Full SHA resolved from the GitHub commit page (API rate-limited) | §D.1 step 1 |
+| 2026-10-08 | Catalogue maps each metadata link (which points at OTRF `master`) to the same path in the pinned checkout; never fetches from `master` | Reproducibility at d9d40ef | §D.1 step 2 |
+| 2026-10-08 | SDWIN-230718150800 kept in the catalogue with `ingest_status = missing_host_file`; **not** mapped to the unreferenced look-alike file `cmd_dumping_ntds_dit_file_volume_shadow_copy.zip` | Its metadata names `cmd_copy_ntds_from_volume_shadow_copy.zip`, which is absent at d9d40ef. Mapping a different file would be a guess; team question | §D.1, T1.2, T1.3 |
+| 2026-10-08 | Tactics stored as ATT&CK IDs (e.g. TA0006) as in the metadata; `TACTIC_NAMES` maps them to short names for filtering | The metadata uses IDs | §F.1 `windows` |
+| 2026-10-08 | Plan §D.1 [V] says 99 of 100 datasets map to one technique; measured: 98 have one mapping entry, SDWIN-201022042947 has 4 techniques and SDWIN-210611210814 has 2 (T1134.001, T1134.002). All are stored | Survey of the 100 files at d9d40ef | §D.1 edge cases |
+| 2026-10-08 | T1.2 marked done on the database check; its "Windows API lists them" is verified in T1.4, which comes later in §L.2 | Ordering in the plan | T1.2, T1.4 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -139,6 +144,8 @@ See the latest entry per task.
 | 2026-10-08 | T0.3 | `scripts/pilot.py --repetition-penalty 1.05` (20 episodes, no soak) | 80/80 calls OK, **73/80 schema-valid** (7 ended at `max_tokens`); mean completion 231.4 tokens; 1,168.0 input / 60.9 output tok/s; p50/p95 13.65/23.84 s |
 | 2026-10-08 | T1.1 | `uv run pytest tests/unit/test_fetch.py` | 4 passed (local git origin: pinned commit and sparse paths only; re-fetch no-op; prefix mismatch refused) |
 | 2026-10-08 | T1.1 | `make data-fetch` (twice) | HEAD d9d40ef…; 100 SDWIN metadata files; 4 min 6 s for 207 MB; second run reports already present |
+| 2026-10-08 | T1.2 | `pytest tests/unit/test_catalogue.py tests/integration/test_catalogue_real.py` | 11 passed (3 fixture YAMLs: sub-technique join, network files ignored, multi-mapping, missing Host file, id check; idempotent upsert keeps later fields; real data: 100 windows, stable checksum, LSASS window T1003.001, only SDWIN-230718150800 missing) |
+| 2026-10-08 | T1.2 | `make catalogue` (twice) | 100 windows; inserted 100 then updated 100; checksum `da6d27b076b40d2ad15c6cd14549c97b2ac0fbd7d4de70f87d3770462851c3ae` both times |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 
