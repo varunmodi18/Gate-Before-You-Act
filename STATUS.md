@@ -7,7 +7,7 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M1 Data walking skeleton, on branch `m1-data` (from `m0-foundations`). M0 complete; `m0-foundations` pushed.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M1 approved by the team on 2026-10-08.
-- **Next action:** T1.6 (split selection), then T1.7 (Windows page). T1.6 ends at a team review of the split list. T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
+- **Next action:** T1.7 (Windows page). T1.6 waits for the team's review of `data/splits.json`. T1.2 → T1.3 → T1.3a → T1.4 → T1.7, with T1.5 → T1.6 in parallel. Stop at the M1 checkpoint.
 - **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
@@ -27,7 +27,7 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | T1.3a SQL guard and hardened connection | done | m1-data | `gbya/tools/sql_guard.py` (layer 1 + 2 s watchdog) and `gbya/data/connection.py` (`open_case_db`, layer 2). Both suites pass on DuckDB 1.5.6 |
 | T1.4 Windows API | done | m1-data | `GET /windows` (split/tactic/q filters), `GET /windows/{id}`, `GET /windows/{id}/tables/{table}` (pagination, `column:text` filters), `GET /windows/{id}/records/{record_id}`, `POST /windows/{id}/query` (shared guard). Real app.db: lists 100 windows (closes the T1.2 check) |
 | T1.5 De-duplication and eligibility | done | m1-data | `make dedup`: 99 ingested windows → 94 groups (5 pairs with J > 0.5); `windows.dedup_group` set for all 99. Eligibility (reading A, see decisions): 99/99 eligible; only 37 are single-host. Report: `data/dedup_report.json` |
-| T1.6 Split selection and freeze | todo | | Team review of the split list |
+| T1.6 Split selection and freeze | blocked | m1-data | Code and tests done; `make splits` wrote `data/splits.json` (seed 2026, SHA-256 `1a355e65…`, identical on re-run): dev 10 / test 40 / e2e 12 / unused 37. **Waiting for the team to review and accept the split list** (plan done-when); `data/splits.json` is not committed until then |
 | T1.7 Windows page | todo | | |
 | T2.1 Trusted-context model | todo | | |
 | T2.2 Policy engine and rules | todo | | Team sign-off on `rules.yaml` |
@@ -125,6 +125,8 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | **Eligibility reading A (team to confirm at the T1.6 review):** "≥1 event in process_create or process_access on a single primary host" read as "designate one primary host per window (most process_create + process_access events; ties → more events, then name) and require ≥1 such event on it", plus ≥30 events. Result: 99/99 eligible. Reading B ("all events on one host") would leave only 37 windows (< 62 needed → Q-2) | §D.2 step 1 is ambiguous; 63 of 99 windows were collected from 2–5 hosts | §D.2, FR-03, Q-2 |
 | 2026-10-08 | Signature per table = (event_id, image, normalised command line, parent image, target), with image/target: process_create image/–; process_access source_image/target_image; network image/`dst_ip:dst_port`; registry image/target_object; file image/target_filename; logon process_name/target_user; share_access –/`share\\relative_target`. Normalisation: lower-case; GUID → `<guid>`; `0x…` → `<hex>`; component under a Temp folder → `<tmp>`; digit runs > 4 → `<n>` | §D.2 step 2 names the tuple but not the per-table fields | §D.2 |
 | 2026-10-08 | Observation for the team: the 5 grouped pairs are different techniques recorded in the same lab sessions (e.g. "Lsass Memory Dump via Comsvcs.dll" ↔ "Windows Vault Web Credentials", J = 0.508), i.e. shared background events, not replays. Grouping only keeps them in the same split, so it is conservative; median pairwise J is 0.026 and 22 of 4,851 pairs exceed 0.4 | Measured on all 99 windows | §D.2 step 3 |
+| 2026-10-08 | Split method: seed 2026; strata = primary tactic (first tactic of the first ATT&CK mapping) of a group's smallest-id window; seeded shuffle within strata, round-robin interleave → seeded order (also the replacement queue); per-split per-tactic quotas by largest remainder; each group to the feasible split with the largest unmet quota for its tactic; a backward reachability table guarantees an exact 10/40/12 fill whenever one exists | §D.2 step 4 gives the goals (seeded, stratified, whole groups, exact counts) but not the algorithm. A first greedy version failed the property test (missed an exact fill) and stratified poorly (dev got 4 + 4 of two tactics) | §D.2, T1.6 |
+| 2026-10-08 | Split result for review: every split covers the same 7 tactics (dev 10, e2e 12, test 40); `collection` (1 window) is in no split (its quota rounds to 0); all 5 de-duplication pairs are kept together; the LSASS demo window (SDWIN-201018225619) is `unused`, so the demo fixture does not reuse a research window | `make splits` output | §D.2, §E.5 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -173,6 +175,8 @@ See the latest entry per task.
 | 2026-10-08 | T1.4 | `make lint`, `make test` | see the M1 checkpoint row |
 | 2026-10-08 | T1.5 | `pytest tests/unit/test_dedup.py` | 15 passed: synthetic boundary (J 0.6 grouped, 0.4 not); J = 0.5 not grouped (strict); union-find transitive with smallest-id group; hypothesis property (150 examples): groups are exactly the connected components; normalisation rules; eligibility (< 30 events; no process events on the primary host); deterministic signatures |
 | 2026-10-08 | T1.5 | `make dedup` | 99 windows, 94 groups, 5 pairs (J 0.508–0.608), 99 eligible, 37 single-host; 3 s |
+| 2026-10-08 | T1.6 | `pytest tests/unit/test_split.py` | 9 passed: exact 10/40/12 + unused = replacement queue; deterministic for a seed (byte-identical JSON) and seed-sensitive; input order irrelevant; groups together; ineligible never assigned; < 62 windows → Q-2 error; every tactic in every split with per-tactic counts within 1 of the proportional share; JSON document; hypothesis property (60 examples: 62–110 windows, up to 25 pairs, random seeds): no group straddles splits and counts are exact |
+| 2026-10-08 | T1.6 | `make splits` (twice) | dev 10, test 40, e2e 12, unused 37; SHA-256 `1a355e659cc204e136b39d018dc258f8ea7666b1f4e481fbe231849df2598936` both times; 2 s |
 
 ### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
 

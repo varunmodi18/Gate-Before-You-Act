@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: help setup db data data-fetch catalogue normalise dedup lint format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: help setup db data data-fetch catalogue normalise dedup splits lint format test up api worker web build-web model-up model-cmd pilot gpu-test
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -33,6 +33,9 @@ normalise:  ## Normalise every catalogued window into data/duckdb/windows/<id>.d
 
 dedup:  ## Eligibility + de-duplication groups (windows.dedup_group; data/dedup_report.json)
 	$(UV) run python -m gbya.data.dedup
+
+splits:  ## Seeded stratified split -> data/splits.json (team review before commit)
+	$(UV) run python -m gbya.data.split
 
 data: data-fetch catalogue normalise dedup  ## Fetch OTRF, catalogue, normalise, de-duplicate
 
