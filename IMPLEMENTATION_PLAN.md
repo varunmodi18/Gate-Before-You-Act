@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -148,6 +148,8 @@ Substantive ambiguities and gaps **inside** the proposal (not between versions) 
 ### 0.8 What changed in Draft 8 (8 October 2026, team decisions at the start of implementation)
 
 Node 22 LTS replaces Node 20, which is end-of-life (§G, §J.1); §D.5.1 now states that only rows dropped entirely by the 1,500-token result limit go unregistered, while a row with a shortened field is still registered; `verifier_evals` gains `manifest` and `prompt_hash` (§F.1); React Router is pinned to 7.x (§G). All are recorded in the `STATUS.md` decisions log.
+
+**T0.3 results that change serving settings (Draft 8; see `docs/pilot_report.md`).** (1) The FP8 KV cache named in T0.3 and in the proposal's §13 garbled the model's output in the pilot; the measured profile uses an FP16 KV cache instead, **pending team confirmation** (same model file, so no claim changes, but the proposal's wording differs). (2) The server runs with `--generation-config vllm`, so only per-request sampling parameters apply. (3) JSON-constrained output needs xgrammar with `disable_any_whitespace` (risk R7). (4) The vLLM venv lives at a path without spaces, because FlashInfer's kernel build does not quote paths.
 
 ---
 
@@ -1778,7 +1780,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Prerequisites:** T0.1; NVIDIA driver (present: 580.178.04 per user's report); internet for weights.
 - **Files:** `config/model_profiles.yaml`, `scripts/pilot.py`, `docs/pilot_report.md`.
 - **Instructions:**
-  1. Profile `vllm-awq`: install vLLM into a **separate** venv (`.venv-vllm`) to avoid dependency conflicts. Serve `Qwen/Qwen2.5-7B-Instruct-AWQ` on port 8001 with: max context 8192, GPU memory utilisation 0.90, FP8 KV cache, max 4 concurrent sequences.
+  1. Profile `vllm-awq`: install vLLM into a **separate** venv (`.venv-vllm`) to avoid dependency conflicts. Serve `Qwen/Qwen2.5-7B-Instruct-AWQ` on port 8001 with: max context 8192, GPU memory utilisation 0.90, FP8 KV cache, max 4 concurrent sequences. *(Draft 8: FP8 KV garbled the output in the pilot; FP16 KV is used pending team confirmation. See §0.8 and `docs/pilot_report.md`.)*
   2. Confirm the **exact flag names against the installed vLLM version's `--help`**. Record the working command in `model_profiles.yaml`.
   3. Test JSON-schema-constrained output through the OpenAI-compatible API (`response_format` with `json_schema`, or vLLM's guided decoding parameter). Record which form works.
   4. If OOM or unsupported, use profile `llamacpp-q4`: build or install `llama-server` with CUDA; Q4_K_M GGUF of Qwen2.5-7B-Instruct; `-c 32768 -np 4 -ngl 99`; JSON schema via `response_format`. Confirm flags with `--help`.

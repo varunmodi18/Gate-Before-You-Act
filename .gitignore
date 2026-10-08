@@ -12,7 +12,7 @@ logs/
 
 # Environments and secrets
 .venv/
-.venv-*/
+.venv-*
 .env
 .env.*
 !.env.example

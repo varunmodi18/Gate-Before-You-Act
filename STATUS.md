@@ -7,7 +7,8 @@ Updated in the same commit that completes a task (plan §L.6).
 
 - **Current milestone:** M0 Foundations and spike, on branch `m0-foundations`.
 - **TA approval (Q-0):** approved; recorded 2026-10-08. M0 is cleared; M1 starts only when the team says so.
-- **Next action:** T0.3 (model-serving spike) — waiting for the user's OK on download sizes.
+- **Next action:** M0 checkpoint report. Waiting on the team for: FP16 vs FP8 KV cache (T0.3), the 78/80 schema-valid result (T0.3), and the go-ahead for M1.
+- **Model server:** `make model-up` (profile `vllm-awq`), then `make gpu-test` / `make pilot`. It is stopped when not in use.
 - **Stop rule:** stop and report at the end of every milestone and at each team question (Q-0 to Q-5).
 
 ## Tasks
@@ -18,8 +19,8 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 |---|---|---|---|
 | T0.1 Repository scaffold | done | m0-foundations | Lint and tests pass locally (see Measured numbers). **CI has not yet run on GitHub**: the branch is pushed at the M0 checkpoint |
 | T0.2 Store and migrations | done | m0-foundations | All §F.1 tables in Alembic `0001_initial`; WAL + foreign keys + busy timeout on every connection; `make db` |
-| T0.3 Early model-serving spike | todo | | Needs user OK before large downloads |
-| T0.4 LLM client abstraction | todo | | |
+| T0.3 Early model-serving spike | blocked | m0-foundations | All measurements done (`docs/pilot_report.md`). Blocked on team decisions: (1) FP16 KV cache instead of the planned FP8, which garbled output; (2) verification "20/20 schema-valid" not fully met — 78/80 calls valid, the 2 failures hit `max_tokens` in a repetition loop. Throughput: F1 not triggered |
+| T0.4 LLM client abstraction | doing | m0-foundations | |
 | T1.1 OTRF fetch | todo | | |
 | T1.2 Catalogue | todo | | |
 | T1.3 Normaliser and field map | todo | | |
@@ -88,6 +89,14 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | 2026-10-08 | React 18 kept as in the plan; React Router pinned to 7.x (8.x requires React ≥ 19.2.7); eslint used instead of the template's oxlint | Peer dependency of `react-router@8`; plan §C.3 names eslint | §C.3 |
 | 2026-10-08 | DuckDB pinned to 1.5.6 | The layer-2 hardening of §D.5.1 was verified on 1.5.6 | §D.5.1 |
 | 2026-10-08 | `app.db` additions beyond §F.1: `verifier_evals.manifest` and `.prompt_hash` (§D.7.1 requires the manifest and prompt hash with every row); CHECK constraints only where the plan enumerates values; `gate_decisions.run_id` and `episodes.run_id/case_id` nullable (Playground and Console calls have no run; Exp 3 window mode) | §D.7.1, §E.1 | §F.1 |
+| 2026-10-08 | vLLM 0.31.0 installed in a separate venv: torch, torchvision, torchaudio, torchcodec, Triton, `cuda-toolkit` and 14 NVIDIA wheels from the official PyTorch index (cu130; NVIDIA entries served from `pypi.nvidia.com`), the rest from PyPI; versions exactly as vLLM 0.31.0 resolves (198 packages, `config/vllm-requirements.lock`) | Team instruction; GPU check (matmul + Triton JIT) passed before the PyPI part | T0.3 |
+| 2026-10-08 | The vLLM venv lives at `~/.local/share/gbya/venv-vllm`; `.venv-vllm` is a symlink to it | FlashInfer's JIT build passes include paths unquoted; the repo path has spaces (`nvcc fatal: A single input file is required`). The venv was copied and its 58 `bin/` launchers rewritten; package list identical | T0.3, §0.8 |
+| 2026-10-08 | `CUDA_HOME=/usr/local/cuda-13.0` for the model server | System nvcc 13.0 matches the driver's CUDA 13.0 | T0.3 |
+| 2026-10-08 | **FP16 KV cache (`--kv-cache-dtype auto`) instead of FP8 — pending team confirmation** | FP8 KV garbled the output at all prompt lengths tried (452–4,418 tokens); FP16 with no other change was coherent (`docs/pilot_report.md`). Same model file | T0.3, §0.8; proposal §13 wording differs |
+| 2026-10-08 | `--generation-config vllm` | Otherwise the model's `generation_config.json` silently sets top_p 0.8, top_k 20 and repetition_penalty 1.05 for every request; with it only per-request parameters apply. For the team to note | T0.3, §0.8 |
+| 2026-10-08 | `--structured-outputs-config '{"backend": "xgrammar", "disable_any_whitespace": true}'` | Without it the model emitted only whitespace inside the JSON until `max_tokens` (risk R7). vLLM accepts the option only with an explicit backend | T0.3, §0.8 |
+| 2026-10-08 | Model fetched with `scripts/fetch_model.py` at a pinned commit; each file's SHA-256 checked against Hugging Face and stored in `models/<name>/MANIFEST.json` | §L.4 item 7 (same file, recorded checksum) | T0.3 |
+| 2026-10-08 | Fallback F1 **not** set | Measured 1,229 input tok/s and 55.4 output tok/s; neither is below half of the 800 / 80 assumption | T0.3, §F.8 |
 | 2026-10-08 | The CPU reranker (torch, sentence-transformers) is an optional `rerank` extra pulled from the PyTorch CPU index, not installed by `make setup` | Keeps setup small; installed when T3.7 starts | §C.3, §D.3 |
 
 ## Measured numbers
@@ -97,8 +106,8 @@ Status is one of todo / doing / done / blocked. "PR" is the branch until a PR ex
 | Item | Value |
 |---|---|
 | GPU | NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB, driver 580.178.04 (CUDA 13.0); display on iGPU (`prime-select` = on-demand), 15 MiB used at idle |
-| RAM / disk | 15 GiB RAM; 51 GB free on `/` |
-| Toolchain | uv 0.12.23; Python 3.11.17 (uv-managed); Node 22.23.3 (nvm); pnpm 12.10.1; no `nvcc` (CUDA toolkit) installed |
+| RAM / disk | 15,606 MB RAM; 51 GB free on `/` at the start, 27 GB after T0.3 (vLLM venv 8.0 GB, model 5.2 GB, uv cache 9.2 GB) |
+| Toolchain | uv 0.12.23; Python 3.11.17 (uv-managed); Node 22.23.3 (nvm); pnpm 12.10.1; CUDA 13.0 toolkit at `/usr/local/cuda-13.0` (nvcc 13.0.48), **not on PATH** — the session-start note "no nvcc" was wrong |
 | Network | PyPI CDN ≈ 0.11 MB/s; Hugging Face ≈ 7.4 MB/s; npm ≈ 0.7 MB/s (single measurements) |
 
 ### Test runs
@@ -115,3 +124,18 @@ See the latest entry per task.
 | 2026-10-08 | T0.2 | `uv run pytest tests/unit/test_store.py` | 12 passed: upgrade creates the 14 §F.1 tables; downgrade to base and re-upgrade; migrated schema has no diff against the models; WAL and foreign keys on; `job_items`, `verifier_evals` and `annotations` unique keys; CHECK constraints; foreign key enforced |
 | 2026-10-08 | T0.2 | `make db` (twice) | `data/app.db` created at revision 0001, journal mode WAL; second run is a no-op |
 | 2026-10-08 | T0.2 | `make lint`, `make test` | lint clean (mypy: 29 files); pytest 18 passed; vitest 4 passed |
+| 2026-10-08 | T0.3 | GPU check in the vLLM venv (`scripts/gpu_check.py`) | PASS: torch 2.13.0+cu130 sees the RTX 4060 (cc 8.9); fp16 matmul matches the CPU result; a Triton 3.7.1 JIT kernel compiles and runs |
+| 2026-10-08 | T0.3 | `uv pip check` + comparison with vLLM's resolution | 198 packages, identical to the resolution; all compatible |
+| 2026-10-08 | T0.3 | Server starts | Attempt 1: `ninja` not on PATH. Attempt 2: FlashInfer JIT broke on the path with spaces. Attempt 3 (venv moved, CUDA_HOME set): up. Two later restarts failed on launcher/config errors (`str.format` on the JSON argument; whitespace option needs an explicit backend), then up. FP16-KV diagnostic: first start failed (cold start left 0.36 GiB for KV, 0.44 GiB needed), second start up |
+| 2026-10-08 | T0.3 | `make pilot` (20 episodes + long request + 30-min soak), profile `vllm-awq` with FP16 KV | 80/80 calls OK, **78/80 schema-valid**; 1,229.2 input tok/s, 55.4 output tok/s; p50/p95 latency 14.0/19.0 s; peak VRAM 7,249 MiB; peak host RAM 8,201 MB; long request 7,850-token prompt OK; soak 30.7 min: 480 calls, 459 valid, input 1,161 tok/s mean (min 1,030), output 56.0 (min 53.0), max 80 °C, only the SW power-cap throttle flag |
+
+### T0.3 pilot (synthetic prompts; details in `docs/pilot_report.md`)
+
+| Metric | Value |
+|---|---|
+| Profile | `vllm-awq`: vLLM 0.31.0, Qwen2.5-7B-Instruct-AWQ @ `b2503754`, ctx 8192, util 0.90, **FP16 KV** (21,520 tokens), 4 seqs |
+| Input / output throughput (20 episodes, 4 concurrent) | 1,229.2 / 55.4 tok/s (assumed ≥ 800 / ≥ 80) |
+| Measured wall vs budget formula `in/800 + out/80` | 288.7 s vs 643.6 s (0.45×) |
+| Schema-valid | 78/80 calls (20 episodes); 459/480 in the soak |
+| Peak VRAM / host RAM | 7,249 MiB / 8,201 MB |
+| 30-min soak | 30.7 min; input 1,161 tok/s mean; output 56.0 tok/s mean; max 80 °C; no thermal throttling flag |

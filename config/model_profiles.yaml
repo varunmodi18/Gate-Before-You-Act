@@ -1,0 +1,61 @@
+# Model-server profiles (plan T0.3). This file is the ONLY place the server command lines live;
+# `make model-up PROFILE=<name>` runs them through scripts/model_server.py. Flags were confirmed
+# against the installed version's `--help` (T0.3); see docs/pilot_report.md for measurements.
+default: vllm-awq
+
+profiles:
+  vllm-awq:
+    backend: vllm
+    backend_version: "0.31.0"
+    # Separate venv. `.venv-vllm` is a symlink to ~/.local/share/gbya/venv-vllm: FlashInfer's JIT
+    # build passes include paths unquoted, so the venv must live at a path without spaces.
+    # Its bin/ must be on PATH (the JIT calls ninja). Exact pins: config/vllm-requirements.lock.
+    venv: .venv-vllm
+    env:
+      CUDA_HOME: /usr/local/cuda-13.0   # system nvcc 13.0 matches the driver's CUDA 13.0
+    model_repo: Qwen/Qwen2.5-7B-Instruct-AWQ
+    model_revision: b25037543e9394b818fdfca67ab2a00ecc7dd641
+    model_path: models/Qwen2.5-7B-Instruct-AWQ   # MANIFEST.json there holds every file's SHA-256
+    served_model_name: qwen2.5-7b-instruct-awq
+    port: 8001
+    # Structured output: OpenAI `response_format: {"type": "json_schema", ...}` (confirmed in T0.3).
+    structured_output: response_format_json_schema
+    command:
+      - "{venv}/bin/vllm"
+      - serve
+      - "{model_path}"
+      - --host
+      - 127.0.0.1
+      - --port
+      - "{port}"
+      - --served-model-name
+      - "{served_model_name}"
+      - --max-model-len
+      - "8192"
+      - --gpu-memory-utilization
+      - "0.90"
+      # Plan/proposal say FP8 KV cache. Measured in T0.3: FP8 (e4m3, no calibrated scales) corrupts
+      # this model's output on vLLM 0.31.0 + FlashInfer (garbled text even at ~450-token prompts);
+      # FP16 ("auto") output is coherent. FP16 kept pending team confirmation (STATUS.md).
+      - --kv-cache-dtype
+      - auto
+      - --max-num-seqs
+      - "4"
+      # Do not apply the model's generation_config.json sampling defaults (top_p/top_k/
+      # repetition_penalty); only parameters sent with each request take effect.
+      - --generation-config
+      - vllm
+      # Without this the JSON grammar allows unlimited whitespace and the model degenerates into
+      # whitespace until max_tokens (observed in T0.3; risk R7). vLLM accepts the option only with
+      # an explicit xgrammar or guidance backend.
+      - --structured-outputs-config
+      - '{"backend": "xgrammar", "disable_any_whitespace": true}'
+
+  llamacpp-q4:
+    backend: llama.cpp
+    status: not installed       # fallback only; needs the user's OK (T0.3 instructions)
+    model_repo: Qwen/Qwen2.5-7B-Instruct-GGUF
+    model_file_pattern: q4_k_m
+    served_model_name: qwen2.5-7b-instruct-q4km
+    port: 8001
+    command: []                 # to be filled from `llama-server --help` if this profile is ever used
