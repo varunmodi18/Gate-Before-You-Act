@@ -29,6 +29,7 @@ from gbya.experiments.runner import (
 )
 from gbya.experiments.runs import research_eligible
 from gbya.gate.config import load_configs
+from gbya.gate.ticket_scope import agreement
 from gbya.retrieval.gold import GoldMap
 from gbya.retrieval.metrics import RankedCase, retrieval_report
 from gbya.scoring.verifier_eval import CaseLabel, EvalRow, GateRow, verifier_report
@@ -209,8 +210,12 @@ def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]
     """Exp 1V diagnostic accuracy by verifier variant and case variant (with denominators), and
     C4 invocation counts per gate configuration (§D.7.2)."""
     run = _run(session, run_id)
-    evals = [EvalRow(r.case_id, r.variant, r.run_idx, r.verdict) for r in session.scalars(
-        select(VerifierEval).where(VerifierEval.run_id == run_id))]  # fmt: skip
+    evals = []
+    for ev in session.scalars(select(VerifierEval).where(VerifierEval.run_id == run_id)):
+        out = ev.output or {}
+        model_scope = (out.get("output") or {}).get("ticket_scope")
+        evals.append(EvalRow(ev.case_id, ev.variant, ev.run_idx, ev.verdict,
+                             agreement(model_scope, out.get("ticket_scope_code"))))  # fmt: skip
     configs = load_configs()
     gates = []
     for r in session.scalars(select(GateDecisionRow).where(GateDecisionRow.run_id == run_id)):

@@ -80,6 +80,9 @@ class VerifierCall(BaseModel):
     # The exact prompt, for the Playground's prompt viewer. Not stored: the manifest and the prompt
     # hash make each stored input reproducible (§D.7.1).
     messages: list[dict[str, str]] | None = None
+    # Ticket scope computed in code over the cited records (diagnostic, stored with the output;
+    # it never changes the verdict — the gate decides on ``output.verdict`` alone).
+    ticket_scope_code: dict[str, Any] | None = None
 
 
 class ApprovalOutcome(BaseModel):

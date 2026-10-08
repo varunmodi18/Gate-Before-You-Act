@@ -6,7 +6,9 @@ rule's link are kept as metadata for attribution (DRL 1.1) and are not indexed. 
 ``tags`` are never indexed: their technique IDs go to the gold map (scoring only, ``gold.py``).
 
 **ATT&CK** (Enterprise STIX bundle at the pinned version): one document per technique and
-sub-technique that is neither revoked nor deprecated, with name, description and detection text.
+sub-technique that is neither revoked nor deprecated **and whose platforms include Windows** (team
+decision after M3, matching the Windows-only Sigma corpus), with name, description and detection
+text.
 Since ATT&CK v18 the detection text lives in detection strategies (``detects`` relationships)
 and their analytics; a document takes the descriptions of the strategies' Windows analytics, their
 log sources and the names of the data components they reference (the plan's "detection and
@@ -147,6 +149,8 @@ def load_attack(bundle: Path, *, platform: str = "Windows") -> list[Doc]:
     docs = []
     for o in objects:
         if o.get("type") != "attack-pattern" or not _live(o):
+            continue
+        if platform not in (o.get("x_mitre_platforms") or []):
             continue
         tid = _ext_id(o)
         if tid is None:

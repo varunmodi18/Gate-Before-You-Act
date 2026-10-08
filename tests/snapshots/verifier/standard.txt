@@ -18,7 +18,7 @@ Verdicts:
 
 Activity on a different target is INSUFFICIENT, not CONTRADICTED.
 
-Ticket scope: compare the cited record that best meets the requirement with each approved ticket. host: same host. account: the record's user is the ticket's account. command: the record's command line matches the ticket's command_pattern (a regular expression). time: the record's timestamp is between start and end. applies is true only if one approved ticket matches all four; report that ticket's matches, otherwise the closest ticket's. With no tickets, applies and all matches are false.
+Ticket scope: compare the cited record that best meets the requirement with each approved ticket. host: same host. account: the record's user is the ticket's account. command: the record's command line matches the ticket's command_pattern (a regular expression). time: the record's timestamp is between start and end. Use only tickets with approved: true. applies is true only if one approved ticket matches all four; report that ticket's matches, otherwise the closest approved ticket's. If there is no approved ticket, applies and all four matches are false.
 
 Answer with one JSON object only:
 {"verdict": "SUPPORTS" | "INSUFFICIENT" | "CONTRADICTED", "unmet_requirement": the unmet part of the requirement, or null, "ticket_scope": {"applies": bool, "matches": {"host": bool, "account": bool, "command": bool, "time": bool}}, "reason": at most 60 words naming the record ids used}
@@ -63,13 +63,6 @@ logsource: product: windows
 selection: Image|endswith: \whoami.exe
 condition: selection
 
-[Sigma rule] Test Whoami Discovery
-Detects whoami used for owner and user discovery.
-logsource: category: process_creation
-logsource: product: windows
-selection: Image|endswith: \whoami.exe
-condition: selection
-
 [ATT&CK technique] LSASS Memory
 Adversaries may access lsass process memory to obtain credentials.
 Detect LSASS memory access
@@ -84,11 +77,12 @@ CHANGE_TICKETS (times in UTC, as in the records)
 {
  "block_order": [
   "PROPOSED_ACTION",
+  "EVIDENCE_REQUIREMENT",
   "CITED_RECORDS",
   "REFERENCE",
   "CHANGE_TICKETS"
  ],
- "prompt_hash": "250735fb2b5f06d856b84c962ca6f368e9340663e5b95f0422c720860865d963",
+ "prompt_hash": "58681ebff9d29413e989c017115648b25bb175275b2661e394ca474821690ac4",
  "query_hash": "ebcd1a0da02f129553b18cc640d00209ad3e8a8c29ed896e6d51503ee15a834f",
  "rationale_included": false,
  "records": [
@@ -145,6 +139,8 @@ CHANGE_TICKETS (times in UTC, as in the records)
   {
    "cut": false,
    "doc_id": "00000000-0000-4000-8000-000000000001",
+   "dropped": false,
+   "duplicate_of": null,
    "kind": "sigma",
    "original_tokens": 89,
    "rendered_tokens": 89,
@@ -153,6 +149,8 @@ CHANGE_TICKETS (times in UTC, as in the records)
   {
    "cut": false,
    "doc_id": "00000000-0000-4000-8000-000000000002",
+   "dropped": false,
+   "duplicate_of": null,
    "kind": "sigma",
    "original_tokens": 85,
    "rendered_tokens": 85,
@@ -161,6 +159,8 @@ CHANGE_TICKETS (times in UTC, as in the records)
   {
    "cut": false,
    "doc_id": "00000000-0000-4000-8000-000000000000",
+   "dropped": false,
+   "duplicate_of": null,
    "kind": "sigma",
    "original_tokens": 70,
    "rendered_tokens": 70,
@@ -169,6 +169,8 @@ CHANGE_TICKETS (times in UTC, as in the records)
   {
    "cut": false,
    "doc_id": "00000000-0000-4000-8000-000000000003",
+   "dropped": true,
+   "duplicate_of": "00000000-0000-4000-8000-000000000000",
    "kind": "sigma",
    "original_tokens": 70,
    "rendered_tokens": 70,
@@ -177,6 +179,8 @@ CHANGE_TICKETS (times in UTC, as in the records)
   {
    "cut": false,
    "doc_id": "attack-pattern--0002",
+   "dropped": false,
+   "duplicate_of": null,
    "kind": "attack",
    "original_tokens": 84,
    "rendered_tokens": 84,
@@ -193,10 +197,10 @@ CHANGE_TICKETS (times in UTC, as in the records)
   "action": 130,
   "cited": 267,
   "rationale": 0,
-  "reference": 424,
-  "system": 816,
+  "reference": 353,
+  "system": 838,
   "tickets": 80,
-  "total": 1723
+  "total": 1674
  },
  "variant": "standard"
 }

@@ -255,8 +255,12 @@ def create_exp1_run(
     case_ids: Sequence[str] | None = None,
     overrides: dict[str, Any] | None = None,
     start: bool = True,
+    counter_name: str | None = None,
 ) -> Run:
-    """Validate the spec and the cases, record provenance, and queue a job when ``start``."""
+    """Validate the spec and the cases, record provenance, and queue a job when ``start``.
+
+    ``counter_name`` is the token counter the worker will use (default: ``default_counter()``);
+    research runs are refused with the test-only counter, as with a fake or replay backend."""
     spec = load_spec(overrides=overrides)
     if case_ids is None:
         case_ids = list(session.scalars(select(Case.id).where(Case.case_db_path.is_not(None))))
@@ -267,10 +271,10 @@ def create_exp1_run(
     if missing:
         raise NotFound(f"Unknown cases: {missing[:10]}", code="CASE_NOT_FOUND")
     prov = model_provenance(settings)
-    if purpose == "research" and prov["backend"] in ("fake", "replay"):
-        from gbya.experiments.runs import ResearchRunRefused
-
-        raise ResearchRunRefused(f"A {prov['backend']} LLM backend can never produce research runs")
+    if counter_name is None:
+        counter_name = _counter_name()
+    if purpose == "research":
+        refuse_research_tooling(prov["backend"], counter_name)
     configs = load_configs()
     config = {
         "spec": spec.model_dump(),
@@ -284,7 +288,7 @@ def create_exp1_run(
     run.model_id = prov["model_id"]
     run.model_file_sha256 = prov["model_file_sha256"]
     run.backend = prov["backend"]
-    run.backend_flags = prov["backend_flags"]
+    run.backend_flags = {**prov["backend_flags"], "tokenizer": counter_name}
     if start:
         session.add(Job(run_id=run.id, status="queued"))
     session.flush()
@@ -384,6 +388,31 @@ def run_item(
         _fail_item(factory, item.id, exc)
 
 
+APPROX_COUNTER = "approx-test-only"
+
+
+def _counter_name() -> str:
+    from gbya.llm.tokens import TokenizerUnavailable, default_counter
+
+    try:
+        return default_counter().name
+    except TokenizerUnavailable:
+        return "unavailable"
+
+
+def refuse_research_tooling(backend: str | None, counter_name: str) -> None:
+    """Research runs need the live model and the model's own tokenizer (§D.10.3, §L.4 item 7)."""
+    from gbya.experiments.runs import ResearchRunRefused
+
+    if backend in ("fake", "replay"):
+        raise ResearchRunRefused(f"A {backend} LLM backend can never produce research runs")
+    if counter_name == APPROX_COUNTER or not counter_name.startswith("model:"):
+        raise ResearchRunRefused(
+            f"Research runs need the model tokenizer; the token counter is {counter_name!r}",
+            hint="Run outside GBYA_ENV=test with the model files present",
+        )
+
+
 def execute_run(
     factory: sessionmaker[Session],
     run_id: int,
@@ -397,6 +426,8 @@ def execute_run(
         run = s.get(Run, run_id)
         if run is None:
             raise NotFound(f"No run {run_id}", code="RUN_NOT_FOUND")
+        if run.purpose == "research":  # checked again where the work happens
+            refuse_research_tooling(run.backend, deps.counter.name)
         run.status = "running"
         run.started_at = run.started_at or utcnow()
         ensure_items(s, run)

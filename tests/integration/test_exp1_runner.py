@@ -366,3 +366,13 @@ def test_retrieval_metrics_from_the_runs_stored_rankings(env: tuple[Settings, An
         bm["attack_n"] == 3 and 0 <= bm["recall_at_5"] <= 1 and bm["recall_at_5"] == bm["hit_at_5"]
     )
     assert set(body["modes"]["bm25"]["by_case_variant"]) == {"E1", "E3", "R_neg"}
+
+
+def test_research_run_refused_with_the_test_only_counter(tmp_path: Path) -> None:
+    from gbya.experiments.runs import ResearchRunRefused
+
+    settings = setup_env(tmp_path).model_copy(update={"llm_backend": "live"})
+    factory = db.make_sessionmaker(db.make_engine(settings.app_db_path))
+    with db.session_scope(factory) as s, pytest.raises(ResearchRunRefused, match="model tokenizer"):
+        rn.create_exp1_run(s, settings, purpose="research", case_ids=CASES,
+                           counter_name="approx-test-only")  # fmt: skip

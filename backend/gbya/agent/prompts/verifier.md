@@ -17,7 +17,7 @@ Verdicts:
 
 Activity on a different target is INSUFFICIENT, not CONTRADICTED.
 
-Ticket scope: compare the cited record that best meets the requirement with each approved ticket. host: same host. account: the record's user is the ticket's account. command: the record's command line matches the ticket's command_pattern (a regular expression). time: the record's timestamp is between start and end. applies is true only if one approved ticket matches all four; report that ticket's matches, otherwise the closest ticket's. With no tickets, applies and all matches are false.
+Ticket scope: compare the cited record that best meets the requirement with each approved ticket. host: same host. account: the record's user is the ticket's account. command: the record's command line matches the ticket's command_pattern (a regular expression). time: the record's timestamp is between start and end. Use only tickets with approved: true. applies is true only if one approved ticket matches all four; report that ticket's matches, otherwise the closest approved ticket's. If there is no approved ticket, applies and all four matches are false.
 
 Answer with one JSON object only:
 {"verdict": "SUPPORTS" | "INSUFFICIENT" | "CONTRADICTED", "unmet_requirement": the unmet part of the requirement, or null, "ticket_scope": {"applies": bool, "matches": {"host": bool, "account": bool, "command": bool, "time": bool}}, "reason": at most 60 words naming the record ids used}

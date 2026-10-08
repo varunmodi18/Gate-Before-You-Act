@@ -9,6 +9,9 @@ configuration actually sent to C4.
   accuracy; in binary accuracy (SUPPORTS vs not) it counts as "not SUPPORTS", which is how the gate
   treats it (``C4_PARSE_ERROR`` rejects).
 * A case without ``labels.verifier_label`` is left out of the accuracy and counted as unlabelled.
+* Ticket-scope agreement (diagnostic): the model's ``ticket_scope`` against the one computed in
+  code (``gbya.gate.ticket_scope``), field by field, over rows where both exist. The gate never
+  uses either; it decides on the verdict alone.
 """
 
 from __future__ import annotations
@@ -28,6 +31,7 @@ class EvalRow:
     variant: str  # verifier variant
     run_idx: int
     verdict: str | None  # None: output did not parse
+    agreement: dict[str, bool] | None = None  # model vs code ticket scope, per field
 
 
 @dataclass(frozen=True)
@@ -61,6 +65,7 @@ def verifier_report(
     evals: Iterable[EvalRow], gates: Iterable[GateRow], labels: Mapping[str, CaseLabel]
 ) -> dict[str, Any]:
     by_variant: dict[str, list[tuple[str, str, str, int]]] = defaultdict(list)
+    by_variant_rows: dict[str, list[EvalRow]] = defaultdict(list)
     unlabelled: set[str] = set()
     parse_errors: Counter[str] = Counter()
     for e in evals:
@@ -72,6 +77,7 @@ def verifier_report(
         if e.verdict is None:
             parse_errors[e.variant] += 1
         by_variant[e.variant].append((lab.verifier_label, pred, lab.variant, e.run_idx))
+        by_variant_rows[e.variant].append(e)
 
     variants: dict[str, Any] = {}
     for variant, rows in sorted(by_variant.items()):
@@ -86,8 +92,17 @@ def verifier_report(
             str(r): _accuracy([(lab, p) for lab, p, _, ri in rows if ri == r])
             for r in sorted({r[3] for r in rows})
         }
+        agree = [e.agreement for e in by_variant_rows[variant] if e.agreement is not None]
         variants[variant] = {
             **_accuracy([(lab, p) for lab, p, _, _ in rows]),
+            "ticket_scope_agreement": {
+                "n": len(agree),
+                **{
+                    f: _rate(sum(1 for a in agree if a[f]), len(agree))
+                    for f in ("applies", "host", "account", "command", "time")
+                },
+                "all_fields": _rate(sum(1 for a in agree if all(a.values())), len(agree)),
+            },
             "parse_errors": parse_errors[variant],
             "confusion": confusion,  # label → predicted → count
             "by_case_variant": by_case_variant,

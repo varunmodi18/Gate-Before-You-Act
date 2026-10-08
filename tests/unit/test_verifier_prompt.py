@@ -113,9 +113,12 @@ def test_snapshot_per_variant(index: ix.RetrievalIndex, variant: vf.Variant) -> 
 
 def test_block_order_and_variant_differences(index: ix.RetrievalIndex) -> None:
     std, rat, none = (prompt(v, index) for v in ("standard", "rationale", "none"))
-    assert list(std.blocks) == ["PROPOSED_ACTION", "CITED_RECORDS", "REFERENCE", "CHANGE_TICKETS"]
+    assert list(std.blocks) == ["PROPOSED_ACTION", "EVIDENCE_REQUIREMENT", "CITED_RECORDS",
+                                "REFERENCE", "CHANGE_TICKETS"]  # fmt: skip
+    assert std.manifest["block_order"] == list(std.blocks)
     assert list(rat.blocks) == [*std.blocks, "AGENT_RATIONALE"]  # A3 only
-    assert list(none.blocks) == ["PROPOSED_ACTION", "CITED_RECORDS", "CHANGE_TICKETS"]  # A4
+    assert list(none.blocks) == ["PROPOSED_ACTION", "EVIDENCE_REQUIREMENT", "CITED_RECORDS",
+                                 "CHANGE_TICKETS"]  # A4  # fmt: skip
     assert CLAIM.rationale not in std.messages[1]["content"]  # rationale-blind (G3)
     assert CLAIM.rationale in rat.messages[1]["content"]
     assert "REFERENCE" not in none.messages[1]["content"] and none.manifest["reference"] == []
@@ -126,7 +129,7 @@ def test_block_order_and_variant_differences(index: ix.RetrievalIndex) -> None:
             in p.messages[1]["content"]
         )
     assert std.prompt_hash != rat.prompt_hash != none.prompt_hash
-    assert "Target values: H = WKSTN-01.lab.local" in std.blocks["PROPOSED_ACTION"]
+    assert "Target values: H = WKSTN-01.lab.local" in std.blocks["EVIDENCE_REQUIREMENT"]
 
 
 def test_no_gold_label_or_variant_name_reaches_the_prompt(index: ix.RetrievalIndex) -> None:
@@ -187,7 +190,7 @@ def test_reference_documents_are_cut_at_300_tokens_and_recorded(index: ix.Retrie
     assert not small_m["cut"] and small_m["rendered_tokens"] == small_m["original_tokens"]
     assert (
         vf.CUT_MARK in p.blocks["REFERENCE"]
-        and "CHANGE_TICKETS (times in UTC, as in the records)\nnone" in p.messages[1]["content"]
+        and p.blocks["CHANGE_TICKETS"] == "CHANGE_TICKETS: none"
     )
 
 
@@ -212,10 +215,10 @@ def test_over_budget_rationale_is_rejected_not_trimmed(index: ix.RetrievalIndex)
 
 def test_requirement_bindings_per_tool(index: ix.RetrievalIndex) -> None:
     p = prompt("none", index, tool="kill_process", args={"host": H, "pid": 4100, "cited": [7, 5]})
-    assert "Target values: H = WKSTN-01.lab.local; P = 4100" in p.blocks["PROPOSED_ACTION"]
-    assert REQS["kill_process"].split()[0] in p.blocks["PROPOSED_ACTION"]
+    assert "Target values: H = WKSTN-01.lab.local; P = 4100" in p.blocks["EVIDENCE_REQUIREMENT"]
+    assert REQS["kill_process"].split()[0] in p.blocks["EVIDENCE_REQUIREMENT"]
     acct = prompt("none", index, tool="disable_account", args={"account": "a.mehta", "cited": [7]})
-    assert "U = a.mehta" in acct.blocks["PROPOSED_ACTION"] and acct.manifest["tickets"] == [
+    assert "U = a.mehta" in acct.blocks["EVIDENCE_REQUIREMENT"] and acct.manifest["tickets"] == [
         "CHG-1001"
     ]
 
@@ -233,3 +236,32 @@ def test_schema_and_decoding() -> None:
         "reason",
     ]
     assert vf.MAX_TOKENS == 200 and vf.TEMPERATURE == 0.0
+
+
+def test_duplicate_reference_text_is_dropped_keeping_the_higher_ranked(
+    index: ix.RetrievalIndex,
+) -> None:
+    # the fixture has two whoami rules with identical content (ids ...000 and ...003)
+    p = prompt("standard", index)
+    ref = {d["doc_id"]: d for d in p.manifest["reference"]}
+    first, second = "00000000-0000-4000-8000-000000000000", "00000000-0000-4000-8000-000000000003"
+    assert ref[first]["dropped"] is False and ref[first]["duplicate_of"] is None
+    assert ref[second]["dropped"] is True and ref[second]["duplicate_of"] == first
+    assert p.blocks["REFERENCE"].count("[Sigma rule] Test Whoami Discovery") == 1
+
+
+def test_requirement_and_action_share_one_budget() -> None:
+    long_req = "requirement " * 50  # 600 chars ≈ 200 test tokens; with the action block, over
+    with pytest.raises(vf.PromptBudgetError, match="action"):
+        vf.build_prompt(variant="none", tool="isolate_host", args={"host": H, "cited": [7]},
+                        claim=CLAIM, requirement=long_req, evidence=render_cited([ACCESS], COUNTER),
+                        reference=[], tickets=[], counter=COUNTER)  # fmt: skip
+
+
+def test_ticket_block_lists_target_tickets_or_says_none() -> None:
+    tickets = vf.target_tickets(context(), {"host": H})
+    assert [t.id for t in tickets] == ["CHG-1001"]
+    assert vf._ticket_block([]) == "CHANGE_TICKETS: none"
+    block = vf._ticket_block(tickets)
+    assert block.startswith("CHANGE_TICKETS (times in UTC, as in the records)\n")
+    assert '"start": "2020-10-18T09:00:00"' in block and '"approved": true' in block

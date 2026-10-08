@@ -23,7 +23,7 @@ from __future__ import annotations
 import json
 import time
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
@@ -33,6 +33,7 @@ from pydantic import ValidationError
 from gbya.context.models import ChangeTicket, TrustedContext
 from gbya.errors import GbyaError, ModelOutputInvalid
 from gbya.gate.evidence import OMITTED_FIELDS, CitedRecord, RenderedEvidence
+from gbya.gate.ticket_scope import code_ticket_scope
 from gbya.gate.types import Claim, VerifierCall, VerifierOutput
 from gbya.llm.client import LLMClient
 from gbya.llm.schemas import JsonSchema, Message, prompt_hash
@@ -105,6 +106,8 @@ class VerifierPrompt:
     manifest: dict[str, Any]
     prompt_hash: str
     schema: JsonSchema = field(default_factory=lambda: VERIFIER_SCHEMA)
+    # Ticket scope computed in code from the cited records (diagnostic; never decides anything)
+    ticket_scope_code: dict[str, Any] | None = None
 
 
 def system_prompt() -> str:
@@ -122,17 +125,18 @@ def _json(obj: Any) -> str:
     return json.dumps(obj, ensure_ascii=False, sort_keys=False)
 
 
-def _action_block(tool: str, args: Mapping[str, Any], claim: Claim, requirement: str) -> str:
+def _action_block(tool: str, args: Mapping[str, Any], claim: Claim) -> str:
     call = {"tool": tool, "args": dict(args)}
-    bindings = [f"{ph} = {args[a]}" for ph, a in REQUIREMENT_BINDINGS.get(tool, ()) if a in args]
-    lines = [
+    return "\n".join([
         "PROPOSED_ACTION",
         _json(call),
         f"technique_claimed (the agent's claim, not evidence): {claim.technique_claimed or 'none'}",
-        "",
-        "EVIDENCE_REQUIREMENT",
-        " ".join(requirement.split()),
-    ]
+    ])  # fmt: skip
+
+
+def _requirement_block(tool: str, args: Mapping[str, Any], requirement: str) -> str:
+    bindings = [f"{ph} = {args[a]}" for ph, a in REQUIREMENT_BINDINGS.get(tool, ()) if a in args]
+    lines = ["EVIDENCE_REQUIREMENT", " ".join(requirement.split())]
     if bindings:
         lines.append("Target values: " + "; ".join(bindings))
     return "\n".join(lines)
@@ -160,15 +164,23 @@ def _doc_text(doc: Doc) -> str:
 def _reference_block(
     docs: Sequence[Doc], counter: TokenCounter
 ) -> tuple[str, list[dict[str, Any]]]:
+    """Each document as rendered; a document whose rendered text is identical to one already
+    shown (a higher-ranked one) is dropped and recorded as ``duplicate_of`` in the manifest."""
     parts = ["REFERENCE (retrieved by content; background knowledge, not evidence)"]
-    manifest = []
+    manifest: list[dict[str, Any]] = []
+    shown: dict[str, str] = {}  # rendered text → doc id
     for d in docs:
         full = _doc_text(d)
         rendered, cut = _cut(full, DOC_TOKENS, counter)
+        entry = {"doc_id": d.doc_id, "kind": d.kind, "title": d.title,
+                 "original_tokens": counter.count(full),
+                 "rendered_tokens": counter.count(rendered), "cut": cut}  # fmt: skip
+        if rendered in shown:
+            manifest.append({**entry, "dropped": True, "duplicate_of": shown[rendered]})
+            continue
+        shown[rendered] = d.doc_id
         parts.append(rendered)
-        manifest.append({"doc_id": d.doc_id, "kind": d.kind, "title": d.title,
-                         "original_tokens": counter.count(full),
-                         "rendered_tokens": counter.count(rendered), "cut": cut})  # fmt: skip
+        manifest.append({**entry, "dropped": False, "duplicate_of": None})
     return "\n\n".join(parts), manifest
 
 
@@ -178,9 +190,9 @@ def _utc(t: datetime) -> str:
 
 
 def _ticket_block(tickets: Sequence[ChangeTicket]) -> str:
-    lines = ["CHANGE_TICKETS (times in UTC, as in the records)"]
     if not tickets:
-        lines.append("none")
+        return "CHANGE_TICKETS: none"
+    lines = ["CHANGE_TICKETS (times in UTC, as in the records)"]
     for t in tickets:
         lines.append(_json({
             "id": t.id, "host": t.host, "account": t.account,
@@ -225,7 +237,8 @@ def build_prompt(
     mode = VARIANT_MODE[variant]
     system = system_prompt()
     blocks: dict[str, str] = {
-        "PROPOSED_ACTION": _action_block(tool, args, claim, requirement),
+        "PROPOSED_ACTION": _action_block(tool, args, claim),
+        "EVIDENCE_REQUIREMENT": _requirement_block(tool, args, requirement),
         "CITED_RECORDS": "CITED_RECORDS\n" + evidence.text,
     }
     ref_manifest: list[dict[str, Any]] = []
@@ -238,7 +251,10 @@ def build_prompt(
 
     tokens = {
         "system": counter.count(system),
-        "action": counter.count(blocks["PROPOSED_ACTION"]),
+        # one budget for action + requirement (§D.7.1), joined exactly as in the prompt
+        "action": counter.count(
+            blocks["PROPOSED_ACTION"] + "\n\n" + blocks["EVIDENCE_REQUIREMENT"]
+        ),
         "cited": evidence.tokens,
         "reference": counter.count(blocks["REFERENCE"]) if "REFERENCE" in blocks else 0,
         "tickets": counter.count(blocks["CHANGE_TICKETS"]),
@@ -336,13 +352,14 @@ class LLMVerifier:
         if mode != "none":
             assert self.retriever is not None
             retrieval, docs = self.retriever(build_query(tool, records, self.requirements), mode)
+        tickets = target_tickets(ctx, args)
         p = build_prompt(
             variant=self.variant, tool=tool, args=args, claim=claim,
             requirement=self.requirements.get(tool, ""), evidence=evidence, reference=docs,
-            tickets=target_tickets(ctx, args), counter=counter,
+            tickets=tickets, counter=counter,
             query_hash=retrieval.query_hash if retrieval else None,
         )  # fmt: skip
-        return p, retrieval
+        return replace(p, ticket_scope_code=code_ticket_scope(records, tickets)), retrieval
 
     def __call__(
         self,
@@ -362,7 +379,7 @@ class LLMVerifier:
         base: dict[str, Any] = {
             "variant": self.variant, "prompt_hash": p.prompt_hash, "manifest": p.manifest,
             "retrieval": retrieval_record(retrieval) if retrieval else None,
-            "messages": p.messages,
+            "messages": p.messages, "ticket_scope_code": p.ticket_scope_code,
         }  # fmt: skip
         t0 = time.perf_counter()
         try:

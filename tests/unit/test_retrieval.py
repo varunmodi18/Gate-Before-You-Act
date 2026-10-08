@@ -57,7 +57,9 @@ def test_no_tag_or_technique_id_in_any_indexed_document(built: tuple[Path, dict]
     out, _ = built
     idx = ix.load(out)
     docs = idx.sigma.docs + idx.attack.docs
-    assert len(idx.sigma.docs) == 4 and len(idx.attack.docs) == 3  # deprecated technique dropped
+    assert (
+        len(idx.sigma.docs) == 4 and len(idx.attack.docs) == 3
+    )  # deprecated and Linux-only techniques dropped
     for d in docs:
         assert held_out_violations(d.index_text) == [], d.doc_id
         assert not any(t.startswith("t1") and t[1:].isdigit() for t in tokenise(d.index_text))

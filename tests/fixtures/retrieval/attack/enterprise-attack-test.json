@@ -79,6 +79,25 @@
    "x_mitre_deprecated": true
   },
   {
+   "type": "attack-pattern",
+   "id": "attack-pattern--0005",
+   "name": "Linux Only Credential Thing",
+   "description": "Adversaries may read lsass-like memory on Linux.",
+   "external_references": [
+    {
+     "source_name": "mitre-attack",
+     "external_id": "T1998",
+     "url": "https://attack.mitre.org/techniques/T1998"
+    }
+   ],
+   "x_mitre_is_subtechnique": false,
+   "x_mitre_platforms": [
+    "Linux"
+   ],
+   "revoked": false,
+   "x_mitre_deprecated": false
+  },
+  {
    "type": "x-mitre-detection-strategy",
    "id": "x-mitre-detection-strategy--0001",
    "name": "Detect LSASS memory access",

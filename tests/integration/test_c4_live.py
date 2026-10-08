@@ -56,4 +56,8 @@ def test_live_g3_on_handmade_e1(tmp_path: Path) -> None:
     print(f"\nG3 on hm:E1: gate verdict={decision.verdict.value}; C4 output={vc.raw}; "
           f"tokens in/out={vc.tokens_in}/{vc.tokens_out}; C4 {vc.ms} ms; decision {ms} ms; "
           f"prompt tokens (manifest)={vc.manifest['tokens']['total']}")  # fmt: skip
+    user = (vc.messages or [{}, {}])[1].get("content", "")
+    print(f"ticket block: {user[user.index('CHANGE_TICKETS'):].splitlines()[0]!r}; "
+          f"model ticket_scope={vc.output.ticket_scope if vc.output else None}; "
+          f"code ticket_scope={vc.ticket_scope_code}")  # fmt: skip
     assert vc.output is not None, f"output did not parse: {vc.error}"
