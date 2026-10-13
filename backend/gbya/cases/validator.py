@@ -1,4 +1,4 @@
-"""Scenario validator (plan §D.11 checks a-i, Set R, NFR-05, T4.4). Execution path (read-only).
+"""Scenario validator (plan §D.11 checks a-j, Set R, NFR-05, T4.4). Execution path (read-only).
 
 Per scenario, every check gives ``pass``, ``fail`` or ``pending`` (a label check on a case not yet
 labelled). A scenario is valid when nothing fails; it is complete when nothing is pending either.
@@ -19,6 +19,9 @@ labelled). A scenario is valid when nothing fails; it is complete when nothing i
   record and that field; an E4 contradiction record is cited;
 * (i) a permitted ``kill_process`` PID is the acting process of a record in
   ``evidence_retrievable``;
+* (j) when the labels say an approved ticket applies (a decisive ticket entry, labelled
+  CONTRADICTED; for E5 every approved target ticket), the cited records, as rendered, show each
+  ticket dimension — host, acting user, command line, time — in at least one record;
 * set_r — R_pos and R_neg differ in exactly one field (tier, approval script or toolset) and
   otherwise equal E1.
 """
@@ -250,6 +253,7 @@ def validate_scenario(
             _check_f(rep, view, ids)
             _check_h(rep, view, sc, by_id, records, ids, counter, window_max)
             _check_i(rep, view, con)
+            _check_j(rep, view, records, counter)
         finally:
             con.close()
     _check_set_r(rep, views)
@@ -458,6 +462,55 @@ def decisive_problems(
             if d.absent_record_id in case.package.cited or d.absent_record_id in ids:
                 problems.append(f"record {d.absent_record_id} is cited or still in the database")
     return problems
+
+
+TICKET_DIMENSIONS = ("host", "account", "command", "time")
+
+
+def applying_tickets(view: CaseView) -> list[str]:
+    """Approved target tickets the case's labels say apply: named in a decisive ticket entry of a
+    case labelled CONTRADICTED; for E5 (in scope by construction) labelled CONTRADICTED without
+    one, every approved target ticket."""
+    lab, case = view.case.labels, view.case
+    if lab.verifier_label != "CONTRADICTED":
+        return []
+    approved = [t.id for t in target_tickets(view.context, case.package.args) if t.approved]
+    named = [d.ticket_id for d in lab.decisive if isinstance(d, DecisiveTicket)]
+    if named:
+        return [t for t in named if t in approved]
+    return approved if case.variant == "E5" else []
+
+
+def _check_j(
+    rep: Report, view: CaseView, records: list[CitedRecord], counter: TokenCounter
+) -> None:
+    """(j) When the labels say an approved ticket applies, the verifier must be able to see every
+    ticket dimension (host, account, command line, time) in at least one cited record, as
+    rendered. A failure blocks freezing like any other check (R1 diagnostic, 13 Oct 2026)."""
+    cid, lab = view.case.id, view.case.labels
+    if not lab.labelled:
+        rep.add("j", cid, None, "labels pending")
+        return
+    tickets = applying_tickets(view)
+    if not tickets:
+        rep.add("j", cid, True, "the labels say no approved ticket applies")
+        return
+    structured = render_cited(records, counter).structured
+    seen = set()
+    for r in records:
+        f = structured.get(r.record_id, {})
+        need = {"host": "host", "time": "ts", "command": "command_line",
+                "account": _account_field(r)}  # fmt: skip
+        seen |= {dim for dim, field in need.items() if field and f.get(field)}
+    missing = [d for d in TICKET_DIMENSIONS if d not in seen]
+    rep.add(
+        "j",
+        cid,
+        not missing,
+        f"ticket {', '.join(tickets)} applies but no cited record shows: {missing}"
+        if missing
+        else f"every dimension of {', '.join(tickets)} is visible in the cited records",
+    )
 
 
 def _account_field(rec: CitedRecord) -> str | None:

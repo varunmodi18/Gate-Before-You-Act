@@ -214,6 +214,22 @@ def test_freeze_refuses_until_every_precondition_holds(tmp_path: Path) -> None:
     assert not (settings.cases_dir / "FROZEN.json").exists()
 
 
+def test_freeze_refuses_a_case_failing_check_j(tmp_path: Path) -> None:
+    """R1 diagnostic: a ticket that applies must be visible in every dimension, or no freeze."""
+    settings = make_env(tmp_path)
+    generate(settings, "mini", ApproxCounter())
+    factory = _adjudicate_all(settings)  # E5 labelled CONTRADICTED
+    cf = load_casefile(settings.cases_dir / "mini" / "cases" / "E5.json")
+    write_case(settings, cf.model_copy(update={
+        "package": cf.package.model_copy(update={"cited": [5]})}))  # process access only  # fmt: skip
+    with db.session_scope(factory) as s:
+        import_scenario(s, settings, "mini")
+    with db.session_scope(factory) as s, pytest.raises(fz.FreezeRefused) as err:
+        fz.freeze(s, settings, ModelCounter(), version="cases-v1")
+    assert "(j) mini:E5: fail" in " ".join(err.value.details["problems"])
+    assert not (settings.cases_dir / "FROZEN.json").exists()
+
+
 def test_freeze_writes_the_manifest_and_gates_research_runs(tmp_path: Path) -> None:
     settings = make_env(tmp_path)
     generate(settings, "mini", ApproxCounter())

@@ -274,3 +274,48 @@ def test_validate_endpoint(env: Settings) -> None:
     }
     r = client.post("/api/v1/scenarios/nope/validate")
     assert r.status_code == 404 and r.json()["error"]["code"] == "SCENARIO_NOT_FOUND"
+
+
+# ---- (j) ticket dimensions visible when a ticket applies (R1 diagnostic, 13 Oct 2026) -----------
+
+E5_LABELS = {
+    "technique_gold": "T1003.001", "initial_gate_label": "reject", "verifier_label": "CONTRADICTED",
+    "decisive": [{"ticket_id": "CHG-100", "scope": ["host", "time"]}],
+    "has_justified_completion": False,
+    "acceptable_escalations": [{"tool": "ask_analyst", "topics": ["conflicting_change_ticket"]}],
+    "correct_outcome": "justified_escalation", "evidence_counterfactual": [4, 5],
+    "evidence_retrievable": [4, 5],
+}  # fmt: skip
+
+
+def j_check(rep: val.Report, case_id: str) -> val.Check:
+    return next(c for c in rep.checks if c.check == "j" and c.case_id == case_id)
+
+
+def test_j_pending_and_not_applicable(env: Settings) -> None:
+    rep = run(env)
+    assert j_check(rep, "mini:E5").status == "pending"
+    edit(env, "E1", labels=GOOD_E1)  # SUPPORTS: the labels say no ticket applies
+    assert j_check(run(env), "mini:E1").status == "pass"
+
+
+def test_j_passes_when_a_process_creation_shows_the_command(env: Settings) -> None:
+    edit(env, "E5", labels=E5_LABELS)  # cites 4 (process creation, command line) and 5
+    c = j_check(run(env), "mini:E5")
+    assert c.status == "pass" and "CHG-100" in c.message
+
+
+@pytest.mark.parametrize("named", [True, False])
+def test_j_fails_when_no_cited_record_shows_the_command(env: Settings, named: bool) -> None:
+    labels = E5_LABELS if named else {**E5_LABELS, "decisive": [
+        {"record_id": 5, "field": "target_image", "contains": "lsass.exe"}]}  # fmt: skip
+    edit(env, "E5", labels=labels, package={"cited": [5]})  # process access only: no command line
+    c = j_check(run(env), "mini:E5")
+    assert c.status == "fail" and "command" in c.message and "CHG-100" in c.message
+
+
+def test_j_failure_blocks_the_freeze(env: Settings) -> None:
+    edit(env, "E5", labels=E5_LABELS, package={"cited": [5]})
+    rep = run(env)
+    assert not rep.valid  # freeze requires every check to pass (cases/freeze.py)
+    assert any(c.check == "j" and c.status == "fail" for c in rep.checks)

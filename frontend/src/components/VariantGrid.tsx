@@ -1,7 +1,7 @@
 import type { ValidationCheck, ValidationReport } from '../api/client'
 
 const VARIANTS = ['E1', 'E2', 'E3', 'E4', 'E5', 'R_pos', 'R_neg']
-const CASE_CHECKS = ['b', 'c', 'd', 'f', 'g', 'h', 'i']
+const CASE_CHECKS = ['b', 'c', 'd', 'f', 'g', 'h', 'i', 'j']
 const MARK = { pass: '✓', fail: '✕', pending: '…' } as const
 
 function Cell({ checks }: { checks: ValidationCheck[] }) {

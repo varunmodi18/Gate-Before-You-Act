@@ -1248,6 +1248,7 @@ The model context is 8,192 tokens, so the 40,000-token episode cap cannot be the
 - (g) the package fits the evidence budget of §D.7.1 when rendered in full (no truncation); a failing scenario is logged in `cases/EXCLUSIONS.json` with its reason;
 - (h) every `labels.decisive` entry is satisfied by the actual rendered standard-variant verifier prompt, and an E4 contradiction record is cited (§D.7.1);
 - (i) *(Draft 8, team decision)* if `permitted` includes `kill_process` on a PID, at least one record in `evidence_retrievable` shows that PID as the **acting process** (role table of §D.6.2a). Otherwise the labelled correct action could never be admitted: a PID that appears only as a parent or target fails C1 (not a canonical PID field) or C3 (role mismatch).
+- (j) *(Draft 8, team decision after the R1 demo, 13 Oct 2026)* when a case's labels say an approved ticket applies (labelled `CONTRADICTED` with a decisive ticket entry; for E5, every approved target ticket), the cited records, as rendered for the verifier, show each ticket dimension — host, acting user, command line, time — in at least one record. A command line is rendered only on process-creation records, so such packages cite the acting process's creation record. A failing case cannot be frozen.
 
 **Prefix builder:** deterministic. For each case it emits a scripted investigation transcript:
 1. a profile summary;
@@ -2084,7 +2085,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 **T4.4 Validator**
 - **Prerequisites:** T4.3.
 - **Files:** `gbya/cases/validator.py`.
-- **Instructions:** checks (a)–(i) of §D.11 plus the Set R one-field-difference check. Checks (g) and (h) call the real evidence renderer and prompt builder from T3.2; check (i) uses the gate's actor-PID role table.
+- **Instructions:** checks (a)–(j) of §D.11 plus the Set R one-field-difference check. Checks (g) and (h) call the real evidence renderer and prompt builder from T3.2; check (i) uses the gate's actor-PID role table.
 - **Deliverables:** `validate` endpoint.
 - **Verification:** a negative fixture for each check, including: a package over the evidence budget; a `decisive` substring missing from the rendered prompt; a `decisive` substring present only in another record or another field; an E4 contradiction record that is not cited.
 - **Done when:** it passes.
@@ -2633,7 +2634,7 @@ No credentials or paid services are required.
 **R2 research-complete**
 - [ ] `splits.json` frozen: 10/40/12, no de-duplication group straddling splits
 - [ ] 50 scenarios (350 cases) plus 12 end-to-end scenarios labelled; κ and Jaccard reported pre-adjudication; κ ≥ 0.6 or calibration documented
-- [ ] Validator checks (a)–(h) pass on every frozen case, including label support on the rendered verifier prompt
+- [ ] Validator checks (a)–(j) pass on every frozen case, including label support on the rendered verifier prompt
 - [ ] `cases/FROZEN.json` committed and tagged
 - [ ] T8.0 token audit done and the budget regenerated before the research runs
 - [ ] Exp 1, 2 and 3 completed on the frozen set with provenance; adjudication queue empty
