@@ -15,6 +15,7 @@ from gbya.store.models import (
     Annotation,
     Base,
     Case,
+    Episode,
     JobItem,
     RetrievalRanking,
     Run,
@@ -153,3 +154,59 @@ def test_foreign_key_enforced(db_path: Path) -> None:
     factory = db.make_sessionmaker(db.make_engine(db_path))
     with pytest.raises(IntegrityError), db.session_scope(factory) as s:
         s.add(Scenario(id="s002", window_id="no-such-window"))
+
+
+def test_table_rebuilding_migrations_keep_referencing_rows(tmp_path: Path) -> None:
+    """0010 rebuilds ``cases`` (batch mode); with episodes referencing a case, the upgrade must
+    not fail on the foreign key and the rows must survive (found on the populated demo app.db)."""
+    path = tmp_path / "app.db"
+    db.upgrade(path, "0009")
+    factory = db.make_sessionmaker(db.make_engine(path))  # 0010 changes constraints only
+    with db.session_scope(factory) as s:
+        s.add(Window(id="W", title="t"))
+        s.flush()
+        s.add(Scenario(id="s", window_id="W"))
+        s.flush()
+        s.add(Case(id="s:E1", scenario_id="s", set_="E", variant="E1", request={}, package={}))
+        s.flush()
+        s.add(Episode(case_id="s:E1", system="G3", run_idx=1, status="done"))
+    engine = factory.kw["bind"]
+    engine.dispose()
+    db.upgrade(path)
+    engine = db.make_engine(path)
+    with engine.connect() as conn:
+        assert conn.execute(text("SELECT case_id FROM episodes")).scalar() == "s:E1"
+        assert conn.execute(text("PRAGMA foreign_key_check")).all() == []
+        assert conn.execute(text("PRAGMA foreign_keys")).scalar() == 1
+    engine.dispose()
+
+
+def test_a_failed_migration_leaves_nothing_behind(tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+                                                  ) -> None:  # fmt: skip
+    """Migrations are transactional: a failure inside 0010's table rebuild rolls back the
+    half-built ``_alembic_tmp_cases`` and the version stays at 0009."""
+    from alembic.operations import Operations
+
+    path = tmp_path / "app.db"
+    db.upgrade(path, "0009")
+    real = Operations.batch_alter_table
+    calls: list[str] = []
+
+    def failing(self: Operations, table: str, *a: object, **kw: object) -> object:
+        calls.append(table)
+        if table == "adjudications":  # after "cases" was rebuilt
+            raise RuntimeError("boom")
+        return real(self, table, *a, **kw)
+
+    monkeypatch.setattr(Operations, "batch_alter_table", failing)
+    with pytest.raises(RuntimeError, match="boom"):
+        db.upgrade(path)
+    assert calls == ["cases", "adjudications"]
+    engine = db.make_engine(path)
+    with engine.connect() as conn:
+        assert conn.execute(text("SELECT version_num FROM alembic_version")).scalar() == "0009"
+        names = {r[0] for r in conn.execute(text("SELECT name FROM sqlite_master"))}
+        assert not any(n.startswith("_alembic_tmp") for n in names)
+        ddl = conn.execute(text("SELECT sql FROM sqlite_master WHERE name = 'cases'")).scalar()
+        assert "'X'" not in str(ddl)  # the rebuilt "cases" was rolled back too
+    engine.dispose()

@@ -94,6 +94,7 @@ def test_fixture_run_completes_with_investigation_and_response(settings: Setting
             ("G0", 1), ("G0", 2), ("G1", 1), ("G1", 2), ("G3", 1), ("G3", 2)]  # fmt: skip
         for e in eps:
             inv = e.outcome_detail["investigation"]
+            assert 0 < inv["handover_tokens"] <= 2500
             assert inv["predicted_techniques"] == ["T1003.001"] and inv["findings"][0]["cited"] == [
                 5,
                 7,

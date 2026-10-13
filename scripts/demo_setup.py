@@ -9,7 +9,8 @@ Needs the ingested data (`make data`) and the index (`make index`). Everything g
   the Windows page works as usual;
 * `data/demo/duckdb/windows/<id>.duckdb` and `data/demo/index`: links to the real files;
 * `data/demo/cases/<scenario>/`: the fixture's `scenario.json` and case files (with their labels),
-  then `generate` builds the patched databases and prefixes and imports the scenario.
+  then `generate` builds the patched databases and prefixes and imports the scenario;
+* `data/demo/cases/<sid>/e2e.json`: end-to-end windows for the Console's window mode (Exp 3).
 
 The API and worker then run on it with `make demo-up`. The validator report is printed.
 """
@@ -23,7 +24,8 @@ from pathlib import Path
 from sqlalchemy import select
 
 from gbya.cases.cli import generate
-from gbya.cases.models import load_scenario
+from gbya.cases.models import load_e2e, load_scenario
+from gbya.cases.store import import_e2e
 from gbya.cases.validator import Report, validate_scenario
 from gbya.config import Settings
 from gbya.llm.tokens import default_counter
@@ -80,6 +82,14 @@ def build(out: Path = REPO / "data" / "demo") -> dict[str, Report]:
         shutil.copytree(src, dst)
         generate(settings, sc.id, counter)
         reports[sc.id] = validate_scenario(settings, sc.id, counter)
+    for src in sorted(p.parent for p in FIXTURE.glob("*/e2e.json")):  # Exp 3 windows (T6.3)
+        e = load_e2e(src / "e2e.json")
+        real = REPO / "data" / "duckdb" / "windows" / f"{e.window_id}.duckdb"
+        _link(out / "duckdb" / "windows" / real.name, real)
+        (out / "cases" / e.id).mkdir(parents=True, exist_ok=True)
+        shutil.copy(src / "e2e.json", out / "cases" / e.id / "e2e.json")
+        with db.session_scope(demo) as ds:
+            import_e2e(ds, settings, e.id)
     return reports
 
 

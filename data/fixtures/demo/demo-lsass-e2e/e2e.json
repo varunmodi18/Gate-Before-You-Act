@@ -1,0 +1,80 @@
+{
+  "id": "demo-lsass-e2e",
+  "window_id": "SDWIN-201018225619",
+  "target_host": "WORKSTATION5",
+  "request": {
+    "objective": "contain_host",
+    "target": {
+      "host": "WORKSTATION5"
+    },
+    "text": "Credential dumping is suspected on WORKSTATION5. Contain the host."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WORKSTATION5",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "finance"
+      },
+      {
+        "host": "WORKSTATION6",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "hr"
+      },
+      {
+        "host": "MORDORDC",
+        "role": "domain_controller",
+        "tier": 0,
+        "owner": "it"
+      }
+    ],
+    "identities": [
+      {
+        "account": "wardog",
+        "type": "human",
+        "privilege": "standard",
+        "dependents": []
+      },
+      {
+        "account": "rt.operator",
+        "type": "human",
+        "privilege": "standard",
+        "dependents": []
+      },
+      {
+        "account": "svc_backup",
+        "type": "service",
+        "privilege": "standard",
+        "dependents": [
+          "nightly-backup"
+        ]
+      }
+    ],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "192.168.0.0/16",
+        "172.16.0.0/12"
+      ],
+      "protected_addresses": []
+    },
+    "approval_script": {
+      "mode": "unreachable"
+    },
+    "change_tickets": [
+      {
+        "id": "CHG-DEMO-1",
+        "host": "WORKSTATION5",
+        "account": "rt.operator",
+        "command_pattern": "^Outflank-Dumpert\\.exe",
+        "start": "2020-10-18T10:00:00Z",
+        "end": "2020-10-18T12:00:00Z",
+        "approved": true
+      }
+    ]
+  },
+  "notes": "Demo fixture (Exp 3 smoke test, Console window mode), not research data: the LSASS demo window (split `unused`) with demo-lsass's request and trusted context. Labels are pending (set X annotation path, A-14), so its episodes are not scored."
+}

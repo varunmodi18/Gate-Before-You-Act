@@ -175,6 +175,7 @@ class Investigation:
     events: list[tuple[str, dict[str, Any]]] = field(default_factory=list)  # trace steps
     retrieved: list[int] = field(default_factory=list)
     handover_stubbed: list[str] = field(default_factory=list)  # SQL whose result became a stub
+    handover_tokens: int = 0  # the rendered handover (prefix) as the proposer receives it
 
     @property
     def findings(self) -> list[dict[str, Any]]:
@@ -194,7 +195,7 @@ class Investigation:
                                         for q in h.queries]} for h in self.hypotheses],
             "llm_calls": self.llm_calls, "tokens_in": self.tokens_in,
             "tokens_out": self.tokens_out, "budget_exhausted": self.budget_exhausted,
-            "handover_stubbed": self.handover_stubbed,
+            "handover_stubbed": self.handover_stubbed, "handover_tokens": self.handover_tokens,
         }  # fmt: skip
 
 

@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 from alembic import context
+from sqlalchemy import event
 from sqlalchemy.engine import make_url
 
 from gbya.store.db import make_engine
@@ -32,13 +34,30 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     engine = make_engine(_db_path())
+
+    # Batch mode rebuilds SQLite tables (copy, drop, rename). Two things make that safe:
+    # (1) foreign keys are off while migrating, else dropping a table other rows reference fails
+    # (SQLite's documented table-rebuild procedure; the result is checked before commit);
+    # (2) DDL runs inside the transaction: pysqlite otherwise commits each DDL statement, so a
+    # failed migration would leave half-built tables behind.
+    @event.listens_for(engine, "connect")
+    def _migrating(dbapi_conn: Any, _record: Any) -> None:
+        dbapi_conn.isolation_level = None  # SQLAlchemy emits BEGIN itself (below)
+        dbapi_conn.execute("PRAGMA foreign_keys=OFF")
+
+    @event.listens_for(engine, "begin")
+    def _begin(conn: Any) -> None:
+        conn.exec_driver_sql("BEGIN")
+
     with engine.connect() as connection:
-        # Batch mode lets later migrations alter SQLite tables (copy-and-move).
         context.configure(
             connection=connection, target_metadata=target_metadata, render_as_batch=True
         )
         with context.begin_transaction():
             context.run_migrations()
+            broken = connection.exec_driver_sql("PRAGMA foreign_key_check").fetchall()
+            if broken:
+                raise RuntimeError(f"migration left foreign-key violations: {broken[:5]}")
     engine.dispose()
 
 

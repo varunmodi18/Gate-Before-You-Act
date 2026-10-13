@@ -144,9 +144,11 @@ def run_episode(
                            temperature=slot.temperature, seed=slot.seed,
                            request_text=case.request.text, on_event=trace.step,
                            should_stop=should_stop).run(con)  # fmt: skip
+        prefix = prefix_text(handover(inv, deps.counter))
+        inv.handover_tokens = deps.counter.count(prefix)
         EpisodeRunner(
             client=deps.client, request=case.request,
-            prefix=prefix_text(handover(inv, deps.counter)), temperature=slot.temperature,
+            prefix=prefix, temperature=slot.temperature,
             seed=slot.seed, trace=trace, counter=deps.counter,
             gate=Gate(config, deps.policy, verifier), env=env, tools=tools,
             prefix_label=LIVE_LABEL, should_stop=should_stop or (lambda: False),
