@@ -19,6 +19,7 @@ def get_settings(request: Request) -> Settings:
 def get_session(request: Request) -> Iterator[Session]:
     factory: sessionmaker[Session] = request.app.state.sessionmaker
     session = factory()
+    session.info["gpu_budget_hours"] = request.app.state.settings.gpu_budget_hours  # T5.5
     try:
         yield session
     finally:

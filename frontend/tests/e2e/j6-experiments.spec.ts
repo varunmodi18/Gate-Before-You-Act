@@ -11,10 +11,11 @@ test('J6 (partial): create an Exp 1 run, follow its progress, read the verifier 
   await expect(page.getByRole('heading', { name: 'Experiments', exact: true })).toBeVisible()
   await expect(page.getByRole('checkbox', { name: /rerank/ })).toBeDisabled()
   await expect(page.getByRole('checkbox', { name: /^standard/ })).toBeChecked()
-  await page.getByLabel('Purpose').selectOption('fixture')
+  const form = page.getByRole('form', { name: 'New Experiment 1' })
+  await form.getByLabel('Purpose').selectOption('fixture')
   // name the cases: other journeys (J2) may have added scenarios to the fixture database
-  await page.getByLabel(/^Case ids/).fill('hm:E1 hm:E3 hm:R_neg')
-  await page.getByRole('button', { name: 'Create and start' }).click()
+  await form.getByLabel(/^Case ids/).fill('hm:E1 hm:E3 hm:R_neg')
+  await form.getByRole('button', { name: 'Create and start' }).click()
 
   await expect(page.getByRole('heading', { name: /^Run \d+: Experiment 1$/ })).toBeVisible()
   await expect(page.getByText(/Status: completed/)).toBeVisible({ timeout: 60_000 })

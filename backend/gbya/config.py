@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     worker_concurrency: int = 4
     worker_heartbeat_s: int = 10
     worker_stale_s: int = 60
+    # Budget monitor (T5.5): the planning figure until T8.0 regenerates the budget from real
+    # prompts and sets this value.
+    gpu_budget_hours: float = 81.0
 
     @classmethod
     def settings_customise_sources(

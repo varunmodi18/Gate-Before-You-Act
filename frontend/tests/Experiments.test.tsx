@@ -116,8 +116,9 @@ describe('Experiments', () => {
     const rerank = await screen.findByRole('checkbox', { name: /rerank/ })
     expect(rerank).toBeDisabled()
     expect(screen.getByText(/needs the reranker model/)).toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText('Purpose'), { target: { value: 'fixture' } })
-    fireEvent.click(screen.getByRole('button', { name: 'Create and start' }))
+    const form = within(screen.getByRole('form', { name: 'New Experiment 1' }))
+    fireEvent.change(form.getByLabelText('Purpose'), { target: { value: 'fixture' } })
+    fireEvent.click(form.getByRole('button', { name: 'Create and start' }))
     expect(await screen.findByRole('heading', { name: 'Run 7: Experiment 1' })).toBeInTheDocument()
     expect(posted).toEqual({
       experiment: 1,
@@ -139,5 +140,70 @@ describe('Experiments', () => {
     expect(within(levels).getByRole('row', { name: /No RAG \(A4\)/ })).toHaveTextContent('n/a')
     expect(within(levels).getByRole('row', { name: /BM25 \(G3\)/ })).toHaveTextContent('0.042')
     expect(within(levels).getByRole('row', { name: /rerank \(A6\)/ })).toHaveTextContent('0.070')
+  })
+
+  it('creates an Exp 2 run, shows outcomes and the budget warning with the F1 offer', async () => {
+    let posted: unknown = null
+    const SPEC2 = {
+      spec: {
+        experiment: 2,
+        schedule: { '1': { temperature: 0.2, seed: 11 }, '2': { temperature: 0.5, seed: 22 } },
+        systems: { G0: 2, G3: 2, A7: 1 },
+        fallback: null,
+      },
+      undefined: ['A7'],
+    }
+    const budget = { limit_h: 81, elapsed_h: 30, run_h: 90, spent_other_research_h: 2,
+      projected_total_h: 92, over: true, offer: { fallback: 'F1', drop_systems: ['G2', 'A1'],
+        runs: { G0: 2, G3: 2 }, units: 40, run_h: 60, projected_total_h: 62 } } // prettier-ignore
+    const RUN2 = { ...RUN, id: 8, experiment: 2, progress: { ...progress, run_id: 8, budget } }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input)
+        if (url.endsWith('/runs/exp1-spec')) return new Response(JSON.stringify(SPEC))
+        if (url.endsWith('/runs/exp2-spec')) return new Response(JSON.stringify(SPEC2))
+        if (url.endsWith('/runs') && init?.method === 'POST') {
+          posted = JSON.parse(String(init.body))
+          return new Response(JSON.stringify(RUN2), { status: 201 })
+        }
+        if (url.endsWith('/runs')) return new Response(JSON.stringify([RUN2]))
+        if (url.endsWith('/runs/8')) return new Response(JSON.stringify(RUN2))
+        if (url.endsWith('/runs/8/outcomes'))
+          return new Response(
+            JSON.stringify({ run_id: 8, by_system: { G3: { safe_completion: 1, unscored: 6 } } }),
+          )
+        return new Response('{}', { status: 404 })
+      }),
+    )
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    render(
+      <MemoryRouter initialEntries={['/experiments']}>
+        <App queryClient={client} />
+      </MemoryRouter>,
+    )
+    const runs = await screen.findByRole('table', { name: 'Experiment runs' })
+    expect(within(runs).getByRole('row', { name: /Run 8/ })).toHaveTextContent('over budget')
+    const form = within(screen.getByRole('form', { name: 'New Experiment 2' }))
+    expect(await form.findByRole('checkbox', { name: /A7/ })).toBeDisabled()
+    fireEvent.change(form.getByLabelText('Fallback'), { target: { value: 'F1' } })
+    fireEvent.click(form.getByRole('button', { name: 'Create and start' }))
+    expect(await screen.findByRole('heading', { name: 'Run 8: Experiment 2' })).toBeInTheDocument()
+    expect(posted).toEqual({
+      experiment: 2,
+      purpose: 'development',
+      case_ids: null,
+      config: { systems: { G0: 2, G3: 2 }, fallback: 'F1' },
+      start: true,
+    })
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent('Projected total exceeds the budget')
+    expect(alert).toHaveTextContent('Fallback F1')
+    expect(alert).toHaveTextContent('team decision')
+    expect(screen.getByText(/^Budget:/)).toHaveTextContent(
+      'projected total 92.0 h of 81.0 GPU-hours',
+    )
+    const out = await screen.findByRole('table', { name: /outcomes per system/ })
+    expect(within(out).getByRole('row', { name: /G3/ })).toHaveTextContent('6')
   })
 })

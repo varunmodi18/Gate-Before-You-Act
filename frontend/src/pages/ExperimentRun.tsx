@@ -7,6 +7,8 @@ import {
   apiGet,
   apiPost,
   type Accuracy,
+  type Budget,
+  type OutcomesOut,
   type Progress,
   type RetrievalOut,
   type RunItem,
@@ -47,16 +49,22 @@ export function ExperimentRun() {
   })
   const progress = useProgress(runId, run.data?.progress)
   const finished = progress ? TERMINAL.has(progress.status) : false
+  const exp = run.data?.experiment
   const evalQ = useQuery({
     queryKey: ['verifier-eval', runId, progress?.status],
     queryFn: () => apiGet<VerifierEvalOut>(`/runs/${runId}/verifier-eval`),
-    enabled: finished,
+    enabled: finished && exp === 1,
   })
   const retrievalQ = useQuery({
     queryKey: ['retrieval', runId, progress?.status],
     queryFn: () => apiGet<RetrievalOut>(`/runs/${runId}/retrieval`),
-    enabled: finished,
+    enabled: finished && exp === 1,
     retry: false,
+  })
+  const outcomesQ = useQuery({
+    queryKey: ['outcomes', runId, progress?.done],
+    queryFn: () => apiGet<OutcomesOut>(`/runs/${runId}/outcomes`),
+    enabled: exp === 2,
   })
   const errors = useQuery({
     queryKey: ['run-errors', runId, progress?.errors],
@@ -92,6 +100,7 @@ export function ExperimentRun() {
         <progress className="w-full max-w-xl" max={p.total} value={p.done}>
           {p.done}/{p.total}
         </progress>
+        {p.budget && <BudgetLine b={p.budget} />}
       </div>
       <div className="mb-4 flex gap-2">
         {(['start', 'cancel', 'resume'] as const).map((a) => (
@@ -142,11 +151,88 @@ export function ExperimentRun() {
           </ul>
         </>
       )}
+      {outcomesQ.data && <Outcomes data={outcomesQ.data} />}
       {evalQ.data && <VerifierEval data={evalQ.data} />}
       {evalQ.data && retrievalQ.data && (
         <RetrievalLevels verifier={evalQ.data} retrieval={retrievalQ.data} />
       )}
     </section>
+  )
+}
+
+const hours = (h: number) => h.toFixed(h < 10 ? 2 : 1)
+
+/** Budget monitor (T5.5): projected GPU-hours against the budget; F1 offered, never applied. */
+export function BudgetLine({ b }: { b: Budget }) {
+  return (
+    <div className="mt-2 max-w-3xl">
+      <p>
+        Budget: this run {hours(b.run_h)} h projected ({hours(b.elapsed_h)} h so far); other
+        research runs {hours(b.spent_other_research_h)} h; projected total{' '}
+        <strong>{hours(b.projected_total_h)} h</strong> of {hours(b.limit_h)} GPU-hours.
+      </p>
+      {b.over && (
+        <div role="alert" className="mt-1 rounded border border-red-700 bg-red-50 p-2 text-red-900">
+          <p className="font-semibold">Projected total exceeds the budget.</p>
+          {b.offer ? (
+            <p>
+              Fallback {b.offer.fallback} (experiments/fallbacks.yaml) would drop{' '}
+              {b.offer.drop_systems.join(', ')} and run{' '}
+              {Object.entries(b.offer.runs)
+                .map(([s, n]) => `${s} ×${n}`)
+                .join(', ')}
+              : {b.offer.units} units, about {hours(b.offer.run_h)} h for this run (projected total{' '}
+              {hours(b.offer.projected_total_h)} h). Applying it is a team decision: set{' '}
+              <code>fallback: {b.offer.fallback}</code> in experiments/exp2.yaml, record it in
+              STATUS.md and create a new run.
+            </p>
+          ) : (
+            <p>No fallback applies to this run; discuss the schedule with the team.</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function Outcomes({ data }: { data: OutcomesOut }) {
+  const th = 'border-b border-gray-400 px-2 py-1 text-left'
+  const kinds = ['safe_completion', 'justified_escalation', 'unnecessary_deferral', 'refusal',
+    'unsafe_execution', 'pending_adjudication', 'unscored'] // prettier-ignore
+  return (
+    <>
+      <h2 className="mb-1 text-lg font-semibold">Exp 2: outcomes per system</h2>
+      <p className="mb-1 text-xs text-gray-700">
+        Episode counts. Unscored: the case&apos;s labels are pending. Pending adjudication: an
+        unlisted call or escalation waits in the adjudication queue.
+      </p>
+      <table className="mb-4 min-w-full border-collapse text-sm">
+        <caption className="sr-only">Episode outcomes per system</caption>
+        <thead>
+          <tr>
+            {['System', ...kinds].map((h) => (
+              <th key={h} scope="col" className={th}>
+                {h.replaceAll('_', ' ')}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(data.by_system).map(([sys, counts]) => (
+            <tr key={sys} className="border-b border-gray-200">
+              <th scope="row" className="px-2 py-1 text-left font-mono">
+                {sys}
+              </th>
+              {kinds.map((k) => (
+                <td key={k} className="px-2 py-1">
+                  {counts[k] ?? 0}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   )
 }
 

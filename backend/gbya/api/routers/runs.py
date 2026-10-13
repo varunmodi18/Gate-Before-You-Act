@@ -207,13 +207,14 @@ def resume(run_id: int, session: Annotated[Session, Depends(get_session)]) -> Ru
 async def progress_stream(run_id: int, request: Request) -> EventSourceResponse:
     """Server-sent events: one ``progress`` event per second until the run is terminal."""
     factory: sessionmaker[Session] = request.app.state.sessionmaker
+    limit_h = request.app.state.settings.gpu_budget_hours
     with factory() as s:
         _run(s, run_id)
 
     async def events() -> AsyncIterator[dict[str, str]]:
         while True:
             with factory() as s:
-                p = progress(s, run_id)
+                p = progress(s, run_id, limit_h)
             yield {"event": "progress", "data": json.dumps(p)}
             if p["status"] in TERMINAL or await request.is_disconnected():
                 return

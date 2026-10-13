@@ -239,6 +239,40 @@ export interface Progress {
   eta_s: number | null
   tps_in: number | null
   tps_out: number | null
+  budget?: Budget | null
+}
+
+/** Budget monitor (T5.5): GPU-hours of one GPU, projected at the run's measured pace. */
+export interface Budget {
+  limit_h: number
+  elapsed_h: number
+  run_h: number
+  spent_other_research_h: number
+  projected_total_h: number
+  over: boolean
+  offer: {
+    fallback: string
+    drop_systems: string[]
+    runs: Record<string, number>
+    units: number
+    run_h: number
+    projected_total_h: number
+  } | null
+}
+
+export interface Exp2SpecOut {
+  spec: {
+    experiment: number
+    schedule: Record<string, { temperature: number; seed: number }>
+    systems: Record<string, number>
+    fallback: string | null
+  }
+  undefined: string[]
+}
+
+export interface OutcomesOut {
+  run_id: number
+  by_system: Record<string, Record<string, number>>
 }
 
 export interface RunOut {

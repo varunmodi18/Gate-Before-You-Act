@@ -543,7 +543,77 @@ def execute_run(
         return run.status
 
 
-def progress(session: Session, run_id: int) -> dict[str, Any]:
+# ---- budget monitor (T5.5) ----------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class Projection:
+    """GPU-hours of one GPU: the run's projected total at its measured pace, plus the hours other
+    research runs have already used, against the budget."""
+
+    elapsed_h: float
+    run_h: float  # projected total of this run
+    spent_other_h: float
+    limit_h: float
+
+    @property
+    def total_h(self) -> float:
+        return self.spent_other_h + self.run_h
+
+    @property
+    def over(self) -> bool:
+        return self.total_h > self.limit_h
+
+
+def project(elapsed_s: float, done: int, total: int, spent_other_h: float, limit_h: float
+            ) -> Projection | None:  # fmt: skip
+    """None until a unit has finished (no measured pace yet)."""
+    if done <= 0 or total <= 0:
+        return None
+    run_h = elapsed_s / done * total / 3600
+    return Projection(round(elapsed_s / 3600, 4), round(run_h, 4), round(spent_other_h, 4),
+                      limit_h)  # fmt: skip
+
+
+def _run_hours(session: Session, run: Run) -> float:
+    """Wall-clock hours a run has used: start to finish, or to its last finished unit."""
+    if run.started_at is None:
+        return 0.0
+    end = run.finished_at or session.scalar(
+        select(func.max(JobItem.updated_at)).where(JobItem.run_id == run.id)
+    )
+    if end is None:
+        return 0.0
+    return max((_aware(end) - _aware(run.started_at)).total_seconds(), 0.0) / 3600
+
+
+def budget_status(session: Session, run: Run, elapsed_s: float | None, done: int, total: int,
+                  limit_h: float) -> dict[str, Any] | None:  # fmt: skip
+    """The projection for the progress events, and the F1 offer when an Exp 2 run without a
+    fallback would take the research total over the budget (applying F1 is a team decision)."""
+    others = session.scalars(select(Run).where(Run.purpose == "research", Run.id != run.id))
+    spent = sum(_run_hours(session, r) for r in others)
+    proj = project(elapsed_s or 0.0, done, total, spent, limit_h)
+    if proj is None:
+        return None
+    out: dict[str, Any] = {"limit_h": limit_h, "elapsed_h": proj.elapsed_h, "run_h": proj.run_h,
+                           "spent_other_research_h": proj.spent_other_h,
+                           "projected_total_h": round(proj.total_h, 4), "over": proj.over,
+                           "offer": None}  # fmt: skip
+    if proj.over and run.experiment == 2 and run.config.get("fallback") is None:
+        from gbya.experiments import exp2
+
+        spec = exp2.Exp2Spec.model_validate({**run.config["spec"], "fallback": "F1"})
+        f1_items = len(exp2.plan_items(exp2.effective_systems(spec), run.config["case_ids"]))
+        f1_run_h = proj.run_h * f1_items / total
+        fb = exp2.load_fallbacks()["F1"]
+        out["offer"] = {"fallback": "F1", "drop_systems": fb.drop_systems, "runs": fb.runs,
+                        "units": f1_items, "run_h": round(f1_run_h, 4),
+                        "projected_total_h": round(proj.spent_other_h + f1_run_h, 4)}  # fmt: skip
+    return out
+
+
+def progress(session: Session, run_id: int, limit_h: float | None = None) -> dict[str, Any]:
     rows = session.execute(select(JobItem.status, func.count()).where(JobItem.run_id == run_id)
                            .group_by(JobItem.status)).all()  # fmt: skip
     counts: dict[str, int] = {str(st): int(n) for st, n in rows}
@@ -560,11 +630,17 @@ def progress(session: Session, run_id: int) -> dict[str, Any]:
     eta = None
     if elapsed and done and run.status == "running":
         eta = round(elapsed / done * (total - done), 1)
+    if limit_h is None:  # the API puts its settings' budget on the session
+        from gbya.config import get_settings
+
+        limit_h = float(session.info.get("gpu_budget_hours") or get_settings().gpu_budget_hours)
+    budget = budget_status(session, run, elapsed, done, total, limit_h)
     return {
         "run_id": run_id, "status": run.status, "done": done, "total": total,
         "errors": counts.get("error", 0), "running": counts.get("running", 0), "eta_s": eta,
         "tps_in": round(tok[0] / elapsed, 1) if elapsed else None,
         "tps_out": round(tok[1] / elapsed, 1) if elapsed else None,
+        "budget": budget,
     }  # fmt: skip
 
 

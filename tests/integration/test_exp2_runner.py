@@ -271,3 +271,33 @@ def test_runs_api_creates_exp2_runs(done_run: tuple[Settings, int]) -> None:
                                                "G0": 3, "G1": 3, "G3": 3, "G2": 1, "A1": 1,
                                                "A5": 1}}})  # fmt: skip
     assert f1.status_code == 201 and f1.json()["config"]["systems"] == {"G0": 2, "G1": 2, "G3": 2}
+
+
+# ---- budget monitor (T5.5) ------------------------------------------------------------------------
+
+
+def test_budget_projection_and_f1_offer(done_run: tuple[Settings, int]) -> None:
+    settings, run_id = done_run
+    from datetime import timedelta
+
+    with db.session_scope(factory_of(settings)) as s:
+        run = s.get(Run, run_id)
+        assert run is not None and run.finished_at is not None
+        saved = run.started_at
+        run.started_at = run.finished_at - timedelta(hours=1)  # a one-hour run of 28 units
+        s.add(Run(experiment=1, purpose="research", config={}, config_hash="x",
+                  status="completed", started_at=run.finished_at - timedelta(hours=3),
+                  finished_at=run.finished_at - timedelta(hours=1)))  # fmt: skip
+        s.flush()
+        b = rn.progress(s, run_id, limit_h=81.0)["budget"]
+        assert (b["run_h"], b["spent_other_research_h"], b["projected_total_h"], b["over"]) == (
+            1.0, 2.0, 3.0, False)  # fmt: skip
+        assert b["offer"] is None
+        over = rn.progress(s, run_id, limit_h=2.5)["budget"]
+        assert over["over"] and over["offer"]["fallback"] == "F1"
+        # F1 from fallbacks.yaml on this run's systems {G0: 1, G1: 2, G3: 1}: G0/G1/G3 x 2
+        assert over["offer"]["units"] == 7 * 6 and over["offer"]["run_h"] == 1.5
+        assert over["offer"]["drop_systems"] == ["G2", "A1", "A5", "A7", "A8"]
+        s.rollback()
+        run = s.get(Run, run_id)
+        assert run is not None and run.started_at == saved
