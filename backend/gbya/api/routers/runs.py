@@ -32,7 +32,14 @@ from gbya.gate.config import load_configs
 from gbya.gate.ticket_scope import agreement
 from gbya.retrieval.gold import GoldMap
 from gbya.retrieval.metrics import RankedCase, retrieval_report
-from gbya.scoring.verifier_eval import CaseLabel, EvalRow, GateRow, verifier_report
+from gbya.scoring.verifier_eval import (
+    C3Row,
+    CaseLabel,
+    EvalRow,
+    GateRow,
+    e2_c3_report,
+    verifier_report,
+)
 from gbya.store.models import (
     Case,
     GateDecisionRow,
@@ -220,7 +227,22 @@ def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]
                              agreement(model_scope, out.get("ticket_scope_code"))))  # fmt: skip
     configs = load_configs()
     gates = []
+    c3_rows = []
+    variants: dict[str, str] = {}
     for r in session.scalars(select(GateDecisionRow).where(GateDecisionRow.run_id == run_id)):
+        if r.system in configs and "C3" in configs[r.system].checks:
+            if r.case_id not in variants:
+                row_case = session.get(Case, r.case_id)
+                variants[r.case_id] = row_case.variant if row_case else ""
+            c3 = next((c for c in r.checks if c["check"] == "C3"), None)
+            c3_rows.append(
+                C3Row(
+                    variants[r.case_id],
+                    r.system,
+                    str(r.call.get("tool")),
+                    c3 is not None and not c3["passed"],
+                )
+            )
         if r.system not in configs or "C4" not in configs[r.system].checks:
             continue
         c4 = next((c for c in r.checks if c["check"] == "C4"), None)
@@ -235,7 +257,8 @@ def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]
             labels[cid] = CaseLabel(case.variant, (case.labels or {}).get("verifier_label"))
     report = verifier_report(evals, gates, labels)
     return {"run_id": run_id, "purpose": run.purpose, "research_eligible": research_eligible(run),
-            "replay": run.replay, "backend": run.backend, **report}  # fmt: skip
+            "replay": run.replay, "backend": run.backend, **report,
+            "e2_c3": e2_c3_report(c3_rows)}  # fmt: skip
 
 
 @router.get("/{run_id}/retrieval")

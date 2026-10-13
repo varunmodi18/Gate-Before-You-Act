@@ -28,7 +28,8 @@ from gbya.cases.models import (
     load_scenario,
     scenario_path,
 )
-from gbya.cases.store import db_path_for
+from gbya.cases.processes import describe
+from gbya.cases.store import db_path_for, write_scenario
 from gbya.cases.validator import CaseView, _command_of, decisive_problems, standard_prompt
 from gbya.config import Settings
 from gbya.data.connection import open_case_db
@@ -151,7 +152,19 @@ def _case_workspace(
     target = {k: v for k, v in cf.package.args.items()}
     decision = deps.policy.evaluate(cf.package.tool, target, ctx)
     tickets = target_tickets(ctx, {**cf.package.args, "host": sc.target_host})
+    e2 = None
+    if cf.variant == "E2":
+        con = open_case_db(db)
+        try:
+            recs = read_cited(con, cf.package.cited)
+            e2 = {
+                "sampled": [describe(recs[i]) for i in cf.package.cited if i in recs],
+                "flags": _flag_log(settings, sid),
+            }
+        finally:
+            con.close()
     return {
+        "e2": e2,
         "id": cf.id,
         "variant": cf.variant,
         "request": cf.request.model_dump(mode="json"),
@@ -451,3 +464,74 @@ def adjudicate(
     meta = {"split": row.split, "window_id": sc_window}
     report = validate_scenario(settings, sid, deps.counter, window_meta=meta)
     return {"adjudicated": True, "validation": {**report.to_json(), "tokenizer": deps.counter.name}}
+
+
+# ---- E2: annotators flag sampled records that are attack-related -------------------------------
+
+
+def _flag_log_path(settings: Settings, sid: str) -> Any:
+    return _root(settings) / sid / "e2_flags.json"
+
+
+def _flag_log(settings: Settings, sid: str) -> list[dict[str, Any]]:
+    import json
+
+    path = _flag_log_path(settings, sid)
+    log: list[dict[str, Any]] = json.loads(path.read_text()) if path.is_file() else []
+    return log
+
+
+class E2Flag(BaseModel):
+    record_id: int
+    role: Role
+    reason: str = Field(default="", max_length=500)
+
+
+@router.post("/{sid}/e2-flag")
+def flag_e2_record(
+    sid: str,
+    body: E2Flag,
+    session: Annotated[Session, Depends(get_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> dict[str, Any]:
+    """Mark one of E2's sampled records as attack-related: it is excluded from sampling, E2 is
+    regenerated (that record is replaced by the next seeded candidate) and the replacement is
+    logged in ``cases/<sid>/e2_flags.json``. Both annotators see the log on the E2 case."""
+    import json
+
+    from gbya.api.routers.scenarios import run_generate
+
+    row = _scenario_row(session, sid)
+    if row.status in ("adjudicated", "frozen"):
+        raise Conflict(f"Scenario {sid} is {row.status}", code="SCENARIO_LOCKED")
+    root = _root(settings)
+    e2_path = root / sid / "cases" / "E2.json"
+    if not e2_path.is_file():
+        raise NotFound(f"No case {sid}:E2", code="CASE_NOT_FOUND")
+    before = load_casefile(e2_path).package.cited
+    if body.record_id not in before:
+        raise Unprocessable(
+            f"Record {body.record_id} is not one of E2's sampled records",
+            code="NOT_SAMPLED",
+            details={"sampled": before},
+        )
+    sc = load_scenario(scenario_path(root, sid))
+    flagged = sorted({*sc.e2.flagged_record_ids, body.record_id})
+    write_scenario(
+        settings,
+        sc.model_copy(update={"e2": sc.e2.model_copy(update={"flagged_record_ids": flagged})}),
+    )
+    run_generate(settings, sid)
+    after = load_casefile(e2_path).package.cited
+    entry = {
+        "record_id": body.record_id,
+        "flagged_by": body.role,
+        "reason": body.reason,
+        "at": utcnow().isoformat(),
+        "replaced_by": sorted(set(after) - set(before)),
+        "e2_before": before,
+        "e2_after": after,
+    }
+    log = [*_flag_log(settings, sid), entry]
+    _flag_log_path(settings, sid).write_text(json.dumps(log, indent=2) + "\n")
+    return entry

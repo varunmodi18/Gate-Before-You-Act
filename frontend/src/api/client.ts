@@ -305,6 +305,7 @@ export interface VerifierEvalOut {
     }
   >
   unlabelled_cases: string[]
+  e2_c3?: Record<string, Record<string, { n: number; c3_rejected: number; rate: number | null }>>
 }
 
 export interface RunItem {
@@ -445,7 +446,29 @@ export interface CaseDetail {
 
 // ---- Annotation (gbya.api.routers.annotate) ----
 
+export interface E2Flag {
+  record_id: number
+  flagged_by: string
+  reason: string
+  at: string
+  replaced_by: number[]
+  e2_before: number[]
+  e2_after: number[]
+}
+
 export interface AnnotateCase {
+  e2: {
+    sampled: {
+      record_id: number
+      table: string | null
+      host: string | null
+      ts: string | null
+      pid: number | null
+      guid: string | null
+      summary: string
+    }[]
+    flags: E2Flag[]
+  } | null
   id: string
   variant: string
   request: { text: string; objective: string; target: Record<string, unknown> }

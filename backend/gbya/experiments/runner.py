@@ -281,9 +281,16 @@ def create_exp1_run(
         "case_ids": ids,
         "configs": {sid: configs[sid].model_dump() for sid in spec.code_only + spec.composed},
     }
-    run = create_run(session, experiment=1, config=config, config_hash=config_hash(config),
-                     purpose=purpose, case_ids=ids,
-                     replay=prov["backend"] == "replay")  # fmt: skip
+    run = create_run(
+        session,
+        experiment=1,
+        config=config,
+        config_hash=config_hash(config),
+        purpose=purpose,
+        case_ids=ids,
+        replay=prov["backend"] == "replay",
+        frozen_path=settings.resolve(settings.cases_dir) / "FROZEN.json",
+    )
     run.git_sha = git_sha()
     run.model_id = prov["model_id"]
     run.model_file_sha256 = prov["model_file_sha256"]

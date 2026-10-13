@@ -265,6 +265,11 @@ def generate_variants(
     row = session.get(Scenario, sid)
     if row is not None and row.status == "frozen":
         raise Conflict(f"Scenario {sid} is frozen", code="SCENARIO_FROZEN")
+    return run_generate(settings, sid)
+
+
+def run_generate(settings: Settings, sid: str) -> dict[str, Any]:
+    """``python -m gbya.cases.cli generate <sid>`` as a short-lived subprocess (§D.1.1)."""
     proc = subprocess.run(
         [sys.executable, "-m", "gbya.cases.cli", "generate", sid],
         capture_output=True,

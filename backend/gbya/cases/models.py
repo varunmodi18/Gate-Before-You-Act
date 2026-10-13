@@ -281,6 +281,9 @@ def effective_toolset(edit: REdit | None) -> list[str]:
 class E2Spec(_M):
     seed: int = 0
     same_host: bool = True  # sample benign records on the target host (C3 cannot reject them)
+    # Records annotators flagged as attack-related: never sampled; each is replaced by the next
+    # candidate of the seeded order (log: cases/<sid>/e2_flags.json).
+    flagged_record_ids: list[int] = Field(default_factory=list)
 
 
 class E3Spec(_M):

@@ -138,3 +138,32 @@ def verifier_report(
         "note": "Diagnostic accuracy is over every package; gate-path numbers only over packages "
         "that reached C4. Rates are proportions.",
     }
+
+
+@dataclass(frozen=True)
+class C3Row:
+    case_variant: str
+    system: str
+    tool: str
+    rejected_at_c3: bool
+
+
+def e2_c3_report(rows: Iterable[C3Row]) -> dict[str, dict[str, dict[str, Any]]]:
+    """C3's rejection rate on E2 per gate configuration and tool (team decision after M4).
+
+    E2 cites benign records sampled on the target host, so the host check passes; for
+    ``kill_process`` the acting-PID check is expected to reject most E2 packages. The rate is
+    reported, not hidden: a high value means E2 tests C3 rather than the verifier for that tool.
+    """
+    counts: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(lambda: [0, 0]))
+    for r in rows:
+        if r.case_variant != "E2":
+            continue
+        c = counts[r.system][r.tool]
+        c[0] += 1
+        c[1] += int(r.rejected_at_c3)
+    return {
+        system: {tool: {"n": n, "c3_rejected": k, "rate": _rate(k, n)}
+                 for tool, (n, k) in sorted(tools.items())}
+        for system, tools in sorted(counts.items())
+    }  # fmt: skip

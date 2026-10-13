@@ -52,7 +52,7 @@ def generate(settings: Settings, sid: str, counter: TokenCounter | None = None) 
     wdb = settings.resolve(window_db(settings, sc.window_id))
     if not wdb.is_file():
         raise SystemExit(f"window database {wdb} is missing (make normalise)")
-    facts = window_facts(wdb)
+    facts = window_facts(wdb, sc.e1.cited)
     existing: dict[str, Labels] = {}
     for path in sorted((root / sid / "cases").glob("*.json")):
         cf = load_casefile(path)

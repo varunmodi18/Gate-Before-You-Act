@@ -96,7 +96,8 @@
   ],
   "e2": {
     "seed": 7,
-    "same_host": true
+    "same_host": true,
+    "flagged_record_ids": []
   },
   "e3": {
     "host": "HR001.lab.local",

@@ -203,6 +203,42 @@ function VerifierEval({ data }: { data: VerifierEvalOut }) {
           ])}
         </tbody>
       </table>
+      {data.e2_c3 && Object.keys(data.e2_c3).length > 0 && (
+        <>
+          <h2 className="mb-1 text-lg font-semibold">C3 rejections on E2, by tool</h2>
+          <p className="mb-1 text-xs text-gray-700">
+            E2 cites benign records on the target host. A high rate (expected for kill_process)
+            means E2 tests C3 rather than the verifier for that tool.
+          </p>
+          <table className="mb-4 min-w-full border-collapse text-sm">
+            <caption className="sr-only">C3 rejection rate on E2 per system and tool</caption>
+            <thead>
+              <tr>
+                {['System', 'Tool', 'n', 'Rejected at C3', 'Rate'].map((h) => (
+                  <th key={h} scope="col" className={th}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(data.e2_c3).flatMap(([sys, tools]) =>
+                Object.entries(tools).map(([tool, v]) => (
+                  <tr key={`${sys}-${tool}`} className="border-b border-gray-200">
+                    <th scope="row" className="px-2 py-1 text-left font-mono">
+                      {sys}
+                    </th>
+                    <td className="px-2 py-1 font-mono">{tool}</td>
+                    <td className="px-2 py-1">{v.n}</td>
+                    <td className="px-2 py-1">{v.c3_rejected}</td>
+                    <td className="px-2 py-1">{pct(v.rate)}</td>
+                  </tr>
+                )),
+              )}
+            </tbody>
+          </table>
+        </>
+      )}
       <h2 className="mb-1 text-lg font-semibold">Exp 1G: packages reaching C4</h2>
       <table className="min-w-full border-collapse text-sm">
         <caption className="sr-only">C4 invocation counts per gate configuration</caption>

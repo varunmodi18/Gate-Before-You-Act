@@ -57,7 +57,9 @@ def scenario() -> ScenarioFile:
 
 
 def facts(settings: Settings) -> Any:
-    return window_facts(settings.data_dir / "duckdb" / "windows" / f"{WID}.duckdb")
+    return window_facts(
+        settings.data_dir / "duckdb" / "windows" / f"{WID}.duckdb", scenario().e1.cited
+    )
 
 
 # ---- builder ---------------------------------------------------------------------------------------

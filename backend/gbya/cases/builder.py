@@ -7,8 +7,10 @@ next record id) and returns ``CaseFile`` objects. Writing per-case databases is 
 | Variant | Package | Patch |
 |---|---|---|
 | E1 | as authored | — |
-| E2 | the cited IDs replaced by as many benign records (not suspicious, not cited), seeded; by
-  default on the target host so C3 alone cannot reject them | — |
+| E2 | the cited IDs replaced by as many benign records, seeded; by default on the target host so
+  C3 alone cannot reject them. Never sampled: suspicious or cited records, records whose acting
+  process is a process of a cited record or its parent or child (``processes.py``), and records
+  annotators flagged as attack-related (each flag replaces just that record) | — |
 | E3 | as authored (the malicious records now sit on host Y) | ``move_host`` |
 | E4 | partial chain: the cited records that remain; contradiction: E1's citations **plus the added
   record** | ``remove`` / ``add`` |
@@ -23,7 +25,7 @@ the validator reports them.
 from __future__ import annotations
 
 import random
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -51,10 +53,13 @@ class WindowFacts:
 
     max_record_id: int
     hosts: dict[int, str | None]  # record id → host (normalised table, else raw event)
+    attack_related: frozenset[int] = frozenset()  # acting process tied to the cited records
 
 
-def window_facts(db: Path) -> WindowFacts:
+def window_facts(db: Path, cited: Sequence[int] = ()) -> WindowFacts:
     import json
+
+    from gbya.cases.processes import attack_related_records
 
     con = open_case_db(db)
     try:
@@ -65,20 +70,30 @@ def window_facts(db: Path) -> WindowFacts:
         for t in TABLES:
             for rid, host in con.execute(f'SELECT record_id, host FROM "{t}"').fetchall():
                 hosts[int(rid)] = host
-        return WindowFacts(max(hosts, default=0), hosts)
+        related = frozenset(attack_related_records(con, cited)) if cited else frozenset()
+        return WindowFacts(max(hosts, default=0), hosts, related)
     finally:
         con.close()
 
 
-def sample_e2(sc: ScenarioFile, facts: WindowFacts) -> list[int]:
-    excluded = set(sc.suspicious_record_ids) | set(sc.e1.cited)
+def e2_order(sc: ScenarioFile, facts: WindowFacts) -> list[int]:
+    """The seeded order in which E2 candidates are taken (flagged records not yet removed)."""
+    excluded = set(sc.suspicious_record_ids) | set(sc.e1.cited) | set(facts.attack_related)
     pool = sorted(rid for rid, host in facts.hosts.items() if rid not in excluded and (
         not sc.e2.same_host or (host is not None and host_key(host) == host_key(sc.target_host))
     ))  # fmt: skip
+    return random.Random(sc.e2.seed).sample(pool, len(pool))
+
+
+def sample_e2(sc: ScenarioFile, facts: WindowFacts) -> list[int]:
+    """The first k candidates of the seeded order that no annotator flagged: flagging a record
+    replaces only that record, with the next candidate."""
+    flagged = set(sc.e2.flagged_record_ids)
+    order = [r for r in e2_order(sc, facts) if r not in flagged]
     k = len(sc.e1.cited)
-    if len(pool) < k:
-        raise BuildError(f"E2 needs {k} benign records, only {len(pool)} available")
-    return sorted(random.Random(sc.e2.seed).sample(pool, k))
+    if len(order) < k:
+        raise BuildError(f"E2 needs {k} benign records, only {len(order)} available")
+    return sorted(order[:k])
 
 
 def build_cases(

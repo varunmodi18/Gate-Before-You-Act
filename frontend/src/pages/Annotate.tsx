@@ -7,6 +7,7 @@ import {
   apiPost,
   apiPut,
   type AgreementReport,
+  type E2Flag,
   type AnnotateCase,
   type AnnotateOverview,
   type Comparison,
@@ -344,6 +345,7 @@ function CaseForm({
           {c.e4_kind ? `; E4 kind ${c.e4_kind}` : ''}
         </p>
         <TicketChecklist c={c} value={checklist} onChange={onChecklist} />
+        {c.e2 && <E2Sample sid={sid} c={c} />}
       </section>
       <section aria-labelledby={`lf-${c.variant}`} className="flex flex-col gap-2 text-sm">
         <h2 id={`lf-${c.variant}`} className="font-semibold">
@@ -808,5 +810,90 @@ function LabeledSelect({
         {children}
       </select>
     </div>
+  )
+}
+
+/** E2's sampled records with a per-record "attack-related" flag (team decision after M4): a
+ * flagged record is replaced by the next seeded candidate, and the replacement is logged. */
+function E2Sample({ sid, c }: { sid: string; c: AnnotateCase }) {
+  const qc = useQueryClient()
+  const [params] = useSearchParams()
+  const role = params.get('role') ?? 'A'
+  const [reason, setReason] = useState('')
+  const flag = useMutation({
+    mutationFn: (recordId: number) =>
+      apiPost<E2Flag>(`/annotate/${sid}/e2-flag`, { record_id: recordId, role, reason }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['workspace', sid] }),
+  })
+  const e2 = c.e2
+  if (!e2) return null
+  return (
+    <section aria-labelledby={`e2-${c.id}`} className="mt-3 text-sm">
+      <h3 id={`e2-${c.id}`} className="font-semibold">
+        E2 sampled records
+      </h3>
+      <p className="text-xs text-gray-700">
+        Sampled as unrelated evidence. If one is part of the attack, flag it: E2 is regenerated with
+        the next seeded record, and the replacement is logged for both annotators.
+      </p>
+      <label className="flex flex-col">
+        Reason for a flag (optional)
+        <input className={input} value={reason} onChange={(e) => setReason(e.target.value)} />
+      </label>
+      <table className="mt-1 min-w-full border-collapse text-xs">
+        <caption className="sr-only">E2 sampled records</caption>
+        <thead>
+          <tr>
+            {['Record', 'Table', 'Host', 'PID', 'What it shows', ''].map((h, i) => (
+              <th key={i} scope="col" className="border-b border-gray-400 px-1 text-left">
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {e2.sampled.map((r) => (
+            <tr key={r.record_id} className="border-b border-gray-200">
+              <th scope="row" className="px-1 text-left">
+                {r.record_id}
+              </th>
+              <td className="px-1">{r.table}</td>
+              <td className="px-1">{r.host}</td>
+              <td className="px-1">{r.pid ?? '—'}</td>
+              <td className="px-1 font-mono">{r.summary}</td>
+              <td className="px-1">
+                <button
+                  type="button"
+                  className="underline"
+                  disabled={flag.isPending}
+                  onClick={() => flag.mutate(r.record_id)}
+                >
+                  Flag record {r.record_id} as attack-related
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div aria-live="polite">
+        {flag.isError && <ErrorBanner error={flag.error} />}
+        {flag.data && (
+          <p>
+            ✓ Record {flag.data.record_id} replaced by{' '}
+            {flag.data.replaced_by.join(', ') || 'nothing'}.
+          </p>
+        )}
+      </div>
+      {e2.flags.length > 0 && (
+        <ul className="mt-1 list-disc pl-5 text-xs">
+          {e2.flags.map((f, i) => (
+            <li key={i}>
+              {f.at.slice(0, 19)}: annotator {f.flagged_by} flagged {f.record_id}
+              {f.reason ? ` (${f.reason})` : ''} → replaced by {f.replaced_by.join(', ') || '—'}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   )
 }
