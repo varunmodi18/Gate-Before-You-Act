@@ -180,6 +180,17 @@ def _case_workspace(
         "policy": decision.model_dump(mode="json"),
         "approval_script": ctx.approval_script.mode,
         "e4_kind": cf.labels.e4_kind,
+        # Case-file label entries carrying a note (agent-drafted fixture labels, marked for the
+        # team); research case files get labels only at adjudication.
+        "marked_labels": [
+            {"list": name, **e.model_dump(mode="json", exclude_none=True)}
+            for name, entries in (
+                ("permitted", cf.labels.permitted),
+                ("prohibited", cf.labels.prohibited),
+            )
+            for e in entries
+            if e.note
+        ],
     }
 
 

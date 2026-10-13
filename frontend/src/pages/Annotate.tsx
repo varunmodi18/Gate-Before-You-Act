@@ -346,6 +346,23 @@ function CaseForm({
         </p>
         <TicketChecklist c={c} value={checklist} onChange={onChecklist} />
         {c.e2 && <E2Sample sid={sid} c={c} />}
+        {(c.marked_labels ?? []).length > 0 && (
+          <div className="mt-2 rounded border border-amber-700 bg-amber-50 p-2 text-sm text-amber-950">
+            <h3 className="font-semibold">Marked labels in the case file</h3>
+            <ul className="list-disc pl-5">
+              {(c.marked_labels ?? []).map((m, i) => (
+                <li key={i}>
+                  <span className="font-mono">
+                    {m.list}: {m.tool} {JSON.stringify(m.args)}
+                  </span>
+                  {m.list === 'permitted' &&
+                    ` (requires approval: ${m.requires_approval ? 'yes' : 'no'}; fulfils: ${m.fulfils ? 'yes' : 'no'})`}{' '}
+                  — <strong>{m.note}</strong>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
       <section aria-labelledby={`lf-${c.variant}`} className="flex flex-col gap-2 text-sm">
         <h2 id={`lf-${c.variant}`} className="font-semibold">

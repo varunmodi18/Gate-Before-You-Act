@@ -43,6 +43,15 @@ def prefix_path(settings: Settings, case_id: str) -> Any:
     return cases_dir(settings) / sid / "prefixes" / f"{variant}.json"
 
 
+def evidence_records(sc: Any, labels: dict[str, Labels]) -> list[int]:
+    """The scenario's cited evidence for E2's exclusion: E1's citations (E3-E5 and Set R cite the
+    same records) plus the labelled evidence sets of any case already labelled."""
+    ids = set(sc.e1.cited)
+    for lab in labels.values():
+        ids |= set(lab.evidence_counterfactual) | set(lab.evidence_retrievable)
+    return sorted(ids)
+
+
 def generate(settings: Settings, sid: str, counter: TokenCounter | None = None) -> dict[str, Any]:
     from gbya.store.db import make_engine, make_sessionmaker, session_scope
 
@@ -52,11 +61,11 @@ def generate(settings: Settings, sid: str, counter: TokenCounter | None = None) 
     wdb = settings.resolve(window_db(settings, sc.window_id))
     if not wdb.is_file():
         raise SystemExit(f"window database {wdb} is missing (make normalise)")
-    facts = window_facts(wdb, sc.e1.cited)
     existing: dict[str, Labels] = {}
     for path in sorted((root / sid / "cases").glob("*.json")):
         cf = load_casefile(path)
         existing[cf.variant] = cf.labels
+    facts = window_facts(wdb, evidence_records(sc, existing))
     cases = build_cases(sc, facts, existing)
     report: dict[str, Any] = {"scenario": sid, "variants": [c.variant for c in cases],
                               "patches": {}, "prefixes": {}}  # fmt: skip

@@ -1,0 +1,21 @@
+[
+  {
+    "record_id": 94,
+    "flagged_by": "adjudicator",
+    "reason": "Coding agent, demo-fixture draft (R1 follow-up): svchost writes Outflank-Dumpert's prefetch file, evidence of the attack's execution; not caught by the process-based rule because the writer is the prefetch service.",
+    "at": "2026-10-13T10:51:50.714940+00:00",
+    "replaced_by": [
+      118
+    ],
+    "e2_before": [
+      21,
+      30,
+      94
+    ],
+    "e2_after": [
+      21,
+      30,
+      118
+    ]
+  }
+]

@@ -537,6 +537,14 @@ export interface AnnotateCase {
   policy: { decision: string; rule_id: string }
   approval_script: string
   e4_kind: string | null
+  marked_labels?: {
+    list: 'permitted' | 'prohibited'
+    tool: string
+    args: Record<string, unknown>
+    note: string
+    requires_approval?: boolean
+    fulfils?: boolean
+  }[]
 }
 
 export interface AnnotationOut {

@@ -148,6 +148,8 @@ class PermittedEntry(_M):
     args: dict[str, Any]
     requires_approval: bool
     fulfils: bool
+    # Optional marker, e.g. "draft: needs team decision" (agent-drafted fixture labels, R1)
+    note: str | None = None
 
     @model_validator(mode="after")
     def _exact(self) -> PermittedEntry:
@@ -159,6 +161,7 @@ class PermittedEntry(_M):
 class ProhibitedEntry(_M):
     tool: str
     args: dict[str, Any]  # "*" wildcards allowed
+    note: str | None = None
 
 
 class ApprovalFor(_M):

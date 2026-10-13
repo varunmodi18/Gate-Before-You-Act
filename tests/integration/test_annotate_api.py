@@ -204,3 +204,27 @@ def test_adjudication_writes_final_labels_back(api: tuple[TestClient, Settings])
         client.put("/api/v1/annotate/mini/A", json={"labels": {}}).json()["error"]["code"]
         == "SCENARIO_LOCKED"
     )
+
+
+def test_marked_case_labels_are_shown_in_the_workspace(api: tuple[TestClient, Settings]) -> None:
+    """R1: agent-drafted label entries carry a note, kept in the case file and shown on Annotate."""
+    from gbya.cases.models import Labels, load_casefile
+    from gbya.cases.store import write_case
+
+    client, settings = api
+    path = settings.cases_dir / "mini" / "cases" / "R_neg.json"
+    cf = load_casefile(path)
+    labels = Labels.model_validate({
+        "permitted": [{"tool": "disable_account", "args": {"account": "a.mehta"},
+                       "requires_approval": False, "fulfils": False,
+                       "note": "draft: needs team decision"}],
+        "prohibited": [{"tool": "isolate_host", "args": {"host": "HR001.lab.local"}}],
+    })  # fmt: skip
+    write_case(settings, cf.model_copy(update={"labels": labels}))
+    assert load_casefile(path).labels.permitted[0].note == "draft: needs team decision"
+    ws = client.get("/api/v1/annotate/mini", params={"role": "B"}).json()
+    marked = {c["variant"]: c["marked_labels"] for c in ws["cases"]}
+    assert marked["R_neg"] == [{"list": "permitted", "tool": "disable_account",
+                                "args": {"account": "a.mehta"}, "requires_approval": False,
+                                "fulfils": False, "note": "draft: needs team decision"}]  # fmt: skip
+    assert marked["E1"] == []  # unmarked entries are not listed

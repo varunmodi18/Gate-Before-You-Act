@@ -10,8 +10,12 @@ are its parent (``ppid`` / ``ParentProcessGuid``) and, for process access, its t
 Two identities are the same process when host and PID agree and, if both carry a GUID, the GUIDs
 agree. Without GUIDs this errs towards "same", which only removes more candidates from E2's pool.
 
-``attack_related_records`` returns every record whose acting process is a process of a cited
-record, or a parent or child of one: such records are never sampled as E2's "unrelated" evidence.
+**Attack process set** (team decision at R1, 13 Oct 2026): the acting processes of the scenario's
+cited evidence records, plus their recorded parents and children. Targets of cited records (such
+as ``lsass.exe``) are **not** added, so an unrelated process's benign access to lsass stays
+eligible. ``attack_related_records`` returns every record whose acting process **or** target
+process is in the set: such records are never sampled as E2's "unrelated" evidence (e.g. a
+process opening the attacking process is excluded).
 """
 
 from __future__ import annotations
@@ -111,25 +115,44 @@ def _creates(con: duckdb.DuckDBPyConnection) -> list[CitedRecord]:
     return [recs[i] for i in ids if i in recs]
 
 
-def attack_related_records(con: duckdb.DuckDBPyConnection, cited: Iterable[int]) -> set[int]:
-    """Records whose acting process is a cited record's process, or its parent or child."""
-    seeds = [p for r in read_cited(con, list(cited)).values() for p in named_processes(r)]
+def target_process(rec: CitedRecord) -> Proc | None:
+    """The accessed process of a process-access record (None for other records)."""
+    if rec.table is None or rec.host is None or not rec.values.get("target_pid"):
+        return None
+    guid = _guid(rec.raw, ("TargetProcessGUID", "TargetProcessGuid"))
+    return Proc(host_key(rec.host), int(rec.values["target_pid"]), guid)
+
+
+def attack_processes(con: duckdb.DuckDBPyConnection, cited: Iterable[int]) -> list[Proc]:
+    """The acting processes of the cited records, plus their recorded parents and children."""
+    recs = list(read_cited(con, list(cited)).values())
+    seeds = [a for r in recs if (a := acting_process(r)) is not None]
     procs = list(seeds)
-    for c in _creates(con):  # one generation of lineage around every seed process
+    procs += [
+        pp for r in recs if (pp := parent_process(r)) is not None
+    ]  # a cited creation's parent
+    for c in _creates(con):  # one generation of recorded lineage around every seed process
         child, parent = acting_process(c), parent_process(c)
-        if child is None:
+        if child is None or parent is None:
             continue
-        if any(child.same(s) for s in seeds) and parent is not None:
+        if any(child.same(s) for s in seeds):
             procs.append(parent)  # parent of a seed
-        if parent is not None and any(parent.same(s) for s in seeds):
+        if any(parent.same(s) for s in seeds):
             procs.append(child)  # child of a seed
+    return procs
+
+
+def attack_related_records(con: duckdb.DuckDBPyConnection, cited: Iterable[int]) -> set[int]:
+    """Records whose acting process or target process is in the attack process set."""
+    procs = attack_processes(con, cited)
     # every record, raw-only ones included (their acting PID comes from the raw event)
     ids = [int(r[0]) for r in con.execute("SELECT record_id FROM raw_events").fetchall()]
     related = set()
     for rec in read_cited(con, ids).values():
-        actor = acting_process(rec)
-        if actor is not None and any(actor.same(p) for p in procs):
-            related.add(rec.record_id)
+        for proc in (acting_process(rec), target_process(rec)):
+            if proc is not None and any(proc.same(p) for p in procs):
+                related.add(rec.record_id)
+                break
     return related
 
 

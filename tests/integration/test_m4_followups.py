@@ -83,6 +83,46 @@ def test_attack_related_records_use_guids_parents_and_children(tmp_path: Path) -
         con.close()
 
 
+def _window(tmp_path: Path, events: dict[int, dict[str, Any]]) -> Path:
+    path = tmp_path / "w.duckdb"
+    with build_database(path) as con:
+        con.execute(fm.RAW_DDL)
+        con.execute(fm.META_DDL)
+        for t in fm.TABLES:
+            con.execute(fm.ddl(t))
+        for rid, raw in events.items():
+            _insert(con, rid, raw)
+    return path
+
+
+def test_e2_exclusion_covers_targets_but_not_the_victims_of_the_attack(tmp_path: Path) -> None:
+    """Team decision at R1: the set is the cited records' acting processes with their recorded
+    parents and children; a record is excluded when its actor OR target is in the set; targets of
+    cited records (lsass) are not added."""
+    events = {
+        1: _ev("1", "01", Image="C:\\\\dumper.exe", ProcessId="100", ProcessGuid="{A}",
+               ParentProcessId="50", ParentProcessGuid="{P}"),
+        2: _ev("10", "02", SourceImage="C:\\\\dumper.exe", SourceProcessId="100",
+               SourceProcessGUID="{A}", TargetImage="C:\\\\lsass.exe", TargetProcessId="600"),
+        # csrss (unrelated actor) opens the dumper: excluded through its target
+        3: _ev("10", "03", SourceImage="C:\\\\csrss.exe", SourceProcessId="400",
+               TargetImage="C:\\\\dumper.exe", TargetProcessId="100", TargetProcessGUID="{A}"),
+        # svchost (unrelated) reads lsass: lsass is only a target of the cited record, so eligible
+        4: _ev("10", "04", SourceImage="C:\\\\svchost.exe", SourceProcessId="900",
+               TargetImage="C:\\\\lsass.exe", TargetProcessId="600"),
+        # lsass's own activity is eligible too
+        5: _ev("13", "05", Image="C:\\\\lsass.exe", ProcessId="600", TargetObject="HKLM\\\\x"),
+        # explorer opens the dumper's parent: excluded (the parent is in the set)
+        6: _ev("10", "06", SourceImage="C:\\\\explorer.exe", SourceProcessId="70",
+               TargetImage="C:\\\\cmd.exe", TargetProcessId="50", TargetProcessGUID="{P}"),
+    }  # fmt: skip
+    con = open_case_db(_window(tmp_path, events))
+    try:
+        assert attack_related_records(con, [1, 2]) == {1, 2, 3, 6}
+    finally:
+        con.close()
+
+
 # ---- E2 sampling, flags and their replacement ------------------------------------------------------
 
 
