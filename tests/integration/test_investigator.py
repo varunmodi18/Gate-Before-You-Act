@@ -125,3 +125,17 @@ def test_unusable_output_is_recorded_and_skipped(con: Any) -> None:
     inv, _ = run(con, client)
     assert inv.hypotheses == [] and inv.llm_calls == 1
     assert inv.events[-1][1]["error"]
+
+
+def test_stop_during_the_investigation(con: Any) -> None:
+    from gbya.agent.episode import EpisodeStopped
+
+    tools = ToolEnvironment(con=con, context=ctx(), state=EpisodeState(), counter=COUNTER)
+    seen: list[str] = []
+    inv = iv.Investigator(client=fake(t1059_cites=[999]), tools=tools, counter=COUNTER,
+                          retrieve=None, temperature=0.2, seed=11,
+                          on_event=lambda kind, p: seen.append(p.get("step") or p["tool"]),
+                          should_stop=lambda: len(seen) >= 2)  # fmt: skip
+    with pytest.raises(EpisodeStopped, match="investigation"):
+        inv.run(con)
+    assert seen == ["profile", "hypothesise"]  # events reach the live trace as they happen

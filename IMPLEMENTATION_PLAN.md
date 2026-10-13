@@ -1359,6 +1359,7 @@ P2 work must not start until Exp 1 and Exp 2 have completed once on the frozen s
 | **J3 Annotate** | Annotate (as A) → label → submit; switch role to B → label → submit; switch to Adjudicator → resolve | `annotations`, agreement computation |
 | **J4 Compare gates on one package** | Playground → case E5 → select G1, A1, G3 → Run | `gbya.gate` + live C4 via the model server |
 | **J5 Watch an agent recover** | Console → case E2, G3 → Start → see `INSUFFICIENT`, 1–2 recovery queries, re-cite, `ADMITTED` (or escalation) | `gbya.agent` episode loop + live LLM |
+| **J5b Watch a live investigation** *(Draft 8, T6.3)* | Console → Live investigation (Exp 3) → window → G3 → Start → investigation phase (profile, hypotheses, queries, technique verdicts) → response phase → findings and outcome | `gbya.agent.investigator` + the Exp 3 episode path |
 | **J6 Run and analyse an experiment** | Experiments → New Exp 1 (demo set) → Start → Results → read H1 card | Runner, worker, scoring, analysis |
 
 ### E.3 Input handling and states
@@ -2248,6 +2249,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Deliverables:** —
 - **Verification:** Playwright (Fake).
 - **Done when:** visible.
+- *Draft 8 note (as built):* the Console lists end-to-end cases as windows (`mode: window`); `POST /episodes` on a set-X case runs `exp3.run_episode` with the Console's live trace, approver and stop flag (in-process transport only; one code path with the Exp 3 runner), and a finished episode becomes visible only together with its score. The Timeline marks *Phase 1: investigation* and *Phase 2: response*; the findings panel shows the predicted techniques and every hypothesis's verdict (Console and Trace page). Playwright J5b.
 
 ---
 

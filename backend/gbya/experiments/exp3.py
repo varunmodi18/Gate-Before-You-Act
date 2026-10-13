@@ -17,7 +17,7 @@ completion) and the outcomes of §D.9.
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
@@ -118,9 +118,11 @@ def load_e3_case(session: Session, case_id: str, settings: Settings) -> Exp3Case
 
 def run_episode(
     case: Exp3Case, config: GateConfig, slot: Slot, deps: Deps,
-    factory: sessionmaker[Session] | None = None,
-) -> tuple[MemoryTrace, Investigation]:  # fmt: skip
-    """Investigation, then the response episode, in memory (one trace)."""
+    factory: sessionmaker[Session] | None = None, trace: Any = None, approver: Any = None,
+    should_stop: Callable[[], bool] | None = None,
+) -> tuple[Any, Investigation]:  # fmt: skip
+    """Investigation, then the response episode, in one trace: in memory (runs), or the Console's
+    ``SqlTrace`` (each step committed as it happens) with its approver and stop flag."""
     if config.transport != "in_process":
         raise Unprocessable(f"{config.id}: Exp 3 runs in-process", code="TRANSPORT_UNSUPPORTED")
     from gbya.gate.verifier import live_retriever
@@ -133,31 +135,43 @@ def run_episode(
     try:
         state = EpisodeState()
         env = GateEnv(con=con, ctx=case.context, state=state, counter=deps.counter,
-                      allowed_tools=ALL_TOOLS, window=window_time_range(con))  # fmt: skip
+                      allowed_tools=ALL_TOOLS, window=window_time_range(con),
+                      approver=approver)  # fmt: skip
         tools = ToolEnvironment(con=con, context=case.context, state=state, counter=deps.counter)
+        trace = trace if trace is not None else MemoryTrace()
         inv = Investigator(client=deps.client, tools=tools, counter=deps.counter,
                            retrieve=live_retriever(deps.index()) if has_index else None,
                            temperature=slot.temperature, seed=slot.seed,
-                           request_text=case.request.text).run(con)  # fmt: skip
-        trace = MemoryTrace()
-        for kind, payload in inv.events:
-            trace.step(kind, payload)
+                           request_text=case.request.text, on_event=trace.step,
+                           should_stop=should_stop).run(con)  # fmt: skip
         EpisodeRunner(
             client=deps.client, request=case.request,
             prefix=prefix_text(handover(inv, deps.counter)), temperature=slot.temperature,
             seed=slot.seed, trace=trace, counter=deps.counter,
             gate=Gate(config, deps.policy, verifier), env=env, tools=tools,
-            prefix_label=LIVE_LABEL,
+            prefix_label=LIVE_LABEL, should_stop=should_stop or (lambda: False),
         ).run()  # fmt: skip
         return trace, inv
     finally:
         con.close()
 
 
-def cited_by_executed_calls(trace: MemoryTrace) -> list[int]:
-    return sorted({int(i) for k, p in trace.kinds()
+def cited_by_executed_calls(steps: Iterable[tuple[str, dict[str, Any]]]) -> list[int]:
+    return sorted({int(i) for k, p in steps
                    if k == "tool" and p.get("tool") in STATE_CHANGING and "approval_state" in p
                    for i in p.get("cited", [])})  # fmt: skip
+
+
+def record_investigation(session: Session, ep: Episode, inv: Investigation, case: Exp3Case,
+                         steps: Iterable[tuple[str, dict[str, Any]]]) -> None:  # fmt: skip
+    """Adds the investigation to a finished episode (runs and Console alike) and scores it."""
+    ep.tokens_in += inv.tokens_in  # the episode's model use: investigation plus response
+    ep.tokens_out += inv.tokens_out
+    ep.outcome_detail = {**(ep.outcome_detail or {}), "investigation": inv.summary(),
+                         "cited": cited_by_executed_calls(steps)}  # fmt: skip
+    if case.labels.has_justified_completion is not None:
+        session.flush()
+        outcomes.score_episode(session, ep.id, case.labels)
 
 
 def write_episode(
@@ -167,12 +181,7 @@ def write_episode(
     ep = Episode(run_id=run_id, case_id=case.case_id, system=system, run_idx=run_idx,
                  temperature=slot.temperature, seed=slot.seed, status="running")  # fmt: skip
     trace.persist(session, ep)
-    ep.tokens_in += inv.tokens_in  # the episode's model use: investigation plus response
-    ep.tokens_out += inv.tokens_out
-    ep.outcome_detail = {**(ep.outcome_detail or {}), "investigation": inv.summary(),
-                         "cited": cited_by_executed_calls(trace)}  # fmt: skip
-    if case.labels.has_justified_completion is not None:
-        outcomes.score_episode(session, ep.id, case.labels)
+    record_investigation(session, ep, inv, case, trace.kinds())
     session.flush()
     return ep
 

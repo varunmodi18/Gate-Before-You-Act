@@ -1,5 +1,7 @@
+import { Fragment } from 'react'
+
 import type { CheckResult, StepOut } from '../api/client'
-import { recoveryState } from './recovery'
+import { isInvestigation, recoveryState } from './recovery'
 
 type P = Record<string, unknown>
 const str = (v: unknown) => (typeof v === 'string' ? v : JSON.stringify(v))
@@ -59,8 +61,92 @@ function Card({
   )
 }
 
+const VERDICT_TONE: Record<string, string> = {
+  ACCEPT: 'border-l-green-700',
+  REJECT: 'border-l-red-700',
+}
+
+/** Steps of the live investigation (Exp 3, Console window mode; ``phase: investigation``). */
+function InvestigationCard({ step }: { step: StepOut }) {
+  const p = step.payload
+  if (step.kind === 'tool') {
+    const profile = p.tool === 'profile'
+    const content = typeof p.content === 'string' ? p.content : ''
+    return (
+      <Card
+        title={
+          profile
+            ? 'Investigation: window profile'
+            : `Investigation query for ${str(p.technique_id)}${p.ok ? '' : ' (refused)'}`
+        }
+        tone="border-l-violet-700"
+      >
+        <span className="mr-2 rounded bg-amber-100 px-1 text-xs font-semibold text-amber-900">
+          untrusted log data
+        </span>
+        {!profile && <p className="font-mono text-xs break-all">{str((p.args as P)?.sql)}</p>}
+        {content && (
+          <pre
+            tabIndex={0}
+            aria-label={`Investigation result, step ${step.idx}`}
+            className="mt-1 max-h-48 overflow-auto bg-gray-50 p-1 text-xs whitespace-pre-wrap"
+          >
+            {content}
+          </pre>
+        )}
+      </Card>
+    )
+  }
+  const out = p.output as P | null
+  if (!out)
+    return (
+      <Card title={`Investigation: ${str(p.step)} output unusable`} tone="border-l-red-700">
+        <p>{str(p.error)}</p>
+      </Card>
+    )
+  if (p.step === 'hypothesise') {
+    const hs = (out.hypotheses ?? []) as P[]
+    return (
+      <Card title={`Investigation: ${hs.length} hypotheses`} tone="border-l-violet-700">
+        {out.thought ? <p className="italic">{str(out.thought)}</p> : null}
+        <ul className="list-disc pl-5">
+          {hs.map((h, i) => (
+            <li key={i}>
+              <span className="font-mono">{str(h.technique_id)}</span>: {str(h.behaviour)}
+            </li>
+          ))}
+        </ul>
+      </Card>
+    )
+  }
+  if (p.step === 'sqlgen') {
+    const qs = (out.queries ?? []) as P[]
+    return (
+      <Card title={`Investigation: ${qs.length} queries proposed`} tone="border-l-violet-700">
+        {qs.map((q, i) => (
+          <p key={i} className="font-mono text-xs break-all">
+            {str(q.sql)}
+          </p>
+        ))}
+      </Card>
+    )
+  }
+  const verdict = str(out.verdict)
+  const cited = (out.cited ?? []) as number[]
+  return (
+    <Card
+      title={`Technique verifier: ${verdict}`}
+      tone={VERDICT_TONE[verdict] ?? 'border-l-gray-500'}
+    >
+      <p>{str(out.reason)}</p>
+      {cited.length > 0 && <p className="font-mono text-xs">cited [{cited.join(', ')}]</p>}
+    </Card>
+  )
+}
+
 function StepCard({ step }: { step: StepOut }) {
   const p = step.payload
+  if (p.phase === 'investigation') return <InvestigationCard step={step} />
   if (step.kind === 'llm') {
     const prop = p.proposal as P | null
     if (!prop)
@@ -152,13 +238,28 @@ function StepCard({ step }: { step: StepOut }) {
 }
 
 /** The episode as a timeline (Console and Traces): proposals, gate cards, tool results, approval
- * events and feedback, in trace order. */
+ * events and feedback, in trace order. An Exp 3 episode starts with its live investigation; a
+ * heading marks where each phase begins. */
 export function Timeline({ steps }: { steps: StepOut[] }) {
+  const firstResponse = steps.findIndex((s) => !isInvestigation(s))
+  const live = steps.length > 0 && isInvestigation(steps[0])
   return (
     <ol aria-label="Episode timeline" className="flex flex-col gap-2">
-      {steps.map((s) => (
-        <StepCard key={s.idx} step={s} />
+      {steps.map((s, i) => (
+        <Fragment key={s.idx}>
+          {live && i === 0 && <PhaseHeading>Phase 1: investigation</PhaseHeading>}
+          {live && i === firstResponse && <PhaseHeading>Phase 2: response</PhaseHeading>}
+          <StepCard step={s} />
+        </Fragment>
       ))}
     </ol>
+  )
+}
+
+function PhaseHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="list-none">
+      <h3 className="mt-1 text-base font-semibold">{children}</h3>
+    </li>
   )
 }

@@ -5,7 +5,7 @@ import { Link, useParams } from 'react-router'
 import { apiGet, apiPut, type EpisodeDetail, type EpisodeSummary } from '../api/client'
 import { ErrorBanner } from '../components/ErrorBanner'
 import { RecoveryMeter, Timeline } from '../components/Timeline'
-import { OutcomePanel } from './Console'
+import { InvestigationPanel, OutcomePanel } from './Console'
 
 const th = 'border-b border-gray-400 px-2 py-1 text-left'
 
@@ -103,6 +103,7 @@ export function Trace() {
           Request: <q>{e.request.text}</q>
         </p>
       )}
+      {e.investigation && <InvestigationPanel inv={e.investigation} />}
       {e.status !== 'running' && <OutcomePanel ep={e} />}
       <TagEditor
         key={JSON.stringify([e.tags, e.starred, e.note])}

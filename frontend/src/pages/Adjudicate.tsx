@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { apiGet, apiPost, type AdjudicationItem } from '../api/client'
 import { ErrorBanner } from '../components/ErrorBanner'
 
-/** Adjudication queue (plan §E.1 row 9): unlisted calls and escalations of Exp 2/3 episodes, one
- * per (case, item), with the system hidden. A decision re-scores every episode of the case. */
+/** Adjudication queue (plan §E.1 row 9): unlisted calls and escalations of Exp 2/3 episodes and
+ * Exp 3 predicted techniques outside the window's metadata (A-15), one per (case, item), with the
+ * system hidden. A decision re-scores every episode of the case. */
 export function Adjudicate() {
   const queue = useQuery({
     queryKey: ['adjudications'],
@@ -86,6 +87,19 @@ function Item({ item }: { item: AdjudicationItem }) {
             onClick={() => decide.mutate({ label: 'prohibited' })}
           >
             Prohibited
+          </button>
+        </div>
+      ) : item.kind === 'technique' ? (
+        <div className="mt-1 flex gap-2">
+          <button type="button" className={btn} onClick={() => decide.mutate({ incidental: true })}>
+            Incidental (in the window)
+          </button>
+          <button
+            type="button"
+            className={btn}
+            onClick={() => decide.mutate({ incidental: false })}
+          >
+            Not incidental
           </button>
         </div>
       ) : (

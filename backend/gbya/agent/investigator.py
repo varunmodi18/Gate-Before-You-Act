@@ -30,6 +30,7 @@ from typing import Any
 
 import duckdb
 
+from gbya.agent.episode import EpisodeStopped
 from gbya.agent.proposer import MAX_RECORD_ID, TECHNIQUE
 from gbya.data.fieldmap import COMMON_COLUMNS, TABLE_COLUMNS, TABLES
 from gbya.errors import ModelOutputInvalid
@@ -213,10 +214,19 @@ class Investigator:
     temperature: float
     seed: int | None
     request_text: str = ""
+    on_event: Callable[[str, dict[str, Any]], Any] | None = None  # live trace (Console)
+    should_stop: Callable[[], bool] | None = None
     _profile: dict[str, Any] = field(default_factory=dict, init=False)
+
+    def _emit(self, inv: Investigation, kind: str, payload: dict[str, Any]) -> None:
+        inv.events.append((kind, payload))
+        if self.on_event is not None:
+            self.on_event(kind, payload)
 
     def _call(self, inv: Investigation, kind: str, messages: list[Message],
               schema: JsonSchema, temperature: float) -> dict[str, Any] | None:  # fmt: skip
+        if self.should_stop is not None and self.should_stop():
+            raise EpisodeStopped("stopped during the investigation")
         if inv.llm_calls >= MAX_LLM_CALLS:
             raise _Budget()
         inv.llm_calls += 1
@@ -233,8 +243,8 @@ class Investigator:
             error = None
         except ModelOutputInvalid as exc:
             obj, error = None, exc.message
-        inv.events.append(("llm", {"phase": "investigation", "step": kind, "output": obj,
-                                   "error": error}))  # fmt: skip
+        self._emit(inv, "llm", {"phase": "investigation", "step": kind, "output": obj,
+                                "error": error})  # fmt: skip
         return obj
 
     def run(self, con: duckdb.DuckDBPyConnection) -> Investigation:
@@ -242,7 +252,7 @@ class Investigator:
         self._profile = prof
         inv = Investigation(profile=prof)
         text = profile_text(prof)
-        inv.events.append(("tool", {"phase": "investigation", "tool": "profile", "content": text}))
+        self._emit(inv, "tool", {"phase": "investigation", "tool": "profile", "content": text})
         try:
             self._hypothesise(inv, text)
             for h in inv.hypotheses:
@@ -295,10 +305,10 @@ class Investigator:
                     "registered": sorted(res.registered),
                 }
             )
-            inv.events.append(("tool", {"phase": "investigation", "tool": "sql_query",
-                                        "technique_id": h.technique_id, "args": {"sql": q["sql"]},
-                                        "ok": res.ok, "content": res.content,
-                                        "registered": sorted(res.registered)}))  # fmt: skip
+            self._emit(inv, "tool", {"phase": "investigation", "tool": "sql_query",
+                                     "technique_id": h.technique_id, "args": {"sql": q["sql"]},
+                                     "ok": res.ok, "content": res.content,
+                                     "registered": sorted(res.registered)})  # fmt: skip
         if not any(q["ok"] for q in h.queries):
             h.verdict, h.reason = "REJECT", "no query ran"
             return

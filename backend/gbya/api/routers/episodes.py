@@ -6,6 +6,10 @@ the API process; its steps are committed as they happen (``SqlTrace``), and
 approval, feedback), ``gate`` (gate decision), ``approval_request`` (demo-interactive mode, a
 human must answer), ``outcome`` and ``error``.
 
+On an end-to-end case (set X, T6.3) the Console runs the Exp 3 episode instead: the live
+investigation of the window (its steps carry ``phase: investigation``) and then the response from
+its handover, with the same investigator, gate, tools and loop as Exp 3 (in-process transport).
+
 Console episodes have no run (``run_id`` NULL), so they never enter an experiment. In
 **demo-interactive** mode a human answers approval requests (``POST /episodes/{id}/approval``)
 instead of the scripted approver; without an answer within ``APPROVAL_TIMEOUT_S`` the request gets
@@ -32,12 +36,21 @@ from gbya.api.deps import get_deps, get_session, get_settings
 from gbya.cases.models import Labels
 from gbya.config import Settings
 from gbya.errors import Conflict, NotFound, Unprocessable
-from gbya.experiments import exp2
+from gbya.experiments import exp2, exp3
 from gbya.experiments.runner import Deps, variant_availability
 from gbya.logging import get_logger
 from gbya.scoring import outcomes
 from gbya.store.db import session_scope
-from gbya.store.models import ERROR_TAGS, Case, Episode, GateDecisionRow, Step, ToolCall, TraceTag
+from gbya.store.models import (
+    ERROR_TAGS,
+    Case,
+    Episode,
+    GateDecisionRow,
+    Scenario,
+    Step,
+    ToolCall,
+    TraceTag,
+)
 from gbya.store.models import utcnow as _now
 from gbya.tools.dispatcher import InProcessDispatcher
 
@@ -115,17 +128,22 @@ def cases(
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> list[dict[str, Any]]:
-    """Cases the Console can run: those with a generated prefix."""
+    """Cases the Console can run: those with a generated prefix (``mode: case``) and the
+    end-to-end cases, whose window is investigated live (``mode: window``)."""
     out = []
     for row in session.scalars(select(Case).where(Case.case_db_path.is_not(None))
                                .order_by(Case.id)):  # fmt: skip
-        if exp2.prefix_file(settings, row.id).is_file():
+        window = row.set_ == "X"
+        if window or exp2.prefix_file(settings, row.id).is_file():
+            sc = session.get(Scenario, row.scenario_id) if window else None
             out.append(
                 {
                     "case_id": row.id,
                     "variant": row.variant,
                     "request": row.request,
                     "labelled": exp2.scorable(Labels.model_validate(row.labels or {})),
+                    "mode": "window" if window else "case",
+                    "window_id": sc.window_id if sc else None,
                 }
             )
     return out
@@ -154,13 +172,22 @@ def start(
             "needs the in-process transport",
             code="INTERACTIVE_NEEDS_IN_PROCESS",
         )
-    if session.get(Case, body.case_id) is None:
+    row = session.get(Case, body.case_id)
+    if row is None:
         raise NotFound(f"No case {body.case_id}", code="CASE_NOT_FOUND")
-    try:
-        case = exp2.load_episode_case(session, body.case_id, settings)
-    except ValueError as exc:
-        raise Unprocessable(str(exc), code="NO_PREFIX") from exc
-    spec = exp2.load_spec()
+    case: exp2.Exp2Case | exp3.Exp3Case
+    spec: exp2.Exp2Spec
+    if row.set_ == "X":
+        if deps.configs[body.system].transport != "in_process":
+            raise Unprocessable(f"{body.system}: Exp 3 episodes run in-process",
+                                code="TRANSPORT_UNSUPPORTED")  # fmt: skip
+        case, spec = exp3.load_e3_case(session, body.case_id, settings), exp3.load_spec()
+    else:
+        try:
+            case = exp2.load_episode_case(session, body.case_id, settings)
+        except ValueError as exc:
+            raise Unprocessable(str(exc), code="NO_PREFIX") from exc
+        spec = exp2.load_spec()
     if body.run_idx not in spec.schedule:
         raise Unprocessable(f"No run {body.run_idx} in the schedule", code="UNKNOWN_RUN")
     slot = spec.schedule[body.run_idx]
@@ -186,14 +213,32 @@ def start(
     return {"episode_id": ep.id}
 
 
-def _run(factory: sessionmaker[Session], deps: Deps, case: exp2.Exp2Case, body: EpisodeStart,
-         slot: exp2.Slot, episode_id: int, live: _Live) -> None:  # fmt: skip
+def _run(factory: sessionmaker[Session], deps: Deps, case: exp2.Exp2Case | exp3.Exp3Case,
+         body: EpisodeStart, slot: exp2.Slot, episode_id: int, live: _Live) -> None:  # fmt: skip
     config = deps.configs[body.system]
     session = factory()
     try:
         ep = session.get(Episode, episode_id)
         assert ep is not None
-        trace = SqlTrace(session, ep)
+        # "done" becomes visible (stream, polling) only together with the score
+        trace = SqlTrace(session, ep, defer_finish=True)
+        if isinstance(case, exp3.Exp3Case):
+            _, inv = exp3.run_episode(
+                case, config, slot, deps, factory, trace=trace, should_stop=live.stop.is_set,
+                approver=live.ask if body.interactive_approval else None,
+            )  # fmt: skip
+            steps = session.execute(select(Step.kind, Step.payload)
+                                    .where(Step.episode_id == episode_id)
+                                    .order_by(Step.idx)).all()  # fmt: skip
+            ep.outcome_detail = {
+                **(ep.outcome_detail or {}),
+                "console": {"interactive_approval": body.interactive_approval},
+                "transport": config.transport,
+            }
+            exp3.record_investigation(session, ep, inv, case,
+                                      [(k, dict(p)) for k, p in steps])  # fmt: skip
+            session.commit()
+            return
         if config.transport == "in_process":  # demo-interactive approval needs this process
             approver = live.ask if body.interactive_approval else None
             e = exp2.episode_env(case, config, deps, factory, approver=approver)
@@ -280,6 +325,7 @@ def _summary(ep: Episode) -> dict[str, Any]:
         "interactive_approval": bool(((ep.outcome_detail or {}).get("console") or {})
                                      .get("interactive_approval")),
         "error": (ep.outcome_detail or {}).get("error") or (ep.outcome_detail or {}).get("stopped"),
+        "investigation": (ep.outcome_detail or {}).get("investigation"),
     }  # fmt: skip
 
 

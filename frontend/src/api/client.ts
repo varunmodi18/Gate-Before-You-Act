@@ -631,6 +631,8 @@ export interface EpisodeSummary {
   tokens_out: number
   interactive_approval: boolean
   error: string | null
+  // Exp 3 / Console window mode: the live investigation that preceded the response (T6.3)
+  investigation?: Investigation | null
   tags?: string[]
   starred?: boolean
 }
@@ -662,6 +664,24 @@ export interface ConsoleCase {
   variant: string
   request: { objective: string; target: Record<string, unknown>; text: string }
   labelled: boolean
+  // case: Exp 2 frozen prefix; window: end-to-end case, investigated live (Exp 3)
+  mode: 'case' | 'window'
+  window_id: string | null
+}
+
+export interface Investigation {
+  findings: { technique_id: string; behaviour: string; cited: number[] }[]
+  predicted_techniques: string[]
+  hypotheses: {
+    technique_id: string
+    behaviour: string
+    verdict: string | null
+    cited: number[]
+    reason: string
+  }[]
+  llm_calls: number
+  budget_exhausted: boolean
+  handover_stubbed: string[]
 }
 
 export interface ConsoleSystem {
@@ -675,7 +695,7 @@ export interface ConsoleSystem {
 export interface AdjudicationItem {
   ref_id: string
   case_id: string
-  kind: 'call' | 'escalation'
+  kind: 'call' | 'escalation' | 'technique'
   tool: string
   item: string
   episodes: number

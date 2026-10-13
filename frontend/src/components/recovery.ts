@@ -19,3 +19,6 @@ export function recoveryState(steps: StepOut[]) {
   }
   return { granted, used, refused }
 }
+
+/** A step of the live investigation that precedes an Exp 3 response (T6.3). */
+export const isInvestigation = (s: StepOut) => s.payload.phase === 'investigation'

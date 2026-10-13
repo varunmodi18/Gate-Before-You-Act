@@ -4,6 +4,7 @@ scripted investigator hypothesises T1003.001, queries lsass access and accepts r
 from __future__ import annotations
 
 import shutil
+import time
 from pathlib import Path
 from typing import Any
 
@@ -159,3 +160,65 @@ def test_runs_api_creates_exp3_runs_and_refuses_other_cases(settings: Settings) 
     bad = client.post("/api/v1/runs", json={"experiment": 3, "purpose": "fixture",
                                             "case_ids": ["mini-e2e:E1"]})  # fmt: skip
     assert bad.status_code == 422 and bad.json()["error"]["code"] == "NOT_END_TO_END"
+
+
+# ---- T6.3: the Console's window mode ------------------------------------------------------------
+
+
+def wait(client: TestClient, eid: int, timeout: float = 30) -> dict[str, Any]:
+    t0 = time.monotonic()
+    while time.monotonic() - t0 < timeout:
+        ep: dict[str, Any] = client.get(f"/api/v1/episodes/{eid}").json()
+        if ep["status"] != "running":
+            return ep
+        time.sleep(0.05)
+    raise AssertionError(f"episode {eid} did not end in {timeout} s")
+
+
+def norm(kind: str, payload: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    """A step without its timings."""
+    p = dict(payload)
+    if "decision" in p:
+        d = p["decision"] = {
+            **p["decision"],
+            "checks": [
+                {k: v for k, v in c.items() if k != "duration_ms"} for c in p["decision"]["checks"]
+            ],
+        }
+        if d.get("verifier_call"):
+            d["verifier_call"] = {k: v for k, v in d["verifier_call"].items() if k != "ms"}
+    return kind, p
+
+
+def test_console_investigates_the_window_live_like_exp3(settings: Settings, done_run: int) -> None:
+    app = create_app(settings)
+    app.state.deps = deps(settings)  # the run's token counter (the trace records token counts)
+    client = TestClient(app)
+    cases = {c["case_id"]: c for c in client.get("/api/v1/episodes/cases").json()}
+    assert (cases[CASE]["mode"], cases[CASE]["window_id"]) == ("window", WID)
+    res = client.post("/api/v1/episodes", json={"case_id": CASE, "system": "G3"})
+    assert res.status_code == 201, res.text
+    ep = wait(client, int(res.json()["episode_id"]))
+    assert (ep["status"], ep["terminal_state"], ep["run_id"]) == ("done", "fulfilled", None)
+    assert ep["outcome"] == "safe_completion"
+    assert ep["investigation"]["predicted_techniques"] == ["T1003.001"]
+    assert ep["steps"][0]["payload"] == {"phase": "investigation", "tool": "profile",
+                                         "content": ep["steps"][0]["payload"]["content"]}  # fmt: skip
+    # the same investigator, gate, tools and loop as Exp 3: the same trace as the run's G3, run 1
+    with db.session_scope(factory_of(settings)) as s:
+        run_ep = s.scalars(select(Episode).where(Episode.run_id == done_run, Episode.system == "G3",
+                                                 Episode.run_idx == 1)).one()  # fmt: skip
+        run_steps = [norm(st.kind, st.payload) for st in s.scalars(
+            select(Step).where(Step.episode_id == run_ep.id).order_by(Step.idx))]  # fmt: skip
+        assert ep["investigation"] == run_ep.outcome_detail["investigation"]
+    assert [norm(st["kind"], st["payload"]) for st in ep["steps"]] == run_steps
+    with client.stream("GET", f"/api/v1/episodes/{ep['id']}/stream") as stream:
+        body = "".join(stream.iter_text())
+    assert '"phase": "investigation"' in body and "event: outcome" in body
+
+
+def test_console_refuses_the_mcp_transport_on_windows(settings: Settings) -> None:
+    client = TestClient(create_app(settings))
+    res = client.post("/api/v1/episodes", json={"case_id": CASE, "system": "A8"})
+    assert res.status_code == 422 and res.json()["error"]["code"] in {
+        "TRANSPORT_UNSUPPORTED", "SYSTEM_UNAVAILABLE"}  # fmt: skip

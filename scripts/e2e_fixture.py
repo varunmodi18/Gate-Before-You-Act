@@ -5,7 +5,9 @@
 Catalogues the committed fixture windows (tests/fixtures/otrf and tests/fixtures/mini_window),
 normalises the mini window on the construction path, records it as ingested in split ``dev``,
 imports the hand-made Exp 1 cases (``data/fixtures/handmade/cases.json``) and builds a retrieval
-index from the synthetic test corpus (``tests/fixtures/retrieval``) into ``<dir>/index``.
+index from the synthetic test corpus (``tests/fixtures/retrieval``) into ``<dir>/index``, and
+imports the mini end-to-end case (``tests/fixtures/cases/mini-e2e``) for the Console's window mode
+(T6.3).
 The API and worker are then started with ``GBYA_APP_DB_PATH=<dir>/app.db GBYA_DATA_DIR=<dir>``.
 """
 
@@ -68,6 +70,16 @@ def build(out: Path) -> None:
         path = out / "cases" / sid / "scenario.json"
         path.write_text(dump(base.model_copy(update={"id": sid})))
         generate(settings, sid, ApproxCounter())
+    # The end-to-end case for J5b (Console window mode: live investigation, then response).
+    from gbya.cases.store import import_e2e
+
+    (out / "cases" / "mini-e2e").mkdir(parents=True, exist_ok=True)
+    shutil.copy(FIXTURES / "cases" / "mini-e2e" / "e2e.json", out / "cases" / "mini-e2e")
+    with db.session_scope(factory) as s:
+        w = s.get(Window, MINI_ID)
+        assert w is not None
+        w.techniques = ["T1003.001"]
+        import_e2e(s, settings, "mini-e2e")
     print(f"e2e fixture ready in {out}")
 
 

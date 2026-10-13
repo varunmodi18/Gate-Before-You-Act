@@ -241,6 +241,7 @@ class SqlTrace:
     session: Session
     episode: Episode
     commit: bool = True
+    defer_finish: bool = False  # the caller commits the finished episode (after scoring it)
     _idx: int = 0
 
     def _flush(self) -> None:
@@ -273,7 +274,10 @@ class SqlTrace:
 
     def finish(self, result: EpisodeResult, state: dict[str, Any]) -> None:
         _finish_episode(self.episode, result, state)
-        self._flush()
+        if self.defer_finish:
+            self.session.flush()
+        else:
+            self._flush()
 
 
 # ---- the loop -----------------------------------------------------------------------------------
