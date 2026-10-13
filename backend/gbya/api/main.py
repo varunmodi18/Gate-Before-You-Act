@@ -12,6 +12,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from gbya.api.routers import (
     adjudications,
+    analysis,
     annotate,
     episodes,
     health,
@@ -61,6 +62,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(annotate.router, prefix=API_PREFIX)
     app.include_router(adjudications.router, prefix=API_PREFIX)
     app.include_router(episodes.router, prefix=API_PREFIX)
+    app.include_router(analysis.router, prefix=API_PREFIX)
 
     dist = settings.resolve(settings.frontend_dist)
     if (dist / "index.html").is_file():
