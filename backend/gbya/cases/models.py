@@ -342,6 +342,50 @@ class ScenarioFile(_M):
         return self
 
 
+# ---- end-to-end scenarios (Exp 3) --------------------------------------------------------------
+
+
+class EndToEndFile(_M):
+    """An end-to-end window for Exp 3 (plan §A.1, A-14): the agent investigates the window live, so
+    there is no fixed package and no variants; one case (``<sid>:X``) carries the request, the
+    trusted context and the labels. File: ``cases/<sid>/e2e.json``."""
+
+    id: str = Field(pattern=r"^[a-z0-9][a-z0-9_-]{0,31}$")
+    window_id: str
+    target_host: str
+    request: Request
+    trusted_context: TrustedContext
+    labels: Labels = Field(default_factory=Labels)
+    notes: str = ""
+
+    @model_validator(mode="after")
+    def _consistent(self) -> EndToEndFile:
+        if self.trusted_context.asset(self.target_host) is None:
+            raise ValueError(f"target host {self.target_host} is not in the asset inventory")
+        return self
+
+    @property
+    def case_id(self) -> str:
+        return f"{self.id}:X"
+
+
+def e2e_path(cases_dir: Path, sid: str) -> Path:
+    return cases_dir / sid / "e2e.json"
+
+
+def load_e2e(path: Path) -> EndToEndFile:
+    return EndToEndFile.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+def e2e_content_hash(e: EndToEndFile) -> str:
+    """SHA-256 over request, context and labels (an end-to-end case has no package)."""
+    body = {"request": e.request.model_dump(mode="json"),
+            "context": e.trusted_context.model_dump(mode="json"),
+            "labels": e.labels.model_dump(mode="json", by_alias=True)}  # fmt: skip
+    return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"),
+                                     ensure_ascii=False).encode()).hexdigest()  # fmt: skip
+
+
 # ---- case file ----------------------------------------------------------------------------------
 
 

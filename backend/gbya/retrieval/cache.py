@@ -140,7 +140,9 @@ def fill(case_ids: list[str] | None = None) -> None:
     deps = Deps(settings=settings, client=make_client(settings), counter=default_counter())
     cache = deps.cache(factory)
     with session_scope(factory) as s:
-        ids = case_ids or list(s.scalars(select(Case.id).where(Case.case_db_path.is_not(None))))
+        ids = case_ids or list(
+            s.scalars(select(Case.id).where(Case.case_db_path.is_not(None), Case.set_ != "X"))
+        )
         cases = [load_case(s, cid, settings) for cid in ids]
     modes: tuple[RetrieveMode, ...] = ("bm25", "bm25_rerank")
     timings: dict[str, list[float]] = {m: [] for m in modes}

@@ -146,3 +146,41 @@ def main(argv: list[str]) -> None:
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
+def e2e_ids(settings: Settings) -> list[str]:
+    root = cases_dir(settings)
+    return sorted(p.parent.name for p in root.glob("*/e2e.json"))
+
+
+def import_e2e(session: Session, settings: Settings, sid: str) -> str:
+    """An end-to-end window (Exp 3): a scenario row and its one case ``<sid>:X`` (set ``X``),
+    reading the window's own database (no patch, no prefix)."""
+    from gbya.cases.models import e2e_content_hash, e2e_path, load_e2e
+
+    e = load_e2e(e2e_path(cases_dir(settings), sid))
+    if e.id != sid:
+        raise Unprocessable(f"e2e.json of {sid} names {e.id}", code="CASE_MISPLACED")
+    window = session.get(Window, e.window_id)
+    if window is None:
+        raise NotFound(f"Window {e.window_id} is not catalogued", code="WINDOW_NOT_FOUND")
+    row = session.get(Scenario, sid) or Scenario(id=sid, window_id=e.window_id)
+    row.window_id, row.split, row.target_host = e.window_id, window.split, e.target_host
+    row.request_template = e.request.model_dump(mode="json")
+    row.trusted_context = e.trusted_context.model_dump(mode="json")
+    row.context_hash = context_hash(e.trusted_context)
+    row.spec = {"kind": "end_to_end", **e.model_dump(mode="json", by_alias=True)}
+    session.add(row)
+    session.flush()
+    case = session.get(Case, e.case_id) or Case(id=e.case_id, scenario_id=sid)
+    case.scenario_id, case.set_, case.variant = sid, "X", "X"
+    case.request = e.request.model_dump(mode="json")
+    case.package = {}
+    case.db_patch = case.r_edit = case.e2_basis = None
+    case.labels = e.labels.model_dump(mode="json", by_alias=True)
+    case.approval_script = e.trusted_context.approval_script.model_dump(mode="json")
+    case.case_db_path = str(window_db(settings, e.window_id))
+    case.content_hash = e2e_content_hash(e)
+    session.add(case)
+    session.flush()
+    return e.case_id

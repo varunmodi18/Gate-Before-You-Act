@@ -91,6 +91,8 @@ def overview(
     """Scenarios with generated cases and where each annotator stands (no labels)."""
     out = []
     for row in session.scalars(select(Scenario).order_by(Scenario.id)):
+        if (row.spec or {}).get("kind") == "end_to_end":  # Exp 3 windows: no variants to annotate
+            continue
         n = len(list(session.scalars(select(Case.id).where(Case.scenario_id == row.id))))
         if not n:
             continue

@@ -268,7 +268,9 @@ def create_exp2_run(
     if not systems:
         raise Unprocessable("No systems to run", code="NO_SYSTEMS")
     if case_ids is None:
-        case_ids = list(session.scalars(select(Case.id).where(Case.case_db_path.is_not(None))))
+        case_ids = list(
+            session.scalars(select(Case.id).where(Case.case_db_path.is_not(None), Case.set_ != "X"))
+        )
     ids = sorted(set(case_ids))
     if not ids:
         raise Unprocessable("No cases to run", code="NO_CASES")

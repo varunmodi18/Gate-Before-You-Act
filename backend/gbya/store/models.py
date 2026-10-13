@@ -117,7 +117,7 @@ class Scenario(Base):
 
 class Case(Base):
     __tablename__ = "cases"
-    __table_args__ = (CheckConstraint(_in('"set"', ["R", "E"]), name="set"),)
+    __table_args__ = (CheckConstraint(_in('"set"', ["R", "E", "X"]), name="set"),)  # X: Exp 3
 
     id: Mapped[str] = mapped_column(String, primary_key=True)  # "<scenario>:<variant>"
     scenario_id: Mapped[str] = mapped_column(ForeignKey("scenarios.id"), index=True)
@@ -164,7 +164,9 @@ class AgreementSnapshot(Base):
 class Adjudication(Base):
     __tablename__ = "adjudications"
     __table_args__ = (
-        CheckConstraint(_in("kind", ["scenario_label", "unlisted_call"]), name="kind"),
+        CheckConstraint(
+            _in("kind", ["scenario_label", "unlisted_call", "incidental_technique"]), name="kind"
+        ),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

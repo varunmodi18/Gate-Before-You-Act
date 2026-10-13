@@ -113,7 +113,9 @@ def systems(deps: Annotated[Deps, Depends(get_deps)]) -> list[SystemInfo]:
 
 @router.get("/cases", response_model=list[PlaygroundCase])
 def cases(session: Annotated[Session, Depends(get_session)]) -> list[PlaygroundCase]:
-    rows = session.scalars(select(Case).where(Case.case_db_path.is_not(None)).order_by(Case.id))
+    rows = session.scalars(
+        select(Case).where(Case.case_db_path.is_not(None), Case.set_ != "X").order_by(Case.id)
+    )
     return [
         PlaygroundCase(
             id=r.id,

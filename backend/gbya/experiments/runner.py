@@ -272,7 +272,9 @@ def create_exp1_run(
     research runs are refused with the test-only counter, as with a fake or replay backend."""
     spec = load_spec(overrides=overrides)
     if case_ids is None:
-        case_ids = list(session.scalars(select(Case.id).where(Case.case_db_path.is_not(None))))
+        case_ids = list(
+            session.scalars(select(Case.id).where(Case.case_db_path.is_not(None), Case.set_ != "X"))
+        )
     ids = sorted(set(case_ids))
     if not ids:
         raise Unprocessable("No cases to run", code="NO_CASES")
