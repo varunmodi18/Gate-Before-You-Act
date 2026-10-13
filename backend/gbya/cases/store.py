@@ -19,10 +19,12 @@ from sqlalchemy.orm import Session
 from gbya.cases.models import (
     PATCHED,
     CaseFile,
+    EndToEndFile,
     ScenarioFile,
     case_path,
     content_hash,
     dump,
+    e2e_path,
     effective_context,
     load_casefile,
     load_scenario,
@@ -146,6 +148,13 @@ def main(argv: list[str]) -> None:
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
+def write_e2e(settings: Settings, e: EndToEndFile) -> Path:
+    path = e2e_path(cases_dir(settings), e.id)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(e.model_dump_json(indent=2, by_alias=True) + "\n", encoding="utf-8")
+    return path
 
 
 def e2e_ids(settings: Settings) -> list[str]:

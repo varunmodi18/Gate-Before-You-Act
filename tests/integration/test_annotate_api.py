@@ -100,7 +100,8 @@ def test_workspace_shows_the_verifier_prompt_events_and_policy(
     assert e1["policy"] == {"decision": "allowed", "rule_id": "P2-tier12-isolate"}
     assert cases["R_neg"]["policy"]["decision"] == "needs_approval"
     assert client.get("/api/v1/annotate", params={}).json()[0] == {
-        "id": "mini", "status": "draft", "split": "dev", "cases": 7, "A": "none", "B": "none"}  # fmt: skip
+        "id": "mini", "status": "draft", "split": "dev", "cases": 7, "kind": "scenario",
+        "A": "none", "B": "none"}  # fmt: skip
 
 
 def test_blindness_lock_and_agreement_snapshot(api: tuple[TestClient, Settings]) -> None:

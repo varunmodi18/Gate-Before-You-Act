@@ -683,3 +683,48 @@ def _check_set_r(rep: Report, views: dict[str, CaseView]) -> None:
         else f"R_pos/R_neg must differ in exactly one field (changed: {changed}) and otherwise "
         "equal E1",
     )
+
+
+# ---- Set X: end-to-end windows (decision D, 14 Oct 2026) ----------------------------------------
+
+
+@dataclass(frozen=True)
+class _XCase:
+    """What checks f, i and k read from a case, for the one case of an end-to-end window."""
+
+    id: str
+    variant: str
+    labels: Any
+
+
+def validate_e2e(settings: Settings, sid: str) -> Report:
+    """An end-to-end window (set X): *scope* (authored = computed from the window's records),
+    *labels* (the case is labelled; nothing outside the set X label list is set — enforced by
+    the schema), (f) evidence and completion, (i) permitted PIDs, (k) rule A, and *context_check*
+    (the trusted context was checked by a second member, Q-X4; pending until then)."""
+    from gbya.cases.models import e2e_path, load_e2e
+    from gbya.cases.store import cases_dir, window_db
+
+    e = load_e2e(e2e_path(cases_dir(settings), sid))
+    rep = Report(sid)
+    db = settings.resolve(window_db(settings, e.window_id))
+    if not db.is_file():
+        rep.add("d", e.case_id, False, f"window database {db} is missing")
+        return rep
+    view = CaseView(_XCase(e.case_id, "X", e.labels), db, e.trusted_context)  # type: ignore[arg-type]
+    con = open_case_db(db)
+    try:
+        _check_scope(rep, e.scope, con)
+        rep.add("labels", e.case_id, True if e.labels.labelled else None,
+                "outcome and justified completion set" if e.labels.labelled
+                else "labels pending")  # fmt: skip
+        _check_f(rep, view, _record_ids(con))
+        _check_i(rep, view, con)
+        _check_k(rep, view, e.scope, con)
+    finally:
+        con.close()
+    checked = bool(e.context_checked_by and e.context_author)
+    rep.add("context_check", e.case_id, True if checked else None,
+            f"context by {e.context_author}, checked by {e.context_checked_by}" if checked
+            else "the trusted context needs its author and a second member's check")  # fmt: skip
+    return rep

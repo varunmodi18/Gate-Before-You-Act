@@ -7,6 +7,8 @@ Preconditions (each refusal names what is missing):
 * every scenario under ``cases/`` is imported and **adjudicated**;
 * every scenario is **valid and complete** (no failing and no pending check; warnings, e.g.
   check e2, are listed in the manifest);
+* every end-to-end window (``cases/<sid>/e2e.json``, set X) is adjudicated and passes
+  ``validate_e2e`` completely, including the second member's context check (decision D);
 * no scenario has an entry in ``cases/EXCLUSIONS.json`` (an excluded scenario is replaced, never
   frozen);
 * ``cases/FROZEN.json`` does not exist yet. A new version (``--supersede``) records the hash it
@@ -30,8 +32,8 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from gbya.cases.store import cases_dir, import_scenario, scenario_ids
-from gbya.cases.validator import EXCLUSIONS, validate_scenario
+from gbya.cases.store import cases_dir, e2e_ids, import_e2e, import_scenario, scenario_ids
+from gbya.cases.validator import EXCLUSIONS, validate_e2e, validate_scenario
 from gbya.config import Settings
 from gbya.errors import Conflict, Unprocessable
 from gbya.llm.tokens import TokenCounter
@@ -72,6 +74,7 @@ def freeze(
     if not counter.name.startswith("model:"):
         raise FreezeRefused(f"validation must use the model tokenizer, not {counter.name!r}")
     sids = scenario_ids(settings)
+    xids = e2e_ids(settings)
     if not sids:
         raise FreezeRefused("no scenarios under cases/")
     excluded = json.loads((root / EXCLUSIONS).read_text()) if (root / EXCLUSIONS).is_file() else []
@@ -102,6 +105,21 @@ def freeze(
         for case in session.query(Case).filter(Case.scenario_id == sid):
             hashes[case.id] = str(case.content_hash)
         scenarios.append({"id": sid, "split": row.split, "window_id": row.window_id})
+    for sid in xids:  # set X: one case per end-to-end window
+        import_e2e(session, settings, sid)
+        row = session.get(Scenario, sid)
+        assert row is not None
+        if row.status not in ("adjudicated", "frozen"):
+            problems.append(f"{sid}: status {row.status}, not adjudicated")
+        report = validate_e2e(settings, sid)
+        bad = [f"({c.check}) {c.case_id or sid}: {c.status}"
+               for c in report.checks if c.status in ("fail", "pending")]  # fmt: skip
+        if bad:
+            problems.append(f"{sid}: validator not all-pass: {bad[:5]}")
+        for case in session.query(Case).filter(Case.scenario_id == sid):
+            hashes[case.id] = str(case.content_hash)
+        scenarios.append({"id": sid, "split": row.split, "window_id": row.window_id,
+                          "kind": "end_to_end"})  # fmt: skip
     if problems:
         raise FreezeRefused("The case set cannot be frozen", details={"problems": problems})
     manifest = {
@@ -118,7 +136,7 @@ def freeze(
         "warnings": warnings,
     }
     out.write_text(json.dumps(manifest, indent=2) + "\n")
-    for sid in sids:
+    for sid in [*sids, *xids]:
         row = session.get(Scenario, sid)
         assert row is not None
         row.status = "frozen"

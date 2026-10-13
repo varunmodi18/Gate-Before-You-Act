@@ -13,6 +13,7 @@ import {
   type Comparison,
   type ValidationReport,
   type Workspace,
+  type XCase,
 } from '../api/client'
 import { JsonField } from '../components/ContextEditor'
 import { ErrorBanner } from '../components/ErrorBanner'
@@ -38,7 +39,12 @@ const ids = (t: string) =>
     .filter(Boolean)
     .map(Number)
     .filter((n) => Number.isInteger(n) && n > 0)
-const fmt = (x: number | null) => (x === null ? '—' : x.toFixed(3))
+const fmt = (x: number | null | undefined) => (x === null || x === undefined ? '—' : x.toFixed(3))
+const isX = (c: AnnotateCase | XCase): c is XCase => (c as XCase).kind === 'end_to_end'
+/** Set X is labelled with outcome and justified completion; E and R with outcome and verdict. */
+const done = (c: AnnotateCase | XCase, l: LabelsDraft | undefined) =>
+  Boolean(l?.correct_outcome) &&
+  (isX(c) ? l?.has_justified_completion !== undefined : Boolean(l?.verifier_label))
 
 /** Annotate (plan §E.1 row 4, T4.7): choose a role (local, A-12) and a scenario; agreement panel. */
 export function Annotate() {
@@ -99,7 +105,10 @@ export function Annotate() {
                 </th>
                 <td className="px-2 py-1">{s.split ?? '—'}</td>
                 <td className="px-2 py-1">{s.status}</td>
-                <td className="px-2 py-1">{s.cases}</td>
+                <td className="px-2 py-1">
+                  {s.cases}
+                  {s.kind === 'end_to_end' ? ' (end-to-end window)' : ''}
+                </td>
                 <td className="px-2 py-1">{s.A}</td>
                 <td className="px-2 py-1">{s.B}</td>
               </tr>
@@ -129,7 +138,7 @@ function AgreementPanel({ report }: { report: AgreementReport }) {
               'Scenarios',
               'κ outcome (items)',
               'κ actions (items)',
-              'E1 evidence Jaccard',
+              'Evidence Jaccard (E1; set X: evidence records)',
             ].map((h) => (
               <th key={h} scope="col" className="border-b border-gray-400 px-2 py-1 text-left">
                 {h}
@@ -151,6 +160,21 @@ function AgreementPanel({ report }: { report: AgreementReport }) {
             </td>
             <td className="px-2 py-1">{fmt(p.jaccard_e1_mean)}</td>
           </tr>
+          {report.set_x && (
+            <tr className="border-b border-gray-300 font-semibold">
+              <th scope="row" className="px-2 py-1 text-left">
+                set X (end-to-end windows, separate)
+              </th>
+              <td className="px-2 py-1">{report.set_x.scenarios}</td>
+              <td className="px-2 py-1">
+                {fmt(report.set_x.kappa_outcome)} ({report.set_x.outcome_items})
+              </td>
+              <td className="px-2 py-1">
+                {fmt(report.set_x.kappa_actions)} ({report.set_x.action_items})
+              </td>
+              <td className="px-2 py-1">{fmt(report.set_x.jaccard_x_mean)} (evidence records)</td>
+            </tr>
+          )}
           {report.per_scenario.map((s) => (
             <tr key={s.scenario_id} className="border-b border-gray-200">
               <th scope="row" className="px-2 py-1 text-left font-normal">
@@ -235,12 +259,22 @@ function Annotator({ sid, role, ws }: { sid: string; role: 'A' | 'B'; ws: Worksp
             onClick={() => setVariant(x.variant)}
           >
             {x.variant}
-            {labels[x.variant]?.correct_outcome && labels[x.variant]?.verifier_label ? ' ✓' : ''}
+            {done(x, labels[x.variant]) ? ' ✓' : ''}
           </button>
         ))}
       </div>
       {locked && <p className="mb-2 text-sm font-semibold">Submitted and locked.</p>}
-      {c && (
+      {c && isX(c) && (
+        <XCaseForm
+          key={c.variant}
+          sid={sid}
+          c={c}
+          locked={locked}
+          value={labels[c.variant] ?? {}}
+          onChange={(v) => setLabels((l) => ({ ...l, [c.variant]: v }))}
+        />
+      )}
+      {c && !isX(c) && (
         <CaseForm
           key={c.variant}
           sid={sid}
@@ -802,12 +836,24 @@ function AdjudicationForm({
       </button>
       <div aria-live="polite">
         {run.isError && <ErrorBanner error={run.error} />}
-        {run.data && (
-          <>
-            <p className="text-sm">✓ Final labels written to the case files.</p>
-            <VariantGrid report={run.data.validation} />
-          </>
-        )}
+        {run.data &&
+          (variants.length === 1 && variants[0] === 'X' ? (
+            <>
+              <p className="text-sm">✓ Final labels written to e2e.json.</p>
+              <ul aria-label="Validator results for the window" className="text-sm">
+                {run.data.validation.checks.map((ch) => (
+                  <li key={ch.check}>
+                    <span className="font-mono">{ch.check}</span>: {ch.status} — {ch.message}
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : (
+            <>
+              <p className="text-sm">✓ Final labels written to the case files.</p>
+              <VariantGrid report={run.data.validation} />
+            </>
+          ))}
       </div>
     </section>
   )
@@ -912,5 +958,180 @@ function E2Sample({ sid, c }: { sid: string; c: AnnotateCase }) {
         </ul>
       )}
     </section>
+  )
+}
+
+/** The one case of an end-to-end window (set X, decision D): request, window and its technique
+ * metadata (Q-X3), scope, trusted context with the second member's check (Q-X4), and only the
+ * set X label fields; evidence is picked from the unmodified window database. */
+function XCaseForm({
+  sid,
+  c,
+  value,
+  onChange,
+  locked,
+}: {
+  sid: string
+  c: XCase
+  value: LabelsDraft
+  onChange: (v: LabelsDraft) => void
+  locked: boolean
+}) {
+  const set = (patch: LabelsDraft) => onChange({ ...value, ...patch })
+  const [picked, setPicked] = useState<number | null>(null)
+  const hjc = value.has_justified_completion
+  return (
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <section aria-labelledby="x-ctx" className="flex flex-col gap-2 text-sm">
+        <h2 id="x-ctx" className="font-semibold">
+          End-to-end window {c.window.id}
+        </h2>
+        <p>
+          {c.window.title}; techniques in the window&apos;s metadata:{' '}
+          <span className="font-mono">{c.window.techniques.join(', ') || 'none'}</span>
+        </p>
+        <p>
+          Request: <q>{c.request.text}</q> ({c.request.objective})
+        </p>
+        <p>
+          Policy for the requested action: <strong>{c.policy.decision}</strong> ({c.policy.rule_id}
+          ); approval script <span className="font-mono">{c.approval_script}</span>
+        </p>
+        <div>
+          <h3 className="font-semibold">Scope (rule A)</h3>
+          <p>
+            Hosts <span className="font-mono">{c.scope.hosts.join(', ')}</span>; accounts{' '}
+            <span className="font-mono">{c.scope.accounts.join(', ') || 'none'}</span>; IPs{' '}
+            <span className="font-mono">{c.scope.ips.join(', ') || 'none'}</span>
+          </p>
+          <p className="font-mono text-xs break-all">
+            Processes:{' '}
+            {c.scope.processes.map((p) => `${p.pid} ${p.image ?? '?'}`).join('; ') || 'none'}
+          </p>
+        </div>
+        <details>
+          <summary className="cursor-pointer">Trusted context</summary>
+          <pre
+            tabIndex={0}
+            aria-label="Trusted context"
+            className="max-h-64 overflow-auto whitespace-pre-wrap bg-gray-100 p-2 text-xs"
+          >
+            {JSON.stringify(c.trusted_context, null, 2)}
+          </pre>
+        </details>
+        <ContextCheck sid={sid} c={c} />
+        <p className="text-xs text-gray-700">
+          Not labelled for set X: {c.not_labelled.join(', ')} (technique ground truth is the
+          metadata plus adjudicated incidental techniques).
+        </p>
+      </section>
+      <fieldset disabled={locked} className="flex flex-col gap-2 text-sm">
+        <legend className="font-semibold">Labels for {c.id}</legend>
+        <LabeledSelect
+          label="Correct outcome"
+          value={(value.correct_outcome as string) ?? ''}
+          onChange={(e) => set({ correct_outcome: e.target.value || null })}
+        >
+          <option value="">—</option>
+          {OUTCOMES.map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </LabeledSelect>
+        <LabeledSelect
+          label="Has a justified completion"
+          value={hjc === undefined || hjc === null ? '' : hjc ? 'yes' : 'no'}
+          onChange={(e) =>
+            set({
+              has_justified_completion: e.target.value === '' ? null : e.target.value === 'yes',
+            })
+          }
+        >
+          <option value="">—</option>
+          <option value="yes">yes</option>
+          <option value="no">no</option>
+        </LabeledSelect>
+        <label className="flex flex-col">
+          Evidence records (justify the action)
+          <input
+            className={`${input} font-mono`}
+            value={((value.evidence_retrievable as number[] | undefined) ?? []).join(', ')}
+            onChange={(e) => set({ evidence_retrievable: ids(e.target.value) })}
+          />
+        </label>
+        <JsonField
+          label="Permitted (JSON list: tool, args, requires_approval, fulfils)"
+          value={value.permitted ?? []}
+          onChange={(v) => set({ permitted: v })}
+        />
+        <JsonField
+          label="Prohibited (JSON list; * wildcards allowed)"
+          value={value.prohibited ?? []}
+          onChange={(v) => set({ prohibited: v })}
+        />
+        <JsonField
+          label="Acceptable escalations (JSON list of predicates)"
+          value={value.acceptable_escalations ?? []}
+          onChange={(v) => set({ acceptable_escalations: v })}
+        />
+        <SqlConsole
+          title="Evidence picker (the window's database)"
+          queryPath={`/annotate/${sid}/cases/X/query`}
+          onOpenRecord={setPicked}
+        />
+        {picked !== null && (
+          <button
+            type="button"
+            className="self-start underline"
+            onClick={() =>
+              set({
+                evidence_retrievable: [
+                  ...new Set([...((value.evidence_retrievable as number[]) ?? []), picked]),
+                ],
+              })
+            }
+          >
+            Add record {picked} to the evidence records
+          </button>
+        )}
+      </fieldset>
+    </div>
+  )
+}
+
+/** Q-X4: the trusted context is authored once and checked by a second member. */
+function ContextCheck({ sid, c }: { sid: string; c: XCase }) {
+  const qc = useQueryClient()
+  const [by, setBy] = useState('')
+  const check = useMutation({
+    mutationFn: () => apiPost(`/annotate/${sid}/context-check`, { by }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['workspace', sid] }),
+  })
+  const id = useId()
+  return (
+    <div className="rounded border border-gray-400 p-2">
+      <p>
+        Context author: {c.context_author ?? 'not recorded'}; checked by:{' '}
+        {c.context_checked_by ?? 'nobody yet'}
+      </p>
+      {!c.context_checked_by && (
+        <div className="mt-1 flex items-end gap-2">
+          <label htmlFor={id} className="flex flex-col">
+            Your name (a member other than the author)
+            <input id={id} className={input} value={by} onChange={(e) => setBy(e.target.value)} />
+          </label>
+          <button
+            type="button"
+            className="rounded border border-gray-600 px-2 py-1"
+            disabled={!by.trim() || check.isPending}
+            onClick={() => check.mutate()}
+          >
+            I checked the context
+          </button>
+        </div>
+      )}
+      {check.isError && <ErrorBanner error={check.error} />}
+    </div>
   )
 }

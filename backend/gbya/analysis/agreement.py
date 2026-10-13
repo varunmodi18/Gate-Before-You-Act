@@ -3,7 +3,10 @@
 * **Cohen's κ** on two label types (A-11): the per-case ``correct_outcome``, and the
   per-candidate action label: every action either annotator listed as permitted or prohibited
   for a case, labelled ``permitted`` / ``prohibited`` / ``unlisted`` by each annotator.
-* **Jaccard** on ``evidence_counterfactual`` of the scenario's E1 case.
+* **Jaccard** on ``evidence_counterfactual`` of the scenario's E1 case; for an end-to-end window
+  (set X, decision D) on the X case's ``evidence_retrievable`` (there is no counterfactual set).
+
+Set X agreement is reported **separately** from sets E and R (decision D, Q-X2).
 
 A snapshot is stored per scenario when both annotators have submitted, before adjudication; the
 report pools the snapshots' items (κ needs many items; a single scenario has seven cases).
@@ -62,6 +65,11 @@ def items(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
         xa, xb = _action_labels(la), _action_labels(lb)
         for key in sorted(set(xa) | set(xb)):
             actions.append([variant, key, xa.get(key, "unlisted"), xb.get(key, "unlisted")])
+    if "X" in a or "X" in b:  # an end-to-end window: Jaccard on the evidence records
+        ea = a.get("X", {}).get("evidence_retrievable", [])
+        eb = b.get("X", {}).get("evidence_retrievable", [])
+        return {"outcome": outcome, "actions": actions, "jaccard_x": jaccard(ea, eb),
+                "evidence_x": [ea, eb]}  # fmt: skip
     e1a = a.get("E1", {}).get("evidence_counterfactual", [])
     e1b = b.get("E1", {}).get("evidence_counterfactual", [])
     return {
@@ -75,7 +83,8 @@ def items(a: dict[str, Any], b: dict[str, Any]) -> dict[str, Any]:
 def summarise(snapshot_items: Sequence[dict[str, Any]]) -> dict[str, Any]:
     outcome = [(str(x[1]), str(x[2])) for s in snapshot_items for x in s["outcome"]]
     actions = [(str(x[2]), str(x[3])) for s in snapshot_items for x in s["actions"]]
-    jac = [s["jaccard_e1"] for s in snapshot_items if s.get("jaccard_e1") is not None]
+    key = "jaccard_x" if any("jaccard_x" in s for s in snapshot_items) else "jaccard_e1"
+    jac = [s[key] for s in snapshot_items if s.get(key) is not None]
     return {
         "scenarios": len(snapshot_items),
         "kappa_outcome": cohen_kappa(outcome),
@@ -84,7 +93,12 @@ def summarise(snapshot_items: Sequence[dict[str, Any]]) -> dict[str, Any]:
         "kappa_actions": cohen_kappa(actions),
         "action_items": len(actions),
         "action_agreement": (sum(a == b for a, b in actions) / len(actions)) if actions else None,
-        "jaccard_e1_mean": (sum(jac) / len(jac)) if jac else None,
+        "jaccard_field": "evidence_retrievable (X)"
+        if key == "jaccard_x"
+        else "evidence_counterfactual (E1)",
+        "jaccard_e1_mean" if key == "jaccard_e1" else "jaccard_x_mean": (sum(jac) / len(jac))
+        if jac
+        else None,
         "jaccard_n": len(jac),
     }
 
@@ -111,13 +125,20 @@ def store_snapshot(session: Session, sid: str) -> AgreementSnapshot:
 
 
 def report(session: Session, split: str | None = None) -> dict[str, Any]:
-    q = select(AgreementSnapshot, Scenario.split).join(
+    q = select(AgreementSnapshot, Scenario.split, Scenario.spec).join(
         Scenario, Scenario.id == AgreementSnapshot.scenario_id
     )
-    rows = [(s, sp) for s, sp in session.execute(q) if split is None or sp == split]
+    every = [(s, sp, (spec or {}).get("kind") == "end_to_end")
+             for s, sp, spec in session.execute(q) if split is None or sp == split]  # fmt: skip
+    rows = [(s, sp) for s, sp, x in every if not x]
+    xrows = [(s, sp) for s, sp, x in every if x]
     return {
         "split": split,
-        "pooled": summarise([s.values for s, _ in rows]),
+        "pooled": summarise([s.values for s, _ in rows]),  # sets E and R
+        "set_x": summarise([s.values for s, _ in xrows]),  # end-to-end windows, separately
+        "per_scenario_x": [
+            {"scenario_id": s.scenario_id, "split": sp, **s.values["summary"]} for s, sp in xrows
+        ],
         "per_scenario": [
             {"scenario_id": s.scenario_id, "split": sp, **s.values["summary"]} for s, sp in rows
         ],

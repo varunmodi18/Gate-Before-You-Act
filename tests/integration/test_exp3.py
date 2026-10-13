@@ -81,7 +81,9 @@ def test_end_to_end_case_is_imported_as_set_x(settings: Settings) -> None:
         assert str(row.case_db_path).endswith(f"{WID}.duckdb")  # the window's own database
     client = TestClient(create_app(settings))
     assert CASE not in [c["id"] for c in client.get("/api/v1/playground/cases").json()]
-    assert all(r["id"] != "mini-e2e" for r in client.get("/api/v1/annotate").json())
+    # decision D: end-to-end windows are annotated like scenarios (one case, set X)
+    annotate = {r["id"]: r for r in client.get("/api/v1/annotate").json()}
+    assert annotate["mini-e2e"]["kind"] == "end_to_end" and annotate["mini-e2e"]["cases"] == 1
 
 
 def test_fixture_run_completes_with_investigation_and_response(settings: Settings,

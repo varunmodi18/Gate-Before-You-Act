@@ -579,9 +579,32 @@ export interface AnnotationOut {
   submitted_at: string | null
 }
 
+/** The one case of an end-to-end window (set X, decision D): no package and no prompt. */
+export interface XCase {
+  kind: 'end_to_end'
+  id: string
+  variant: 'X'
+  request: { text: string; objective: string; target: Record<string, unknown> }
+  window: { id: string; title: string | null; techniques: string[] }
+  trusted_context: TrustedContextJson
+  context_author: string | null
+  context_checked_by: string | null
+  scope: ScopeJson
+  tickets: Ticket[]
+  policy: { decision: string; rule_id: string; reason?: string }
+  approval_script: string
+  not_labelled: string[]
+}
+
 export interface Workspace {
-  scenario: { id: string; status: string; split: string | null; target_host: string | null }
-  cases: AnnotateCase[]
+  scenario: {
+    id: string
+    status: string
+    split: string | null
+    target_host: string | null
+    kind?: 'scenario' | 'end_to_end'
+  }
+  cases: (AnnotateCase | XCase)[]
   own: AnnotationOut | null
   other_submitted: boolean
   both_submitted: boolean
@@ -592,6 +615,7 @@ export interface AnnotateOverview {
   status: string
   split: string | null
   cases: number
+  kind?: 'scenario' | 'end_to_end'
   A: string
   B: string
 }
@@ -610,14 +634,18 @@ export interface AgreementSummary {
   kappa_actions: number | null
   action_items: number
   action_agreement: number | null
-  jaccard_e1_mean: number | null
+  jaccard_e1_mean?: number | null
+  jaccard_x_mean?: number | null // set X: Jaccard on the evidence records (decision D)
+  jaccard_field?: string
   jaccard_n: number
 }
 
 export interface AgreementReport {
   split: string | null
-  pooled: AgreementSummary
+  pooled: AgreementSummary // sets E and R
   per_scenario: (AgreementSummary & { scenario_id: string; split: string | null })[]
+  set_x?: AgreementSummary // end-to-end windows, reported separately (Q-X2)
+  per_scenario_x?: (AgreementSummary & { scenario_id: string; split: string | null })[]
   note: string
 }
 

@@ -228,6 +228,31 @@ class Labels(_M):
         return self.correct_outcome is not None and self.verifier_label is not None
 
 
+# Not labelled for set X (no fixed package; technique ground truth is the OTRF metadata plus
+# adjudicated incidental techniques, A-15). Decision D / STATUS "Set X annotation".
+X_NOT_LABELLED = ("technique_gold", "initial_gate_label", "verifier_label", "e4_kind",
+                  "decisive", "evidence_counterfactual")  # fmt: skip
+
+
+class XLabels(Labels):
+    """Labels of an end-to-end (set X) case: what to do and what justifies it, nothing about a
+    package. Labelled when ``correct_outcome`` and ``has_justified_completion`` are set."""
+
+    @model_validator(mode="after")
+    def _x_fields(self) -> XLabels:
+        if set_ := [f for f in X_NOT_LABELLED if getattr(self, f) not in (None, [])]:
+            raise ValueError(f"not labelled for set X cases: {set_}")
+        return self
+
+    @property
+    def labelled(self) -> bool:
+        return self.correct_outcome is not None and self.has_justified_completion is not None
+
+
+def labels_model(variant: str) -> type[Labels]:
+    return XLabels if variant == "X" else Labels
+
+
 # ---- Set R --------------------------------------------------------------------------------------
 
 
@@ -384,7 +409,10 @@ class EndToEndFile(_M):
     request: Request
     trusted_context: TrustedContext
     scope: Scope
-    labels: Labels = Field(default_factory=Labels)
+    labels: XLabels = Field(default_factory=XLabels)
+    # Decision D (Q-X4): the trusted context is authored once and checked by a second member
+    context_author: str | None = None
+    context_checked_by: str | None = None
     notes: str = ""
 
     @model_validator(mode="after")
@@ -392,6 +420,10 @@ class EndToEndFile(_M):
         if self.trusted_context.asset(self.target_host) is None:
             raise ValueError(f"target host {self.target_host} is not in the asset inventory")
         _check_scope(self.scope, self.target_host, self.trusted_context)
+        if (self.context_checked_by and self.context_author
+                and self.context_checked_by.strip().casefold()
+                == self.context_author.strip().casefold()):  # fmt: skip
+            raise ValueError("the context must be checked by a member other than its author")
         return self
 
     @property
@@ -408,9 +440,10 @@ def load_e2e(path: Path) -> EndToEndFile:
 
 
 def e2e_content_hash(e: EndToEndFile) -> str:
-    """SHA-256 over request, context and labels (an end-to-end case has no package)."""
+    """SHA-256 over request, context, scope and labels (an end-to-end case has no package)."""
     body = {"request": e.request.model_dump(mode="json"),
             "context": e.trusted_context.model_dump(mode="json"),
+            "scope": e.scope.model_dump(mode="json"),
             "labels": e.labels.model_dump(mode="json", by_alias=True)}  # fmt: skip
     return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"),
                                      ensure_ascii=False).encode()).hexdigest()  # fmt: skip

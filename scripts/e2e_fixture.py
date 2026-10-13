@@ -80,6 +80,16 @@ def build(out: Path) -> None:
         assert w is not None
         w.techniques = ["T1003.001"]
         import_e2e(s, settings, "mini-e2e")
+    # End-to-end windows to annotate in J3b (one per viewport: adjudication locks the window).
+    from gbya.cases.models import XLabels, e2e_path, load_e2e
+    from gbya.cases.store import write_e2e
+
+    base_x = load_e2e(e2e_path(out / "cases", "mini-e2e"))
+    for xid in ("x-desktop", "x-tablet"):
+        write_e2e(settings, base_x.model_copy(update={"id": xid, "labels": XLabels(),
+                                                      "context_author": "Alex"}))  # fmt: skip
+        with db.session_scope(factory) as s:
+            import_e2e(s, settings, xid)
     print(f"e2e fixture ready in {out}")
 
 
