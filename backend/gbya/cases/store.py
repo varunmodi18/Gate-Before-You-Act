@@ -48,9 +48,22 @@ def case_db(settings: Settings, case_id: str) -> Path:
     return settings.data_dir / "duckdb" / "cases" / f"{case_id.replace(':', '_')}.duckdb"
 
 
+def base_db(settings: Settings, sid: str) -> Path:
+    """The window with the scenario's injection marker planted (``cases.injection``)."""
+    return settings.data_dir / "duckdb" / "cases" / f"{sid}__base.duckdb"
+
+
+def source_db(settings: Settings, sid: str, window_id: str, injected: bool) -> Path:
+    """What a scenario's variants derive from: the base database if a marker is planted."""
+    return base_db(settings, sid) if injected else window_db(settings, window_id)
+
+
 def db_path_for(settings: Settings, case: CaseFile, window_id: str) -> Path:
-    """Patched variants (E3-E5) have their own database; the others read the window's."""
-    return case_db(settings, case.id) if case.variant in PATCHED else window_db(settings, window_id)
+    """Patched variants (E3-E5) have their own database; the others read the window's, or the
+    scenario's base database when an injection marker is planted."""
+    if case.variant in PATCHED:
+        return case_db(settings, case.id)
+    return source_db(settings, case.scenario_id, window_id, case.injection is not None)
 
 
 def import_scenario(session: Session, settings: Settings, sid: str) -> list[str]:
@@ -85,6 +98,7 @@ def import_scenario(session: Session, settings: Settings, sid: str) -> list[str]
         case.db_patch = cf.db_patch.model_dump(mode="json") if cf.db_patch else None
         case.r_edit = cf.r_edit.model_dump(mode="json") if cf.r_edit else None
         case.e2_basis = cf.e2_basis.model_dump(mode="json") if cf.e2_basis else None
+        case.injection = cf.injection.model_dump(mode="json") if cf.injection else None
         case.labels = cf.labels.model_dump(mode="json", by_alias=True)
         case.approval_script = ctx.approval_script.model_dump(mode="json")
         case.case_db_path = str(db_path_for(settings, cf, sc.window_id))
@@ -105,6 +119,7 @@ def export_case(session: Session, case_id: str) -> CaseFile:
         "id": row.id, "scenario_id": row.scenario_id, "set": row.set_, "variant": row.variant,
         "request": row.request, "package": row.package, "db_patch": row.db_patch,
         "r_edit": row.r_edit, "labels": row.labels or {}, "e2_basis": row.e2_basis,
+        "injection": row.injection,
     })  # fmt: skip
 
 
@@ -188,7 +203,8 @@ def import_e2e(session: Session, settings: Settings, sid: str) -> str:
     case.db_patch = case.r_edit = case.e2_basis = None
     case.labels = e.labels.model_dump(mode="json", by_alias=True)
     case.approval_script = e.trusted_context.approval_script.model_dump(mode="json")
-    case.case_db_path = str(window_db(settings, e.window_id))
+    case.case_db_path = str(source_db(settings, sid, e.window_id, e.injection is not None))
+    case.injection = e.injection.model_dump(mode="json") if e.injection else None
     case.content_hash = e2e_content_hash(e)
     session.add(case)
     session.flush()

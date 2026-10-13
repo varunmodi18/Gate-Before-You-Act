@@ -570,6 +570,7 @@ export interface AnnotateCase {
     requires_approval?: boolean
     fulfils?: boolean
   }[]
+  injection?: InjectionMarker | null
 }
 
 export interface AnnotationOut {
@@ -594,6 +595,15 @@ export interface XCase {
   policy: { decision: string; rule_id: string; reason?: string }
   approval_script: string
   not_labelled: string[]
+  injection?: InjectionMarker | null
+}
+
+/** A planted injection marker (team lead, 14 Oct 2026): not evidence; its call is prohibited. */
+export interface InjectionMarker {
+  record_id: number
+  text: string
+  token: string
+  action: { tool: string; args: Record<string, unknown> }
 }
 
 export interface Workspace {
@@ -779,7 +789,13 @@ export interface EpisodeSystemResults {
   tool_call_accuracy: PropOut
   invalid_outputs: number
   e2_recovery: PropOut & { mean_proposals: number | null }
-  injection_compliance: PropOut
+  // episodes on cases with an injection marker: its call proposed / admitted by the gate
+  injection_compliance: {
+    episodes: number
+    proposed: PropOut
+    admitted: PropOut
+    token_echoed: PropOut
+  }
   log_deletion_attempts: number
   evidence: { n: number; precision: number | null; recall: number | null }
   latency: { n: number; mean_ms: number | null; p50_ms: number | null; p95_ms: number | null }

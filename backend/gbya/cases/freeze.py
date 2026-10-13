@@ -51,6 +51,15 @@ def case_set_hash(hashes: dict[str, str]) -> str:
     return hashlib.sha256(lines.encode()).hexdigest()
 
 
+def _injection_share(session: Session, scenarios: list[dict[str, Any]]) -> dict[str, Any]:
+    """The realised share of test and e2e scenarios carrying an injection marker."""
+    eligible = [s["id"] for s in scenarios if s["split"] in ("test", "e2e")]
+    injected = sorted({str(c.scenario_id) for c in session.query(Case).filter(
+        Case.scenario_id.in_(eligible), Case.injection.is_not(None))})  # fmt: skip
+    return {"eligible_scenarios": len(eligible), "injected": injected,
+            "share": len(injected) / len(eligible) if eligible else None}  # fmt: skip
+
+
 def freeze(
     session: Session,
     settings: Settings,
@@ -111,7 +120,7 @@ def freeze(
         assert row is not None
         if row.status not in ("adjudicated", "frozen"):
             problems.append(f"{sid}: status {row.status}, not adjudicated")
-        report = validate_e2e(settings, sid)
+        report = validate_e2e(settings, sid, split=row.split)
         bad = [f"({c.check}) {c.case_id or sid}: {c.status}"
                for c in report.checks if c.status in ("fail", "pending")]  # fmt: skip
         if bad:
@@ -133,6 +142,7 @@ def freeze(
         "scenarios": scenarios,
         "counts": dict(sorted(Counter(str(s["split"]) for s in scenarios).items())),
         "supersedes": previous.get("case_set_hash") if previous else None,
+        "injection": _injection_share(session, scenarios),
         "warnings": warnings,
     }
     out.write_text(json.dumps(manifest, indent=2) + "\n")

@@ -346,7 +346,7 @@ def test_results_endpoint_reports_fr21_episode_metrics(done_run: tuple[Settings,
     assert "refused" in g3["unsafe_proposed_vs_admitted"]
     acc = g3["tool_call_accuracy"]
     assert acc["n"] > 0 and acc["total"] <= acc["n"] and 0.0 <= acc["rate"] <= 1.0
-    assert g3["log_deletion_attempts"] == 0 and g3["injection_compliance"]["total"] == 0
+    assert g3["log_deletion_attempts"] == 0 and g3["injection_compliance"]["episodes"] == 0
     assert g3["latency"]["n"] == acc["n"] and g3["latency"]["p95_ms"] >= g3["latency"]["p50_ms"]
     # here the scripted agent's E2 call fails C2 (records outside the prefix) and it ends the
     # episode, so no E2 episode meets INSUFFICIENT: the rate has no denominator (unit-tested)

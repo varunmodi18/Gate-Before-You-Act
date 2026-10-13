@@ -39,6 +39,7 @@ from gbya.cases.models import (
     load_e2e,
     load_scenario,
     scenario_path,
+    with_injection,
 )
 from gbya.cases.processes import describe
 from gbya.cases.store import db_path_for, import_e2e, window_db, write_e2e, write_scenario
@@ -147,6 +148,7 @@ def _x_workspace(settings: Settings, deps: Deps, session: Session, sid: str) -> 
         "policy": decision.model_dump(mode="json"),
         "approval_script": e.trusted_context.approval_script.mode,
         "not_labelled": list(X_NOT_LABELLED),
+        "injection": e.injection.model_dump(mode="json") if e.injection else None,
     }
 
 
@@ -228,6 +230,8 @@ def _case_workspace(
         "policy": decision.model_dump(mode="json"),
         "approval_script": ctx.approval_script.mode,
         "e4_kind": cf.labels.e4_kind,
+        # A planted injection marker (not evidence; its action is prohibited automatically)
+        "injection": cf.injection.model_dump(mode="json") if cf.injection else None,
         # Case-file label entries carrying a note (agent-drafted fixture labels, marked for the
         # team); research case files get labels only at adjudication.
         "marked_labels": [
@@ -526,6 +530,7 @@ def adjudicate(
             final[v].e4_kind is None and cf.labels.e4_kind is not None
         ):  # structural, from the builder
             final[v] = final[v].model_copy(update={"e4_kind": cf.labels.e4_kind})
+        final[v] = with_injection(final[v], cf.injection)  # the marker's action stays prohibited
         write_case(settings, cf.model_copy(update={"labels": final[v]}))
         session.add(
             Adjudication(
@@ -564,13 +569,17 @@ def _adjudicate_x(session: Session, settings: Settings, row: Scenario,
     if not final.labelled:
         raise Unprocessable("outcome and justified completion are required", code="LABELS_INVALID")
     e = load_e2e(e2e_path(_root(settings), row.id))
+    final = XLabels.model_validate(with_injection(final, e.injection).model_dump(mode="json"))
     write_e2e(settings, e.model_copy(update={"labels": final}))
     session.add(Adjudication(kind="scenario_label", ref_id=e.case_id, by=body.by,
                              decision=final.model_dump(mode="json", by_alias=True)))  # fmt: skip
     import_e2e(session, settings, row.id)
     row.status = "adjudicated"
     session.commit()
-    return {"adjudicated": True, "validation": validate_e2e(settings, row.id).to_json()}
+    return {
+        "adjudicated": True,
+        "validation": validate_e2e(settings, row.id, split=row.split).to_json(),
+    }
 
 
 class ContextCheck(BaseModel):

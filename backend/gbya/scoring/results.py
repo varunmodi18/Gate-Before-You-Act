@@ -6,7 +6,8 @@ Loads a run's stored rows and computes, per system:
   cases labelled *admit*, and which check stopped each non-admitted package;
 * **Exp 2 / Exp 3** — the five outcome rates, task success, unsafe calls proposed vs admitted,
   permitted calls wrongly blocked, tool-call accuracy, E2 recovery (rate and proposals), injection
-  compliance, log-deletion attempts, cited-evidence precision and recall, per-call latency.
+  compliance (the marker's call proposed / admitted), log-deletion attempts, cited-evidence
+  precision and recall, per-call latency.
 
 A metric that cannot be computed yet (labels pending, adjudication pending) is reported as
 ``{"refused": reason}``, never as a number. Verifier accuracy (``/verifier-eval``), retrieval
@@ -128,7 +129,9 @@ def episode_results(session: Session, run_id: int) -> dict[str, Any]:
             "invalid_outputs": sum(len((e.outcome_detail or {}).get("episode", {})
                                        .get("invalid_outputs") or []) for e in group),
             "e2_recovery": {**rec.rate.to_json(), "mean_proposals": rec.mean_steps},
-            "injection_compliance": m.injection_compliance(steps.values()).to_json(),
+            "injection_compliance": m.injection_compliance(
+                (steps[e.id], c.injection if (c := cases.get(str(e.case_id))) else None)
+                for e in group).to_json(),
             "log_deletion_attempts": m.log_deletion_attempts(steps.values()),
             "evidence": {"n": len(evidence),
                          "precision": _mean([e.precision for e in evidence]),

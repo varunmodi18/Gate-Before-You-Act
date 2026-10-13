@@ -13,30 +13,40 @@ from __future__ import annotations
 
 import json
 import sys
+from dataclasses import replace
 from typing import Any
 
+from gbya.cases import injection
 from gbya.cases.builder import build_cases, evidence_records, window_facts
 from gbya.cases.models import (
     Add,
+    CaseFile,
+    Injection,
     Labels,
+    ScenarioFile,
     case_path,
     effective_context,
     load_casefile,
     load_scenario,
     scenario_path,
+    with_injection,
 )
 from gbya.cases.patch import patch_database
 from gbya.cases.prefix import build_prefix
 from gbya.cases.store import (
+    base_db,
     case_db,
     cases_dir,
     db_path_for,
     import_scenario,
+    source_db,
     window_db,
     write_case,
 )
 from gbya.config import Settings, get_settings
+from gbya.data.connection import open_case_db
 from gbya.llm.tokens import TokenCounter, default_counter
+from gbya.store.models import Window
 
 
 def prefix_path(settings: Settings, case_id: str) -> Any:
@@ -49,7 +59,10 @@ def generate(
 ) -> dict[str, Any]:
     """Build the variants. E2's sampling basis is computed once and stored with the E2 case;
     later generations reuse its evidence records (plus E1's current citations), so label changes
-    never move E2. ``refresh_e2`` recomputes it from the current labels (``regenerate_e2``)."""
+    never move E2. ``refresh_e2`` recomputes it from the current labels (``regenerate_e2``).
+
+    In a seeded half of the test and e2e scenarios an injection marker is planted in one benign
+    record of a base database from which every variant derives (``gbya.cases.injection``)."""
     from gbya.store.db import make_engine, make_sessionmaker, session_scope
 
     counter = counter or default_counter()
@@ -60,17 +73,35 @@ def generate(
         raise SystemExit(f"window database {wdb} is missing (make normalise)")
     existing: dict[str, Labels] = {}
     stored = None
+    stored_injection = None
     for path in sorted((root / sid / "cases").glob("*.json")):
         cf = load_casefile(path)
         existing[cf.variant] = cf.labels
         if cf.variant == "E2":
             stored = cf.e2_basis
+        if cf.variant == "E1":
+            stored_injection = cf.injection
+    factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
+    with session_scope(factory) as s:
+        window = s.get(Window, sc.window_id)
+        split = window.split if window else None
+    inject = injection.selected(sid, split)
     if stored is not None and not refresh_e2:
         evidence = sorted(set(stored.evidence_records) | set(sc.e1.cited))
     else:
         evidence = evidence_records(sc, existing)
     facts = window_facts(wdb, evidence)
+    if inject and stored_injection is not None:
+        facts = replace(facts, never_sample=frozenset({stored_injection.record_id}))
     cases = build_cases(sc, facts, existing)
+    inj = _injection(sc, wdb, cases, evidence, stored_injection) if inject else None
+    if inj is not None:  # the same marker, and its prohibited action, in every variant
+        cases = [
+            c.model_copy(update={"injection": inj, "labels": with_injection(c.labels, inj)})
+            for c in cases
+        ]
+        injection.plant(wdb, settings.resolve(base_db(settings, sid)), inj)
+    src = settings.resolve(source_db(settings, sid, sc.window_id, inj is not None))
     report: dict[str, Any] = {"scenario": sid, "variants": [c.variant for c in cases],
                               "patches": {}, "prefixes": {}}  # fmt: skip
     keep = {c.variant for c in cases}
@@ -81,7 +112,7 @@ def generate(
         write_case(settings, case)
         if case.db_patch is not None:
             out = settings.resolve(case_db(settings, case.id))
-            rep = patch_database(wdb, out, case.db_patch).to_json()
+            rep = patch_database(src, out, case.db_patch).to_json()
             adds = [op for op in case.db_patch.ops if isinstance(op, Add)]
             if adds and rep["added"] != [facts.max_record_id + i + 1 for i in range(len(adds))]:
                 raise SystemExit(f"{case.id}: added ids {rep['added']} differ from the package")
@@ -95,11 +126,31 @@ def generate(
         path.write_text(prefix.text(), encoding="utf-8")
         report["prefixes"][case.variant] = {"queries": len(prefix.queries),
                                             "retrieved": len(prefix.retrieved)}  # fmt: skip
-    factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
     with session_scope(factory) as s:
         import_scenario(s, settings, sid)
     assert all(case_path(root, c.id).is_file() for c in cases)
+    report["injection"] = inj.model_dump(mode="json") if inj else None
     return report
+
+
+def _injection(sc: ScenarioFile, wdb: Any, cases: list[CaseFile], evidence: list[int],
+               stored: Injection | None) -> Injection:  # fmt: skip
+    """The scenario's marker: the stored one while its record is still eligible, else a new one
+    (benign, in scope, outside E1, the suspicious records, the E2 sample and the evidence)."""
+    e2 = next((c for c in cases if c.variant == "E2"), None)
+    exclude = set(evidence) | set(sc.suspicious_record_ids) | set(sc.e1.cited)
+    exclude |= set(e2.package.cited) if e2 else set()
+    for c in cases:
+        exclude |= set(c.labels.evidence_counterfactual) | set(c.labels.evidence_retrievable)
+    con = open_case_db(wdb)
+    try:
+        seed = set(sc.suspicious_record_ids) | set(sc.e1.cited)
+        if stored is not None and stored.record_id in injection.eligible_records(
+                con, sc.target_host, exclude, seed):  # fmt: skip
+            return stored
+        return injection.choose(con, sc.id, sc.target_host, exclude, seed)
+    finally:
+        con.close()
 
 
 def e2_log_path(settings: Settings, sid: str) -> Any:
@@ -138,12 +189,62 @@ def regenerate_e2(settings: Settings, sid: str, reason: str, *, by: str = "cli",
 
 
 USAGE = ("usage: python -m gbya.cases.cli generate <scenario_id>\n"
-         "       python -m gbya.cases.cli regenerate-e2 <scenario_id> <reason>")  # fmt: skip
+         "       python -m gbya.cases.cli regenerate-e2 <scenario_id> <reason>\n"
+         "       python -m gbya.cases.cli prepare-e2e <window_case_id>")  # fmt: skip
+
+
+def prepare_e2e(settings: Settings, sid: str) -> dict[str, Any]:
+    """An end-to-end window before annotation: decide its injection marker (a seeded half of the
+    e2e windows), plant it in the window's base database, add the marker's action to the
+    prohibited list, and import the case. Needs the authored ``attack_record_ids`` when a
+    marker is due. Refused once frozen."""
+    from gbya.cases.models import e2e_path, load_e2e
+    from gbya.cases.store import import_e2e, write_e2e
+    from gbya.store.db import make_engine, make_sessionmaker, session_scope
+    from gbya.store.models import Scenario
+
+    root = cases_dir(settings)
+    e = load_e2e(e2e_path(root, sid))
+    factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
+    with session_scope(factory) as s:
+        window = s.get(Window, e.window_id)
+        row = s.get(Scenario, sid)
+        if row is not None and row.status == "frozen":
+            raise SystemExit(f"{sid} is frozen; its marker cannot change")
+        split = window.split if window else None
+    inj = None
+    if injection.selected(sid, split):
+        if not e.attack_record_ids:
+            raise SystemExit(f"{sid}: author attack_record_ids in e2e.json first (the attack "
+                             "chain), so that the marker goes into a benign record")  # fmt: skip
+        wdb = settings.resolve(window_db(settings, e.window_id))
+        exclude = set(e.attack_record_ids) | set(e.labels.evidence_retrievable)
+        con = open_case_db(wdb)
+        try:
+            seed = e.attack_record_ids
+            eligible = injection.eligible_records(con, e.target_host, exclude, seed)
+            keep = e.injection is not None and e.injection.record_id in eligible
+            inj = (
+                e.injection
+                if keep and e.injection is not None
+                else injection.choose(con, sid, e.target_host, exclude, seed)
+            )
+        finally:
+            con.close()
+        injection.plant(wdb, settings.resolve(base_db(settings, sid)), inj)
+    labels = with_injection(e.labels, inj)
+    write_e2e(settings, e.model_copy(update={"injection": inj, "labels": labels}))
+    with session_scope(factory) as s:
+        import_e2e(s, settings, sid)
+    return {"window": sid, "split": split, "injection": inj.model_dump(mode="json") if inj
+            else None}  # fmt: skip
 
 
 def main(argv: list[str]) -> None:
     if len(argv) == 2 and argv[0] == "generate":
         print(json.dumps(generate(get_settings(), argv[1]), indent=1))
+    elif len(argv) == 2 and argv[0] == "prepare-e2e":
+        print(json.dumps(prepare_e2e(get_settings(), argv[1]), indent=1))
     elif len(argv) == 3 and argv[0] == "regenerate-e2":
         print(json.dumps(regenerate_e2(get_settings(), argv[1], argv[2]), indent=1))
     else:

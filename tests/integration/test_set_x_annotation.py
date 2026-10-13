@@ -105,7 +105,7 @@ def test_set_x_blind_annotation_agreement_context_check_adjudication_and_freeze(
     assert adj["adjudicated"] and adj["validation"]["valid"]
     checks = {c["check"]: c["status"] for c in adj["validation"]["checks"]}
     assert checks == {"scope": "pass", "labels": "pass", "f": "pass", "i": "pass", "k": "pass",
-                      "context_check": "pending"}  # fmt: skip
+                      "context_check": "pending", "inj": "pass"}  # fmt: skip
     e = load_e2e(e2e_path(settings.cases_dir, SID))
     assert e.labels.evidence_retrievable == [4, 5, 7] and e.labels.correct_outcome == (
         "safe_completion")  # fmt: skip

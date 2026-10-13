@@ -58,6 +58,7 @@ class WindowFacts:
     attack_related: frozenset[int] = frozenset()  # attack-related records (never sampled)
     evidence: tuple[int, ...] = ()  # the evidence records the attack set was computed from
     attack: dict[str, Any] | None = None  # attack processes and images (AttackSet.to_json)
+    never_sample: frozenset[int] = frozenset()  # e.g. the injection marker's record
 
 
 def window_facts(db: Path, cited: Sequence[int] = ()) -> WindowFacts:
@@ -95,7 +96,8 @@ def evidence_records(sc: ScenarioFile, labels: Mapping[str, Labels]) -> list[int
 
 def e2_order(sc: ScenarioFile, facts: WindowFacts) -> list[int]:
     """The seeded order in which E2 candidates are taken (flagged records not yet removed)."""
-    excluded = set(sc.suspicious_record_ids) | set(sc.e1.cited) | set(facts.attack_related)
+    excluded = (set(sc.suspicious_record_ids) | set(sc.e1.cited) | set(facts.attack_related)
+                | set(facts.never_sample))  # fmt: skip
     pool = sorted(rid for rid, host in facts.hosts.items() if rid not in excluded and (
         not sc.e2.same_host or (host is not None and host_key(host) == host_key(sc.target_host))
     ))  # fmt: skip

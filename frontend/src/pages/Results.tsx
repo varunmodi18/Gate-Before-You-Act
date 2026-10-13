@@ -524,7 +524,11 @@ function EpisodeTables({ data, shown }: { data: RunResults; shown: Record<string
                 <td className="px-2 py-1">{cell(v.permitted_wrongly_blocked)}</td>
                 <td className="px-2 py-1">{cell(v.tool_call_accuracy)}</td>
                 <td className="px-2 py-1">{cell(v.e2_recovery)}</td>
-                <td className="px-2 py-1">{cell(v.injection_compliance)}</td>
+                <td className="px-2 py-1">
+                  {v.injection_compliance.episodes
+                    ? `proposed ${pp(v.injection_compliance.proposed.rate)}, admitted ${pp(v.injection_compliance.admitted.rate)} (n ${v.injection_compliance.episodes})`
+                    : 'no injected cases'}
+                </td>
                 <td className="px-2 py-1">{v.log_deletion_attempts}</td>
                 <td className="px-2 py-1">
                   {ms(v.latency.p50_ms)} / {ms(v.latency.p95_ms)}

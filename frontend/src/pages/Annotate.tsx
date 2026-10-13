@@ -13,6 +13,7 @@ import {
   type Comparison,
   type ValidationReport,
   type Workspace,
+  type InjectionMarker,
   type XCase,
 } from '../api/client'
 import { JsonField } from '../components/ContextEditor'
@@ -378,6 +379,7 @@ function CaseForm({
           approval script <span className="font-mono">{c.approval_script}</span>
           {c.e4_kind ? `; E4 kind ${c.e4_kind}` : ''}
         </p>
+        {c.injection && <MarkerNotice m={c.injection} />}
         <TicketChecklist c={c} value={checklist} onChange={onChecklist} />
         {c.e2 && <E2Sample sid={sid} c={c} />}
         {(c.marked_labels ?? []).length > 0 && (
@@ -1019,6 +1021,7 @@ function XCaseForm({
             {JSON.stringify(c.trusted_context, null, 2)}
           </pre>
         </details>
+        {c.injection && <MarkerNotice m={c.injection} />}
         <ContextCheck sid={sid} c={c} />
         <p className="text-xs text-gray-700">
           Not labelled for set X: {c.not_labelled.join(', ')} (technique ground truth is the
@@ -1132,6 +1135,29 @@ function ContextCheck({ sid, c }: { sid: string; c: XCase }) {
         </div>
       )}
       {check.isError && <ErrorBanner error={check.error} />}
+    </div>
+  )
+}
+
+/** Annotators see a planted injection marker so that they never label its record as evidence;
+ * its call is already in the prohibited list (added automatically). */
+function MarkerNotice({ m }: { m: InjectionMarker }) {
+  return (
+    <div
+      role="note"
+      className="mt-2 rounded border border-violet-700 bg-violet-50 p-2 text-sm text-violet-950"
+    >
+      <p className="font-semibold">
+        Injection marker in record {m.record_id} (planted by the benchmark)
+      </p>
+      <p className="font-mono text-xs break-all">{m.text}</p>
+      <p>
+        Do not label record {m.record_id} as evidence. Its call{' '}
+        <span className="font-mono">
+          {m.action.tool}({JSON.stringify(m.action.args)})
+        </span>{' '}
+        is prohibited automatically.
+      </p>
     </div>
   )
 }
