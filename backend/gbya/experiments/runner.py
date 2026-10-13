@@ -65,7 +65,16 @@ from gbya.retrieval.index import load as load_index
 from gbya.retrieval.query import build_query
 from gbya.retrieval.rerank import RERANKER_ID, unavailable_reason
 from gbya.store.db import session_scope
-from gbya.store.models import Case, Job, JobItem, Run, VerifierEval, utcnow
+from gbya.store.models import (
+    Case,
+    Episode,
+    GateDecisionRow,
+    Job,
+    JobItem,
+    Run,
+    VerifierEval,
+    utcnow,
+)
 
 EXP1_SPEC = REPO_ROOT / "experiments" / "exp1.yaml"
 V_PREFIX = "V:"
@@ -302,10 +311,17 @@ def create_exp1_run(
     return run
 
 
+def planned_items(run: Run) -> list[tuple[str, str, int]]:
+    if run.experiment == 2:
+        from gbya.experiments.exp2 import run_items
+
+        return run_items(run)
+    return plan_items(Exp1Spec.model_validate(run.config["spec"]), run.config["case_ids"])
+
+
 def ensure_items(session: Session, run: Run) -> int:
     """Insert missing work units (INSERT OR IGNORE on the idempotency key)."""
-    spec = Exp1Spec.model_validate(run.config["spec"])
-    items = plan_items(spec, run.config["case_ids"])
+    items = planned_items(run)
     rows = [{"run_id": run.id, "case_id": c, "system": s, "run_idx": r, "status": "queued",
              "attempts": 0} for c, s, r in items]  # fmt: skip
     for i in range(0, len(rows), 500):
@@ -395,6 +411,50 @@ def run_item(
         _fail_item(factory, item.id, exc)
 
 
+class _Exp2Cases:
+    def __init__(self, factory: sessionmaker[Session], settings: Settings) -> None:
+        self.factory, self.settings = factory, settings
+        self._cases: dict[str, Any] = {}
+        self._lock = Lock()
+
+    def get(self, case_id: str) -> Any:
+        from gbya.experiments.exp2 import load_episode_case
+
+        with self._lock:
+            if case_id not in self._cases:
+                with session_scope(self.factory) as s:
+                    self._cases[case_id] = load_episode_case(s, case_id, self.settings)
+            return self._cases[case_id]
+
+
+def run_exp2_item(
+    factory: sessionmaker[Session], deps: Deps, cases: _Exp2Cases, run_id: int, item: JobItem
+) -> None:
+    """One Exp 2 episode, written with the unit's ``done`` status in one transaction."""
+    from gbya.experiments import exp2
+
+    if not _start_item(factory, item.id):
+        return
+    try:
+        case = cases.get(item.case_id)
+        with session_scope(factory) as s:
+            run = s.get(Run, run_id)
+            assert run is not None
+            slot = exp2.slot_of(run, item.run_idx)
+        trace = exp2.run_episode(case, deps.configs[item.system], slot, deps, factory)
+        with session_scope(factory) as s:
+            ji = s.get(JobItem, item.id)
+            assert ji is not None
+            if ji.status == "done":
+                return
+            exp2.write_episode(s, trace, case, item.system, item.run_idx, slot, run_id)
+            ji.status, ji.error, ji.updated_at = "done", None, utcnow()
+    except Exception as exc:
+        log.warning("item_error", run=run_id, case=item.case_id, system=item.system,
+                    run_idx=item.run_idx, error=str(exc))  # fmt: skip
+        _fail_item(factory, item.id, exc)
+
+
 APPROX_COUNTER = "approx-test-only"
 
 
@@ -438,12 +498,14 @@ def execute_run(
         run.status = "running"
         run.started_at = run.started_at or utcnow()
         ensure_items(s, run)
+        experiment = run.experiment
     with session_scope(factory) as s:
         pending = select(JobItem).where(
             JobItem.run_id == run_id, JobItem.status != "done", JobItem.attempts < MAX_ATTEMPTS
         )
         todo = list(s.scalars(pending.order_by(JobItem.id)))
     cases = _CaseCache(factory, deps.settings)
+    episode_cases = _Exp2Cases(factory, deps.settings)
     v_items = [i for i in todo if i.system.startswith(V_PREFIX)]
     g_items = [i for i in todo if not i.system.startswith(V_PREFIX)]
     stopped = False
@@ -453,13 +515,21 @@ def execute_run(
         if stopped or should_stop():
             stopped = True
             return
-        run_item(factory, deps, cases, run_id, item)
+        if experiment == 2:
+            run_exp2_item(factory, deps, episode_cases, run_id, item)
+        else:
+            run_item(factory, deps, cases, run_id, item)
         after_item()
 
-    with ThreadPoolExecutor(max_workers=max(1, deps.settings.worker_concurrency)) as pool:
-        list(pool.map(one, v_items))
-    for item in g_items:
-        one(item)
+    workers = max(1, deps.settings.worker_concurrency)
+    if experiment == 2:  # episodes are independent: all in parallel, as many as the server takes
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(one, todo))
+    else:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(one, v_items))
+        for item in g_items:
+            one(item)
 
     with session_scope(factory) as s:
         run = s.get(Run, run_id)
@@ -480,12 +550,9 @@ def progress(session: Session, run_id: int) -> dict[str, Any]:
     run = session.get(Run, run_id)
     if run is None:
         raise NotFound(f"No run {run_id}", code="RUN_NOT_FOUND")
-    total = sum(counts.values()) or len(plan_items(Exp1Spec.model_validate(run.config["spec"]),
-                                                   run.config["case_ids"]))  # fmt: skip
+    total = sum(counts.values()) or len(planned_items(run))
     done = counts.get("done", 0)
-    tok = session.execute(select(func.coalesce(func.sum(VerifierEval.tokens_in), 0),
-                                 func.coalesce(func.sum(VerifierEval.tokens_out), 0))
-                          .where(VerifierEval.run_id == run_id)).one()  # fmt: skip
+    tok = _run_tokens(session, run)
     elapsed = None
     if run.started_at is not None:
         end = run.finished_at or utcnow()
@@ -499,6 +566,24 @@ def progress(session: Session, run_id: int) -> dict[str, Any]:
         "tps_in": round(tok[0] / elapsed, 1) if elapsed else None,
         "tps_out": round(tok[1] / elapsed, 1) if elapsed else None,
     }  # fmt: skip
+
+
+def _run_tokens(session: Session, run: Run) -> tuple[int, int]:
+    """Model tokens of the run: verifier calls (Exp 1V rows, or the episodes' gate decisions) plus,
+    for Exp 2, the proposer's."""
+
+    def total(*cols: Any, where: Any) -> tuple[int, int]:
+        row = session.execute(select(*(func.coalesce(func.sum(c), 0) for c in cols))
+                              .where(where)).one()  # fmt: skip
+        return int(row[0]), int(row[1])
+
+    if run.experiment != 2:
+        return total(VerifierEval.tokens_in, VerifierEval.tokens_out,
+                     where=VerifierEval.run_id == run.id)  # fmt: skip
+    p = total(Episode.tokens_in, Episode.tokens_out, where=Episode.run_id == run.id)
+    v = total(GateDecisionRow.tokens_in, GateDecisionRow.tokens_out,
+              where=GateDecisionRow.run_id == run.id)  # fmt: skip
+    return p[0] + v[0], p[1] + v[1]
 
 
 def _aware(t: datetime) -> datetime:

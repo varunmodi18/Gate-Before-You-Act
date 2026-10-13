@@ -1,7 +1,7 @@
 """Experiment runs API (plan §F.5, T3.5): create, control, progress (SSE) and Exp 1V results.
 
-The API only writes ``runs`` and ``jobs``; the worker process executes them. Exp 1 only for now
-(Exp 2 and Exp 3 arrive in M5 and M6).
+The API only writes ``runs`` and ``jobs``; the worker process executes them. Exp 1 and Exp 2
+(Exp 3 arrives in M6).
 """
 
 from __future__ import annotations
@@ -20,6 +20,8 @@ from sse_starlette.sse import EventSourceResponse
 from gbya.api.deps import get_deps, get_session, get_settings
 from gbya.config import Settings
 from gbya.errors import NotFound, Unprocessable
+from gbya.experiments.exp2 import create_exp2_run, outcome_counts
+from gbya.experiments.exp2 import load_spec as load_exp2_spec
 from gbya.experiments.runner import (
     Deps,
     create_exp1_run,
@@ -55,10 +57,10 @@ TERMINAL = {"completed", "cancelled", "failed"}
 
 
 class RunCreate(BaseModel):
-    experiment: Literal[1] = 1
+    experiment: Literal[1, 2] = 1
     purpose: Literal["research", "development", "fixture", "demo"] = "development"
     case_ids: list[str] | None = Field(default=None, max_length=5000)
-    config: dict[str, Any] | None = None  # overrides of experiments/exp1.yaml
+    config: dict[str, Any] | None = None  # overrides of experiments/exp<experiment>.yaml
     start: bool = True
 
 
@@ -114,9 +116,10 @@ def create(
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> RunOut:
+    create_run = create_exp1_run if body.experiment == 1 else create_exp2_run
     try:
-        run = create_exp1_run(session, settings, purpose=body.purpose, case_ids=body.case_ids,
-                              overrides=body.config, start=body.start)  # fmt: skip
+        run = create_run(session, settings, purpose=body.purpose, case_ids=body.case_ids,
+                         overrides=body.config, start=body.start)  # fmt: skip
     except ValueError as exc:  # spec validation
         raise Unprocessable(str(exc), code="INVALID_RUN_CONFIG") from exc
     session.commit()
@@ -131,6 +134,25 @@ def exp1_spec(deps: Annotated[Deps, Depends(get_deps)]) -> dict[str, Any]:
     unavailable = {k: v for k, v in variant_availability(deps).items() if v is not None}
     variant_of = {sid: deps.configs[sid].verifier_variant for sid in spec.composed}
     return {"spec": spec.model_dump(), "unavailable": unavailable, "variant_of": variant_of}
+
+
+@router.get("/exp2-spec")
+def exp2_spec() -> dict[str, Any]:
+    """The default Exp 2 configuration (``experiments/exp2.yaml``) and which of its systems are
+    not defined yet (A7 with T5.7, A8 with T5.8)."""
+    spec = load_exp2_spec()
+    configs = load_configs()
+    return {"spec": spec.model_dump(mode="json"),
+            "undefined": [s for s in spec.systems if s not in configs]}  # fmt: skip
+
+
+@router.get("/{run_id}/outcomes")
+def outcomes(run_id: int, session: Annotated[Session, Depends(get_session)]) -> dict[str, Any]:
+    """Exp 2 outcome counts per system; ``unscored`` while a case's labels are pending."""
+    run = _run(session, run_id)
+    if run.experiment != 2:
+        raise Unprocessable("Outcomes exist for Exp 2 runs only", code="NOT_EXP2")
+    return {"run_id": run_id, "by_system": outcome_counts(session, run_id)}
 
 
 @router.get("", response_model=list[RunOut])

@@ -75,7 +75,7 @@ def test_live_g3_episode(tmp_path: Path) -> None:
         prefix=prefix, temperature=0.2, seed=11, trace=trace, counter=counter,
     ).run()  # fmt: skip
     con.close()
-    for kind, payload in trace.steps:
+    for kind, payload in trace.kinds():
         shown = payload.get("proposal") or payload.get("text") or payload.get("decision", {}).get(
             "verdict") or payload.get("content", "")  # fmt: skip
         print(f"{kind:9} {json.dumps(shown, ensure_ascii=False)[:220]}")

@@ -1,0 +1,7 @@
+# Fallback F1, defined only here (plan §F.8). Referenced elsewhere by name; no other file may
+# restate these lists. A run created with `fallback: F1` records it in its provenance.
+F1:
+  applies_to: exp2
+  drop_systems: [G2, A1, A5, A7, A8]
+  runs: {G0: 2, G1: 2, G3: 2}     # run indices 1 and 2
+  unchanged: [exp1, exp3]

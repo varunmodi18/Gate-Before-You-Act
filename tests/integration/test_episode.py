@@ -100,11 +100,11 @@ def run(con: Any, cid: str, script: list[Any], *, mode: str = "unreachable",
 
 def executed(trace: ep.MemoryTrace) -> list[dict[str, Any]]:
     """Tool steps of executed state-changing calls (with the approval state at execution)."""
-    return [p for k, p in trace.steps if k == "tool" and "approval_state" in p]
+    return [p for k, p in trace.kinds() if k == "tool" and "approval_state" in p]
 
 
 def feedback(trace: ep.MemoryTrace) -> list[str]:
-    return [p["text"] for k, p in trace.steps if k == "feedback"]
+    return [p["text"] for k, p in trace.kinds() if k == "feedback"]
 
 
 # ---- termination conditions T1-T4 ----------------------------------------------------------------
@@ -140,7 +140,7 @@ def test_t2_rejected_hand_off_does_not_end_the_episode(con: Any) -> None:
 def test_t3_end_episode_is_a_control_action(con: Any, reason: str) -> None:
     res, trace, _state, _ = run(con, "G3", [END(reason)], verifier=Scripted(SUPPORTS))
     assert (res.terminal_state, res.reason) == ("ended", reason)
-    assert [k for k, _ in trace.steps] == ["llm", "tool"] and trace.decisions == []  # no gate
+    assert [k for k, _ in trace.kinds()] == ["llm", "tool"] and trace.decisions == []  # no gate
 
 
 def test_t4_llm_call_cap(con: Any) -> None:
@@ -169,7 +169,7 @@ def test_unusable_output_is_re_asked_once(con: Any) -> None:
     res, trace, _, client = run(con, "A1", ['{"thought": "cut', ISO_H])
     assert (res.terminal_state, res.llm_calls, res.invalid_outputs) == ("fulfilled", 2, 1)
     assert "could not be used" in client.calls[1].messages[-1]["content"]
-    assert [p["reask"] for k, p in trace.steps if k == "llm"] == [False, True]
+    assert [p["reask"] for k, p in trace.kinds() if k == "llm"] == [False, True]
 
 
 def test_output_unusable_after_the_re_ask_costs_a_step(con: Any) -> None:
@@ -214,7 +214,7 @@ def test_request_approval_never_ends_the_episode(con: Any) -> None:
     res, trace, *_ = run(con, "G1", [APPROVE("isolate_host", {"host": DC}), END("cannot_proceed")],
                          mode="grant", req=request(host=DC))  # fmt: skip
     assert res.terminal_state == "ended" and res.approvals[0].accepted
-    assert [k for k, _ in trace.steps].count("approval") == 1
+    assert [k for k, _ in trace.kinds()].count("approval") == 1
 
 
 def test_grant_does_not_cover_a_different_call(con: Any) -> None:
@@ -289,7 +289,7 @@ DC_LABELS = Labels.model_validate({
 
 def scored(trace: ep.MemoryTrace, labels: Labels = DC_LABELS) -> oc.OutcomeResult:
     assert trace.result is not None
-    return oc.classify(oc.events_from_steps(trace.steps, trace.result.terminal_state), labels)
+    return oc.classify(oc.events_from_steps(trace.kinds(), trace.result.terminal_state), labels)
 
 
 def test_g0_explicit_grant_then_execute(con: Any) -> None:
@@ -392,7 +392,7 @@ def test_claim_reaches_the_gate(con: Any) -> None:
 def test_recovery_budget_after_insufficient(con: Any, cid: str, allowed: int) -> None:
     script = [ISO_H, SQL, SQL, SQL, END("cannot_proceed")]
     _res, trace, *_ = run(con, cid, script, verifier=Scripted(INSUFFICIENT))
-    tool_steps = [p for k, p in trace.steps if k == "tool" and p.get("tool") == "sql_query"]
+    tool_steps = [p for k, p in trace.kinds() if k == "tool" and p.get("tool") == "sql_query"]
     assert [p["ok"] for p in tool_steps] == [True] * allowed + [False] * (3 - allowed)
     refused = [p for p in tool_steps if not p["ok"]]
     assert all(p["error_code"] == ep.RECOVERY_EXHAUSTED for p in refused)
@@ -401,7 +401,7 @@ def test_recovery_budget_after_insufficient(con: Any, cid: str, allowed: int) ->
 def test_queries_before_any_insufficient_are_not_limited(con: Any) -> None:
     _res, trace, *_ = run(con, "G3", [SQL, SQL, SQL, END("cannot_proceed")],
                          verifier=Scripted(SUPPORTS))  # fmt: skip
-    assert [p["ok"] for k, p in trace.steps if k == "tool" and p.get("tool") == "sql_query"] == [
+    assert [p["ok"] for k, p in trace.kinds() if k == "tool" and p.get("tool") == "sql_query"] == [
         True, True, True]  # fmt: skip
 
 

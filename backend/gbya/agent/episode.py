@@ -118,20 +118,27 @@ class Trace(Protocol):
 
 @dataclass
 class MemoryTrace:
-    steps: list[tuple[str, dict[str, Any]]] = field(default_factory=list)
+    """Keeps the episode in memory; ``persist`` then writes it in one short transaction (the Exp 2
+    runner commits it together with the work unit's ``done`` status, so a killed worker leaves no
+    partial episode and SQLite's write lock is held only for the write)."""
+
+    steps: list[tuple[str, dict[str, Any], float | None]] = field(default_factory=list)
     decisions: list[GateDecision] = field(default_factory=list)
+    decision_rows: list[tuple[dict[str, Any], list[int], float]] = field(default_factory=list)
     tool_calls: list[dict[str, Any]] = field(default_factory=list)
     result: EpisodeResult | None = None
+    state: dict[str, Any] = field(default_factory=dict)
 
     def step(self, kind: str, payload: dict[str, Any], ms: float | None = None) -> int:
-        self.steps.append((kind, payload))
+        self.steps.append((kind, payload, ms))
         return len(self.steps) - 1
 
     def gate_decision(
         self, decision: GateDecision, call: dict[str, Any], cited: list[int], ms: float
     ) -> int | None:
         self.decisions.append(decision)
-        return len(self.decisions)
+        self.decision_rows.append((call, cited, ms))
+        return len(self.decisions)  # a local id (1-based), mapped to the row id by ``persist``
 
     def tool_call(self, tool: str, args: dict[str, Any], cited: list[int], *, admitted: bool,
                   gate_decision_id: int | None) -> None:  # fmt: skip
@@ -139,7 +146,33 @@ class MemoryTrace:
                                 "gate_decision_id": gate_decision_id})  # fmt: skip
 
     def finish(self, result: EpisodeResult, state: dict[str, Any]) -> None:
-        self.result = result
+        self.result, self.state = result, state
+
+    def kinds(self) -> list[tuple[str, dict[str, Any]]]:
+        return [(k, p) for k, p, _ in self.steps]
+
+    def persist(self, session: Session, episode: Episode) -> None:
+        """Write the finished episode: the episode row (added and flushed here), its steps, gate
+        decisions and tool calls."""
+        assert self.result is not None, "the episode has not finished"
+        session.add(episode)
+        session.flush()
+        for idx, (kind, payload, ms) in enumerate(self.steps):
+            session.add(Step(episode_id=episode.id, idx=idx, kind=kind, payload=payload, ms=ms))
+        ids: dict[int, int] = {}
+        for local, (decision, (call, cited, ms)) in enumerate(
+            zip(self.decisions, self.decision_rows, strict=True), 1
+        ):
+            row = _decision_row(episode, decision, call, cited, ms)
+            session.add(row)
+            session.flush()
+            ids[local] = row.id
+        for tc in self.tool_calls:
+            gid = tc["gate_decision_id"]
+            session.add(_tool_call_row(episode, tc["tool"], tc["args"], tc["cited"],
+                                       tc["admitted"], ids.get(gid) if gid else None))  # fmt: skip
+        _finish_episode(episode, self.result, self.state)
+        session.flush()
 
 
 def _verifier_detail(decision: GateDecision) -> dict[str, Any] | None:
@@ -152,6 +185,44 @@ def _verifier_detail(decision: GateDecision) -> dict[str, Any] | None:
         "retrieval": call.retrieval,
         "ticket_scope_code": call.ticket_scope_code,
     }
+
+
+def _decision_row(episode: Episode, decision: GateDecision, call: dict[str, Any],
+                  cited: list[int], ms: float) -> GateDecisionRow:  # fmt: skip
+    vcall = decision.verifier_call
+    return GateDecisionRow(
+        run_id=episode.run_id,
+        case_id=episode.case_id,
+        system=decision.config_id,
+        run_idx=episode.run_idx,
+        episode_id=episode.id,
+        call=call,
+        cited=cited,
+        checks=[c.model_dump(mode="json") for c in decision.checks],
+        verdict=decision.verdict.value,
+        verifier=_verifier_detail(decision),
+        tokens_in=vcall.tokens_in if vcall else 0,
+        tokens_out=vcall.tokens_out if vcall else 0,
+        ms=ms,
+    )
+
+
+def _tool_call_row(episode: Episode, tool: str, args: dict[str, Any], cited: list[int],
+                   admitted: bool, gate_decision_id: int | None) -> ToolCall:  # fmt: skip
+    return ToolCall(episode_id=episode.id, tool=tool, class_=tool_class(tool) or "unknown",
+                    args=args, cited=cited, admitted=admitted,
+                    gate_decision_id=gate_decision_id)  # fmt: skip
+
+
+def _finish_episode(ep: Episode, result: EpisodeResult, state: dict[str, Any]) -> None:
+    ep.status = "done"
+    ep.terminal_state = result.terminal_state
+    ep.budget_exhausted = result.terminal_state == "cap"
+    ep.approvals = state["approvals"]
+    ep.retrieved = state["retrieved"]
+    ep.tokens_in = result.tokens_in
+    ep.tokens_out = result.tokens_out
+    ep.outcome_detail = {"episode": result.summary()}
 
 
 @dataclass
@@ -181,51 +252,19 @@ class SqlTrace:
     def gate_decision(
         self, decision: GateDecision, call: dict[str, Any], cited: list[int], ms: float
     ) -> int | None:
-        vcall = decision.verifier_call
-        row = GateDecisionRow(
-            run_id=self.episode.run_id,
-            case_id=self.episode.case_id,
-            system=decision.config_id,
-            run_idx=self.episode.run_idx,
-            episode_id=self.episode.id,
-            call=call,
-            cited=cited,
-            checks=[c.model_dump(mode="json") for c in decision.checks],
-            verdict=decision.verdict.value,
-            verifier=_verifier_detail(decision),
-            tokens_in=vcall.tokens_in if vcall else 0,
-            tokens_out=vcall.tokens_out if vcall else 0,
-            ms=ms,
-        )
+        row = _decision_row(self.episode, decision, call, cited, ms)
         self.session.add(row)
         self.session.flush()
         return row.id
 
     def tool_call(self, tool: str, args: dict[str, Any], cited: list[int], *, admitted: bool,
                   gate_decision_id: int | None) -> None:  # fmt: skip
-        self.session.add(
-            ToolCall(
-                episode_id=self.episode.id,
-                tool=tool,
-                class_=tool_class(tool) or "unknown",
-                args=args,
-                cited=cited,
-                admitted=admitted,
-                gate_decision_id=gate_decision_id,
-            )
-        )
+        self.session.add(_tool_call_row(self.episode, tool, args, cited, admitted,
+                                        gate_decision_id))  # fmt: skip
         self.session.flush()
 
     def finish(self, result: EpisodeResult, state: dict[str, Any]) -> None:
-        ep = self.episode
-        ep.status = "done"
-        ep.terminal_state = result.terminal_state
-        ep.budget_exhausted = result.terminal_state == "cap"
-        ep.approvals = state["approvals"]
-        ep.retrieved = state["retrieved"]
-        ep.tokens_in = result.tokens_in
-        ep.tokens_out = result.tokens_out
-        ep.outcome_detail = {"episode": result.summary()}
+        _finish_episode(self.episode, result, state)
         self._flush()
 
 
