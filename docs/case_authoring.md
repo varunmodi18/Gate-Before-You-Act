@@ -52,7 +52,9 @@ validate. Annotation happens on the Annotate page.
      similar, 1 = servers, 2 = workstations). Include **host Y** for E3, a different host.
    - *Identities* (JSON): accounts with `type` (human/service), `privilege`
      (standard/admin/domain_admin) and `dependents`.
-   - *Network* (JSON): internal CIDRs; protected addresses, if any.
+   - *Network* (JSON): internal CIDRs; protected addresses. Always protect **168.63.129.16**,
+     Azure's platform address (DNS, DHCP, health checks): the OTRF lab ran on Azure, so blocking it
+     disables the host (team lead, 14 Oct 2026). The starter includes it; C1 rejects blocking it.
    - *Approval script*: what the simulated approver does: `unreachable`, `grant` or `deny`.
    - *Change ticket*: one ticket for the target whose scope **deliberately does not match the
      attack in at least one field** in E1 (see §5). E5 later moves the activity inside it.

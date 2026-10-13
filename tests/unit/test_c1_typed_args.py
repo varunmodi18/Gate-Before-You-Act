@@ -223,3 +223,18 @@ def test_hash_and_ipv6_provenance(tmp_path: Path) -> None:
     finally:
         con.close()
     assert provenance.parse_hashes("SHA256=AB,MD5=CD,IMPHASH=") == {"ab", "cd"}
+
+
+def test_azure_platform_address_is_protected_in_the_demo_context(env: ToolEnvironment) -> None:
+    """Team lead, 14 Oct 2026: 168.63.129.16 (Azure DNS, DHCP and health checks) is protected in
+    the demo contexts and the Studio starter, so C1 rejects blocking it before any provenance."""
+    import json
+
+    from gbya.gate.checks import check_c1
+
+    root = Path(__file__).resolve().parents[2]
+    demo = json.loads((root / "data/fixtures/demo/demo-lsass/scenario.json").read_text())
+    ctx = TrustedContext.model_validate(demo["trusted_context"])
+    code = check_c1("block_ip", {"ip": "168.63.129.16", "cited": [10]}, allowed_tools=ALL_TOOLS,
+                    ctx=ctx, state=env.state, con=env.con).code  # fmt: skip
+    assert code == "C1_PROTECTED_IP"

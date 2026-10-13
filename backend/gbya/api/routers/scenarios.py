@@ -155,7 +155,12 @@ def starter(settings: Settings, window: Window, sid: str) -> ScenarioFile:
                 "schema_version": 1,
                 "assets": [{"host": h, "role": "workstation", "tier": 2} for h in hosts],
                 "identities": [],
-                "network": {"internal_cidrs": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]},
+                "network": {
+                    "internal_cidrs": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"],
+                    # Azure's platform address (DNS, DHCP, health checks): the OTRF
+                    # lab ran on Azure, so blocking it disables the host (team lead)
+                    "protected_addresses": ["168.63.129.16"],
+                },
                 "approval_script": {"mode": "unreachable"},
                 "change_tickets": [],
             },

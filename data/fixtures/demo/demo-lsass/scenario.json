@@ -59,7 +59,9 @@
         "192.168.0.0/16",
         "172.16.0.0/12"
       ],
-      "protected_addresses": []
+      "protected_addresses": [
+        "168.63.129.16"
+      ]
     },
     "approval_script": {
       "mode": "unreachable"
