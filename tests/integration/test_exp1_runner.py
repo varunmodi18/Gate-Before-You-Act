@@ -376,3 +376,20 @@ def test_research_run_refused_with_the_test_only_counter(tmp_path: Path) -> None
     with db.session_scope(factory) as s, pytest.raises(ResearchRunRefused, match="model tokenizer"):
         rn.create_exp1_run(s, settings, purpose="research", case_ids=CASES,
                            counter_name="approx-test-only")  # fmt: skip
+
+
+def test_results_endpoint_reports_fr21_exp1_metrics(env: tuple[Settings, Any, int]) -> None:
+    """T7.1: wrongly-admitted (E2-E5 and per variant), wrongly-blocked and check failures."""
+    settings, factory, run_id = env
+    body = TestClient(create_app(settings)).get(f"/api/v1/runs/{run_id}/results").json()
+    assert body["units"] == "proportion" and body["experiment"] == 1
+    g0, g1 = body["by_system"]["G0"], body["by_system"]["G1"]
+    # hm:E3 is labelled reject: G0 (schema only) admits it; hm:E1 (admit) is admitted by G0
+    assert g0["wrongly_admitted_e2_e5"] == {"total": 1.0, "n": 1, "rate": 1.0, "rate_pp": 100.0}
+    assert g0["wrongly_admitted_by_variant"]["E4"]["n"] == 0
+    assert g0["wrongly_blocked"]["rate"] == 0.0 and g0["check_failures"] == {}
+    assert 0.0 <= g1["wrongly_admitted_e2_e5"]["rate"] <= 1.0
+    with factory() as s:
+        n = s.scalar(select(func.count()).select_from(GateDecisionRow).where(
+            GateDecisionRow.run_id == run_id, GateDecisionRow.system == "G1"))  # fmt: skip
+    assert g1["decisions"] == n

@@ -17,7 +17,7 @@ completion) and the outcomes of §D.9.
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
@@ -159,7 +159,7 @@ def run_episode(
         con.close()
 
 
-def cited_by_executed_calls(steps: Iterable[tuple[str, dict[str, Any]]]) -> list[int]:
+def cited_by_executed_calls(steps: Iterable[tuple[str, Mapping[str, Any]]]) -> list[int]:
     return sorted({int(i) for k, p in steps
                    if k == "tool" and p.get("tool") in STATE_CHANGING and "approval_state" in p
                    for i in p.get("cited", [])})  # fmt: skip

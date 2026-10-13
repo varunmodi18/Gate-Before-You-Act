@@ -259,6 +259,17 @@ def items(run_id: int, session: Annotated[Session, Depends(get_session)],
              "attempts": r.attempts, "error": r.error} for r in rows]  # fmt: skip
 
 
+@router.get("/{run_id}/results")
+def results(run_id: int, session: Annotated[Session, Depends(get_session)]) -> dict[str, Any]:
+    """Every FR-21 metric per system (T7.1; ``scoring/results.py``), with denominators; a metric
+    whose labels or adjudications are pending is refused, not estimated."""
+    from gbya.scoring.results import run_results
+
+    run = _run(session, run_id)
+    return run_results(session, run) | {"purpose": run.purpose, "replay": run.replay,
+                                        "research_eligible": research_eligible(run)}  # fmt: skip
+
+
 @router.get("/{run_id}/verifier-eval")
 def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]) -> dict[str, Any]:
     """Exp 1V diagnostic accuracy by verifier variant and case variant (with denominators), and

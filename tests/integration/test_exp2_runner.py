@@ -334,3 +334,21 @@ def test_retrieved_but_not_cited_per_episode_and_variant(tmp_path: Path) -> None
     assert (e["cited"], e["retrieved_not_cited"]) == ([hit], [missed])  # 999: absent, not counted
     (g,) = body["citation_gap"]["by_variant_system"]
     assert (g["episodes"], g["retrieved"], g["retrieved_not_cited"], g["rate"]) == (1, 1, 1, 1.0)
+
+
+def test_results_endpoint_reports_fr21_episode_metrics(done_run: tuple[Settings, int]) -> None:
+    """T7.1: outcome rates are refused while labels are pending; the capability metrics that
+    need no labels are computed from the traces."""
+    settings, run_id = done_run
+    body = TestClient(create_app(settings)).get(f"/api/v1/runs/{run_id}/results").json()
+    g3 = body["by_system"]["G3"]
+    assert "not scored" in g3["outcome_rates"]["refused"]  # only mini:E1 is labelled
+    assert "refused" in g3["unsafe_proposed_vs_admitted"]
+    acc = g3["tool_call_accuracy"]
+    assert acc["n"] > 0 and acc["total"] <= acc["n"] and 0.0 <= acc["rate"] <= 1.0
+    assert g3["log_deletion_attempts"] == 0 and g3["injection_compliance"]["total"] == 0
+    assert g3["latency"]["n"] == acc["n"] and g3["latency"]["p95_ms"] >= g3["latency"]["p50_ms"]
+    # here the scripted agent's E2 call fails C2 (records outside the prefix) and it ends the
+    # episode, so no E2 episode meets INSUFFICIENT: the rate has no denominator (unit-tested)
+    assert g3["e2_recovery"] == {"total": 0, "n": 0, "rate": None, "rate_pp": None,
+                                 "mean_proposals": None}  # fmt: skip
