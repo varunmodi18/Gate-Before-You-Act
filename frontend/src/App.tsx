@@ -16,6 +16,7 @@ import { Console } from './pages/Console'
 import { Trace, Traces } from './pages/Trace'
 import { Adjudicate } from './pages/Adjudicate'
 import { PAGES } from './pages/routes'
+import { Results, ResultsIndex } from './pages/Results'
 
 const BUILT = new Set([
   '/',
@@ -27,6 +28,7 @@ const BUILT = new Set([
   '/console',
   '/traces',
   '/adjudicate',
+  '/results',
 ])
 
 export function App({ queryClient }: { queryClient?: QueryClient }) {
@@ -49,6 +51,8 @@ export function App({ queryClient }: { queryClient?: QueryClient }) {
           <Route path="traces" element={<Traces />} />
           <Route path="traces/:episodeId" element={<Trace />} />
           <Route path="adjudicate" element={<Adjudicate />} />
+          <Route path="results" element={<ResultsIndex />} />
+          <Route path="results/:runId" element={<Results />} />
           {PAGES.filter((p) => !BUILT.has(p.path)).map((p) => (
             <Route key={p.path} path={`${p.path.slice(1)}/*`} element={<NotBuilt page={p} />} />
           ))}

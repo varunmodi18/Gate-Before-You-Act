@@ -52,13 +52,14 @@ describe('SPA shell', () => {
     expect(await screen.findByText('✕ Unreachable')).toBeInTheDocument()
   })
 
-  it('routes unbuilt pages to a labelled placeholder', () => {
+  it('routes /results to the Results page, no longer a placeholder (T7.4)', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(() => new Promise(() => {})),
     )
     renderAt('/results')
     expect(screen.getByRole('heading', { name: 'Results' })).toBeInTheDocument()
-    expect(screen.getByText(/task T7\.4/)).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Runs with results' })).toBeInTheDocument()
+    expect(screen.queryByText(/task T7\.4/)).toBeNull()
   })
 })

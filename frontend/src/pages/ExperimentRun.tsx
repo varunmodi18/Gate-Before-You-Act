@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { Link, useParams } from 'react-router'
 
 import {
   API_BASE,
@@ -86,6 +86,11 @@ export function ExperimentRun() {
       <h1 id="run-title" className="mb-2 text-2xl font-semibold">
         Run {r.id}: Experiment {r.experiment}
       </h1>
+      <p className="mb-2 text-sm">
+        <Link className="text-blue-800 underline" to={`/results/${r.id}`}>
+          Open the results of run {r.id}
+        </Link>
+      </p>
       <div aria-live="polite" className="mb-3 text-sm">
         <p>
           Status: <strong className="font-mono">{p.status}</strong>; {p.done} of {p.total} units

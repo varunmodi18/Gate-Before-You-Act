@@ -2307,6 +2307,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Deliverables:** J6.
 - **Verification:** Playwright J6; axe.
 - **Done when:** M7 is demonstrable.
+- *Draft 9 note (as built):* `/results` lists runs; `/results/:runId` shows provenance, illustrative mode (watermark, `/analysis/illustrative`, no verdicts) for non-research runs, hypothesis cards for completed research runs with a chosen run of the other experiment, the forest plot and outcome bars (inline SVG with text alternatives) and the T7.1 tables with toggles. P2 charts are not built. T7.1 adds `GET /runs/{id}/results`; T7.2 adds `POST /analysis/code-ticket` and T7.3 `POST /analysis/sensitivity` next to the three endpoints of §F.5.
 
 **T7.5 Error taxonomy and exports**
 - **Prerequisites:** T7.4.

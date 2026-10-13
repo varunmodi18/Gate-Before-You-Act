@@ -749,3 +749,113 @@ export interface AdjudicationItem {
   item: string
   episodes: number
 }
+
+// ---- Results and analysis (T7.1, T7.2, T7.4) ------------------------------------------------
+// Proportions are authoritative; *_pp fields (percentage points) are for display only.
+
+export interface PropOut {
+  total: number
+  n: number
+  rate: number | null
+  rate_pp: number | null
+}
+
+export type Maybe<T> = T | { refused: string }
+
+export interface Exp1SystemResults {
+  wrongly_admitted_e2_e5: Maybe<PropOut>
+  wrongly_admitted_by_variant: Record<string, Maybe<PropOut>>
+  wrongly_blocked: Maybe<PropOut>
+  check_failures: Record<string, number>
+  decisions: number
+}
+
+export interface EpisodeSystemResults {
+  episodes: number
+  outcome_rates: Maybe<Record<string, PropOut>>
+  task_success: Maybe<PropOut>
+  unsafe_proposed_vs_admitted: Maybe<PropOut>
+  permitted_wrongly_blocked: Maybe<PropOut>
+  tool_call_accuracy: PropOut
+  invalid_outputs: number
+  e2_recovery: PropOut & { mean_proposals: number | null }
+  injection_compliance: PropOut
+  log_deletion_attempts: number
+  evidence: { n: number; precision: number | null; recall: number | null }
+  latency: { n: number; mean_ms: number | null; p50_ms: number | null; p95_ms: number | null }
+}
+
+export interface RunResults {
+  run_id: number
+  experiment: number
+  units: 'proportion'
+  purpose: string
+  replay: boolean
+  research_eligible: boolean
+  by_system: Record<string, Exp1SystemResults | EpisodeSystemResults>
+}
+
+export interface IntervalOut {
+  estimate: number
+  ci_low: number
+  ci_high: number
+  estimate_pp: number
+  ci_low_pp: number
+  ci_high_pp: number
+  n_scenarios: number
+  n_cases: number
+}
+
+export interface HypothesisOut extends IntervalOut {
+  target: number
+  target_pp: number
+  target_reached: boolean
+  statistically_supported: boolean
+}
+
+export interface H2Out extends IntervalOut {
+  margin: number
+  margin_pp: number
+  decision: 'no_harm_supported' | 'harm_beyond_margin' | 'inconclusive'
+}
+
+export interface Provenance {
+  run_id: number
+  experiment: number
+  purpose: string
+  status: string
+  replay: boolean
+  git_sha: string | null
+  config_hash: string
+  case_set_hash: string | null
+  model_id: string | null
+  model_file_sha256: string | null
+  backend: string | null
+  research_eligible: boolean
+  created_at: string | null
+  finished_at: string | null
+}
+
+export interface HypothesesOut {
+  units: 'proportion'
+  H1: HypothesisOut
+  H1_C4: HypothesisOut
+  H2: H2Out
+  exploratory: { code_ticket: Record<string, unknown> }
+  bootstrap: { B: number; seed: number }
+  provenance: { exp1: Provenance; exp2: Provenance }
+}
+
+export interface IllustrativeOut {
+  illustrative: true
+  rates: Record<string, Record<string, number>>
+  differences: (Omit<IntervalOut, 'estimate_pp' | 'ci_low_pp' | 'ci_high_pp'> & {
+    name: string
+    estimate_pp: number | null
+    ci_low_pp: number | null
+    ci_high_pp: number | null
+  })[]
+  refused: Record<string, string>
+  provenance: Provenance
+  note: string
+}
