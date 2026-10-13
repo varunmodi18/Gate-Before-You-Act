@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test
+.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -104,6 +104,17 @@ model-up:  ## Start the model server for PROFILE on 127.0.0.1:8001 (foreground; 
 
 pilot:  ## Throughput pilot against the running server -> docs/pilot/$(PROFILE).json (30-min soak)
 	$(UV) run python scripts/pilot.py --model $$($(UV) run python -c "import yaml;print(yaml.safe_load(open('config/model_profiles.yaml'))['profiles']['$(PROFILE)']['served_model_name'])") --soak-minutes 30 --out docs/pilot/$(PROFILE).json
+
+demo-setup:  ## Build data/demo from data/fixtures/demo (T8.1; needs make data and make index)
+	$(UV) run python scripts/demo_setup.py
+
+demo-up: build-web  ## API + worker on the demo environment (data/demo; never the research app.db)
+	@trap 'kill 0' INT TERM EXIT; \
+	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases \
+	  $(UV) run uvicorn gbya.api.main:app --app-dir backend --host $(API_HOST) --port $(API_PORT) & \
+	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases \
+	  $(UV) run python -m gbya.worker & \
+	wait
 
 gpu-test:  ## Tests that need the running model server (pytest -m gpu)
 	$(UV) run pytest -m gpu

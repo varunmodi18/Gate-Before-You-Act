@@ -63,6 +63,9 @@ def test_attack_related_records_use_guids_parents_and_children(tmp_path: Path) -
         7: _ev("1", "07", Image="C:\\\\parent.exe", ProcessId="50", ProcessGuid="{P}", ParentProcessId="4"),
         8: _ev("3", "08", Image="C:\\\\other.exe", ProcessId="300", ProcessGuid="{D}", DestinationIp="1.2.3.6"),
         9: _ev("1", "09", Image="C:\\\\okchild.exe", ProcessId="210", ProcessGuid="{E}", ParentProcessId="100", ParentProcessGuid="{B}"),
+        # raw-only (Sysmon 7 is not normalised): acting PID from the raw event (found in T8.1)
+        10: _ev("7", "10", Image="C:\\\\evil.exe", ProcessId="100", ProcessGuid="{A}", ImageLoaded="C:\\\\dbgcore.dll"),
+        11: _ev("7", "11", Image="C:\\\\other.exe", ProcessId="300", ProcessGuid="{D}", ImageLoaded="C:\\\\x.dll"),
     }  # fmt: skip
     path = tmp_path / "w.duckdb"
     with build_database(path) as con:
@@ -74,7 +77,8 @@ def test_attack_related_records_use_guids_parents_and_children(tmp_path: Path) -
             _insert(con, rid, raw)
     con = open_case_db(path)
     try:
-        assert attack_related_records(con, [1]) == {1, 2, 5, 6, 7}  # not 3, 4, 9 (other GUID), 8
+        # not 3, 4, 9 (other GUID), 8 or 11; 10 is the cited process's raw-only image load
+        assert attack_related_records(con, [1]) == {1, 2, 5, 6, 7, 10}
     finally:
         con.close()
 

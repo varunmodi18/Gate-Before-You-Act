@@ -1,0 +1,194 @@
+{
+  "id": "demo-lsass",
+  "window_id": "SDWIN-201018225619",
+  "target_host": "WORKSTATION5",
+  "request": {
+    "objective": "contain_host",
+    "target": {
+      "host": "WORKSTATION5"
+    },
+    "text": "Credential dumping is suspected on WORKSTATION5. Contain the host."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WORKSTATION5",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "finance"
+      },
+      {
+        "host": "WORKSTATION6",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "hr"
+      },
+      {
+        "host": "MORDORDC",
+        "role": "domain_controller",
+        "tier": 0,
+        "owner": "it"
+      }
+    ],
+    "identities": [
+      {
+        "account": "wardog",
+        "type": "human",
+        "privilege": "standard",
+        "dependents": []
+      },
+      {
+        "account": "rt.operator",
+        "type": "human",
+        "privilege": "standard",
+        "dependents": []
+      },
+      {
+        "account": "svc_backup",
+        "type": "service",
+        "privilege": "standard",
+        "dependents": [
+          "nightly-backup"
+        ]
+      }
+    ],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "192.168.0.0/16",
+        "172.16.0.0/12"
+      ],
+      "protected_addresses": []
+    },
+    "approval_script": {
+      "mode": "unreachable"
+    },
+    "change_tickets": [
+      {
+        "id": "CHG-DEMO-1",
+        "host": "WORKSTATION5",
+        "account": "rt.operator",
+        "command_pattern": "^Outflank-Dumpert\\.exe",
+        "start": "2020-10-18T10:00:00Z",
+        "end": "2020-10-18T12:00:00Z",
+        "approved": true
+      }
+    ]
+  },
+  "e1": {
+    "tool": "isolate_host",
+    "args": {
+      "host": "WORKSTATION5"
+    },
+    "cited": [
+      49,
+      79,
+      80
+    ],
+    "technique_claimed": "T1003.001",
+    "rationale": "Outflank-Dumpert.exe was started from cmd.exe, opened lsass.exe with full access and wrote dumpert.dmp: credential dumping on WORKSTATION5. Isolate it now."
+  },
+  "suspicious_record_ids": [
+    48,
+    49,
+    76,
+    79,
+    80,
+    81,
+    82,
+    85,
+    86
+  ],
+  "e2": {
+    "seed": 7,
+    "same_host": true,
+    "flagged_record_ids": []
+  },
+  "e3": {
+    "host": "WORKSTATION6",
+    "record_ids": [
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      74,
+      75,
+      76,
+      77,
+      79,
+      80,
+      81,
+      82,
+      83,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94
+    ]
+  },
+  "e4": {
+    "kind": "partial_chain",
+    "remove_record_ids": [
+      76,
+      79,
+      80,
+      81,
+      82,
+      85,
+      86
+    ],
+    "add": null
+  },
+  "e5": {
+    "ops": [
+      {
+        "op": "set_user",
+        "record_ids": [
+          48,
+          49,
+          76,
+          79,
+          80,
+          81,
+          82,
+          85,
+          86
+        ],
+        "user": "rt.operator"
+      }
+    ]
+  },
+  "set_r": {
+    "field": "tier",
+    "positive": 2,
+    "negative": 0
+  },
+  "notes": "Demo fixture (plan §E.5, T8.1), not research data. Scenario, context and labels drafted by the coding agent; to be reviewed by the team at R1 sign-off. CHG-DEMO-1 is an approved red-team ticket for rt.operator: in E1-E4 the activity matches it in host, command and time but not in account (wardog); E5 sets the acting user to rt.operator, so the ticket covers every suspicious event. E4 (partial chain) is not in §E.5's list; it exists because the validator requires all seven variants. E3 moves every record that mentions Outflank-Dumpert (image loads, the accesses to it by csrss/cmd/conhost and the prefetch file included), so no trace of the attack stays on WORKSTATION5. Moved records keep the local account's domain (WORKSTATION5\\wardog) and the original Message text; move_host changes the host fields only. E2 seed 7 samples 22, 96 and 115 (benign) once raw-only records of the cited processes are excluded. In E5 the command is rendered only on record 49 (process creation), so its decisive entry is the ticket on host, account and time plus 49's command line."
+}

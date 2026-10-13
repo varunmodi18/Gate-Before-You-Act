@@ -2,9 +2,10 @@
 
 A record's **acting process** is its acting PID (the gate's role table, §D.6.2a) on its host,
 with the Sysmon process GUID when the event carries one (``ProcessGuid``; ``SourceProcessGUID``
-for process access). Other processes named in a record are its parent (``ppid`` /
-``ParentProcessGuid``) and, for process access, its target (``target_pid`` /
-``TargetProcessGUID``).
+for process access). A raw-only record (an event type that is not normalised, e.g. Sysmon 7 image
+loads) takes its acting PID from the raw event's ``ProcessId``. Other processes named in a record
+are its parent (``ppid`` / ``ParentProcessGuid``) and, for process access, its target
+(``target_pid`` / ``TargetProcessGUID``).
 
 Two identities are the same process when host and PID agree and, if both carry a GUID, the GUIDs
 agree. Without GUIDs this errs towards "same", which only removes more candidates from E2's pool.
@@ -23,12 +24,12 @@ from typing import Any
 import duckdb
 
 from gbya.context.models import host_key
-from gbya.data.fieldmap import TABLES
 from gbya.gate.checks import ACTOR_PID
 from gbya.gate.evidence import CitedRecord, read_cited
 
 ACTOR_GUID = {"process_access": ("SourceProcessGUID", "SourceProcessGuid")}
 DEFAULT_GUID = ("ProcessGuid",)
+RAW_PID = ("ProcessId", "ProcessID")
 
 
 @dataclass(frozen=True)
@@ -53,9 +54,28 @@ def _guid(raw: dict[str, Any], keys: Iterable[str]) -> str | None:
     return None
 
 
+def _raw_pid(raw: dict[str, Any]) -> int | None:
+    containers = [raw, raw.get("event_data")] if isinstance(raw.get("event_data"), dict) else [raw]
+    for c in containers:
+        for k in RAW_PID:
+            v = c.get(k) if isinstance(c, dict) else None
+            if v in (None, ""):
+                continue
+            try:
+                return int(str(v), 0) if str(v).lower().startswith("0x") else int(str(v))
+            except ValueError:
+                return None
+    return None
+
+
 def acting_process(rec: CitedRecord) -> Proc | None:
-    if rec.table is None or rec.host is None:
+    if rec.host is None:
         return None
+    if rec.table is None:  # raw-only record: the raw event's own process
+        raw_pid = _raw_pid(rec.raw)
+        if raw_pid is None:
+            return None
+        return Proc(host_key(rec.host), raw_pid, _guid(rec.raw, DEFAULT_GUID))
     pid = next((rec.values.get(c) for c in ACTOR_PID.get(rec.table, ()) if rec.values.get(c)), None)
     if pid is None:
         return None
@@ -103,9 +123,8 @@ def attack_related_records(con: duckdb.DuckDBPyConnection, cited: Iterable[int])
             procs.append(parent)  # parent of a seed
         if parent is not None and any(parent.same(s) for s in seeds):
             procs.append(child)  # child of a seed
-    ids = [
-        int(r[0]) for t in TABLES for r in con.execute(f'SELECT record_id FROM "{t}"').fetchall()
-    ]
+    # every record, raw-only ones included (their acting PID comes from the raw event)
+    ids = [int(r[0]) for r in con.execute("SELECT record_id FROM raw_events").fetchall()]
     related = set()
     for rec in read_cited(con, ids).values():
         actor = acting_process(rec)
