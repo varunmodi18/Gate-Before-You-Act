@@ -309,6 +309,29 @@ class ToolCall(Base):
     gate_decision_id: Mapped[int | None] = mapped_column(ForeignKey("gate_decisions.id"))
 
 
+# Error taxonomy of proposal §12 (T7.5); the Traces page tags episodes with these.
+ERROR_TAGS = [
+    "wrong_target",
+    "weak_evidence_accepted",
+    "in_scope_ticket_missed",
+    "out_of_scope_ticket_accepted",
+    "over_deferral",
+    "injection_followed",
+]
+
+
+class TraceTag(Base):
+    """Error-taxonomy tags of one episode and whether it is one of the annotated traces."""
+
+    __tablename__ = "trace_tags"
+
+    episode_id: Mapped[int] = mapped_column(ForeignKey("episodes.id"), primary_key=True)
+    tags: Mapped[list[Any]] = mapped_column(default=list)
+    starred: Mapped[bool] = mapped_column(Boolean, default=False)
+    note: Mapped[str | None] = mapped_column(String)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
 class VerifierEval(Base):
     """Exp 1V diagnostic verifier pass (§D.7.2)."""
 

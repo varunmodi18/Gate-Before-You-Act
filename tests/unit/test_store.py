@@ -39,6 +39,7 @@ F1_TABLES = {
     "verifier_evals",
     "agreement_snapshots",
     "retrieval_rankings",
+    "trace_tags",
 }
 
 

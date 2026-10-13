@@ -85,7 +85,12 @@ def request_approval(
             f"Refused: policy forbids {_describe(action_tool, target)} ({decision.rule_id}).",
         )
 
-    new_state, code = SCRIPT_RESULT[env.ctx.approval_script.mode]
+    mode = (
+        env.approver(key, _describe(action_tool, target))
+        if env.approver is not None  # demo-interactive Console only
+        else env.ctx.approval_script.mode
+    )
+    new_state, code = SCRIPT_RESULT[mode]
     env.state.approvals[key] = new_state
     env.state.approval_requests += 1
     message = {

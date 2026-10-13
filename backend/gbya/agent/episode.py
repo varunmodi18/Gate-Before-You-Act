@@ -32,6 +32,7 @@ from __future__ import annotations
 import hashlib
 import json
 import time
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Protocol
 
@@ -301,6 +302,10 @@ class EpisodeResult:
         }
 
 
+class EpisodeStopped(Exception):
+    """The Console stopped the episode; it has no terminal state and is never scored."""
+
+
 @dataclass
 class _Ended(Exception):
     state: TerminalState
@@ -339,6 +344,7 @@ class EpisodeRunner:
     caps: Caps = field(default_factory=Caps)
     recorder: mock_actions.Recorder = field(default_factory=mock_actions.MemoryRecorder)
     retries: bool = True
+    should_stop: Callable[[], bool] = lambda: False  # Console "Stop" (raises EpisodeStopped)
 
     def __post_init__(self) -> None:
         assert self.tools.state is self.env.state, "the tools and the gate share one EpisodeState"
@@ -543,6 +549,8 @@ class EpisodeRunner:
     def run(self) -> EpisodeResult:
         try:
             while True:
+                if self.should_stop():
+                    raise EpisodeStopped(f"stopped after {self.steps} steps")
                 if self.steps >= self.caps.max_steps:
                     raise _Ended("cap", "max_steps")
                 proposal = self._next_proposal()

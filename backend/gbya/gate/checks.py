@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import ipaddress
 import time
-from collections.abc import Collection, Mapping
+from collections.abc import Callable, Collection, Mapping
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Any
@@ -176,6 +176,10 @@ class GateEnv:
     counter: TokenCounter
     allowed_tools: Collection[str]
     window: tuple[datetime, datetime] | None
+    # Demo-interactive Console only (§D.10.2): a human answers approval requests instead of the
+    # scripted approver. Called with (normalised call key, description); returns "grant", "deny"
+    # or "unreachable". Never set for experiment runs.
+    approver: Callable[[str, str], str] | None = None
 
 
 def _timed(

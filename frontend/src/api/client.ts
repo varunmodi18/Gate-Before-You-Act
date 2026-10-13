@@ -77,6 +77,18 @@ export async function apiPut<T>(path: string, body: unknown): Promise<T> {
 
 export interface Health {
   api: string
+  worker?: { alive: boolean; last_heartbeat: string | null }
+  model?: {
+    status: string
+    backend: string
+    model_id: string
+    last_pilot: {
+      in_tps: number | null
+      out_tps: number | null
+      peak_vram_mb: number | null
+    } | null
+  }
+  data?: { windows: number; index: boolean }
 }
 
 export interface WindowSummary {
@@ -574,4 +586,85 @@ export interface AgreementReport {
   pooled: AgreementSummary
   per_scenario: (AgreementSummary & { scenario_id: string; split: string | null })[]
   note: string
+}
+
+// ---- Agent Console, Traces and the adjudication queue (T5.6, T5.4) ----------------------------
+
+export type StepKind = 'llm' | 'tool' | 'gate' | 'approval' | 'feedback'
+
+export interface StepOut {
+  idx: number
+  kind: StepKind
+  // The step payload as stored (append-only); its shape depends on the kind.
+  payload: Record<string, unknown>
+  ms?: number | null
+}
+
+export interface EpisodeSummary {
+  id: number
+  run_id: number | null
+  case_id: string | null
+  system: string
+  run_idx: number
+  temperature: number | null
+  seed: number | null
+  status: string
+  terminal_state: string | null
+  outcome: string | null
+  rule: string | null
+  rule_text: string | null
+  budget_exhausted: boolean
+  unqualified_escalation: boolean
+  tokens_in: number
+  tokens_out: number
+  interactive_approval: boolean
+  error: string | null
+  tags?: string[]
+  starred?: boolean
+}
+
+export interface EpisodeDetail extends EpisodeSummary {
+  steps: StepOut[]
+  tool_calls: {
+    tool: string
+    class: string
+    args: Record<string, unknown>
+    cited: number[]
+    admitted: boolean
+    call_class: string | null
+    escalation_class: string | null
+  }[]
+  scoring: Record<string, unknown> | null
+  summary: Record<string, unknown> | null
+  request: { objective: string; target: Record<string, unknown>; text: string } | null
+  labels: Record<string, unknown> | null
+  pending_approval: { call_key: string; call: string } | null
+  tags: string[]
+  starred: boolean
+  note: string | null
+  error_tags: string[]
+}
+
+export interface ConsoleCase {
+  case_id: string
+  variant: string
+  request: { objective: string; target: Record<string, unknown>; text: string }
+  labelled: boolean
+}
+
+export interface ConsoleSystem {
+  id: string
+  checks: string[]
+  recovery_budget: number | null
+  verifier_variant: string | null
+  unavailable: string | null
+}
+
+export interface AdjudicationItem {
+  ref_id: string
+  case_id: string
+  kind: 'call' | 'escalation'
+  tool: string
+  item: string
+  episodes: number
 }

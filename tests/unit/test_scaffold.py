@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 
 from gbya.api.main import create_app
 from gbya.config import Settings
+from gbya.store import db
 
 
 def _client(tmp_path: Path, with_spa: bool) -> TestClient:
@@ -16,13 +17,22 @@ def _client(tmp_path: Path, with_spa: bool) -> TestClient:
         (dist / "assets").mkdir(parents=True)
         (dist / "index.html").write_text("<html><body>GateBench</body></html>")
         (dist / "assets" / "app.js").write_text("console.log('x')")
-    return TestClient(create_app(Settings(frontend_dist=dist)))
+    db.upgrade(tmp_path / "app.db")
+    return TestClient(create_app(Settings(frontend_dist=dist, app_db_path=tmp_path / "app.db",
+                                          data_dir=tmp_path, llm_backend="fake")))  # fmt: skip
 
 
-def test_health_returns_ok(tmp_path: Path) -> None:
-    resp = _client(tmp_path, with_spa=False).get("/api/v1/health")
-    assert resp.status_code == 200
-    assert resp.json() == {"api": "ok"}
+def test_health_reports_api_worker_model_and_data(tmp_path: Path) -> None:
+    client = _client(tmp_path, with_spa=False)
+    body = client.get("/api/v1/health").json()
+    assert body["api"] == "ok"
+    assert body["worker"] == {"alive": False, "last_heartbeat": None}  # no worker has run
+    assert body["model"]["status"] == "fake" and body["model"]["model_id"]
+    assert body["data"] == {"windows": 0, "index": False}
+    from gbya.worker import _beat_file
+
+    _beat_file(Settings(data_dir=tmp_path), "w:1", None)
+    assert client.get("/api/v1/health").json()["worker"]["alive"] is True
 
 
 def test_spa_index_and_client_routes(tmp_path: Path) -> None:

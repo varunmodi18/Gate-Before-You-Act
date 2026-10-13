@@ -1,8 +1,11 @@
 """Choose the LLM client from settings, and the model provenance stored with every run (§F.1).
 
 * ``live``: the local model server of the default profile (``config/model_profiles.yaml``).
-* ``fake``: a scripted client for tests and the Playwright profile. It answers every verifier
-  call with SUPPORTS and says so in its reason. Runs on it are never research runs.
+* ``fake``: a scripted client for tests and the Playwright profile (``fake_rules``). The verifier
+  answers INSUFFICIENT when no cited record names a dumping tool ("dump", any case: the fixtures'
+  ``dumper.exe`` and ``Outflank-Dumpert.exe``) and SUPPORTS otherwise, and says so in its
+  reason; the proposer follows a fixed recovery script written for the e2e fixture (the mini
+  window). Runs on it are never research runs.
 * ``replay``: a recorded cassette. Runs on it are flagged ``replay`` and excluded from analysis.
 """
 
@@ -27,6 +30,56 @@ FAKE_VERIFIER_OUTPUT: dict[str, Any] = {
                      "matches": {"host": False, "account": False, "command": False, "time": False}},
     "reason": "Fake LLM backend (test profile): fixed SUPPORTS, not a model judgement.",
 }  # fmt: skip
+
+
+FAKE_INSUFFICIENT: dict[str, Any] = {
+    **FAKE_VERIFIER_OUTPUT,
+    "verdict": "INSUFFICIENT",
+    "unmet_requirement": "a cited record of the credential-dumping process",
+    "reason": "Fake LLM backend (test profile): INSUFFICIENT because no cited record names a "
+    "dumping tool, not a model judgement.",
+}
+
+
+def _proposal(tool: str, args: dict[str, Any], cited: list[int], thought: str) -> dict[str, Any]:
+    return {"thought": f"Fake LLM backend (test profile): {thought}", "tool": tool, "args": args,
+            "cited": cited, "technique_id": "T1003.001" if cited else None}  # fmt: skip
+
+
+# The Fake profile's agent (J5 on the e2e fixture's mini scenario, E2): it cites E2's benign
+# records (6, 12), gets INSUFFICIENT, runs one recovery query for lsass access, then cites the
+# dumper's accesses that query returns (5, 7) and is admitted. Any other gate feedback ends the
+# episode.
+FAKE_HOST = "WKSTN-01.lab.local"
+RECOVERY_SQL = "SELECT * FROM process_access WHERE target_image LIKE '%lsass%' LIMIT 10"
+
+
+def fake_rules() -> list[FakeRule]:
+    """Rules in order (the first match answers). Verifier prompts contain ``CITED_RECORDS``; the
+    proposer's system prompt starts with "You are a SOC responder"."""
+    # the CITED_RECORDS block itself (the system prompt also names it): header, then the records
+    no_tool = (
+        r"CITED_RECORDS\n<<UNTRUSTED_LOG_DATA>>(?:(?![Dd][Uu][Mm][Pp])"
+        r"(?!<</UNTRUSTED_LOG_DATA>>)[\s\S])*<</UNTRUSTED_LOG_DATA>>"
+    )
+    return [
+        FakeRule([FAKE_INSUFFICIENT], pattern=no_tool),
+        FakeRule([FAKE_VERIFIER_OUTPUT], pattern="CITED_RECORDS"),
+        FakeRule([_proposal("isolate_host", {"host": FAKE_HOST}, [5, 7],
+                            "the recovery query returned the lsass access; re-citing it")],
+                 pattern=r"SOC responder[\s\S]*target_image LIKE"),
+        FakeRule([_proposal("sql_query", {"sql": RECOVERY_SQL}, [],
+                            "the gate needs evidence of lsass access; querying for it")],
+                 pattern=r"SOC responder[\s\S]*C4_INSUFFICIENT"),
+        FakeRule([_proposal("end_episode", {"reason": "cannot_proceed"}, [],
+                            "the gate did not admit the call; ending")],
+                 pattern=r"SOC responder[\s\S]*(?:C[0-9]_[A-Z_]+:|APPROVAL_|Refused|Denied|"
+                         r"No response|mock action recorded|RECOVERY_BUDGET)"),
+        FakeRule([_proposal("isolate_host", {"host": FAKE_HOST}, [6, 12],
+                            "containing the host on the records in the prefix")],
+                 pattern="SOC responder"),
+        FakeRule([FAKE_VERIFIER_OUTPUT]),
+    ]  # fmt: skip
 
 
 def _profile(name: str | None = None) -> dict[str, Any]:
@@ -79,7 +132,7 @@ class _DelayedFake(FakeLLMClient):
 
 def make_client(settings: Settings) -> LLMClient:
     if settings.llm_backend == "fake":
-        return _DelayedFake(settings.fake_llm_delay_ms, [FakeRule([FAKE_VERIFIER_OUTPUT])])
+        return _DelayedFake(settings.fake_llm_delay_ms, fake_rules())
     if settings.llm_backend == "replay":
         from gbya.llm.replay import ReplayLLMClient
 
