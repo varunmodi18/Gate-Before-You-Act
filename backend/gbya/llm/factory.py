@@ -62,7 +62,18 @@ def fake_rules() -> list[FakeRule]:
         r"CITED_RECORDS\n<<UNTRUSTED_LOG_DATA>>(?:(?![Dd][Uu][Mm][Pp])"
         r"(?!<</UNTRUSTED_LOG_DATA>>)[\s\S])*<</UNTRUSTED_LOG_DATA>>"
     )
+    investigator = [  # Exp 3 investigator prompts (mini fixture): verifier first, then SQL
+        FakeRule([{"thought": "Fake LLM backend (test profile)", "hypotheses": [
+            {"technique_id": "T1003.001", "behaviour": "a process opens lsass.exe memory"}]}],
+                 pattern="WINDOW PROFILE"),
+        FakeRule([{"verdict": "ACCEPT", "cited": [5, 7],
+                   "reason": "Fake LLM backend (test profile): fixed ACCEPT"}],
+                 pattern=r"HYPOTHESIS\n[\s\S]*QUERY RESULTS"),
+        FakeRule([{"queries": [{"sql": RECOVERY_SQL, "purpose": "lsass access"}]}],
+                 pattern=r"HYPOTHESIS\n"),
+    ]  # fmt: skip
     return [
+        *investigator,
         FakeRule([FAKE_INSUFFICIENT], pattern=no_tool),
         FakeRule([FAKE_VERIFIER_OUTPUT], pattern="CITED_RECORDS"),
         FakeRule([_proposal("isolate_host", {"host": FAKE_HOST}, [5, 7],

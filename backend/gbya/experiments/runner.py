@@ -318,6 +318,10 @@ def planned_items(run: Run) -> list[tuple[str, str, int]]:
         from gbya.experiments.exp2 import run_items
 
         return run_items(run)
+    if run.experiment == 3:
+        from gbya.experiments import exp3
+
+        return exp3.run_items(run)
     return plan_items(Exp1Spec.model_validate(run.config["spec"]), run.config["case_ids"])
 
 
@@ -414,18 +418,24 @@ def run_item(
 
 
 class _Exp2Cases:
-    def __init__(self, factory: sessionmaker[Session], settings: Settings) -> None:
-        self.factory, self.settings = factory, settings
+    """Episode cases, loaded once per run: Exp 2 cases (with their prefix) or Exp 3 end-to-end
+    cases."""
+
+    def __init__(self, factory: sessionmaker[Session], settings: Settings,
+                 experiment: int = 2) -> None:  # fmt: skip
+        self.factory, self.settings, self.experiment = factory, settings, experiment
         self._cases: dict[str, Any] = {}
         self._lock = Lock()
 
     def get(self, case_id: str) -> Any:
         from gbya.experiments.exp2 import load_episode_case
+        from gbya.experiments.exp3 import load_e3_case
 
+        load = load_e3_case if self.experiment == 3 else load_episode_case
         with self._lock:
             if case_id not in self._cases:
                 with session_scope(self.factory) as s:
-                    self._cases[case_id] = load_episode_case(s, case_id, self.settings)
+                    self._cases[case_id] = load(s, case_id, self.settings)
             return self._cases[case_id]
 
 
@@ -450,6 +460,35 @@ def run_exp2_item(
             if ji.status == "done":
                 return
             exp2.write_episode(s, trace, case, item.system, item.run_idx, slot, run_id)
+            ji.status, ji.error, ji.updated_at = "done", None, utcnow()
+    except Exception as exc:
+        log.warning("item_error", run=run_id, case=item.case_id, system=item.system,
+                    run_idx=item.run_idx, error=str(exc))  # fmt: skip
+        _fail_item(factory, item.id, exc)
+
+
+def run_exp3_item(
+    factory: sessionmaker[Session], deps: Deps, cases: _Exp2Cases, run_id: int, item: JobItem
+) -> None:
+    """One Exp 3 episode (investigation plus response), written with the unit's ``done``
+    status in one transaction."""
+    from gbya.experiments import exp3
+
+    if not _start_item(factory, item.id):
+        return
+    try:
+        case = cases.get(item.case_id)
+        with session_scope(factory) as s:
+            run = s.get(Run, run_id)
+            assert run is not None
+            slot = exp3.slot_of(run, item.run_idx)
+        trace, inv = exp3.run_episode(case, deps.configs[item.system], slot, deps, factory)
+        with session_scope(factory) as s:
+            ji = s.get(JobItem, item.id)
+            assert ji is not None
+            if ji.status == "done":
+                return
+            exp3.write_episode(s, trace, inv, case, item.system, item.run_idx, slot, run_id)
             ji.status, ji.error, ji.updated_at = "done", None, utcnow()
     except Exception as exc:
         log.warning("item_error", run=run_id, case=item.case_id, system=item.system,
@@ -507,7 +546,7 @@ def execute_run(
         )
         todo = list(s.scalars(pending.order_by(JobItem.id)))
     cases = _CaseCache(factory, deps.settings)
-    episode_cases = _Exp2Cases(factory, deps.settings)
+    episode_cases = _Exp2Cases(factory, deps.settings, experiment)
     v_items = [i for i in todo if i.system.startswith(V_PREFIX)]
     g_items = [i for i in todo if not i.system.startswith(V_PREFIX)]
     stopped = False
@@ -519,12 +558,14 @@ def execute_run(
             return
         if experiment == 2:
             run_exp2_item(factory, deps, episode_cases, run_id, item)
+        elif experiment == 3:
+            run_exp3_item(factory, deps, episode_cases, run_id, item)
         else:
             run_item(factory, deps, cases, run_id, item)
         after_item()
 
     workers = max(1, deps.settings.worker_concurrency)
-    if experiment == 2:  # episodes are independent: all in parallel, as many as the server takes
+    if experiment in (2, 3):  # episodes are independent: all in parallel, up to the server's slots
         with ThreadPoolExecutor(max_workers=workers) as pool:
             list(pool.map(one, todo))
     else:
@@ -655,7 +696,7 @@ def _run_tokens(session: Session, run: Run) -> tuple[int, int]:
                               .where(where)).one()  # fmt: skip
         return int(row[0]), int(row[1])
 
-    if run.experiment != 2:
+    if run.experiment not in (2, 3):
         return total(VerifierEval.tokens_in, VerifierEval.tokens_out,
                      where=VerifierEval.run_id == run.id)  # fmt: skip
     p = total(Episode.tokens_in, Episode.tokens_out, where=Episode.run_id == run.id)

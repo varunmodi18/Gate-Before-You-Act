@@ -1,0 +1,12 @@
+# Experiment 3: live investigation plus response on the end-to-end windows (plan §A.1, §D.6.4,
+# §D.10.4, T6.2). Configuration only: the runner interprets it and contains no system logic.
+experiment: 3
+
+# The run schedule of A-4 (the same as Exp 2); Exp 3 uses runs 1 and 2.
+schedule:
+  1: {temperature: 0.2, seed: 11}
+  2: {temperature: 0.5, seed: 22}
+  3: {temperature: 0.7, seed: 33}
+
+# System -> number of runs (§D.6.4). Fallback F1 leaves Exp 3 unchanged (experiments/fallbacks.yaml).
+systems: {G0: 2, G1: 2, G3: 2}

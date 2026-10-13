@@ -1216,6 +1216,8 @@ The model context is 8,192 tokens, so the 40,000-token episode cap cannot be the
 
 **Correctness:** episode-loop tests with `FakeLLM` scripted responses cover every termination path and every gate verdict.
 
+*Draft 8 notes (M6, as built).* The investigator retrieves with the hypothesis's behaviour description plus profile terms (never the technique ID); its technique verifier's ACCEPT counts only when every cited record was returned by that hypothesis's own queries (code check); the budget is 25 LLM calls; unusable outputs are recorded and skipped. Its handover (profile, query results with accepted hypotheses first, findings) replaces Exp 2's frozen prefix under the label "INVESTIGATION SO FAR (your live investigation)", within 2,500 tokens, results that do not fit becoming record-ID stubs. Exp 3 cases are end-to-end files (`cases/<sid>/e2e.json`, one case `<sid>:X`, set `X`; migration `0010`); the investigation shares the episode state with the response phase (its queries register records the agent may cite). Technique F1 matches equal IDs or a technique-level ID with its sub-technique, pools counts over a system's episodes and is refused while an incidental technique (A-15, adjudication kind `incidental_technique`) is pending; cited-evidence precision/recall uses the records cited by executed calls.
+
 ### D.11 `gbya.cases` — SOC-Risk builder and prefix builder
 
 **Scenario authoring input** (`cases/<scenario_id>/scenario.json`):
@@ -2237,7 +2239,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Instructions:** G0, G1, G3 × 2 runs on 12 end-to-end windows. Technique ground truth = OTRF metadata; predicted techniques absent from the metadata are listed for adjudication (incidental techniques) **[A-15]**.
 - **Deliverables:** —
 - **Verification:** F1 unit test.
-- **Done when:** a fixture run completes.
+- **Done when:** a fixture run completes. *(Draft 8: a fixture run of G0/G1/G3 × 2 on the mini end-to-end case completes; see STATUS.md.)*
 
 **T6.3 Console support for windows (Exp 3 mode)**
 - **Prerequisites:** T6.2.

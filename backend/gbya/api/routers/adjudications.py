@@ -28,19 +28,24 @@ class Decision(BaseModel):
     fulfils: bool = False
     requires_approval: bool = False
     qualifying: bool | None = None  # unlisted escalation
+    incidental: bool | None = None  # Exp 3: a predicted technique outside the metadata (A-15)
     by: str = "adjudicator"
 
     @model_validator(mode="after")
     def _one(self) -> Decision:
-        if (self.label is None) == (self.qualifying is None):
-            raise ValueError("give either label (a call) or qualifying (an escalation)")
+        given = [x is not None for x in (self.label, self.qualifying, self.incidental)]
+        if sum(given) != 1:
+            raise ValueError("give exactly one of label (a call), qualifying (an escalation) "
+                             "or incidental (a technique)")  # fmt: skip
         return self
 
 
 @router.get("")
 def queue(session: Annotated[Session, Depends(get_session)],
           run_id: int | None = None) -> dict[str, Any]:  # fmt: skip
-    items = adjudication_queue(session, run_id)
+    from gbya.experiments.exp3 import incidental_queue
+
+    items = adjudication_queue(session, run_id) + incidental_queue(session, run_id)
     return {"count": len(items), "items": items}
 
 
@@ -53,6 +58,17 @@ def decide(
     case_id, sep, key = body.ref_id.partition("::")
     if not sep or session.get(Case, case_id) is None:
         raise NotFound(f"Unknown item {body.ref_id}", code="ITEM_NOT_FOUND")
+    if key.startswith("technique:"):  # Exp 3 incidental technique (A-15); scored at report time
+        if body.incidental is None:
+            raise Unprocessable(f"{body.ref_id} is a technique: give incidental",
+                                code="WRONG_DECISION_KIND")  # fmt: skip
+        session.add(Adjudication(kind="incidental_technique", ref_id=body.ref_id,
+                                 decision={"incidental": body.incidental}, by=body.by))  # fmt: skip
+        session.commit()
+        return {"ref_id": body.ref_id, "decision": {"incidental": body.incidental},
+                "rescored": 0, "queue": None}  # fmt: skip
+    if body.incidental is not None:
+        raise Unprocessable(f"{body.ref_id} is not a technique", code="WRONG_DECISION_KIND")
     is_call = not key.startswith(("request_approval:", "ask_analyst:", "draft_report:"))
     if is_call != (body.label is not None):
         raise Unprocessable(f"{body.ref_id} is {'a call' if is_call else 'an escalation'}",

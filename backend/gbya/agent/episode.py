@@ -39,6 +39,7 @@ from typing import Any, Literal, Protocol
 from sqlalchemy.orm import Session
 
 from gbya.agent.proposer import (
+    PREFIX_LABEL,
     PROMPT_LIMIT,
     Prompt,
     Proposal,
@@ -354,6 +355,7 @@ class EpisodeRunner:
     recorder: mock_actions.Recorder = field(default_factory=mock_actions.MemoryRecorder)
     retries: bool = True
     should_stop: Callable[[], bool] = lambda: False  # Console "Stop" (raises EpisodeStopped)
+    prefix_label: str = PREFIX_LABEL  # Exp 3: LIVE_LABEL
 
     def __post_init__(self) -> None:
         if self.dispatcher is None:
@@ -412,7 +414,12 @@ class EpisodeRunner:
     def _next_proposal(self) -> Proposal | None:
         """A proposal, re-asking once; None when the output stayed unusable."""
         prompt = build_messages(
-            self.prefix, self.request.text, self.turns, self.counter, self.caps.prompt_limit
+            self.prefix,
+            self.request.text,
+            self.turns,
+            self.counter,
+            self.caps.prompt_limit,
+            self.prefix_label,
         )
         self.truncations += len(prompt.truncations)
         res = self._call(prompt, reask=False)

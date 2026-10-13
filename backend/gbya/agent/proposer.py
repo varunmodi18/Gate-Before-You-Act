@@ -178,10 +178,14 @@ class Prompt:
     truncations: list[dict[str, Any]]
 
 
-def opening(prefix: str, request: str) -> str:
+PREFIX_LABEL = "INVESTIGATION SO FAR (scripted prefix)"  # Exp 2's frozen prefix
+LIVE_LABEL = "INVESTIGATION SO FAR (your live investigation)"  # Exp 3's handover
+
+
+def opening(prefix: str, request: str, label: str = PREFIX_LABEL) -> str:
     parts = []
     if prefix:
-        parts.append("INVESTIGATION SO FAR (scripted prefix)\n" + prefix.strip())
+        parts.append(f"{label}\n" + prefix.strip())
     parts.append("ANALYST REQUEST\n" + request.strip())
     return "\n\n".join(parts)
 
@@ -197,12 +201,13 @@ def build_messages(
     turns: Sequence[Turn],
     counter: TokenCounter,
     limit: int = PROMPT_LIMIT,
+    prefix_label: str = PREFIX_LABEL,
 ) -> Prompt:
     """Messages for the next proposal, reduced to ``limit`` tokens by the history policy."""
     system = system_prompt()
     head: list[Message] = [
         {"role": "system", "content": system},
-        {"role": "user", "content": opening(prefix, request)},
+        {"role": "user", "content": opening(prefix, request, prefix_label)},
     ]
     feedback = [t.feedback for t in turns]
     latest_gate = max((i for i, t in enumerate(turns) if t.gate_feedback), default=None)

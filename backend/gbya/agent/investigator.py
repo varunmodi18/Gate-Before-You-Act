@@ -48,7 +48,7 @@ HANDOVER_TOKENS = 2500  # like Exp 2's frozen prefix (§D.10.3)
 REFERENCE_CHARS = 700  # per reference document shown to the investigator (background only)
 MAX_TOKENS = {"hypothesise": 500, "sqlgen": 400, "technique_verifier": 250}
 
-Retrieve = Callable[[str, str], tuple[Any, list[Doc]]]  # (query, mode) -> (Retrieval, docs)
+Retrieve = Callable[..., tuple[Any, list[Doc]]]  # (query, mode) -> (Retrieval, docs)
 
 
 def _obj(props: dict[str, Any], required: list[str] | None = None) -> dict[str, Any]:

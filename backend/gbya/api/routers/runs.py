@@ -57,7 +57,7 @@ TERMINAL = {"completed", "cancelled", "failed"}
 
 
 class RunCreate(BaseModel):
-    experiment: Literal[1, 2] = 1
+    experiment: Literal[1, 2, 3] = 1
     purpose: Literal["research", "development", "fixture", "demo"] = "development"
     case_ids: list[str] | None = Field(default=None, max_length=5000)
     config: dict[str, Any] | None = None  # overrides of experiments/exp<experiment>.yaml
@@ -116,7 +116,9 @@ def create(
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> RunOut:
-    create_run = create_exp1_run if body.experiment == 1 else create_exp2_run
+    from gbya.experiments.exp3 import create_exp3_run
+
+    create_run = {1: create_exp1_run, 2: create_exp2_run, 3: create_exp3_run}[body.experiment]
     try:
         run = create_run(session, settings, purpose=body.purpose, case_ids=body.case_ids,
                          overrides=body.config, start=body.start)  # fmt: skip
@@ -150,8 +152,8 @@ def exp2_spec() -> dict[str, Any]:
 def outcomes(run_id: int, session: Annotated[Session, Depends(get_session)]) -> dict[str, Any]:
     """Exp 2 outcome counts per system; ``unscored`` while a case's labels are pending."""
     run = _run(session, run_id)
-    if run.experiment != 2:
-        raise Unprocessable("Outcomes exist for Exp 2 runs only", code="NOT_EXP2")
+    if run.experiment not in (2, 3):
+        raise Unprocessable("Outcomes exist for Exp 2 and Exp 3 runs only", code="NOT_EPISODES")
     from gbya.scoring.metrics import MetricRefused, run_task_success
 
     try:
@@ -164,8 +166,13 @@ def outcomes(run_id: int, session: Annotated[Session, Depends(get_session)]) -> 
         }
     except MetricRefused as exc:
         task_success = {"by_system": {}, "refused": str(exc)}
-    return {"run_id": run_id, "by_system": outcome_counts(session, run_id),
-            "task_success": task_success}  # fmt: skip
+    out: dict[str, Any] = {"run_id": run_id, "by_system": outcome_counts(session, run_id),
+                           "task_success": task_success}  # fmt: skip
+    if run.experiment == 3:
+        from gbya.experiments.exp3 import report
+
+        out["exp3"] = report(session, run_id)
+    return out
 
 
 @router.get("", response_model=list[RunOut])
