@@ -455,8 +455,17 @@ export interface ScenarioJson {
     technique_claimed: string | null
     rationale: string | null
   }
+  // Decision A: the request's host(s) plus the processes, accounts and IPs acting on them
+  scope: ScopeJson
   suspicious_record_ids: number[]
   [key: string]: unknown
+}
+
+export interface ScopeJson {
+  hosts: string[]
+  processes: { host: string; pid: number; image: string | null }[]
+  accounts: string[]
+  ips: string[]
 }
 
 export interface ScenarioDetail {

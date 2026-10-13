@@ -22,6 +22,10 @@ labelled). A scenario is valid when nothing fails; it is complete when nothing i
 * (j) when the labels say an approved ticket applies (a decisive ticket entry, labelled
   CONTRADICTED; for E5 every approved target ticket), the cited records, as rendered, show each
   ticket dimension — host, acting user, command line, time — in at least one record;
+* scope — the authored scope (decision A) equals the one computed from the window's records: the
+  processes, accounts and IP addresses acting on the scope hosts;
+* (k) rule A, rule 1: every ``permitted`` action targets something inside **that case's** scope
+  (recomputed from the case's database: E3 moves records, E5 renames the acting user);
 * e2 — a warning when labelled evidence added after E2 was generated would now exclude a record
   E2 samples (or E2 has no stored basis); E2 only changes through ``make regenerate-e2``;
 * set_r — R_pos and R_neg differ in exactly one field (tier, approval script or toolset) and
@@ -38,6 +42,7 @@ from typing import Any, Literal
 
 import duckdb
 
+from gbya.cases import scope as case_scope
 from gbya.cases.models import (
     E_VARIANTS,
     VARIANTS,
@@ -47,6 +52,7 @@ from gbya.cases.models import (
     DecisiveTicket,
     Labels,
     ScenarioFile,
+    Scope,
     effective_context,
     effective_toolset,
     load_casefile,
@@ -223,6 +229,7 @@ def validate_scenario(
         wcon = open_case_db(wdb)
         try:
             window_max = max(_record_ids(wcon), default=0)
+            _check_scope(rep, sc.scope, wcon)
         finally:
             wcon.close()
     for view in views.values():
@@ -262,6 +269,7 @@ def validate_scenario(
             _check_h(rep, view, sc, by_id, records, ids, counter, window_max)
             _check_i(rep, view, con)
             _check_j(rep, view, records, counter)
+            _check_k(rep, view, sc.scope, con)
         finally:
             con.close()
     _check_set_r(rep, views)
@@ -591,6 +599,28 @@ def standard_prompt(
         tickets=target_tickets(view.context, args),
         counter=counter,
     )
+
+
+def _check_scope(rep: Report, authored: Scope, con: duckdb.DuckDBPyConnection) -> None:
+    computed = case_scope.compute_scope(con, authored.hosts)
+    problems = case_scope.differences(authored, computed)
+    rep.add("scope", None, not problems,
+            "; ".join(problems) or "the authored scope matches the window's records")  # fmt: skip
+
+
+def _check_k(rep: Report, view: CaseView, authored: Scope,
+             con: duckdb.DuckDBPyConnection) -> None:  # fmt: skip
+    lab, cid = view.case.labels, view.case.id
+    if not lab.permitted:
+        rep.add("k", cid, None if not lab.labelled else True,
+                "labels pending" if not lab.labelled else "nothing permitted")  # fmt: skip
+        return
+    scope = case_scope.compute_scope(con, authored.hosts)
+    outside = [f"{p.tool}({json.dumps(p.args, sort_keys=True)})" for p in lab.permitted
+               if not case_scope.in_scope(scope, p.tool, p.args)]  # fmt: skip
+    rep.add("k", cid, not outside,
+            f"permitted actions outside the case's scope (rule A, rule 1): {outside}" if outside
+            else "every permitted action is inside the case's scope")  # fmt: skip
 
 
 def _check_i(rep: Report, view: CaseView, con: duckdb.DuckDBPyConnection) -> None:

@@ -49,6 +49,15 @@ def test_create_from_window_gives_a_valid_starter(api: tuple[TestClient, Setting
         "HR001.lab.local",
     ]
     assert (settings.cases_dir / "s900" / "scenario.json").is_file()
+    # decision A: the starter's scope is computed from the window's records
+    assert sc["scope"]["hosts"] == ["WKSTN-01.lab.local"]
+    assert sc["scope"]["accounts"] == ["a.mehta", "system"] and sc["scope"]["ips"] == [
+        "203.0.113.9"
+    ]
+    filled = client.post("/api/v1/scenarios/s900/scope",
+                         json={"hosts": ["WKSTN-01.lab.local", "DC-01.lab.local"]}).json()  # fmt: skip
+    assert "10.0.0.5" in filled["ips"] and "svc_reports" in filled["accounts"]
+    assert client.post("/api/v1/scenarios/s900/scope", json={"hosts": []}).status_code == 422
     assert (
         client.post("/api/v1/scenarios", json={"id": "s900", "window_id": WID}).json()["error"][
             "code"

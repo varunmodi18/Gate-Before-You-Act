@@ -76,5 +76,66 @@
       }
     ]
   },
+  "scope": {
+    "hosts": [
+      "WORKSTATION5"
+    ],
+    "processes": [
+      {
+        "host": "WORKSTATION5",
+        "pid": 756,
+        "image": "lsass.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 944,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1072,
+        "image": "explorer.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1556,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3080,
+        "image": "cmd.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3304,
+        "image": "waappagent.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3428,
+        "image": "windowsazureguestagent.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 5672,
+        "image": "csrss.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 6772,
+        "image": "outflank-dumpert.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 8056,
+        "image": "conhost.exe"
+      }
+    ],
+    "accounts": [
+      "wardog"
+    ],
+    "ips": []
+  },
   "notes": "Demo fixture (Exp 3 smoke test, Console window mode), not research data: the LSASS demo window (split `unused`) with demo-lsass's request and trusted context. Labels are pending (set X annotation path, A-14), so its episodes are not scored."
 }

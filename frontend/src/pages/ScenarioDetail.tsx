@@ -10,6 +10,7 @@ import {
   type CaseDetail,
   type ScenarioDetail as Detail,
   type ScenarioJson,
+  type ScopeJson,
   type ValidationReport,
 } from '../api/client'
 import { ContextEditor, JsonField } from '../components/ContextEditor'
@@ -216,6 +217,7 @@ function Editor({
               Objective, E2-E5 parameters and the Set R edit are edited in the JSON view.
             </p>
           </fieldset>
+          <ScopeEditor sid={sid} value={draft.scope} onChange={(scope) => set({ scope })} />
           <ContextEditor
             value={draft.trusted_context}
             onChange={(ctx) => set({ trusted_context: ctx })}
@@ -308,5 +310,78 @@ function Editor({
         )}
       </section>
     </section>
+  )
+}
+
+const words = (text: string) => text.split(/[\s,]+/).filter(Boolean)
+
+/** The scenario's scope (decision A): the request's host(s) and the processes, accounts and IP
+ * addresses acting on them in the window's records. "Fill from the window" recomputes it for the
+ * hosts entered; the author checks it, and the validator compares it with the records. */
+function ScopeEditor({
+  sid,
+  value,
+  onChange,
+}: {
+  sid: string
+  value: ScopeJson
+  onChange: (scope: ScopeJson) => void
+}) {
+  const fill = useMutation({
+    mutationFn: () => apiPost<ScopeJson>(`/scenarios/${sid}/scope`, { hosts: value.hosts }),
+    onSuccess: (scope) => {
+      onChange(scope)
+      setFills((n) => n + 1) // remounts the processes field with the filled value
+    },
+  })
+  const [fills, setFills] = useState(0)
+  return (
+    <fieldset className="mb-3 grid max-w-4xl grid-cols-1 gap-2 rounded border border-gray-400 p-3 md:grid-cols-2">
+      <legend className="font-semibold">Scope (rule A)</legend>
+      <label className="flex flex-col text-sm">
+        Scope hosts (the request&apos;s host or hosts)
+        <input
+          className={input}
+          value={value.hosts.join(', ')}
+          onChange={(e) => onChange({ ...value, hosts: words(e.target.value) })}
+        />
+      </label>
+      <div className="flex items-end">
+        <button
+          type="button"
+          className="rounded border border-gray-600 px-3 py-1 text-sm disabled:opacity-60"
+          disabled={fill.isPending || value.hosts.length === 0}
+          onClick={() => fill.mutate()}
+        >
+          Fill from the window
+        </button>
+      </div>
+      <label className="flex flex-col text-sm">
+        Accounts acting on them
+        <input
+          className={`${input} font-mono`}
+          value={value.accounts.join(', ')}
+          onChange={(e) => onChange({ ...value, accounts: words(e.target.value) })}
+        />
+      </label>
+      <label className="flex flex-col text-sm">
+        IP addresses acting on them
+        <input
+          className={`${input} font-mono`}
+          value={value.ips.join(', ')}
+          onChange={(e) => onChange({ ...value, ips: words(e.target.value) })}
+        />
+      </label>
+      <div className="md:col-span-2">
+        <JsonField
+          key={fills}
+          label="Processes acting on them (host, pid, image)"
+          rows={5}
+          value={value.processes}
+          onChange={(v) => onChange({ ...value, processes: v as ScopeJson['processes'] })}
+        />
+      </div>
+      {fill.isError && <ErrorBanner error={fill.error} />}
+    </fieldset>
   )
 }

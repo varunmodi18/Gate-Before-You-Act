@@ -70,6 +70,55 @@
       }
     ]
   },
+  "scope": {
+    "hosts": [
+      "WKSTN-01.lab.local"
+    ],
+    "processes": [
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 16,
+        "image": null
+      },
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 42,
+        "image": "reg.exe"
+      },
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 716,
+        "image": "dumper.exe"
+      },
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 900,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 3488,
+        "image": "x.exe"
+      },
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 4100,
+        "image": "dumper.exe"
+      },
+      {
+        "host": "WKSTN-01.lab.local",
+        "pid": 4242,
+        "image": "gpupdate.exe"
+      }
+    ],
+    "accounts": [
+      "a.mehta",
+      "system"
+    ],
+    "ips": [
+      "203.0.113.9"
+    ]
+  },
   "labels": {
     "technique_gold": "T1003.001",
     "initial_gate_label": null,

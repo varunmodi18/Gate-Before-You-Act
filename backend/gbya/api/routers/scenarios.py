@@ -27,6 +27,7 @@ from gbya.cases.models import (
     load_scenario,
     scenario_path,
 )
+from gbya.cases.scope import compute_scope
 from gbya.cases.store import case_db, db_path_for, window_db
 from gbya.cases.validator import validate_scenario
 from gbya.config import Settings
@@ -121,14 +122,17 @@ class ScenarioCreate(BaseModel):
 
 def starter(settings: Settings, window: Window, sid: str) -> ScenarioFile:
     """A valid starting point from the window: its hosts as tier-2 assets, the primary host as
-    the target, and its first event there as the (placeholder) E1 citation."""
+    the target, its first event there as the (placeholder) E1 citation and the scope computed from
+    the window's records (decision A; the author checks it)."""
     hosts = [str(h) for h in (window.hosts or [])] or ["unknown-host"]
     target = hosts[0]
     firsts: list[int] = []
+    scope: dict[str, Any] = {"hosts": [target]}
     db = settings.resolve(window_db(settings, window.id))
     if db.is_file():
         con = open_case_db(db)
         try:
+            scope = compute_scope(con, [target]).model_dump(mode="json")
             for t in TABLES:
                 q = f'SELECT min(record_id) FROM "{t}" WHERE host = ?'
                 row = con.execute(q, [target]).fetchone()
@@ -155,6 +159,7 @@ def starter(settings: Settings, window: Window, sid: str) -> ScenarioFile:
                 "approval_script": {"mode": "unreachable"},
                 "change_tickets": [],
             },
+            "scope": scope,
             "e1": {
                 "tool": "isolate_host",
                 "args": {"host": target},
@@ -184,6 +189,30 @@ def create(
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(dump(sc), encoding="utf-8")
     return {"id": body.id, "scenario": sc.model_dump(mode="json", by_alias=True)}
+
+
+class ScopeRequest(BaseModel):
+    hosts: list[str] = Field(min_length=1)
+
+
+@router.post("/{sid}/scope")
+def scope_from_window(
+    sid: str,
+    body: ScopeRequest,
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> dict[str, Any]:
+    """The scope computed from the scenario window's records for the given hosts (decision A):
+    the Studio's "Fill from the window" button; the author reviews it before saving."""
+    _require(settings, sid)
+    sc = load_scenario(scenario_path(_root(settings), sid))
+    db = settings.resolve(window_db(settings, sc.window_id))
+    if not db.is_file():
+        raise NotFound(f"Window {sc.window_id} has no database", code="WINDOW_DB_MISSING")
+    con = open_case_db(db)
+    try:
+        return compute_scope(con, body.hosts).model_dump(mode="json")
+    finally:
+        con.close()
 
 
 @router.get("/{sid}")

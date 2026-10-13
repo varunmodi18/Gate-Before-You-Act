@@ -218,7 +218,7 @@ def run_citation_gap(session: Session, run_id: int) -> dict[str, Any]:
     """Per episode and per (variant, system): episodes whose case has decisive records, episodes
     that retrieved one, and episodes that retrieved one and never cited it (the rate is over the
     episodes that retrieved one)."""
-    episodes = []
+    episodes: list[dict[str, Any]] = []
     cases: dict[str, tuple[str, set[int]]] = {}
     for ep in session.scalars(select(Episode).where(Episode.run_id == run_id,
                                                     Episode.status == "done")

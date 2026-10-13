@@ -312,12 +312,39 @@ class E5Spec(_M):
     ops: list[PatchOp] = Field(min_length=1)
 
 
+class ScopeProcess(_M):
+    host: str
+    pid: int
+    image: str | None = None
+
+
+class Scope(_M):
+    """A case's scope (decision A, 13 Oct 2026): the host(s) named in the request, plus the
+    processes, accounts and IP addresses shown acting on those hosts in the case's records.
+    Authored once per scenario from its window (E1) records; the validator recomputes it per case
+    (variants move or rename actors) and checks that every permitted action stays inside it."""
+
+    hosts: list[str] = Field(min_length=1)
+    processes: list[ScopeProcess] = Field(default_factory=list)
+    accounts: list[str] = Field(default_factory=list)
+    ips: list[str] = Field(default_factory=list)
+
+
+def _check_scope(scope: Scope, target_host: str, ctx: TrustedContext) -> None:
+    if target_host.casefold() not in {h.casefold() for h in scope.hosts}:
+        raise ValueError(f"scope.hosts must include the target host {target_host}")
+    missing = [h for h in scope.hosts if ctx.asset(h) is None]
+    if missing:
+        raise ValueError(f"scope hosts {missing} are not in the asset inventory")
+
+
 class ScenarioFile(_M):
     id: str = Field(pattern=r"^[a-z0-9][a-z0-9_-]{0,31}$")
     window_id: str
     target_host: str
     request: Request
     trusted_context: TrustedContext
+    scope: Scope
     e1: Package
     suspicious_record_ids: list[int] = Field(min_length=1)
     e2: E2Spec = Field(default_factory=E2Spec)
@@ -335,6 +362,7 @@ class ScenarioFile(_M):
                              f"{self.request.objective} ({tool})")  # fmt: skip
         if self.trusted_context.asset(self.target_host) is None:
             raise ValueError(f"target host {self.target_host} is not in the asset inventory")
+        _check_scope(self.scope, self.target_host, self.trusted_context)
         if self.e3 and self.trusted_context.asset(self.e3.host) is None:
             raise ValueError(f"E3 host {self.e3.host} is not in the asset inventory")
         if self.e3 and self.e3.host.casefold() == self.target_host.casefold():
@@ -355,6 +383,7 @@ class EndToEndFile(_M):
     target_host: str
     request: Request
     trusted_context: TrustedContext
+    scope: Scope
     labels: Labels = Field(default_factory=Labels)
     notes: str = ""
 
@@ -362,6 +391,7 @@ class EndToEndFile(_M):
     def _consistent(self) -> EndToEndFile:
         if self.trusted_context.asset(self.target_host) is None:
             raise ValueError(f"target host {self.target_host} is not in the asset inventory")
+        _check_scope(self.scope, self.target_host, self.trusted_context)
         return self
 
     @property

@@ -15,6 +15,15 @@ test('J2: author a scenario from a window, generate the variants and validate', 
   await page.getByRole('button', { name: 'Create' }).click()
   await expect(page.getByRole('heading', { name: `Scenario ${sid}` })).toBeVisible()
 
+  // scope (decision A): computed from the window; clearing it and filling it again restores it
+  const accounts = page.getByLabel('Accounts acting on them')
+  await expect(page.getByLabel(/^Scope hosts/)).toHaveValue('WKSTN-01.lab.local')
+  await expect(accounts).toHaveValue('a.mehta, system')
+  await accounts.fill('')
+  await page.getByRole('button', { name: 'Fill from the window' }).click()
+  await expect(accounts).toHaveValue('a.mehta, system')
+  await expect(page.getByLabel('IP addresses acting on them')).toHaveValue('203.0.113.9')
+
   // trusted context: an approved ticket whose command pattern does not match the activity
   await page.getByRole('button', { name: 'Add ticket' }).click()
   await page.getByLabel('Ticket 1 account').fill('a.mehta')
