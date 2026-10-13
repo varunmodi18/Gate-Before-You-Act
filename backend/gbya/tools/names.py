@@ -8,6 +8,8 @@ READ_ONLY = ("sql_query", "get_context")
 ESCALATION = ("request_approval", "ask_analyst", "draft_report")
 STATE_CHANGING = ("isolate_host", "kill_process", "disable_account", "block_ip")
 ALL_TOOLS = READ_ONLY + ESCALATION + STATE_CHANGING
+# Tools whose arguments include ``cited`` (state-changing tools, request_approval, draft_report).
+TAKES_CITED = ("request_approval", "draft_report", *STATE_CHANGING)
 
 ToolClass = Literal["read_only", "escalation", "state_changing"]
 StateChangingTool = Literal["isolate_host", "kill_process", "disable_account", "block_ip"]

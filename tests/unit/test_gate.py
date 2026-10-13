@@ -112,6 +112,7 @@ def test_configuration_snapshot() -> None:
         "A5": ["C1", "C2", "C3", "C4", "C5", "C6"],
         "A6": ["C1", "C2", "C3", "C4", "C5", "C6"],
         "A7": ["C1", "C2", "C3", "C4", "C5", "C6"],
+        "A8": ["C1", "C2", "C3", "C4", "C5", "C6"],
     }
     fields = {cid: (c.verifier_variant, c.retrieval_mode, c.recovery_budget, c.transport)
               for cid, c in CONFIGS.items()}  # fmt: skip
@@ -127,8 +128,9 @@ def test_configuration_snapshot() -> None:
         "A5": ("standard", "bm25", 0, "in_process"),
         "A6": ("rerank", "bm25_rerank", 2, "in_process"),
         "A7": ("standard", "bm25", 1, "in_process"),
+        "A8": ("standard", "bm25", 2, "mcp"),
     }
-    exp1 = [c for c in CONFIGS if c not in ("A5", "A7")]  # they differ from G3 only in episodes
+    exp1 = [c for c in CONFIGS if c not in ("A5", "A7", "A8")]  # differ from G3 only in episodes
     assert len(exp1) == 9
 
 
@@ -140,7 +142,7 @@ def test_variants_differ_from_g3_only_as_specified() -> None:
             for k, v in CONFIGS[cid].model_dump(exclude={"id", "capability"}).items()
             if g3[k] != v
         }
-        for cid in ("A2", "A3", "A4", "A5", "A6", "A7")
+        for cid in ("A2", "A3", "A4", "A5", "A6", "A7", "A8")
     }
     assert differences == {
         "A2": {"checks"},
@@ -149,6 +151,7 @@ def test_variants_differ_from_g3_only_as_specified() -> None:
         "A5": {"recovery_budget"},
         "A6": {"verifier_variant", "retrieval_mode"},
         "A7": {"recovery_budget"},
+        "A8": {"transport"},
     }
 
 

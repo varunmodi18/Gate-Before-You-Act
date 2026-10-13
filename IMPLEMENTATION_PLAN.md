@@ -734,6 +734,8 @@ Mock actions write `tool_calls` rows (`admitted=true`, args, gate decision ID). 
 
 **Correctness:** the parity test in FR-29.
 
+*Draft 8 notes (T5.8, as built).* (1) The episode loop reaches the tools through a `ToolDispatcher` (`gbya/tools/dispatcher.py`): `InProcessDispatcher` holds the tool side of a call (gate, approval service, recovery budget, read-only tools, mock actions, escalation records); the MCP server runs the same class in its tool handler, so there is one implementation and the gate runs server-side. (2) **Traces:** the server returns each call's trace events in the result's structured content and the client writes them to the episode's trace (with `transport: "mcp"` and the call's round-trip latency on each step), instead of the server writing to app.db, so an Exp 2 episode is still written in one transaction with its unit's `done` status. (3) The agent's claim (technique, rationale) travels as the reserved argument `_claim`, removed before the gate sees the arguments. (4) The server gets the run's settings through the `GBYA_*` environment and the token counter as an argument. (5) Demo-interactive approval needs the in-process transport (a person answers in the API process), so the Console refuses it for A8. (6) A crashed server raises `McpServerError`; the unit is marked `error` and redone by a resumed run, with no partial episode.
+
 ### D.6 `gbya.gate` — the gate contract
 
 #### D.6.1 Data types
@@ -2217,7 +2219,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Instructions:** §D.5.3. Extract a `ToolDispatcher` interface from the episode loop; implement the in-process and MCP dispatchers; start the server per episode over stdio; record `transport` and latency in traces.
 - **Deliverables:** A8 runnable in Exp 2 and selectable in the Agent Console.
 - **Verification:** the FR-29 parity test; a test that the MCP server exposes no ungated state-changing tool; server-crash recovery test.
-- **Done when:** a demo-set episode completes over MCP. If the MCP SDK cannot be made stable within one working day, drop A8, record it in `STATUS.md`, and report it as not run (risk R12).
+- **Done when:** a demo-set episode completes over MCP. If the MCP SDK cannot be made stable within one working day, drop A8, record it in `STATUS.md`, and report it as not run (risk R12). *(Draft 8: done 13 Oct 2026 with MCP SDK 2.3.0; a live demo-set Exp 2 run of A8 and G3 run 1 completed, see STATUS.md.)*
 
 #### M6 — Live investigation and Exp 3
 

@@ -122,9 +122,8 @@ def test_spec_validation(bad: dict[str, Any]) -> None:
 
 def test_run_creation_refusals(done_run: tuple[Settings, int]) -> None:
     settings, _ = done_run
-    # A8 (T5.8) is not defined yet
-    with pytest.raises(Unprocessable, match="A8"), db.session_scope(factory_of(settings)) as s:
-        exp2.create_exp2_run(s, settings, purpose="fixture")
+    with pytest.raises(Unprocessable, match="A9"), db.session_scope(factory_of(settings)) as s:
+        exp2.create_exp2_run(s, settings, purpose="fixture", overrides={"systems": {"A9": 1}})
     with db.session_scope(factory_of(settings)) as s:
         s.add(Case(id="mini:X1", scenario_id="mini", set_="E", variant="E1", request={},
                    package={}, case_db_path="x"))  # fmt: skip
@@ -263,7 +262,7 @@ def test_runs_api_creates_exp2_runs(done_run: tuple[Settings, int]) -> None:
     settings, _ = done_run
     client = TestClient(create_app(settings))
     spec = client.get("/api/v1/runs/exp2-spec").json()
-    assert spec["undefined"] == ["A8"] and spec["spec"]["fallback"] is None
+    assert spec["undefined"] == [] and spec["spec"]["fallback"] is None
     res = client.post("/api/v1/runs", json={"experiment": 2, "purpose": "fixture",
                                             "case_ids": ["mini:E1"],
                                             "config": {"systems": {"G1": 1}}})  # fmt: skip
@@ -271,7 +270,8 @@ def test_runs_api_creates_exp2_runs(done_run: tuple[Settings, int]) -> None:
     body = res.json()
     assert body["experiment"] == 2 and body["config"]["systems"] == {"G1": 1}
     assert body["progress"]["total"] == 1
-    refused = client.post("/api/v1/runs", json={"experiment": 2, "purpose": "fixture"})
+    refused = client.post("/api/v1/runs", json={"experiment": 2, "purpose": "fixture",
+                                                "config": {"systems": {"A9": 1}}})  # fmt: skip
     assert refused.status_code == 422 and refused.json()["error"]["code"] == "UNKNOWN_SYSTEM"
     f1 = client.post("/api/v1/runs", json={"experiment": 2, "purpose": "fixture",
                                            "case_ids": ["mini:E1"],

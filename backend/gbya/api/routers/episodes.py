@@ -31,20 +31,15 @@ from gbya.agent.episode import EpisodeRunner, EpisodeStopped, SqlTrace, prefix_t
 from gbya.api.deps import get_deps, get_session, get_settings
 from gbya.cases.models import Labels
 from gbya.config import Settings
-from gbya.data.connection import open_case_db
 from gbya.errors import Conflict, NotFound, Unprocessable
 from gbya.experiments import exp2
 from gbya.experiments.runner import Deps, variant_availability
-from gbya.gate.checks import GateEnv
-from gbya.gate.evidence import window_time_range
-from gbya.gate.gate import Gate
 from gbya.logging import get_logger
 from gbya.scoring import outcomes
 from gbya.store.db import session_scope
 from gbya.store.models import ERROR_TAGS, Case, Episode, GateDecisionRow, Step, ToolCall, TraceTag
 from gbya.store.models import utcnow as _now
-from gbya.tools.registry import ToolEnvironment
-from gbya.tools.state import EpisodeState
+from gbya.tools.dispatcher import InProcessDispatcher
 
 router = APIRouter(prefix="/episodes", tags=["episodes"])
 log = get_logger("gbya.api.episodes")
@@ -102,8 +97,6 @@ def _system_reason(deps: Deps, sid: str) -> str | None:
     config = deps.configs.get(sid)
     if config is None:
         return "is not defined"
-    if config.transport != "in_process":
-        return f"needs transport {config.transport} (T5.8)"
     if config.verifier_variant is not None:
         return variant_availability(deps).get(config.verifier_variant)
     return None
@@ -155,6 +148,12 @@ def start(
     reason = _system_reason(deps, body.system)
     if reason is not None:
         raise Unprocessable(f"{body.system} {reason}", code="SYSTEM_UNAVAILABLE")
+    if body.interactive_approval and deps.configs[body.system].transport != "in_process":
+        raise Unprocessable(
+            f"{body.system} runs its tools in an MCP server process; demo-interactive approval "
+            "needs the in-process transport",
+            code="INTERACTIVE_NEEDS_IN_PROCESS",
+        )
     if session.get(Case, body.case_id) is None:
         raise NotFound(f"No case {body.case_id}", code="CASE_NOT_FOUND")
     try:
@@ -194,28 +193,26 @@ def _run(factory: sessionmaker[Session], deps: Deps, case: exp2.Exp2Case, body: 
     try:
         ep = session.get(Episode, episode_id)
         assert ep is not None
-        verifier = (deps.verifier(config.verifier_variant, case.case_id, factory)
-                    if config.verifier_variant is not None else None)  # fmt: skip
-        con = open_case_db(case.base.db_path)
+        trace = SqlTrace(session, ep)
+        if config.transport == "in_process":  # demo-interactive approval needs this process
+            approver = live.ask if body.interactive_approval else None
+            e = exp2.episode_env(case, config, deps, factory, approver=approver)
+            dispatcher: Any = InProcessDispatcher(e.gate, e.env, e.tools, trace)
+            close = e.close
+        else:
+            dispatcher, close = exp2.make_dispatcher(case, config, deps, trace, factory)
         try:
-            state = EpisodeState(retrieved={int(i) for i in case.prefix.get("retrieved", [])})
-            ctx = case.base.context
-            env = GateEnv(con=con, ctx=ctx, state=state, counter=deps.counter,
-                          allowed_tools=case.base.toolset, window=window_time_range(con),
-                          approver=live.ask if body.interactive_approval else None)  # fmt: skip
             EpisodeRunner(
-                client=deps.client, gate=Gate(config, deps.policy, verifier), env=env,
-                tools=ToolEnvironment(con=con, context=ctx, state=state, counter=deps.counter),
-                request=case.request, prefix=prefix_text(case.prefix),
-                temperature=slot.temperature, seed=slot.seed,
-                trace=SqlTrace(session, ep), counter=deps.counter,
-                should_stop=live.stop.is_set,
+                client=deps.client, dispatcher=dispatcher, request=case.request,
+                prefix=prefix_text(case.prefix), temperature=slot.temperature, seed=slot.seed,
+                trace=trace, counter=deps.counter, should_stop=live.stop.is_set,
             ).run()  # fmt: skip
         finally:
-            con.close()
+            close()
         ep.outcome_detail = {
             **(ep.outcome_detail or {}),
             "console": {"interactive_approval": body.interactive_approval},
+            "transport": config.transport,
         }
         if exp2.scorable(case.labels):
             outcomes.score_episode(session, episode_id, case.labels)

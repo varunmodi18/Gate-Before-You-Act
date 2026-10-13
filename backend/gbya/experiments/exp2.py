@@ -16,7 +16,7 @@ queue (``adjudication_queue``); an adjudication re-scores every episode of that 
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Iterable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal
@@ -40,6 +40,7 @@ from gbya.gate.gate import Gate
 from gbya.llm.factory import model_provenance
 from gbya.scoring import outcomes
 from gbya.store.models import Case, Episode, Job, Run
+from gbya.tools.dispatcher import InProcessDispatcher, ToolDispatcher
 from gbya.tools.registry import ToolEnvironment
 from gbya.tools.state import EpisodeState
 
@@ -153,35 +154,75 @@ def scorable(labels: Labels) -> bool:
 # ---- one episode ---------------------------------------------------------------------------------
 
 
-def run_episode(
-    case: Exp2Case, config: GateConfig, slot: Slot, deps: Deps,
-    factory: sessionmaker[Session] | None = None,
-) -> MemoryTrace:  # fmt: skip
-    """One episode of ``config`` on the case, in memory. The verifier (if any) retrieves through
-    the retrieval cache when a session factory is given."""
-    if config.transport != "in_process":
-        raise NotImplementedError(f"{config.id}: transport {config.transport} (T5.8)")
+@dataclass
+class EpisodeEnv:
+    """The tool side of one episode in this process: the case database, the gate and the tools,
+    sharing one EpisodeState seeded with the prefix's registry."""
+
+    con: Any
+    gate: Gate
+    env: GateEnv
+    tools: ToolEnvironment
+
+    def close(self) -> None:
+        self.con.close()
+
+
+def episode_env(
+    case: Exp2Case, config: GateConfig, deps: Deps,
+    factory: sessionmaker[Session] | None = None, approver: Any = None,
+) -> EpisodeEnv:  # fmt: skip
+    """Exp 2, the Console and the MCP server build an episode's tool side here (one path)."""
     verifier = (
         deps.verifier(config.verifier_variant, case.case_id, factory)
         if config.verifier_variant is not None
         else None
     )
     con = open_case_db(case.base.db_path)
+    state = EpisodeState(retrieved={int(i) for i in case.prefix.get("retrieved", [])})
+    ctx = case.base.context
+    env = GateEnv(con=con, ctx=ctx, state=state, counter=deps.counter,
+                  allowed_tools=case.base.toolset, window=window_time_range(con),
+                  approver=approver)  # fmt: skip
+    tools = ToolEnvironment(con=con, context=ctx, state=state, counter=deps.counter)
+    return EpisodeEnv(con, Gate(config, deps.policy, verifier), env, tools)
+
+
+def make_dispatcher(
+    case: Exp2Case, config: GateConfig, deps: Deps, trace: Any,
+    factory: sessionmaker[Session] | None = None,
+) -> tuple[ToolDispatcher, Callable[[], None]]:  # fmt: skip
+    """The dispatcher the configuration's ``transport`` asks for, and how to close it."""
+    if config.transport == "mcp":
+        from gbya.agent.mcp_client import McpDispatcher
+
+        registry = [int(i) for i in case.prefix.get("retrieved", [])]
+        mcp = McpDispatcher.start(deps.settings, case.case_id, config.id, trace,
+                                  counter_name=deps.counter.name,
+                                  initial_retrieved=registry)  # fmt: skip
+        return mcp, mcp.close
+    e = episode_env(case, config, deps, factory)
+    return InProcessDispatcher(e.gate, e.env, e.tools, trace), e.close
+
+
+def run_episode(
+    case: Exp2Case, config: GateConfig, slot: Slot, deps: Deps,
+    factory: sessionmaker[Session] | None = None,
+) -> MemoryTrace:  # fmt: skip
+    """One episode of ``config`` on the case, in memory. The verifier (if any) retrieves through
+    the retrieval cache when a session factory is given."""
+    trace = MemoryTrace()
+    dispatcher, close = make_dispatcher(case, config, deps, trace, factory)
     try:
-        state = EpisodeState(retrieved={int(i) for i in case.prefix.get("retrieved", [])})
-        ctx = case.base.context
-        env = GateEnv(con=con, ctx=ctx, state=state, counter=deps.counter,
-                      allowed_tools=case.base.toolset, window=window_time_range(con))  # fmt: skip
-        trace = MemoryTrace()
         EpisodeRunner(
-            client=deps.client, gate=Gate(config, deps.policy, verifier), env=env,
-            tools=ToolEnvironment(con=con, context=ctx, state=state, counter=deps.counter),
-            request=case.request, prefix=prefix_text(case.prefix), temperature=slot.temperature,
-            seed=slot.seed, trace=trace, counter=deps.counter,
+            client=deps.client, dispatcher=dispatcher, request=case.request,
+            prefix=prefix_text(case.prefix), temperature=slot.temperature, seed=slot.seed,
+            trace=trace, counter=deps.counter,
         ).run()  # fmt: skip
+        trace.transport = dispatcher.transport
         return trace
     finally:
-        con.close()
+        close()
 
 
 def write_episode(
@@ -226,10 +267,6 @@ def create_exp2_run(
     systems = effective_systems(spec)
     if not systems:
         raise Unprocessable("No systems to run", code="NO_SYSTEMS")
-    not_ready = [s for s in systems if configs[s].transport != "in_process"]
-    if not_ready:
-        raise Unprocessable(f"Transport not available yet for {not_ready} (T5.8)",
-                            code="TRANSPORT_UNAVAILABLE")  # fmt: skip
     if case_ids is None:
         case_ids = list(session.scalars(select(Case.id).where(Case.case_db_path.is_not(None))))
     ids = sorted(set(case_ids))

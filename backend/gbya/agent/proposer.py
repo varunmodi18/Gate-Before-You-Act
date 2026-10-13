@@ -31,7 +31,7 @@ from gbya.errors import ModelOutputInvalid
 from gbya.llm.client import LLMClient
 from gbya.llm.schemas import JsonSchema, Message, Usage
 from gbya.llm.tokens import TokenCounter
-from gbya.tools.names import ALL_TOOLS
+from gbya.tools.names import ALL_TOOLS, TAKES_CITED
 from gbya.tools.registry import DESCRIPTIONS, AnalystTopic, IncidentType
 from gbya.tools.typed import ACCOUNT_PATTERN, HOSTNAME_PATTERN
 
@@ -102,14 +102,6 @@ ARG_SCHEMAS: dict[str, dict[str, Any]] = {
     **TARGET_SCHEMAS,
     END_EPISODE: _obj({"reason": {"enum": list(END_REASONS)}}),
 }
-TAKES_CITED = (
-    "request_approval",
-    "draft_report",
-    "isolate_host",
-    "kill_process",
-    "disable_account",
-    "block_ip",
-)
 
 
 def proposer_schema() -> JsonSchema:

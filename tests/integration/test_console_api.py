@@ -110,7 +110,10 @@ def test_tags_and_refusals(client: TestClient) -> None:
     assert ep["starred"] and ep["error_tags"] == ERROR_TAGS
     bad = client.put(f"{API}/{eid}/tags", json={"tags": ["typo"]})
     assert bad.status_code == 422 and bad.json()["error"]["code"] == "UNKNOWN_TAG"
-    assert client.post(API, json={"case_id": "mini:E2", "system": "A8"}).status_code == 422
+    a8 = client.post(API, json={"case_id": "mini:E2", "system": "A8",
+                                "interactive_approval": True})  # fmt: skip
+    assert a8.status_code == 422 and a8.json()["error"]["code"] == "INTERACTIVE_NEEDS_IN_PROCESS"
+    assert client.post(API, json={"case_id": "mini:E2", "system": "A9"}).status_code == 422
     assert client.post(API, json={"case_id": "nope:E1", "system": "G1"}).status_code == 404
     assert client.get(f"{API}/999999").status_code == 404
     assert client.post(f"{API}/{eid}/stop").status_code == 409  # not running

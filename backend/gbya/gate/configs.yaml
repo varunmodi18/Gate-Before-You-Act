@@ -1,5 +1,5 @@
 # Gate configurations (plan §D.6.4). Data, not code: runners never special-case a configuration.
-# T2.5: G0, G1, G2, G3, A1; T3.4: A2-A6; T5.7: A7. T5.8 adds A8. Every configuration states
+# T2.5: G0, G1, G2, G3, A1; T3.4: A2-A6; T5.7: A7; T5.8: A8. Every configuration states
 # retrieval_mode, recovery_budget and transport (null where C4 is absent).
 # Every configuration shares the same tool environment (allow-list = the case's toolset), the
 # same approval service and the same policy file; only the checks differ (§L.4 items 1 and 20).
@@ -80,3 +80,10 @@ A7:
   recovery_budget: 1             # one recovery query after INSUFFICIENT (Exp 2 only; T5.7)
   transport: in_process
   capability: "agentic: one recovery query"
+A8:
+  checks: [C1, C2, C3, C4, C5, C6]
+  verifier_variant: standard
+  retrieval_mode: bm25
+  recovery_budget: 2
+  transport: mcp                 # tools over a per-episode MCP stdio server; the gate runs there
+  capability: "tool calling: MCP transport"

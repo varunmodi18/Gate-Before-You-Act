@@ -32,11 +32,10 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Protocol
 
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from gbya.agent.proposer import (
@@ -52,17 +51,22 @@ from gbya.cases.models import OBJECTIVE_TOOL, Request
 from gbya.experiments.exp1 import verifier_summary
 from gbya.gate.checks import GateEnv
 from gbya.gate.gate import Gate
-from gbya.gate.types import ApprovalOutcome, Claim, GateDecision, GateVerdict, normalised_call
+from gbya.gate.types import ApprovalOutcome, GateDecision, normalised_call
 from gbya.llm.client import LLMClient
 from gbya.llm.schemas import Message
 from gbya.llm.tokens import TokenCounter
 from gbya.store.models import Episode, GateDecisionRow, Step, ToolCall
 from gbya.tools import escalation, mock_actions
-from gbya.tools.names import STATE_CHANGING, tool_class
-from gbya.tools.registry import AskAnalystArgs, DraftReportArgs, ToolEnvironment
+from gbya.tools.dispatcher import RECOVERY_EXHAUSTED as RECOVERY_EXHAUSTED  # re-exported
+from gbya.tools.dispatcher import (
+    CallRequest,
+    InProcessDispatcher,
+    ToolDispatcher,
+)
+from gbya.tools.names import tool_class
+from gbya.tools.registry import ToolEnvironment
 
 TerminalState = Literal["fulfilled", "handed_off", "ended", "cap"]
-RECOVERY_EXHAUSTED = "RECOVERY_BUDGET_EXHAUSTED"
 
 
 @dataclass(frozen=True)
@@ -129,6 +133,7 @@ class MemoryTrace:
     tool_calls: list[dict[str, Any]] = field(default_factory=list)
     result: EpisodeResult | None = None
     state: dict[str, Any] = field(default_factory=dict)
+    transport: str = "in_process"  # recorded with the episode (A8: "mcp")
 
     def step(self, kind: str, payload: dict[str, Any], ms: float | None = None) -> int:
         self.steps.append((kind, payload, ms))
@@ -173,6 +178,7 @@ class MemoryTrace:
             session.add(_tool_call_row(episode, tc["tool"], tc["args"], tc["cited"],
                                        tc["admitted"], ids.get(gid) if gid else None))  # fmt: skip
         _finish_episode(episode, self.result, self.state)
+        episode.outcome_detail = {**(episode.outcome_detail or {}), "transport": self.transport}
         session.flush()
 
 
@@ -329,25 +335,33 @@ REASK = (
 
 @dataclass
 class EpisodeRunner:
-    """One episode. ``gate`` and the environments are per episode (they share one EpisodeState)."""
+    """One episode. The tool side of each call goes through a ``ToolDispatcher``: by default the
+    in-process one built from ``gate``, ``env`` and ``tools`` (they share one EpisodeState); A8
+    passes an MCP dispatcher instead, whose server holds the gate and the state."""
 
     client: LLMClient
-    gate: Gate
-    env: GateEnv
-    tools: ToolEnvironment
     request: Request
     prefix: str
     temperature: float
     seed: int | None
     trace: Trace
     counter: TokenCounter
+    gate: Gate | None = None
+    env: GateEnv | None = None
+    tools: ToolEnvironment | None = None
+    dispatcher: ToolDispatcher | None = None
     caps: Caps = field(default_factory=Caps)
     recorder: mock_actions.Recorder = field(default_factory=mock_actions.MemoryRecorder)
     retries: bool = True
     should_stop: Callable[[], bool] = lambda: False  # Console "Stop" (raises EpisodeStopped)
 
     def __post_init__(self) -> None:
-        assert self.tools.state is self.env.state, "the tools and the gate share one EpisodeState"
+        if self.dispatcher is None:
+            assert self.gate is not None and self.env is not None and self.tools is not None, (
+                "give a dispatcher, or the gate and both environments"
+            )
+            self.dispatcher = InProcessDispatcher(self.gate, self.env, self.tools, self.trace,
+                                                  self.recorder, self.retries)  # fmt: skip
         self.turns: list[Turn] = []
         self.llm_calls = 0
         self.steps = 0
@@ -423,126 +437,43 @@ class EpisodeRunner:
 
     # -------------------------------------------------------------- dispatch
 
-    def _feedback(self, p: Proposal, text: str, *, gate: bool, ids: frozenset[int] = frozenset()
-                  ) -> None:  # fmt: skip
+    def _feedback(self, p: Proposal, text: str, *, gate: bool, ids: Sequence[int] = ()) -> None:
         self.trace.step("feedback", {"text": text, "gate": gate})
         self.turns.append(Turn(proposal=p.model_dump_json(), feedback=text,
                                returned_ids=sorted(ids), gate_feedback=gate))  # fmt: skip
 
-    def _gate_step(self, p: Proposal, decision: GateDecision, ms: float) -> int | None:
-        call = {"tool": p.tool, "args": p.args}
-        self.trace.step("gate", {"decision": decision.model_dump(
-            mode="json", exclude={"verifier_call": {"messages"}})}, ms)  # fmt: skip
-        if p.tool in STATE_CHANGING:
-            return self.trace.gate_decision(decision, call, list(p.cited), ms)
-        return None
-
-    def _approval_step(self, outcome: ApprovalOutcome, via: str) -> None:
-        self.result_parts["approvals"].append(outcome)
-        self.trace.step("approval", {"via": via, **outcome.model_dump(mode="json")})
-
-    def _evaluate(self, p: Proposal) -> tuple[GateDecision, int | None]:
-        t0 = time.perf_counter()
-        decision = self.gate.evaluate(
-            p.tool, p.call_args(), self.env, retries=self.retries,
-            claim=Claim(technique_claimed=p.technique_id, rationale=p.thought or None),
-        )  # fmt: skip
-        ms = round((time.perf_counter() - t0) * 1000, 3)
-        return decision, self._gate_step(p, decision, ms)
-
     def _dispatch(self, p: Proposal) -> None:
         self.steps += 1
-        if p.is_end:
+        if p.is_end:  # a control action: no tool and no gate check (A-23)
             reason = str(p.args.get("reason", ""))
             self.trace.step("tool", {"tool": p.tool, "control": True, "reason": reason})
             raise _Ended("ended", reason)
-        if p.tool == "request_approval":
-            return self._request_approval(p)
-        if p.tool == "sql_query" and self._recovery_exhausted():
-            text = (
-                f"{RECOVERY_EXHAUSTED}: the recovery queries after INSUFFICIENT evidence are "
-                "used up. Act on the evidence you have, escalate or end the episode."
+        assert self.dispatcher is not None
+        request = CallRequest(
+            tool=p.tool,
+            args=dict(p.args),
+            cited=list(p.cited),
+            technique_id=p.technique_id,
+            thought=p.thought,
+        )
+        out = self.dispatcher.call(request)
+        self.result_parts["approvals"] += [ApprovalOutcome.model_validate(a)
+                                           for a in out.approvals]  # fmt: skip
+        if out.executed is not None:
+            ex = out.executed
+            action = mock_actions.MockAction(
+                ex["tool"], dict(ex["args"]), tuple(ex["cited"]), ex["gate_decision_id"]
             )
-            self.trace.step("tool", {"tool": p.tool, "args": p.args, "ok": False,
-                                     "error_code": RECOVERY_EXHAUSTED})  # fmt: skip
-            self.trace.tool_call(p.tool, p.args, [], admitted=False, gate_decision_id=None)
-            return self._feedback(p, text, gate=True)
-
-        decision, gid = self._evaluate(p)
-        cited = list(p.cited) if "cited" in p.call_args() else []
-        if decision.verdict is GateVerdict.CONVERTED_TO_APPROVAL and decision.approval:
-            self._approval_step(decision.approval, "c6")
-        self.trace.tool_call(p.tool, p.args, cited, admitted=decision.admitted,
-                             gate_decision_id=gid)  # fmt: skip
-        if not decision.admitted:
-            text = decision.message
-            if decision.verdict is GateVerdict.CONVERTED_TO_APPROVAL:
-                text = f"C6_APPROVAL_REQUIRED: not executed; approval was requested. {text}"
-            return self._feedback(p, text, gate=True)
-
-        if p.tool in STATE_CHANGING:
-            return self._execute(p, gid)
-        if p.tool in ("ask_analyst", "draft_report"):
-            return self._hand_off(p)
-        return self._read_only(p)
-
-    def _recovery_exhausted(self) -> bool:
-        state = self.env.state
-        if not state.recovery_granted:
-            return False
-        if state.recovery_queries_left <= 0:
-            return True
-        state.recovery_queries_left -= 1
-        return False
-
-    def _read_only(self, p: Proposal) -> None:
-        t0 = time.perf_counter()
-        res = self.tools.run_read_only(p.tool, p.args)
-        ms = round((time.perf_counter() - t0) * 1000, 3)
-        self.trace.step("tool", {"tool": p.tool, "args": p.args, "ok": res.ok,
-                                 "error_code": res.error_code, "content": res.content,
-                                 "registered": sorted(res.registered)}, ms)  # fmt: skip
-        self.turns.append(Turn(proposal=p.model_dump_json(), feedback=res.content,
-                               returned_ids=sorted(res.registered)))  # fmt: skip
-
-    def _execute(self, p: Proposal, gid: int | None) -> None:
-        key = normalised_call(p.tool, p.args)
-        approval_state = self.env.state.approvals.get(key, "none")
-        action = mock_actions.execute(p.tool, p.args, list(p.cited), self.recorder, gid)
-        self.result_parts["actions"].append(action)
-        self.trace.step("tool", {"tool": p.tool, "args": p.args, "cited": list(p.cited),
-                                 "ok": True, "content": action.message,
-                                 "approval_state": approval_state, "call_key": key})  # fmt: skip
-        if fulfils(self.request, p.tool, p.args):
-            raise _Ended("fulfilled", key)
-        self.turns.append(Turn(proposal=p.model_dump_json(), feedback=action.message))
-
-    def _hand_off(self, p: Proposal) -> None:
-        shown = self.env.state.shown_untrusted
-        try:
-            record = (
-                escalation.ask_analyst(AskAnalystArgs.model_validate(p.args), shown)
-                if p.tool == "ask_analyst"
-                else escalation.draft_report(DraftReportArgs.model_validate(p.call_args()), shown)
-            )
-        except ValidationError as exc:  # C1 admitted it, so this is a programming error
-            raise AssertionError(f"admitted {p.tool} failed validation: {exc}") from exc
-        self.result_parts["escalations"].append(record)
-        self.trace.step("tool", {"tool": p.tool, "args": p.args, "ok": True,
-                                 "escalation": asdict(record)})  # fmt: skip
-        raise _Ended("handed_off", p.tool)
-
-    def _request_approval(self, p: Proposal) -> None:
-        t0 = time.perf_counter()
-        outcome = self.gate.request_approval(p.call_args(), self.env)
-        ms = round((time.perf_counter() - t0) * 1000, 3)
-        self._approval_step(outcome, "explicit")
-        self.trace.tool_call(p.tool, p.args, list(p.cited), admitted=outcome.accepted,
-                             gate_decision_id=None)  # fmt: skip
-        self.trace.step("tool", {"tool": p.tool, "args": p.args, "ok": outcome.accepted,
-                                 "content": outcome.message}, ms)  # fmt: skip
-        text = outcome.message if outcome.accepted else f"{outcome.code}: {outcome.message}"
-        self._feedback(p, text, gate=True)
+            self.result_parts["actions"].append(action)
+            if fulfils(self.request, p.tool, p.args):
+                raise _Ended("fulfilled", ex["call_key"])
+        if out.handoff is not None:
+            self.result_parts["escalations"].append(escalation.EscalationRecord(**out.handoff))
+            raise _Ended("handed_off", p.tool)
+        if out.gate_feedback:
+            return self._feedback(p, out.feedback, gate=True)
+        self.turns.append(Turn(proposal=p.model_dump_json(), feedback=out.feedback,
+                               returned_ids=list(out.returned_ids)))  # fmt: skip
 
     # -------------------------------------------------------------- run
 
@@ -572,7 +503,6 @@ class EpisodeRunner:
                 truncations=self.truncations,
                 invalid_outputs=self.invalid_outputs,
             )
-        state = self.env.state
-        self.trace.finish(result, {"approvals": dict(state.approvals),
-                                   "retrieved": sorted(state.retrieved)})  # fmt: skip
+        assert self.dispatcher is not None
+        self.trace.finish(result, self.dispatcher.state())
         return result
