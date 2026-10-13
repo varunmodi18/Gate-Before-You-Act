@@ -1,21 +1,24 @@
 import type { ValidationCheck, ValidationReport } from '../api/client'
 
 const VARIANTS = ['E1', 'E2', 'E3', 'E4', 'E5', 'R_pos', 'R_neg']
-const CASE_CHECKS = ['b', 'c', 'd', 'f', 'g', 'h', 'i', 'j']
-const MARK = { pass: '✓', fail: '✕', pending: '…' } as const
+const CASE_CHECKS = ['b', 'c', 'd', 'f', 'g', 'h', 'i', 'j', 'e2']
+const MARK = { pass: '✓', fail: '✕', pending: '…', warn: '!' } as const
 
 function Cell({ checks }: { checks: ValidationCheck[] }) {
   if (checks.length === 0) return <td className="px-2 py-1 text-gray-600">—</td>
   const worst =
     checks.find((c) => c.status === 'fail') ??
+    checks.find((c) => c.status === 'warn') ??
     checks.find((c) => c.status === 'pending') ??
     checks[0]
   const tone =
     worst.status === 'fail'
       ? 'font-semibold text-red-800'
-      : worst.status === 'pending'
-        ? 'text-gray-700'
-        : 'text-green-800'
+      : worst.status === 'warn'
+        ? 'font-semibold text-amber-800'
+        : worst.status === 'pending'
+          ? 'text-gray-700'
+          : 'text-green-800'
   return (
     <td className={`px-2 py-1 ${tone}`} title={checks.map((c) => c.message).join(' | ')}>
       <span aria-hidden="true">{MARK[worst.status]} </span>

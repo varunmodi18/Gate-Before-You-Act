@@ -28,10 +28,12 @@ import random
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from gbya.cases.models import (
     CaseFile,
     DbPatch,
+    E2Basis,
     Labels,
     MoveHost,
     Remove,
@@ -53,13 +55,15 @@ class WindowFacts:
 
     max_record_id: int
     hosts: dict[int, str | None]  # record id → host (normalised table, else raw event)
-    attack_related: frozenset[int] = frozenset()  # acting process tied to the cited records
+    attack_related: frozenset[int] = frozenset()  # attack-related records (never sampled)
+    evidence: tuple[int, ...] = ()  # the evidence records the attack set was computed from
+    attack: dict[str, Any] | None = None  # attack processes and images (AttackSet.to_json)
 
 
 def window_facts(db: Path, cited: Sequence[int] = ()) -> WindowFacts:
     import json
 
-    from gbya.cases.processes import attack_related_records
+    from gbya.cases.processes import attack_related_records, attack_set
 
     con = open_case_db(db)
     try:
@@ -70,10 +74,23 @@ def window_facts(db: Path, cited: Sequence[int] = ()) -> WindowFacts:
         for t in TABLES:
             for rid, host in con.execute(f'SELECT record_id, host FROM "{t}"').fetchall():
                 hosts[int(rid)] = host
-        related = frozenset(attack_related_records(con, cited)) if cited else frozenset()
-        return WindowFacts(max(hosts, default=0), hosts, related)
+        if not cited:
+            return WindowFacts(max(hosts, default=0), hosts)
+        attack = attack_set(con, cited)
+        related = frozenset(attack_related_records(con, cited, attack))
+        return WindowFacts(max(hosts, default=0), hosts, related, tuple(sorted(set(cited))),
+                           attack.to_json())  # fmt: skip
     finally:
         con.close()
+
+
+def evidence_records(sc: ScenarioFile, labels: Mapping[str, Labels]) -> list[int]:
+    """The scenario's cited evidence for E2's exclusion: E1's citations (E3-E5 and Set R cite the
+    same records) plus the labelled evidence sets of any case already labelled."""
+    ids = set(sc.e1.cited)
+    for lab in labels.values():
+        ids |= set(lab.evidence_counterfactual) | set(lab.evidence_retrievable)
+    return sorted(ids)
 
 
 def e2_order(sc: ScenarioFile, facts: WindowFacts) -> list[int]:
@@ -122,7 +139,12 @@ def build_cases(
             "r_edit": r_edit, "labels": lab.model_dump(mode="json", by_alias=True),
         })  # fmt: skip
 
-    out = [case("E1"), case("E2", cited=sample_e2(sc, facts))]
+    e2 = case("E2", cited=sample_e2(sc, facts))
+    if facts.attack is not None:
+        e2 = e2.model_copy(update={"e2_basis": E2Basis(
+            evidence_records=list(facts.evidence), **facts.attack,
+            excluded_record_ids=sorted(facts.attack_related))})  # fmt: skip
+    out = [case("E1"), e2]
     if sc.e3:
         moved = sc.e3.record_ids or sc.suspicious_record_ids
         out.append(case("E3", patch=DbPatch(ops=[MoveHost(record_ids=moved, host=sc.e3.host)])))

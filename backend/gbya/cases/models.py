@@ -345,6 +345,17 @@ class ScenarioFile(_M):
 # ---- case file ----------------------------------------------------------------------------------
 
 
+class E2Basis(_M):
+    """How E2's sample was drawn, stored with the E2 case when E2 is generated (team decision
+    before M6): later label changes never move E2; ``make regenerate-e2`` is the explicit,
+    logged way to recompute it."""
+
+    evidence_records: list[int]  # E1's citations plus the labelled evidence sets at generation
+    attack_processes: list[dict[str, Any]]  # host, pid, guid
+    attack_images: list[str]  # lower-case image names of the attack processes
+    excluded_record_ids: list[int]  # attack-related records, never sampled
+
+
 class CaseFile(_M):
     id: str
     scenario_id: str
@@ -355,6 +366,7 @@ class CaseFile(_M):
     db_patch: DbPatch | None = None
     r_edit: REdit | None = None
     labels: Labels = Field(default_factory=Labels)
+    e2_basis: E2Basis | None = None  # E2 only
 
     @model_validator(mode="after")
     def _ids(self) -> CaseFile:
@@ -366,6 +378,8 @@ class CaseFile(_M):
             raise ValueError("r_edit is required for Set R cases and forbidden otherwise")
         if self.db_patch is not None and self.variant not in PATCHED:
             raise ValueError(f"{self.variant} has no database patch")
+        if self.e2_basis is not None and self.variant != "E2":
+            raise ValueError("e2_basis belongs to the E2 case only")
         return self
 
 

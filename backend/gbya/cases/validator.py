@@ -22,6 +22,8 @@ labelled). A scenario is valid when nothing fails; it is complete when nothing i
 * (j) when the labels say an approved ticket applies (a decisive ticket entry, labelled
   CONTRADICTED; for E5 every approved target ticket), the cited records, as rendered, show each
   ticket dimension — host, acting user, command line, time — in at least one record;
+* e2 — a warning when labelled evidence added after E2 was generated would now exclude a record
+  E2 samples (or E2 has no stored basis); E2 only changes through ``make regenerate-e2``;
 * set_r — R_pos and R_neg differ in exactly one field (tier, approval script or toolset) and
   otherwise equal E1.
 """
@@ -43,6 +45,7 @@ from gbya.cases.models import (
     DecisiveAbsent,
     DecisiveField,
     DecisiveTicket,
+    Labels,
     ScenarioFile,
     effective_context,
     effective_toolset,
@@ -67,7 +70,7 @@ from gbya.gate.types import Claim
 from gbya.gate.verifier import build_prompt, target_tickets
 from gbya.llm.tokens import TokenCounter
 
-Status = Literal["pass", "fail", "pending"]
+Status = Literal["pass", "fail", "pending", "warn"]
 EXCLUSIONS = "EXCLUSIONS.json"
 
 
@@ -95,6 +98,11 @@ class Report:
     def add(self, check: str, case_id: str | None, ok: bool | None, message: str) -> None:
         status: Status = "pending" if ok is None else ("pass" if ok else "fail")
         self.checks.append(Check(check, case_id, status, message))
+
+    def warn(self, check: str, case_id: str | None, message: str) -> None:
+        """A warning: shown with the results; neither invalid nor incomplete, and it does not
+        block the freeze (which lists it)."""
+        self.checks.append(Check(check, case_id, "warn", message))
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -257,7 +265,45 @@ def validate_scenario(
         finally:
             con.close()
     _check_set_r(rep, views)
+    if "E2" in views and wdb.is_file():
+        _check_e2_basis(rep, views["E2"], sc, {v: views[v].case.labels for v in views}, wdb)
     return rep
+
+
+def _check_e2_basis(rep: Report, view: CaseView, sc: ScenarioFile, labels: dict[str, Labels],
+                    wdb: Path) -> None:  # fmt: skip
+    """(e2) E2's stored sampling basis against the current labels: a newly labelled evidence
+    record that would now exclude a record E2 samples gives a warning (E2 never moves silently;
+    ``make regenerate-e2`` recomputes it, logged)."""
+    from gbya.cases.builder import evidence_records
+    from gbya.cases.processes import attack_related_records
+
+    cid, basis = view.case.id, view.case.e2_basis
+    hint = f"regenerate explicitly: make regenerate-e2 SID={sc.id} REASON=..."
+    if basis is None:
+        rep.warn("e2", cid, f"E2 has no stored sampling basis; {hint}")
+        return
+    current = evidence_records(sc, labels)
+    new = sorted(set(current) - set(basis.evidence_records))
+    if not new:
+        rep.add("e2", cid, True, "E2's sampling basis covers every labelled evidence record")
+        return
+    con = open_case_db(wdb)
+    try:
+        related = attack_related_records(con, current)
+    finally:
+        con.close()
+    hit = sorted(set(view.case.package.cited) & related)
+    if hit:
+        rep.warn("e2", cid, f"newly labelled evidence records {new} would now exclude E2's "
+                            f"sampled records {hit}; {hint}")  # fmt: skip
+    else:
+        rep.add(
+            "e2",
+            cid,
+            True,
+            f"newly labelled evidence records {new} exclude none of E2's sampled records",
+        )
 
 
 def _target_approved(sc: ScenarioFile, ctx: TrustedContext) -> list[ChangeTicket]:

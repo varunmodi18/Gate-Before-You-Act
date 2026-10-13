@@ -1,6 +1,7 @@
 """Case construction commands (plan §D.11, §D.1.1). CONSTRUCTION PATH — command line only.
 
     python -m gbya.cases.cli generate <scenario_id>     # make generate-variants SID=...
+    python -m gbya.cases.cli regenerate-e2 <sid> <why>  # make regenerate-e2 SID=... REASON=...
 
 ``generate`` builds the seven variants from ``cases/<sid>/scenario.json``, writes the case files
 (keeping existing labels), patches the E3/E4/E5 databases, writes the deterministic prefixes to
@@ -14,7 +15,7 @@ import json
 import sys
 from typing import Any
 
-from gbya.cases.builder import build_cases, window_facts
+from gbya.cases.builder import build_cases, evidence_records, window_facts
 from gbya.cases.models import (
     Add,
     Labels,
@@ -43,16 +44,12 @@ def prefix_path(settings: Settings, case_id: str) -> Any:
     return cases_dir(settings) / sid / "prefixes" / f"{variant}.json"
 
 
-def evidence_records(sc: Any, labels: dict[str, Labels]) -> list[int]:
-    """The scenario's cited evidence for E2's exclusion: E1's citations (E3-E5 and Set R cite the
-    same records) plus the labelled evidence sets of any case already labelled."""
-    ids = set(sc.e1.cited)
-    for lab in labels.values():
-        ids |= set(lab.evidence_counterfactual) | set(lab.evidence_retrievable)
-    return sorted(ids)
-
-
-def generate(settings: Settings, sid: str, counter: TokenCounter | None = None) -> dict[str, Any]:
+def generate(
+    settings: Settings, sid: str, counter: TokenCounter | None = None, *, refresh_e2: bool = False
+) -> dict[str, Any]:
+    """Build the variants. E2's sampling basis is computed once and stored with the E2 case;
+    later generations reuse its evidence records (plus E1's current citations), so label changes
+    never move E2. ``refresh_e2`` recomputes it from the current labels (``regenerate_e2``)."""
     from gbya.store.db import make_engine, make_sessionmaker, session_scope
 
     counter = counter or default_counter()
@@ -62,10 +59,17 @@ def generate(settings: Settings, sid: str, counter: TokenCounter | None = None) 
     if not wdb.is_file():
         raise SystemExit(f"window database {wdb} is missing (make normalise)")
     existing: dict[str, Labels] = {}
+    stored = None
     for path in sorted((root / sid / "cases").glob("*.json")):
         cf = load_casefile(path)
         existing[cf.variant] = cf.labels
-    facts = window_facts(wdb, evidence_records(sc, existing))
+        if cf.variant == "E2":
+            stored = cf.e2_basis
+    if stored is not None and not refresh_e2:
+        evidence = sorted(set(stored.evidence_records) | set(sc.e1.cited))
+    else:
+        evidence = evidence_records(sc, existing)
+    facts = window_facts(wdb, evidence)
     cases = build_cases(sc, facts, existing)
     report: dict[str, Any] = {"scenario": sid, "variants": [c.variant for c in cases],
                               "patches": {}, "prefixes": {}}  # fmt: skip
@@ -98,10 +102,52 @@ def generate(settings: Settings, sid: str, counter: TokenCounter | None = None) 
     return report
 
 
+def e2_log_path(settings: Settings, sid: str) -> Any:
+    return cases_dir(settings) / sid / "e2_regenerations.json"
+
+
+def regenerate_e2(settings: Settings, sid: str, reason: str, *, by: str = "cli",
+                  counter: TokenCounter | None = None) -> dict[str, Any]:  # fmt: skip
+    """Recompute E2's sampling basis from the current labels and regenerate, logged in
+    ``cases/<sid>/e2_regenerations.json``. The only way a label change moves E2."""
+    from gbya.store.db import make_engine, make_sessionmaker, session_scope
+    from gbya.store.models import Scenario, utcnow
+
+    if not reason.strip():
+        raise SystemExit("regenerate-e2 needs a reason")
+    factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
+    with session_scope(factory) as s:
+        row = s.get(Scenario, sid)
+        if row is not None and row.status == "frozen":
+            raise SystemExit(f"scenario {sid} is frozen; E2 cannot be regenerated")
+    e2 = case_path(cases_dir(settings), f"{sid}:E2")
+    before = load_casefile(e2) if e2.is_file() else None
+    generate(settings, sid, counter, refresh_e2=True)
+    after = load_casefile(e2)
+    entry = {
+        "at": utcnow().isoformat(), "by": by, "reason": reason,
+        "evidence_before": before.e2_basis.evidence_records
+        if before and before.e2_basis else None,
+        "evidence_after": after.e2_basis.evidence_records if after.e2_basis else None,
+        "e2_before": before.package.cited if before else None, "e2_after": after.package.cited,
+    }  # fmt: skip
+    path = e2_log_path(settings, sid)
+    log = json.loads(path.read_text()) if path.is_file() else []
+    path.write_text(json.dumps([*log, entry], indent=2) + "\n", encoding="utf-8")
+    return entry
+
+
+USAGE = ("usage: python -m gbya.cases.cli generate <scenario_id>\n"
+         "       python -m gbya.cases.cli regenerate-e2 <scenario_id> <reason>")  # fmt: skip
+
+
 def main(argv: list[str]) -> None:
-    if len(argv) != 2 or argv[0] != "generate":
-        raise SystemExit("usage: python -m gbya.cases.cli generate <scenario_id>")
-    print(json.dumps(generate(get_settings(), argv[1]), indent=1))
+    if len(argv) == 2 and argv[0] == "generate":
+        print(json.dumps(generate(get_settings(), argv[1]), indent=1))
+    elif len(argv) == 3 and argv[0] == "regenerate-e2":
+        print(json.dumps(regenerate_e2(get_settings(), argv[1], argv[2]), indent=1))
+    else:
+        raise SystemExit(USAGE)
 
 
 if __name__ == "__main__":

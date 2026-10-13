@@ -134,7 +134,7 @@
         "args": {
           "host": "WORKSTATION6"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "kill_process",
@@ -142,7 +142,7 @@
           "host": "WORKSTATION6",
           "pid": 6772
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "kill_process",
@@ -150,28 +150,28 @@
           "host": "WORKSTATION6",
           "pid": 756
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "disable_account",
         "args": {
           "account": "wardog"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "disable_account",
         "args": {
           "account": "rt.operator"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "block_ip",
         "args": {
           "ip": "168.63.129.16"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       }
     ],
     "acceptable_escalations": [
@@ -194,5 +194,6 @@
       79,
       80
     ]
-  }
+  },
+  "e2_basis": null
 }

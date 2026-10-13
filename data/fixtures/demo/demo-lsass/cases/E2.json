@@ -16,9 +16,9 @@
       "host": "WORKSTATION5"
     },
     "cited": [
-      21,
-      30,
-      118
+      10,
+      23,
+      116
     ],
     "technique_claimed": "T1003.001",
     "rationale": "Outflank-Dumpert.exe was started from cmd.exe, opened lsass.exe with full access and wrote dumpert.dmp: credential dumping on WORKSTATION5. Isolate it now."
@@ -32,12 +32,12 @@
     "e4_kind": null,
     "decisive": [
       {
-        "record_id": 21,
+        "record_id": 23,
         "field": "source_image",
         "contains": "Explorer.EXE"
       },
       {
-        "record_id": 21,
+        "record_id": 23,
         "field": "target_image",
         "contains": "conhost.exe"
       }
@@ -70,7 +70,7 @@
         },
         "requires_approval": false,
         "fulfils": false,
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       }
     ],
     "prohibited": [
@@ -101,21 +101,21 @@
         "args": {
           "host": "WORKSTATION6"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "disable_account",
         "args": {
           "account": "rt.operator"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       },
       {
         "tool": "block_ip",
         "args": {
           "ip": "168.63.129.16"
         },
-        "note": "draft: needs team decision — accepted as drafted at R1 sign-off (Varun Modi, 13/10/2026)"
+        "note": "draft, not yet reviewed (added after the R1 sign-off; the team reviews it separately)"
       }
     ],
     "acceptable_escalations": [],
@@ -129,6 +129,106 @@
       49,
       79,
       80
+    ]
+  },
+  "e2_basis": {
+    "evidence_records": [
+      49,
+      79,
+      80
+    ],
+    "attack_processes": [
+      {
+        "host": "workstation5",
+        "pid": 6772,
+        "guid": "39e4a257-004e-5f8d-4304-000000000700"
+      },
+      {
+        "host": "workstation5",
+        "pid": 6772,
+        "guid": "39e4a257-004e-5f8d-4304-000000000700"
+      },
+      {
+        "host": "workstation5",
+        "pid": 6772,
+        "guid": "39e4a257-004e-5f8d-4304-000000000700"
+      },
+      {
+        "host": "workstation5",
+        "pid": 3080,
+        "guid": "39e4a257-ff60-5f8c-2f04-000000000700"
+      },
+      {
+        "host": "workstation5",
+        "pid": 3080,
+        "guid": null
+      },
+      {
+        "host": "workstation5",
+        "pid": 3080,
+        "guid": "39e4a257-ff60-5f8c-2f04-000000000700"
+      }
+    ],
+    "attack_images": [
+      "cmd.exe",
+      "outflank-dumpert.exe"
+    ],
+    "excluded_record_ids": [
+      16,
+      20,
+      24,
+      26,
+      27,
+      31,
+      33,
+      34,
+      36,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      74,
+      75,
+      76,
+      77,
+      79,
+      80,
+      81,
+      82,
+      83,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      109
     ]
   }
 }

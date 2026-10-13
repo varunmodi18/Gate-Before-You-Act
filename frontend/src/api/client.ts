@@ -457,7 +457,7 @@ export interface ScenarioDetail {
 export interface ValidationCheck {
   check: string
   case_id: string | null
-  status: 'pass' | 'fail' | 'pending'
+  status: 'pass' | 'fail' | 'pending' | 'warn'
   message: string
 }
 

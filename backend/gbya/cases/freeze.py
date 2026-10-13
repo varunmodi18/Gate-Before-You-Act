@@ -5,7 +5,8 @@
 Preconditions (each refusal names what is missing):
 * the validator runs with the **model tokenizer** (budget check g in model tokens);
 * every scenario under ``cases/`` is imported and **adjudicated**;
-* every scenario is **valid and complete** (no failing and no pending check);
+* every scenario is **valid and complete** (no failing and no pending check; warnings, e.g.
+  check e2, are listed in the manifest);
 * no scenario has an entry in ``cases/EXCLUSIONS.json`` (an excluded scenario is replaced, never
   frozen);
 * ``cases/FROZEN.json`` does not exist yet. A new version (``--supersede``) records the hash it
@@ -75,6 +76,7 @@ def freeze(
         raise FreezeRefused("no scenarios under cases/")
     excluded = json.loads((root / EXCLUSIONS).read_text()) if (root / EXCLUSIONS).is_file() else []
     problems: list[str] = []
+    warnings: list[str] = []
     hashes: dict[str, str] = {}
     scenarios = []
     for sid in sids:
@@ -91,8 +93,10 @@ def freeze(
         bad = [
             f"({c.check}) {c.case_id or sid}: {c.status}"
             for c in report.checks
-            if c.status != "pass"
+            if c.status in ("fail", "pending")
         ]
+        warnings += [f"({c.check}) {c.case_id or sid}: {c.message}"
+                     for c in report.checks if c.status == "warn"]  # fmt: skip
         if bad:
             problems.append(f"{sid}: validator not all-pass: {bad[:5]}")
         for case in session.query(Case).filter(Case.scenario_id == sid):
@@ -111,6 +115,7 @@ def freeze(
         "scenarios": scenarios,
         "counts": dict(sorted(Counter(str(s["split"]) for s in scenarios).items())),
         "supersedes": previous.get("case_set_hash") if previous else None,
+        "warnings": warnings,
     }
     out.write_text(json.dumps(manifest, indent=2) + "\n")
     for sid in sids:

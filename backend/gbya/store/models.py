@@ -131,6 +131,7 @@ class Case(Base):
     labels: Mapped[dict[str, Any] | None] = mapped_column()
     content_hash: Mapped[str | None] = mapped_column(String)
     r_edit: Mapped[dict[str, Any] | None] = mapped_column()  # Set R edit (0005)
+    e2_basis: Mapped[dict[str, Any] | None] = mapped_column()  # E2 sampling basis (0009)
 
 
 class Annotation(Base):

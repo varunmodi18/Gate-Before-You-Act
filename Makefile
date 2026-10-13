@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up
+.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up regenerate-e2
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -50,6 +50,9 @@ import-cases:  ## Import cases/<scenario>/scenario.json and cases/*.json into ap
 
 generate-variants:  ## Build E1-E5 and Set R for SID (case files, patched DBs, prefixes, import)
 	$(UV) run python -m gbya.cases.cli generate $(SID)
+
+regenerate-e2:  ## Recompute E2's sampling basis from the current labels (logged): SID=... REASON="..."
+	$(UV) run python -m gbya.cases.cli regenerate-e2 $(SID) "$(REASON)"
 
 freeze-cases:  ## TEAM ONLY (T4.10): freeze the adjudicated case set -> cases/FROZEN.json (VERSION=cases-v1)
 	$(UV) run python -m gbya.cases.freeze --version $(VERSION)

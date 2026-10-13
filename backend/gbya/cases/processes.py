@@ -15,7 +15,8 @@ cited evidence records, plus their recorded parents and children. Targets of cit
 as ``lsass.exe``) are **not** added, so an unrelated process's benign access to lsass stays
 eligible. ``attack_related_records`` returns every record whose acting process **or** target
 process is in the set: such records are never sampled as E2's "unrelated" evidence (e.g. a
-process opening the attacking process is excluded).
+process opening the attacking process is excluded). File and registry records whose target path
+contains the image name of an attack process (e.g. its prefetch file) are excluded too.
 """
 
 from __future__ import annotations
@@ -142,17 +143,89 @@ def attack_processes(con: duckdb.DuckDBPyConnection, cited: Iterable[int]) -> li
     return procs
 
 
-def attack_related_records(con: duckdb.DuckDBPyConnection, cited: Iterable[int]) -> set[int]:
-    """Records whose acting process or target process is in the attack process set."""
-    procs = attack_processes(con, cited)
-    # every record, raw-only ones included (their acting PID comes from the raw event)
+@dataclass(frozen=True)
+class AttackSet:
+    """The attack processes and their image file names (lower-case base names)."""
+
+    processes: tuple[Proc, ...]
+    images: tuple[str, ...]
+
+    def to_json(self) -> dict[str, Any]:
+        return {"attack_processes": [{"host": p.host, "pid": p.pid, "guid": p.guid}
+                                     for p in self.processes],
+                "attack_images": list(self.images)}  # fmt: skip
+
+
+def _basename(path: Any) -> str | None:
+    if not path:
+        return None
+    name = str(path).replace("/", "\\").rsplit("\\", 1)[-1].strip().lower()
+    return name or None
+
+
+def _image_of(rec: CitedRecord) -> str | None:
+    """The acting process's image of a record (normalised field, else the raw event's)."""
+    for key in ("image", "source_image"):
+        if rec.values.get(key):
+            return _basename(rec.values[key])
+    for key in ("Image", "SourceImage"):
+        v = rec.raw.get(key) or (rec.raw.get("event_data") or {}).get(key)
+        if v:
+            return _basename(v)
+    return None
+
+
+def _all_records(con: duckdb.DuckDBPyConnection) -> list[CitedRecord]:
     ids = [int(r[0]) for r in con.execute("SELECT record_id FROM raw_events").fetchall()]
+    return list(read_cited(con, ids).values())
+
+
+def attack_set(con: duckdb.DuckDBPyConnection, cited: Iterable[int]) -> AttackSet:
+    """The attack processes (see ``attack_processes``) and the images they run: the image of
+    every record they act in, plus a cited creation record's parent image."""
+    cited = list(cited)
+    procs = attack_processes(con, cited)
+    images = set()
+    for rec in _all_records(con):
+        actor = acting_process(rec)
+        if actor is not None and any(actor.same(p) for p in procs) and (img := _image_of(rec)):
+            images.add(img)
+    for rec in read_cited(con, cited).values():  # the parent's image, named by its child
+        if (img := _basename(rec.values.get("parent_image"))) is not None:
+            images.add(img)
+    return AttackSet(tuple(procs), tuple(sorted(images)))
+
+
+TARGET_PATH_FIELDS = ("target_filename", "target_object")
+RAW_TARGET_PATH_FIELDS = ("TargetFilename", "TargetObject")
+
+
+def _target_path(rec: CitedRecord) -> str | None:
+    for key in TARGET_PATH_FIELDS:
+        if rec.values.get(key):
+            return str(rec.values[key])
+    for key in RAW_TARGET_PATH_FIELDS:
+        v = rec.raw.get(key) or (rec.raw.get("event_data") or {}).get(key)
+        if v:
+            return str(v)
+    return None
+
+
+def attack_related_records(con: duckdb.DuckDBPyConnection, cited: Iterable[int],
+                           attack: AttackSet | None = None) -> set[int]:  # fmt: skip
+    """Records whose acting process or target process is in the attack set, and file or
+    registry records whose target path contains the image name of an attack process (e.g. the
+    prefetch file of the attacking binary; team decision before M6)."""
+    attack = attack or attack_set(con, cited)
     related = set()
-    for rec in read_cited(con, ids).values():
-        for proc in (acting_process(rec), target_process(rec)):
-            if proc is not None and any(proc.same(p) for p in procs):
-                related.add(rec.record_id)
-                break
+    for rec in _all_records(con):  # raw-only records included (acting PID from the raw event)
+        if any(proc is not None and any(proc.same(p) for p in attack.processes)
+               for proc in (acting_process(rec), target_process(rec))):  # fmt: skip
+            related.add(rec.record_id)
+            continue
+        path = _target_path(rec)
+        if path and any(img in path.lower() for img in attack.images):
+            related.add(rec.record_id)
     return related
 
 

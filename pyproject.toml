@@ -70,6 +70,10 @@ markers = [
     "gpu: needs the local model server on :8001 (deselected by default)",
 ]
 addopts = "-m 'not gpu'"
+# One run writes ~1.7 GB of DuckDB fixtures; keep temp directories only for failed tests so the
+# per-user /tmp quota is not exhausted by retained runs.
+tmp_path_retention_policy = "failed"
+tmp_path_retention_count = 1
 
 [tool.ruff]
 line-length = 100

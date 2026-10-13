@@ -82,6 +82,7 @@ def import_scenario(session: Session, settings: Settings, sid: str) -> list[str]
         case.package = cf.package.model_dump(mode="json")
         case.db_patch = cf.db_patch.model_dump(mode="json") if cf.db_patch else None
         case.r_edit = cf.r_edit.model_dump(mode="json") if cf.r_edit else None
+        case.e2_basis = cf.e2_basis.model_dump(mode="json") if cf.e2_basis else None
         case.labels = cf.labels.model_dump(mode="json", by_alias=True)
         case.approval_script = ctx.approval_script.model_dump(mode="json")
         case.case_db_path = str(db_path_for(settings, cf, sc.window_id))
@@ -101,7 +102,7 @@ def export_case(session: Session, case_id: str) -> CaseFile:
     return CaseFile.model_validate({
         "id": row.id, "scenario_id": row.scenario_id, "set": row.set_, "variant": row.variant,
         "request": row.request, "package": row.package, "db_patch": row.db_patch,
-        "r_edit": row.r_edit, "labels": row.labels or {},
+        "r_edit": row.r_edit, "labels": row.labels or {}, "e2_basis": row.e2_basis,
     })  # fmt: skip
 
 
