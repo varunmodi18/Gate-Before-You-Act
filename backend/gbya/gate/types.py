@@ -123,12 +123,10 @@ class GateDecision(BaseModel):
         return "Admitted." if self.admitted else self.verdict.value
 
 
-def normalised_call(tool: str, args: dict[str, Any]) -> str:
-    """Key of a call for approvals and retries: tool + normalised target (``cited`` excluded).
-
-    Hosts compare case-insensitively, accounts without ``DOMAIN\\`` and lower-case, IPs in
-    canonical form (same normalisation as scoring, T5.3).
-    """
+def normalised_target(args: dict[str, Any]) -> dict[str, Any]:
+    """A call's arguments without ``cited``, normalised: hosts compare case-insensitively, accounts
+    without ``DOMAIN\\`` and lower-case, IPs in canonical form (the same rule for the gate's
+    approvals and retries and for scoring, T5.3)."""
     target: dict[str, Any] = {}
     for k, v in args.items():
         if k == "cited":
@@ -144,4 +142,9 @@ def normalised_call(tool: str, args: dict[str, Any]) -> str:
                 target[k] = v
         else:
             target[k] = v
-    return f"{tool}:{json.dumps(target, sort_keys=True, default=str)}"
+    return target
+
+
+def normalised_call(tool: str, args: dict[str, Any]) -> str:
+    """Key of a call for approvals and retries: tool + normalised target (``cited`` excluded)."""
+    return f"{tool}:{json.dumps(normalised_target(args), sort_keys=True, default=str)}"
