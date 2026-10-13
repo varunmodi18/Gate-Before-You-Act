@@ -173,3 +173,16 @@ def test_profile_summarises_process_access(con: Any) -> None:
     text = iv.profile_text(p)
     assert "Process access, most accessed target images: " in text and "lsass.exe" in text
     assert "lsass.exe" in iv.query_terms(p)
+
+
+def test_handover_limit_applies_to_the_rendered_prefix(con: Any) -> None:
+    """M6.1 fix: the limit counts the prefix as the proposer receives it (step wrappers and the
+    findings included), not only the query results."""
+    from gbya.agent.episode import prefix_text
+
+    inv, _ = run(con, fake(t1059_cites=[999]))
+    whole = COUNTER.count(prefix_text(iv.handover(inv, COUNTER, limit=10_000)))
+    limit = whole - 1
+    inv2, _ = run(con, fake(t1059_cites=[999]))
+    h = iv.handover(inv2, COUNTER, limit=limit)
+    assert COUNTER.count(prefix_text(h)) <= limit and inv2.handover_stubbed

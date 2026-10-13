@@ -31,7 +31,7 @@ from typing import Any
 
 import duckdb
 
-from gbya.agent.episode import EpisodeStopped
+from gbya.agent.episode import EpisodeStopped, prefix_text
 from gbya.agent.proposer import MAX_RECORD_ID, TECHNIQUE
 from gbya.data.fieldmap import COMMON_COLUMNS, TABLE_COLUMNS, TABLES
 from gbya.errors import ModelOutputInvalid
@@ -317,7 +317,8 @@ class Investigator:
         hyp = f"HYPOTHESIS\n{h.technique_id}: {h.behaviour}"
         msgs: list[Message] = [
             {"role": "system", "content": _prompt("sqlgen") + "\n" + table_schema_text()},
-            {"role": "user", "content": f"{hyp}\n\nREFERENCE (background, not evidence)\n"
+            {"role": "user", "content": f"{hyp}\n\nWINDOW SUMMARY (untrusted log data)\n{text}"
+                                        f"\n\nREFERENCE (background, not evidence)\n"
                                         f"{reference}"},
         ]  # fmt: skip
         out = self._call(inv, "sqlgen", msgs, SQL_SCHEMA, self.temperature)
@@ -383,28 +384,27 @@ def handover(inv: Investigation, counter: TokenCounter, limit: int = HANDOVER_TO
                  "(ask_analyst, insufficient_evidence) instead of acting.")  # fmt: skip
     profile = profile_text(inv.profile)
     ordered = sorted(inv.hypotheses, key=lambda h: not h.accepted)
-    queries: list[dict[str, Any]] = []
-    used = counter.count(profile) + counter.count(findings)
-    for h in ordered:
-        for q in h.queries:
-            if not q["ok"]:
-                continue
-            cost = counter.count(q["content"])
-            if used + cost <= limit:
-                queries.append({"sql": q["sql"], "result": q["content"]})
-                used += cost
-            else:
-                ids = ", ".join(map(str, q["registered"])) or "none"
-                queries.append(
-                    {
-                        "sql": q["sql"],
-                        "result": f"[result omitted to fit the context; "
-                        f"it returned record_ids: {ids}]",
-                    }
-                )
-                inv.handover_stubbed.append(q["sql"])
-    return {"profile": profile, "queries": queries, "findings": findings,
-            "retrieved": list(inv.retrieved)}  # fmt: skip
+    done = [q for h in ordered for q in h.queries if q["ok"]]
+    # The limit applies to the prefix as the proposer receives it (M6.1 fix: it used to count the
+    # results only, so step wrappers and the findings could push the prefix past the limit).
+    full = [True] * len(done)
+
+    def render() -> dict[str, Any]:
+        queries = [{"sql": q["sql"], "result": q["content"] if keep else
+                    "[result omitted to fit the context; it returned record_ids: "
+                    f"{', '.join(map(str, q['registered'])) or 'none'}]"}
+                   for q, keep in zip(done, full, strict=True)]  # fmt: skip
+        return {"profile": profile, "queries": queries, "findings": findings,
+                "retrieved": list(inv.retrieved)}  # fmt: skip
+
+    out = render()
+    for i in reversed(range(len(done))):  # stub from the end (rejected hypotheses go last)
+        if counter.count(prefix_text(out)) <= limit:
+            break
+        full[i] = False
+        inv.handover_stubbed.append(done[i]["sql"])
+        out = render()
+    return out
 
 
 def dump(inv: Investigation) -> str:

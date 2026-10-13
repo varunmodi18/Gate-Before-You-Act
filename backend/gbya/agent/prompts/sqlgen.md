@@ -4,7 +4,8 @@ How the data looks:
 - Image fields (image, parent_image, source_image, target_image) hold full Windows paths, such as C:\Windows\System32\cmd.exe or \Device\HarddiskVolume2\Windows\System32\lsass.exe, in any letter case. Match a program by its file name with ILIKE and a leading backslash: image ILIKE '%\cmd.exe' (write one backslash in the SQL). Never compare an image with = 'name.exe'.
 - In process_create, image is the new (child) process and parent_image is the process that started it; pid and ppid are their process IDs.
 - In process_access, source_image is the process that opened another process and target_image is the process it opened (for example a tool opening lsass.exe); granted_access is the requested access mask.
-- Use the image names, tokens and pairs in the window profile; prefer simple filters on one or two fields over long conjunctions that may match nothing.
+- granted_access is text such as '0x1fffff' or '0x1410': compare it as a quoted string (granted_access = '0x1fffff').
+- Use the exact image names and pairs from the window summary below. Start broad: filter on one or two fields (for example target_image ILIKE '%\lsass.exe'), not on long conjunctions that may match nothing. Put parentheses around OR conditions. No subqueries or joins.
 
 The reference is background on how such behaviour is usually detected; it is not evidence and may be irrelevant.
 
