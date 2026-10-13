@@ -3,7 +3,9 @@
 1. **Profile** (code): event counts per table, the 10 rarest parent→child process pairs, the
    process-access summary (top target and source images, rarest source→target pairs, with counts;
    M6.1), rare command-line tokens and the hosts.
-2. **Hypothesise**: at most 5 technique IDs, each with a behaviour description.
+2. **Hypothesise**: 3 to 5 technique IDs (``minItems`` in the schema; M6.1 round 3), each with a
+   behaviour description. The step also sees the top ATT&CK techniques retrieved from the index
+   with the profile's terms (``CANDIDATES``; bm25, never the window's metadata or an ID as key).
 3. For each hypothesis: **retrieve** Sigma/ATT&CK text with a query made of profile terms and
    the behaviour description in ``bm25`` mode — never the technique ID (§L.4 item 10, §D.3);
    **generate** at most 2 SQL queries and run them through the agent's own guarded
@@ -43,6 +45,10 @@ from gbya.tools.registry import SqlQueryArgs, ToolEnvironment
 
 PROMPTS = Path(__file__).with_name("prompts")
 MAX_HYPOTHESES = 5
+MIN_HYPOTHESES = 3  # M6.1 round 3: the model proposed only two when the prompt alone asked for 3-5
+CANDIDATES = (
+    10  # ATT&CK techniques retrieved with the profile's terms, shown to the hypothesis step
+)
 MAX_QUERIES = 2
 MAX_CITED = 8
 MAX_LLM_CALLS = 25
@@ -51,6 +57,21 @@ REFERENCE_CHARS = 700  # per reference document shown to the investigator (backg
 MAX_TOKENS = {"hypothesise": 500, "sqlgen": 400, "technique_verifier": 250}
 
 Retrieve = Callable[..., tuple[Any, list[Doc]]]  # (query, mode) -> (Retrieval, docs)
+# query -> [(technique_id, name)] from the ATT&CK index (bm25 on the query text; IDs come from the
+# ATT&CK corpus, never from the window's metadata)
+Candidates = Callable[[str], list[tuple[str, str]]]
+
+
+def attack_candidates(index: Any, k: int = CANDIDATES) -> Candidates:
+    def candidates(query: str) -> list[tuple[str, str]]:
+        r = index.retrieve(query, "bm25")
+        out = []
+        for hit in r.attack_ranking[:k]:
+            doc = index.doc(hit.doc_id)
+            out.append((str(doc.meta.get("technique_id")), doc.title))
+        return out
+
+    return candidates
 
 
 def _obj(props: dict[str, Any], required: list[str] | None = None) -> dict[str, Any]:
@@ -60,7 +81,8 @@ def _obj(props: dict[str, Any], required: list[str] | None = None) -> dict[str, 
 
 HYPOTHESES_SCHEMA: JsonSchema = _obj({
     "thought": {"type": "string", "maxLength": 300},
-    "hypotheses": {"type": "array", "maxItems": MAX_HYPOTHESES, "items": _obj({
+    "hypotheses": {"type": "array", "minItems": MIN_HYPOTHESES, "maxItems": MAX_HYPOTHESES,
+                   "items": _obj({
         "technique_id": {"type": "string", "pattern": TECHNIQUE},
         "behaviour": {"type": "string", "minLength": 1, "maxLength": 200}})},
 })  # fmt: skip
@@ -202,6 +224,7 @@ class Investigation:
     retrieved: list[int] = field(default_factory=list)
     handover_stubbed: list[str] = field(default_factory=list)  # SQL whose result became a stub
     handover_tokens: int = 0  # the rendered handover (prefix) as the proposer receives it
+    candidates: list[str] = field(default_factory=list)  # ATT&CK candidates shown (round 3)
 
     @property
     def findings(self) -> list[dict[str, Any]]:
@@ -222,6 +245,7 @@ class Investigation:
             "llm_calls": self.llm_calls, "tokens_in": self.tokens_in,
             "tokens_out": self.tokens_out, "budget_exhausted": self.budget_exhausted,
             "handover_stubbed": self.handover_stubbed, "handover_tokens": self.handover_tokens,
+            "candidates": self.candidates,
         }  # fmt: skip
 
 
@@ -241,6 +265,7 @@ class Investigator:
     temperature: float
     seed: int | None
     request_text: str = ""
+    candidates: Candidates | None = None  # None: the hypothesis step sees no candidate list
     on_event: Callable[[str, dict[str, Any]], Any] | None = None  # live trace (Console)
     should_stop: Callable[[], bool] | None = None
     _profile: dict[str, Any] = field(default_factory=dict, init=False)
@@ -290,10 +315,16 @@ class Investigator:
         return inv
 
     def _hypothesise(self, inv: Investigation, text: str) -> None:
+        cands = self.candidates(query_terms(self._profile)) if self.candidates else []
+        inv.candidates = [t for t, _ in cands]
+        listing = "\n".join(f"{t} {name}" for t, name in cands) or "(none)"
         msgs: list[Message] = [
             {"role": "system", "content": _prompt("hypothesise")},
             {"role": "user", "content": f"ANALYST REQUEST\n{self.request_text}\n\n"
-                                        f"WINDOW PROFILE (untrusted log data)\n{text}"},
+                                        f"WINDOW PROFILE (untrusted log data)\n{text}\n\n"
+                                        "CANDIDATE TECHNIQUES (retrieved from ATT&CK with the "
+                                        f"profile's terms; background, may be irrelevant)\n"
+                                        f"{listing}"},
         ]  # fmt: skip
         out = self._call(inv, "hypothesise", msgs, HYPOTHESES_SCHEMA, self.temperature)
         seen: set[str] = set()

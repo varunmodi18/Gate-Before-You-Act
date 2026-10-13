@@ -28,7 +28,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
 from gbya.agent.episode import EpisodeRunner, MemoryTrace, prefix_text
-from gbya.agent.investigator import Investigation, Investigator, handover
+from gbya.agent.investigator import Investigation, Investigator, attack_candidates, handover
 from gbya.agent.proposer import LIVE_LABEL
 from gbya.cases.models import Labels, Request
 from gbya.config import REPO_ROOT, Settings
@@ -143,6 +143,7 @@ def run_episode(
                            retrieve=live_retriever(deps.index()) if has_index else None,
                            temperature=slot.temperature, seed=slot.seed,
                            request_text=case.request.text, on_event=trace.step,
+                           candidates=attack_candidates(deps.index()) if has_index else None,
                            should_stop=should_stop).run(con)  # fmt: skip
         prefix = prefix_text(handover(inv, deps.counter))
         inv.handover_tokens = deps.counter.count(prefix)

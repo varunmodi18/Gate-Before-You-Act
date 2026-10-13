@@ -186,3 +186,42 @@ def test_handover_limit_applies_to_the_rendered_prefix(con: Any) -> None:
     inv2, _ = run(con, fake(t1059_cites=[999]))
     h = iv.handover(inv2, COUNTER, limit=limit)
     assert COUNTER.count(prefix_text(h)) <= limit and inv2.handover_stubbed
+
+
+def test_fewer_than_three_hypotheses_do_not_match_the_schema(con: Any) -> None:
+    """M6.1 round 3: the schema requires 3 to 5 hypotheses."""
+    two = {"thought": "t", "hypotheses": HYPOTHESES["hypotheses"][:2]}
+    inv, _ = run(con, FakeLLMClient([FakeRule([two], pattern="WINDOW PROFILE")]))
+    assert inv.hypotheses == [] and inv.events[-1][1]["error"]
+    assert iv.HYPOTHESES_SCHEMA["properties"]["hypotheses"]["minItems"] == 3
+
+
+def test_hypothesis_step_sees_attack_candidates_from_the_profile(con: Any, tmp_path: Path) -> None:
+    """Candidates come from the ATT&CK index searched with the profile's terms: never the
+    window's metadata, never a technique ID as the key."""
+    from gbya.retrieval import index as ix
+    from gbya.retrieval import sources
+
+    fixtures = Path(__file__).resolve().parents[1] / "fixtures" / "retrieval"
+    out = tmp_path
+    queries: list[str] = []
+
+    def candidates(query: str) -> list[tuple[str, str]]:
+        queries.append(query)
+        return [("T1003.001", "LSASS Memory"), ("T1055", "Process Injection")]
+
+    client = fake(t1059_cites=[999])
+    tools = ToolEnvironment(con=con, context=ctx(), state=EpisodeState(), counter=COUNTER)
+    inv = iv.Investigator(client=client, tools=tools, counter=COUNTER, retrieve=None,
+                          temperature=0.2, seed=11, candidates=candidates).run(con)  # fmt: skip
+    prompt = client.calls[0].messages[-1]["content"]
+    assert "CANDIDATE TECHNIQUES" in prompt and "T1003.001 LSASS Memory" in prompt
+    assert queries == [iv.query_terms(iv.profile(con))] and "T1003" not in queries[0]
+    assert inv.candidates == ["T1003.001", "T1055"] and inv.summary()["candidates"]
+    # the real index: IDs come from the ATT&CK corpus documents
+    built = ix.build(sources.Sources(fixtures / "sigma", "0" * 40,
+                                     fixtures / "attack/enterprise-attack-test.json", "0" * 64,
+                                     fixtures / "attack/LICENSE.txt"), out / "idx")  # fmt: skip
+    assert built["index_version"]
+    found = iv.attack_candidates(ix.load(out / "idx"), k=3)("lsass.exe memory dump")
+    assert found and all(t.startswith("T") for t, _ in found) and len(found) <= 3

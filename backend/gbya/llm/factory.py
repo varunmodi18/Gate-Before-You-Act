@@ -64,10 +64,15 @@ def fake_rules() -> list[FakeRule]:
     )
     investigator = [  # Exp 3 investigator prompts (mini fixture): verifier first, then SQL
         FakeRule([{"thought": "Fake LLM backend (test profile)", "hypotheses": [
-            {"technique_id": "T1003.001", "behaviour": "a process opens lsass.exe memory"}]}],
+            {"technique_id": "T1003.001", "behaviour": "a process opens lsass.exe memory"},
+            {"technique_id": "T1059.001", "behaviour": "powershell runs an encoded command"},
+            {"technique_id": "T1547.001", "behaviour": "a run key starts a program at logon"}]}],
                  pattern="WINDOW PROFILE"),
         FakeRule([{"verdict": "ACCEPT", "cited": [5, 7],
                    "reason": "Fake LLM backend (test profile): fixed ACCEPT"}],
+                 pattern=r"HYPOTHESIS\nT1003\.001[\s\S]*QUERY RESULTS"),
+        FakeRule([{"verdict": "REJECT", "cited": [],
+                   "reason": "Fake LLM backend (test profile): fixed REJECT"}],
                  pattern=r"HYPOTHESIS\n[\s\S]*QUERY RESULTS"),
         FakeRule([{"queries": [{"sql": RECOVERY_SQL, "purpose": "lsass access"}]}],
                  pattern=r"HYPOTHESIS\n"),
