@@ -289,6 +289,18 @@ export interface OutcomesOut {
     by_system: Record<string, { rate: number | null; rate_pp: number | null; n: number }>
     refused: string | null
   }
+  // Exp 2, decision B: decisive records the agent retrieved but never cited
+  citation_gap?: {
+    by_variant_system: {
+      variant: string
+      system: string
+      episodes: number
+      with_decisive: number
+      retrieved: number
+      retrieved_not_cited: number
+      rate: number | null
+    }[]
+  }
 }
 
 export interface RunOut {

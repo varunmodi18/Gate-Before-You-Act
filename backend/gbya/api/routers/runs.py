@@ -168,6 +168,10 @@ def outcomes(run_id: int, session: Annotated[Session, Depends(get_session)]) -> 
         task_success = {"by_system": {}, "refused": str(exc)}
     out: dict[str, Any] = {"run_id": run_id, "by_system": outcome_counts(session, run_id),
                            "task_success": task_success}  # fmt: skip
+    if run.experiment == 2:
+        from gbya.scoring.metrics import run_citation_gap
+
+        out["citation_gap"] = run_citation_gap(session, run_id)
     if run.experiment == 3:
         from gbya.experiments.exp3 import report
 

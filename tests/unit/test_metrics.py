@@ -82,3 +82,18 @@ def test_evidence_scores_only_for_justified_completion() -> None:
     )
     assert evidence_score([5], [5], False) is None and evidence_score([5], [5], None) is None
     assert evidence_score([], [5], True).precision is None  # type: ignore[union-attr]
+
+
+def test_decisive_records_and_the_citation_gap() -> None:
+    from gbya.cases.models import Labels
+    from gbya.scoring.metrics import citation_gap, decisive_records
+
+    labels = Labels.model_validate({"e4_kind": "contradiction", "decisive": [
+        {"record_id": 79, "field": "target_image", "contains": "lsass.exe"},
+        {"absent_record_id": 80}, {"ticket_id": "CHG-1", "scope": ["host"]}]})  # fmt: skip
+    # the E4 contradiction's added record (cited by E4's package, not by E1's) counts too
+    assert decisive_records(labels, "E4", [49, 79, 120], [49, 79]) == {79, 120}
+    assert decisive_records(labels, "E1", [49, 79], [49, 79]) == {79}
+    gap = citation_gap({79, 120}, retrieved=[49, 79, 120], cited=[49, 79])
+    assert (gap.retrieved, gap.cited, gap.retrieved_not_cited) == ((79, 120), (79,), (120,))
+    assert citation_gap({79}, retrieved=[49], cited=[]).retrieved_not_cited == ()

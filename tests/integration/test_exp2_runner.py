@@ -309,3 +309,28 @@ def test_budget_projection_and_f1_offer(done_run: tuple[Settings, int]) -> None:
         s.rollback()
         run = s.get(Run, run_id)
         assert run is not None and run.started_at == saved
+
+
+def test_retrieved_but_not_cited_per_episode_and_variant(tmp_path: Path) -> None:
+    """Decision B: a decisive record in the agent's registry that no gate-checked call cited."""
+    settings = build(tmp_path)
+    run_id = create(settings, case_ids=["mini:E1"], overrides={"systems": {"G1": 1}})
+    assert rn.execute_run(factory_of(settings), run_id, deps(settings)) == "completed"
+    with db.session_scope(factory_of(settings)) as s:
+        ep = s.scalars(select(Episode).where(Episode.run_id == run_id)).one()
+        registry = set(ep.retrieved)
+        cited = {int(i) for c in s.scalars(select(ToolCall.cited)
+                                           .where(ToolCall.episode_id == ep.id)) for i in c}  # fmt: skip
+        hit, missed = min(registry & cited), min(registry - cited)
+        row = s.get(Case, "mini:E1")
+        assert row is not None
+        row.labels = {**(row.labels or {}), "decisive": [
+            {"record_id": hit, "field": "image", "contains": "x"},
+            {"record_id": missed, "field": "image", "contains": "x"},
+            {"absent_record_id": 999}]}  # fmt: skip
+    body = TestClient(create_app(settings)).get(f"/api/v1/runs/{run_id}/outcomes").json()
+    (e,) = body["citation_gap"]["episodes"]
+    assert (e["variant"], e["system"], e["decisive"]) == ("E1", "G1", sorted([hit, missed]))
+    assert (e["cited"], e["retrieved_not_cited"]) == ([hit], [missed])  # 999: absent, not counted
+    (g,) = body["citation_gap"]["by_variant_system"]
+    assert (g["episodes"], g["retrieved"], g["retrieved_not_cited"], g["rate"]) == (1, 1, 1, 1.0)

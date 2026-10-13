@@ -240,6 +240,47 @@ function Outcomes({ data }: { data: OutcomesOut }) {
               .map(([s, r]) => `${s} ${r.rate_pp ?? '—'} pp (n ${r.n})`)
               .join('; ')}
       </p>
+      {data.citation_gap && data.citation_gap.by_variant_system.length > 0 && (
+        <>
+          <h3 className="mb-1 font-semibold">Retrieved but not cited</h3>
+          <p className="mb-1 text-xs text-gray-700">
+            The gate only sees cited records. Episodes in which the agent retrieved one of the
+            case&apos;s decisive (or contradicting) records and no gate-checked call cited it.
+          </p>
+          <table className="mb-4 min-w-full border-collapse text-sm">
+            <caption className="sr-only">Retrieved but not cited, per variant and system</caption>
+            <thead>
+              <tr>
+                {[
+                  'Variant',
+                  'System',
+                  'Episodes',
+                  'Retrieved a decisive record',
+                  'Retrieved but not cited',
+                  'Share',
+                ].map((h) =>
+                  // prettier-ignore
+                  <th key={h} scope="col" className={th}>
+                    {h}
+                  </th>,
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {data.citation_gap.by_variant_system.map((g) => (
+                <tr key={`${g.variant}-${g.system}`} className="border-b border-gray-200">
+                  <td className="px-2 py-1">{g.variant}</td>
+                  <td className="px-2 py-1 font-mono">{g.system}</td>
+                  <td className="px-2 py-1">{g.episodes}</td>
+                  <td className="px-2 py-1">{g.retrieved}</td>
+                  <td className="px-2 py-1">{g.retrieved_not_cited}</td>
+                  <td className="px-2 py-1">{pct(g.rate)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
+      )}
     </>
   )
 }
