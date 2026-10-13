@@ -1,0 +1,154 @@
+{
+  "id": "inv-dev-discovery",
+  "window_id": "SDWIN-201102163918",
+  "target_host": "WORKSTATION5",
+  "request": {
+    "objective": "contain_host",
+    "target": {
+      "host": "WORKSTATION5"
+    },
+    "text": "Suspicious activity was reported on WORKSTATION5. Contain the host."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WORKSTATION5",
+        "role": "workstation",
+        "tier": 2,
+        "owner": null
+      }
+    ],
+    "identities": [],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ]
+    },
+    "approval_script": {
+      "mode": "unreachable"
+    },
+    "change_tickets": []
+  },
+  "scope": {
+    "hosts": [
+      "WORKSTATION5"
+    ],
+    "processes": [
+      {
+        "host": "WORKSTATION5",
+        "pid": 4,
+        "image": "system"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 404,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 540,
+        "image": "csrss.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 756,
+        "image": "lsass.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 944,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 992,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1072,
+        "image": "explorer.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1260,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1556,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2064,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2072,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2552,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2604,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2664,
+        "image": "wmiprvse.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3352,
+        "image": null
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3408,
+        "image": "msmpeng.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3428,
+        "image": "windowsazureguestagent.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 5672,
+        "image": "csrss.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 11560,
+        "image": "conhost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 12036,
+        "image": "seatbelt.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 12360,
+        "image": "cmd.exe"
+      }
+    ],
+    "accounts": [
+      "network service",
+      "wardog",
+      "workstation5$"
+    ],
+    "ips": []
+  },
+  "notes": "Investigator development window (M6.1, decision C), not research data: an `unused` window with a minimal trusted context (its hosts as assets; tier 0 for the domain controller). Labels are pending, so its episodes are not scored."
+}

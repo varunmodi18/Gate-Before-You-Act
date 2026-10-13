@@ -1,0 +1,100 @@
+{
+  "id": "inv-dev-persistence",
+  "window_id": "SDWIN-200722001847",
+  "target_host": "WORKSTATION5.mordor.local",
+  "request": {
+    "objective": "contain_host",
+    "target": {
+      "host": "WORKSTATION5.mordor.local"
+    },
+    "text": "Suspicious activity was reported on WORKSTATION5.mordor.local. Contain the host."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "role": "workstation",
+        "tier": 2,
+        "owner": null
+      },
+      {
+        "host": "MORDORDC.mordor.local",
+        "role": "domain_controller",
+        "tier": 0,
+        "owner": null
+      },
+      {
+        "host": "WORKSTATION6.mordor.local",
+        "role": "workstation",
+        "tier": 2,
+        "owner": null
+      }
+    ],
+    "identities": [],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ]
+    },
+    "approval_script": {
+      "mode": "unreachable"
+    },
+    "change_tickets": []
+  },
+  "scope": {
+    "hosts": [
+      "WORKSTATION5.mordor.local"
+    ],
+    "processes": [
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 396,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 1392,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 1980,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 3284,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 3372,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 3580,
+        "image": "networkwatcheragent.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 5148,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5.mordor.local",
+        "pid": 9076,
+        "image": "powershell.exe"
+      }
+    ],
+    "accounts": [
+      "network service",
+      "pgustavo"
+    ],
+    "ips": []
+  },
+  "notes": "Investigator development window (M6.1, decision C), not research data: an `unused` window with a minimal trusted context (its hosts as assets; tier 0 for the domain controller). Labels are pending, so its episodes are not scored."
+}

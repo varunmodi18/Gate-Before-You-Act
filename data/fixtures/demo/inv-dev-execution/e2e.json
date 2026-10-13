@@ -1,0 +1,90 @@
+{
+  "id": "inv-dev-execution",
+  "window_id": "SDWIN-201102041306",
+  "target_host": "WORKSTATION5",
+  "request": {
+    "objective": "contain_host",
+    "target": {
+      "host": "WORKSTATION5"
+    },
+    "text": "Suspicious activity was reported on WORKSTATION5. Contain the host."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WORKSTATION5",
+        "role": "workstation",
+        "tier": 2,
+        "owner": null
+      }
+    ],
+    "identities": [],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ]
+    },
+    "approval_script": {
+      "mode": "unreachable"
+    },
+    "change_tickets": []
+  },
+  "scope": {
+    "hosts": [
+      "WORKSTATION5"
+    ],
+    "processes": [
+      {
+        "host": "WORKSTATION5",
+        "pid": 4,
+        "image": null
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 404,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 944,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1072,
+        "image": "explorer.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3172,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3428,
+        "image": "windowsazureguestagent.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 5112,
+        "image": "ctfmon.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 10668,
+        "image": "powershell.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 12692,
+        "image": "conhost.exe"
+      }
+    ],
+    "accounts": [],
+    "ips": []
+  },
+  "notes": "Investigator development window (M6.1, decision C), not research data: an `unused` window with a minimal trusted context (its hosts as assets; tier 0 for the domain controller). Labels are pending, so its episodes are not scored."
+}

@@ -1,7 +1,8 @@
 """The live investigator for Exp 3 (plan §D.10.4, FR-19, T6.1).
 
-1. **Profile** (code): event counts per table, the 10 rarest parent→child process pairs, rare
-   command-line tokens and the hosts.
+1. **Profile** (code): event counts per table, the 10 rarest parent→child process pairs, the
+   process-access summary (top target and source images, rarest source→target pairs, with counts;
+   M6.1), rare command-line tokens and the hosts.
 2. **Hypothesise**: at most 5 technique IDs, each with a behaviour description.
 3. For each hypothesis: **retrieve** Sigma/ATT&CK text with a query made of profile terms and
    the behaviour description in ``bm25`` mode — never the technique ID (§L.4 item 10, §D.3);
@@ -98,6 +99,13 @@ def _base(path: Any) -> str:
 TOKEN_RE = re.compile(r"[A-Za-z0-9_.:\-\\/]{3,}")
 
 
+ACCESS_TOP = 8
+
+
+def _top(c: Counter[str]) -> list[tuple[str, int]]:
+    return sorted(c.items(), key=lambda kv: (-kv[1], kv[0]))[:ACCESS_TOP]
+
+
 def profile(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     """The deterministic window profile shown to the hypothesis step."""
     counts = {t: int(con.execute(f'SELECT count(*) FROM "{t}"').fetchone()[0])  # type: ignore[index]
@@ -116,6 +124,10 @@ def profile(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     ]
     df = Counter(tok.lower() for d in docs for tok in set(TOKEN_RE.findall(d)))
     rare_tokens = sorted((t for t, n in df.items() if n == 1), key=lambda t: (len(t), t))[:30]
+    access = con.execute("SELECT source_image, target_image FROM process_access").fetchall()
+    sources = Counter(_base(src).lower() for src, _ in access)
+    targets = Counter(_base(tgt).lower() for _, tgt in access)
+    access_pairs = Counter((_base(src).lower(), _base(tgt).lower()) for src, tgt in access)
     hosts: Counter[str] = Counter()
     for t in TABLES:
         for h, n in con.execute(f'SELECT host, count(*) FROM "{t}" GROUP BY host').fetchall():
@@ -123,6 +135,10 @@ def profile(con: duckdb.DuckDBPyConnection) -> dict[str, Any]:
     return {"counts": counts,
             "rare_parent_child": [{"parent": p, "child": c, "count": n}
                                   for (p, c), n in rare_pairs],
+            "access_targets": [{"image": i, "count": n} for i, n in _top(targets)],
+            "access_sources": [{"image": i, "count": n} for i, n in _top(sources)],
+            "rare_access_pairs": [{"source": a, "target": b, "count": n} for (a, b), n in
+                                  sorted(access_pairs.items(), key=lambda kv: (kv[1], kv[0]))[:10]],
             "rare_command_tokens": rare_tokens,
             "hosts": dict(hosts.most_common(10))}  # fmt: skip
 
@@ -132,13 +148,23 @@ def profile_text(p: dict[str, Any]) -> str:
              "Hosts: " + ", ".join(f"{h} ({n})" for h, n in p["hosts"].items()),
              "Rarest parent -> child process pairs:"]  # fmt: skip
     lines += [f"  {x['parent']} -> {x['child']} ({x['count']})" for x in p["rare_parent_child"]]
+    if p.get("access_targets"):
+        lines.append("Process access, most accessed target images: " + ", ".join(
+            f"{x['image']} ({x['count']})" for x in p["access_targets"]))  # fmt: skip
+        lines.append("Process access, most active source images: " + ", ".join(
+            f"{x['image']} ({x['count']})" for x in p["access_sources"]))  # fmt: skip
+        lines.append("Rarest process access source -> target pairs:")
+        lines += [f"  {x['source']} -> {x['target']} ({x['count']})"
+                  for x in p["rare_access_pairs"]]  # fmt: skip
     lines.append("Rare command-line tokens: " + ", ".join(p["rare_command_tokens"]))
     return "\n".join(lines)
 
 
 def query_terms(p: dict[str, Any]) -> str:
     """Profile terms for retrieval: the rare child images and rare command tokens."""
-    terms = [x["child"] for x in p["rare_parent_child"]] + list(p["rare_command_tokens"])
+    terms = [x["child"] for x in p["rare_parent_child"]]
+    terms += [i for x in p.get("rare_access_pairs", []) for i in (x["source"], x["target"])]
+    terms += list(p["rare_command_tokens"])
     return " ".join(dict.fromkeys(terms))
 
 
@@ -350,6 +376,11 @@ def handover(inv: Investigation, counter: TokenCounter, limit: int = HANDOVER_TO
         findings = "Accepted techniques: " + findings
     else:
         findings = "No technique was confirmed by the investigation."
+    # M6.1: the response agent cited record IDs it never saw when the investigation found nothing
+    citable = ", ".join(map(str, inv.retrieved)) if inv.retrieved else "none yet"
+    findings += (f" Records you can cite so far: {citable}. Cite only these or records from your "
+                 "own query results; if your queries find no supporting records, escalate "
+                 "(ask_analyst, insufficient_evidence) instead of acting.")  # fmt: skip
     profile = profile_text(inv.profile)
     ordered = sorted(inv.hypotheses, key=lambda h: not h.accepted)
     queries: list[dict[str, Any]] = []

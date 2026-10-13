@@ -139,3 +139,37 @@ def test_stop_during_the_investigation(con: Any) -> None:
     with pytest.raises(EpisodeStopped, match="investigation"):
         inv.run(con)
     assert seen == ["profile", "hypothesise"]  # events reach the live trace as they happen
+
+
+def test_phase_1_records_are_citable_in_phase_2_even_as_handover_stubs(con: Any) -> None:
+    """M6.1 check: the investigation's queries register their records in the episode state the
+    response phase uses, so the gate's C2 admits them, also when the handover shrank their result
+    to a record-ID stub."""
+    from gbya.gate.checks import GateEnv, check_c2
+    from gbya.gate.evidence import read_cited, window_time_range
+    from gbya.tools.names import ALL_TOOLS
+
+    inv, state = run(con, fake(t1059_cites=[999]))
+    small = iv.handover(inv, COUNTER, limit=100)
+    stubbed = {i for q in small["queries"] if q["result"].startswith("[result omitted")
+               for i in map(int, q["result"].split(": ")[1].rstrip("]").split(", "))}  # fmt: skip
+    assert stubbed and stubbed <= state.retrieved
+    env = GateEnv(con=con, ctx=ctx(), state=state, counter=COUNTER, allowed_tools=ALL_TOOLS,
+                  window=window_time_range(con))  # fmt: skip
+    cited = sorted(stubbed)
+    result, _ = check_c2(cited, read_cited(con, cited), env)
+    assert result.passed, result.code
+    assert (
+        f"Records you can cite so far: {', '.join(map(str, sorted(state.retrieved)))}"
+        in (small["findings"])
+    )
+
+
+def test_profile_summarises_process_access(con: Any) -> None:
+    p = iv.profile(con)
+    assert p["access_targets"] == [{"image": "lsass.exe", "count": 4}]  # all 4 accesses
+    assert any(x["source"].startswith("dumper") and x["target"] == "lsass.exe"
+               for x in p["rare_access_pairs"])  # fmt: skip
+    text = iv.profile_text(p)
+    assert "Process access, most accessed target images: " in text and "lsass.exe" in text
+    assert "lsass.exe" in iv.query_terms(p)
