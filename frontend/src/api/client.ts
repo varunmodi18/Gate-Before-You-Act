@@ -285,6 +285,10 @@ export interface Exp2SpecOut {
 export interface OutcomesOut {
   run_id: number
   by_system: Record<string, Record<string, number>>
+  task_success?: {
+    by_system: Record<string, { rate: number | null; rate_pp: number | null; n: number }>
+    refused: string | null
+  }
 }
 
 export interface RunOut {

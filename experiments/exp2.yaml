@@ -9,8 +9,8 @@ schedule:
   2: {temperature: 0.5, seed: 22}
   3: {temperature: 0.7, seed: 33}
 
-# System -> number of runs (§D.6.4). A7 arrives with T5.7 and A8 with T5.8; until they are in
-# gate/configs.yaml a run of this default configuration is refused (UNKNOWN_SYSTEM).
+# System -> number of runs (§D.6.4). A8 arrives with T5.8; until it is in gate/configs.yaml a run
+# of this default configuration is refused (UNKNOWN_SYSTEM).
 systems: {G0: 3, G1: 3, G3: 3, G2: 1, A1: 1, A5: 1, A7: 1, A8: 1}
 
 # Set to F1 (experiments/fallbacks.yaml) when the budget requires it (T0.3, T5.5).

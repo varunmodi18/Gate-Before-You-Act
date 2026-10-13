@@ -388,7 +388,7 @@ def test_claim_reaches_the_gate(con: Any) -> None:
 # ---- recovery budget -------------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(("cid", "allowed"), [("G3", 2), ("A5", 0)])
+@pytest.mark.parametrize(("cid", "allowed"), [("G3", 2), ("A7", 1), ("A5", 0)])
 def test_recovery_budget_after_insufficient(con: Any, cid: str, allowed: int) -> None:
     script = [ISO_H, SQL, SQL, SQL, END("cannot_proceed")]
     _res, trace, *_ = run(con, cid, script, verifier=Scripted(INSUFFICIENT))
@@ -396,6 +396,34 @@ def test_recovery_budget_after_insufficient(con: Any, cid: str, allowed: int) ->
     assert [p["ok"] for p in tool_steps] == [True] * allowed + [False] * (3 - allowed)
     refused = [p for p in tool_steps if not p["ok"]]
     assert all(p["error_code"] == ep.RECOVERY_EXHAUSTED for p in refused)
+
+
+@pytest.mark.parametrize(
+    ("then", "terminal"),
+    [(ISO_H, "fulfilled"),  # act: re-propose with the evidence it has (SUPPORTS this time)
+     (P("ask_analyst", {"topic": "insufficient_evidence", "note": ""}), "handed_off")],
+)  # fmt: skip
+def test_a7_second_recovery_query_is_refused_then_the_agent_acts_or_escalates(
+    con: Any, then: dict[str, Any], terminal: str
+) -> None:
+    """T5.7: with budget 1 the second recovery query is refused; the agent must act or escalate."""
+    script = [ISO_H, SQL, SQL, then]
+    res, trace, *_ = run(con, "A7", script, verifier=Scripted(INSUFFICIENT, SUPPORTS))
+    queries = [p for k, p in trace.kinds() if k == "tool" and p.get("tool") == "sql_query"]
+    assert [p["ok"] for p in queries] == [True, False]
+    assert feedback(trace)[-1].startswith(ep.RECOVERY_EXHAUSTED)
+    assert res.terminal_state == terminal
+
+
+def test_recovery_budget_is_read_from_the_configuration(con: Any) -> None:
+    """The budget the gate grants at INSUFFICIENT is the configuration's (0 / 1 / 2)."""
+    for cid, budget in (("A5", 0), ("A7", 1), ("G3", 2)):
+        assert CONFIGS[cid].recovery_budget == budget
+        _r, trace, state, _c = run(con, cid, [ISO_H, END("cannot_proceed")],
+                                   verifier=Scripted(INSUFFICIENT))  # fmt: skip
+        gate_step = next(p for k, p in trace.kinds() if k == "gate")
+        c4 = next(c for c in gate_step["decision"]["checks"] if c["check"] == "C4")
+        assert c4["details"]["recovery_queries_left"] == budget and state.recovery_granted
 
 
 def test_queries_before_any_insufficient_are_not_limited(con: Any) -> None:

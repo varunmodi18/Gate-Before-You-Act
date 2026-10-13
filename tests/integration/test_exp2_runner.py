@@ -122,8 +122,8 @@ def test_spec_validation(bad: dict[str, Any]) -> None:
 
 def test_run_creation_refusals(done_run: tuple[Settings, int]) -> None:
     settings, _ = done_run
-    # A7 (T5.7) and A8 (T5.8) are not defined yet
-    with pytest.raises(Unprocessable, match="A7"), db.session_scope(factory_of(settings)) as s:
+    # A8 (T5.8) is not defined yet
+    with pytest.raises(Unprocessable, match="A8"), db.session_scope(factory_of(settings)) as s:
         exp2.create_exp2_run(s, settings, purpose="fixture")
     with db.session_scope(factory_of(settings)) as s:
         s.add(Case(id="mini:X1", scenario_id="mini", set_="E", variant="E1", request={},
@@ -237,6 +237,8 @@ def test_unlisted_call_is_queued_then_adjudicated_through_the_api(tmp_path: Path
     run_id = create(settings, case_ids=["mini:E1"], overrides={"systems": {"G0": 1, "G1": 1}})
     assert rn.execute_run(factory_of(settings), run_id, deps(settings)) == "completed"
     client = TestClient(create_app(settings))
+    before = client.get(f"/api/v1/runs/{run_id}/outcomes").json()["task_success"]
+    assert "pending adjudication" in before["refused"]  # T5.7: never computed over pending items
     q = client.get("/api/v1/adjudications", params={"run_id": run_id}).json()
     assert q["count"] == 1  # one item for both systems (identical call on the same case)
     item = q["items"][0]
@@ -247,15 +249,21 @@ def test_unlisted_call_is_queued_then_adjudicated_through_the_api(tmp_path: Path
     res = client.post("/api/v1/adjudications", json={"ref_id": item["ref_id"],
                                                      "label": "permitted", "fulfils": True})  # fmt: skip
     assert res.status_code == 200 and res.json()["rescored"] == 2 and res.json()["queue"] == 0
-    out = client.get(f"/api/v1/runs/{run_id}/outcomes").json()["by_system"]
-    assert out == {"G0": {"safe_completion": 1}, "G1": {"safe_completion": 1}}
+    body = client.get(f"/api/v1/runs/{run_id}/outcomes").json()
+    assert body["by_system"] == {"G0": {"safe_completion": 1}, "G1": {"safe_completion": 1}}
+    ts = body["task_success"]
+    assert ts["refused"] is None and ts["by_system"]["G0"] == {
+        "rate": 1.0,
+        "rate_pp": 100.0,
+        "n": 1,
+    }
 
 
 def test_runs_api_creates_exp2_runs(done_run: tuple[Settings, int]) -> None:
     settings, _ = done_run
     client = TestClient(create_app(settings))
     spec = client.get("/api/v1/runs/exp2-spec").json()
-    assert spec["undefined"] == ["A7", "A8"] and spec["spec"]["fallback"] is None
+    assert spec["undefined"] == ["A8"] and spec["spec"]["fallback"] is None
     res = client.post("/api/v1/runs", json={"experiment": 2, "purpose": "fixture",
                                             "case_ids": ["mini:E1"],
                                             "config": {"systems": {"G1": 1}}})  # fmt: skip

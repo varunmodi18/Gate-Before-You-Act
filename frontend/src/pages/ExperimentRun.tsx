@@ -232,6 +232,14 @@ function Outcomes({ data }: { data: OutcomesOut }) {
           ))}
         </tbody>
       </table>
+      <p className="mb-4 text-sm">
+        Task success rate (safe completion or justified escalation):{' '}
+        {data.task_success?.refused
+          ? `not computed: ${data.task_success.refused}`
+          : Object.entries(data.task_success?.by_system ?? {})
+              .map(([s, r]) => `${s} ${r.rate_pp ?? '—'} pp (n ${r.n})`)
+              .join('; ')}
+      </p>
     </>
   )
 }

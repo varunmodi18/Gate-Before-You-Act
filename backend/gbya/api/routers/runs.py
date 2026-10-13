@@ -152,7 +152,20 @@ def outcomes(run_id: int, session: Annotated[Session, Depends(get_session)]) -> 
     run = _run(session, run_id)
     if run.experiment != 2:
         raise Unprocessable("Outcomes exist for Exp 2 runs only", code="NOT_EXP2")
-    return {"run_id": run_id, "by_system": outcome_counts(session, run_id)}
+    from gbya.scoring.metrics import MetricRefused, run_task_success
+
+    try:
+        rates = run_task_success(session, run_id)
+        task_success: dict[str, Any] = {
+            "by_system": {
+                s: {"rate": r.rate, "rate_pp": r.rate_pp, "n": r.n} for s, r in rates.items()
+            },
+            "refused": None,
+        }
+    except MetricRefused as exc:
+        task_success = {"by_system": {}, "refused": str(exc)}
+    return {"run_id": run_id, "by_system": outcome_counts(session, run_id),
+            "task_success": task_success}  # fmt: skip
 
 
 @router.get("", response_model=list[RunOut])
