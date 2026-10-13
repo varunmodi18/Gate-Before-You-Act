@@ -1,0 +1,64 @@
+{
+  "model": "qwen2.5-7b-instruct-awq",
+  "request_extra": {},
+  "base_url": "http://127.0.0.1:8001/v1",
+  "started": "2026-10-13T09:26:45+0530",
+  "tokens_per_filler_line": 109.7,
+  "episodes_20": {
+    "calls": 80,
+    "calls_ok": 80,
+    "schema_valid": 79,
+    "invalid_samples": [
+      {
+        "finish_reason": "length",
+        "completion_tokens": 400,
+        "text": "{\"thought\": \"The presence of suspicious commands like 'rundll32' and 'outflank.exe' suggests malicious activity. To contain the host, we need to stop the suspicious processes and isolate the system.\", \"tool\": \"sql_query\", \"args\": {\"sql\": \"UPDATE processes SET status='KILLED' WHERE command_line LIKE '%rundll32%' OR image LIKE '%outflank.exe%';\"}, \"cited\": [3593, 2975, 4120, 807, 2763, 4956, 4884, 4779, 4581, 1061, 2221, 3139, 4065, 1161, 2573, 52585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525852585258525"
+      }
+    ],
+    "errors": [],
+    "finish_reasons": {
+      "stop": 79,
+      "length": 1
+    },
+    "wall_s": 339.0,
+    "prompt_tokens": 354874,
+    "completion_tokens": 15781,
+    "mean_prompt_tokens_per_call": 4435.9,
+    "mean_completion_tokens_per_call": 197.3,
+    "input_tok_per_s": 1047.0,
+    "output_tok_per_s": 46.6,
+    "latency_p50_s": 15.61,
+    "latency_p95_s": 22.55,
+    "ttft_p50_s": 2.88,
+    "per_request_decode_tok_per_s_median": 15.3,
+    "budget_formula_s": 640.9,
+    "wall_vs_budget_formula": 0.529,
+    "gpu": {
+      "peak_vram_mb": 7244.0,
+      "max_temp_c": 68.0,
+      "mean_temp_c": 65.1,
+      "sm_clock_mhz_min": 1050.0,
+      "sm_clock_mhz_median": 1860.0,
+      "throttle_reason_counts": {
+        "0x0000000000000004": 675,
+        "0x0000000000000000": 1,
+        "0x0000000000000024": 1
+      },
+      "samples": 677
+    }
+  },
+  "long_request": {
+    "ok": true,
+    "schema_valid": true,
+    "prompt_tokens": 7745,
+    "completion_tokens": 189,
+    "latency_s": 9.43671274899998,
+    "ttft_s": 5.25641180599996,
+    "error": null,
+    "finish_reason": "stop",
+    "invalid_text": null
+  },
+  "peak_host_ram_used_mb": 11806,
+  "peak_vram_mb_overall": 7244.0,
+  "schema": "proposer"
+}

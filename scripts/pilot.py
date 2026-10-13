@@ -126,6 +126,7 @@ class CallResult:
     ttft_s: float = 0.0
     error: str | None = None
     finish_reason: str | None = None
+    invalid_text: str | None = None  # the output, when it was not schema-valid (diagnosis)
 
 
 @dataclass
@@ -267,6 +268,7 @@ class Pilot:
             latency_s=latency,
             ttft_s=ttft,
             finish_reason=finish,
+            invalid_text=None if valid or not schema else text[:2000],
         )
 
     def messages(self, rng: random.Random, target_tokens: int, turn: int) -> list[dict[str, str]]:
@@ -345,6 +347,15 @@ def summarise(results: list[CallResult], wall_s: float) -> dict[str, Any]:
         "calls": len(results),
         "calls_ok": len(ok),
         "schema_valid": sum(r.schema_valid for r in ok),
+        "invalid_samples": [
+            {
+                "finish_reason": r.finish_reason,
+                "completion_tokens": r.completion_tokens,
+                "text": r.invalid_text,
+            }
+            for r in ok
+            if not r.schema_valid
+        ][:5],
         "errors": [r.error for r in results if not r.ok][:5],
         "finish_reasons": dict(Counter(r.finish_reason or "none" for r in ok)),
         "wall_s": round(wall_s, 1),
@@ -474,8 +485,19 @@ def main() -> None:
     ap.add_argument("--timeout", type=float, default=600)
     ap.add_argument("--repetition-penalty", type=float, default=None)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument(
+        "--proposer-schema",
+        action="store_true",
+        help="use the real proposer output schema (T5.1 acceptance check); prompts unchanged",
+    )
     args = ap.parse_args()
+    if args.proposer_schema:
+        from gbya.agent.proposer import proposer_schema
+
+        global SCHEMA
+        SCHEMA = proposer_schema()
     report = asyncio.run(amain(args))
+    report["schema"] = "proposer" if args.proposer_schema else "pilot"
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2) + "\n")
     print(f"wrote {args.out}")

@@ -2152,7 +2152,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Instructions:** §D.10, including the `end_episode` control action and the history policy of §D.10.3.
 - **Deliverables:** —
 - **Verification:** snapshot test; schema-constrained live smoke; a test that an over-long history is reduced to the limit with stubs and that the latest gate feedback survives. **Acceptance check (Draft 8, from T0.3):** with the real proposer schema, the synthetic 20-episode run of `scripts/pilot.py` (same prompts, temperature 0.2, `max_tokens` 400) must give **at least 99% schema-valid outputs** (T0.3 measured 78/80 with the pilot schema). Typed per-tool `args` and bounded arrays are the expected levers.
-- **Done when:** it passes, including the 99% acceptance check.
+- **Done when:** it passes, including the 99% acceptance check. *(Draft 8: passed 80/80 on the third attempt after bounding strings, record IDs and PIDs in the schema; bounds and attempts in STATUS.md.)*
 
 **T5.2 Episode loop**
 - **Prerequisites:** T5.1, T3.3.
