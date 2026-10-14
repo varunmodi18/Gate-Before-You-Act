@@ -8,9 +8,10 @@ The server records every successful model call into ``data/fixtures/demo/replay/
 without the model: the header shows REPLAY and runs are flagged ``replay`` (never research).
 A call outside the recorded script raises ``REPLAY_MISS``.
 
-The script follows the demo of §E.5: the Gate Playground on every demo-lsass case (G1, A1, G3),
-the Agent Console on E2 (recovery) and on the end-to-end window (investigation), and an Exp 1
-run on the demo cases. Each step waits for its result.
+The script follows the demo of §E.5: the Gate Playground on every demo-lsass case (G1, G2, A1,
+G3; steps 4-6), the Agent Console on E2 (recovery, step 7), on R_neg (approval, step 8) and on the
+end-to-end window (investigation), and an Exp 1 demo run with one verifier run (steps 9-10).
+Each step waits for its result.
 """
 
 from __future__ import annotations
@@ -52,16 +53,17 @@ def main(argv: list[str] | None = None) -> None:
         raise SystemExit("the server is not recording: start it with make demo-record")
     for v in VARIANTS:  # J4: Gate Playground
         cid = f"{args.scenario}:{v}"
-        out = call("POST", "/playground/gate", {"case_id": cid, "systems": ["G1", "A1", "G3"]},
+        out = call("POST", "/playground/gate", {"case_id": cid,
+                                                "systems": ["G1", "G2", "A1", "G3"]},
                    base=args.base)  # fmt: skip
         print("playground", cid, [d["verdict"] for d in out["decisions"]])
-    for cid in (f"{args.scenario}:E2", args.window):  # J5 / J5b: Agent Console
+    for cid in (f"{args.scenario}:E2", f"{args.scenario}:R_neg", args.window):  # J5, J5b
         eid = call("POST", "/episodes", {"case_id": cid, "system": "G3"}, base=args.base)
         ep = wait_episode(int(eid["episode_id"]), args.base)
         print("console", cid, ep["status"], ep["terminal_state"])
     run = call("POST", "/runs", {"experiment": 1, "purpose": "demo",  # J6: Exp 1 on the demo
-                                 "case_ids": [f"{args.scenario}:{v}" for v in VARIANTS]},
-               base=args.base)  # fmt: skip
+                                 "case_ids": [f"{args.scenario}:{v}" for v in VARIANTS],
+                                 "config": {"verifier_runs": 1}}, base=args.base)  # fmt: skip
     while (r := call("GET", f"/runs/{run['id']}", base=args.base))["status"] not in (
         "completed", "failed", "cancelled"):  # fmt: skip
         time.sleep(5)

@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
+.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up fixture-up docs diag demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -142,6 +142,21 @@ demo-replay: build-web  ## Demo from the recorded CASSETTE, no model (header: RE
 	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases GBYA_LLM_BACKEND=replay GBYA_REPLAY_CASSETTE=$(CASSETTE) \
 	  $(UV) run python -m gbya.worker & \
 	wait
+
+fixture-up: build-web  ## Quick look without OTRF, GPU or model: fixture data + Fake model on 127.0.0.1:8000
+	$(UV) run python scripts/e2e_fixture.py data/quick
+	@trap 'kill 0' INT TERM EXIT; \
+	GBYA_APP_DB_PATH=data/quick/app.db GBYA_DATA_DIR=data/quick GBYA_CASES_DIR=data/quick/cases GBYA_LLM_BACKEND=fake GBYA_RERANKER_DIR=data/quick/no-reranker \
+	  $(UV) run uvicorn gbya.api.main:app --app-dir backend --host $(API_HOST) --port $(API_PORT) & \
+	GBYA_APP_DB_PATH=data/quick/app.db GBYA_DATA_DIR=data/quick GBYA_CASES_DIR=data/quick/cases GBYA_LLM_BACKEND=fake GBYA_RERANKER_DIR=data/quick/no-reranker \
+	  $(UV) run python -m gbya.worker & \
+	wait
+
+docs:  ## Regenerate docs/api.md (OpenAPI) and docs/gate_contract.md (plan §D.6)
+	$(UV) run python scripts/gen_docs.py
+
+diag:  ## Diagnostics: versions, GPU memory, disk, database counts, frozen case set, model server
+	$(UV) run python scripts/diag.py
 
 gpu-test:  ## Tests that need the running model server (pytest -m gpu)
 	$(UV) run pytest -m gpu

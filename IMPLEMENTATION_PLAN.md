@@ -2403,6 +2403,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Files:** `README.md`, `docs/{runbook.md,gate_contract.md,case_authoring.md,pilot_report.md,fieldmap.md,api.md}`.
 - **Instructions:** quickstart, demo script, troubleshooting (§J.5).
 - **Done when:** NFR-07 dry run passes.
+- *Draft 9 note (M8, as built):* T8.2 — `GBYA_RECORD_CASSETTE` records any client's calls (`make demo-record` + `scripts/record_replay.py`), `make demo-replay` replays them; the header labels REPLAY, FAKE and RECORDING and shows the frozen case set. T8.3 — axe on every page and a replay-profile Playwright run (`playwright.replay.config.ts`, cassette recorded by the fixture builder through the Console's episode path). T8.4 — `scripts/perf.py` and `perf-first-load.spec.ts`. T8.5 — README, runbook, `make docs` (generated `api.md`, `gate_contract.md` with a staleness test), `make diag`, `make fixture-up` (quick look without OTRF, GPU or model).
 
 ---
 
