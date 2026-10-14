@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up fixture-up docs diag demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
+.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up fixture-up budget docs diag demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -151,6 +151,10 @@ fixture-up: build-web  ## Quick look without OTRF, GPU or model: fixture data + 
 	GBYA_APP_DB_PATH=data/quick/app.db GBYA_DATA_DIR=data/quick GBYA_CASES_DIR=data/quick/cases GBYA_LLM_BACKEND=fake GBYA_RERANKER_DIR=data/quick/no-reranker \
 	  $(UV) run python -m gbya.worker & \
 	wait
+
+budget:  ## T8.0 (one command, once 10 dev scenarios are adjudicated): token audit + regenerated budget -> docs/compute_budget.md; PILOT2=<run> PILOT3=<run> optional
+	$(UV) run python scripts/token_audit.py
+	$(UV) run python scripts/budget.py $(if $(PILOT2),--pilot-exp2 $(PILOT2)) $(if $(PILOT3),--pilot-exp3 $(PILOT3))
 
 docs:  ## Regenerate docs/api.md (OpenAPI) and docs/gate_contract.md (plan §D.6)
 	$(UV) run python scripts/gen_docs.py
