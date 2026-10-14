@@ -16,6 +16,7 @@ from __future__ import annotations
 import shutil
 import sys
 from pathlib import Path
+from typing import Any
 
 from gbya.cases.handmade import insert_fixture
 from gbya.data.catalogue import parse_metadata, scan, upsert
@@ -31,7 +32,7 @@ MINI = FIXTURES / "mini_window"
 MINI_ID = "SDWIN-MINI-000001"
 
 
-def build(out: Path) -> None:
+def build(out: Path, record: bool = False) -> None:
     if out.exists():
         for p in out.rglob("*"):
             p.chmod(0o700 if p.is_dir() else 0o600)
@@ -90,8 +91,31 @@ def build(out: Path) -> None:
                                                       "context_author": "Alex"}))  # fmt: skip
         with db.session_scope(factory) as s:
             import_e2e(s, settings, xid)
+    if record:
+        _record_replay(out, settings, factory)
     print(f"e2e fixture ready in {out}")
 
 
+def _record_replay(out: Path, settings: Any, factory: Any) -> None:
+    """The replay-profile journey (T8.3): record the Console demo episode (j3-desktop:E2, G3,
+    run 1) with the Fake model into ``<out>/replay.jsonl`` through the same episode path as the
+    Console, so a server with ``GBYA_LLM_BACKEND=replay`` can replay it without a model."""
+    from gbya.experiments import exp2
+    from gbya.experiments.runner import Deps
+    from gbya.llm.factory import make_client
+    from gbya.llm.tokens import default_counter
+
+    rec = settings.model_copy(update={"llm_backend": "fake",
+                                      "record_cassette": out / "replay.jsonl",
+                                      "reranker_dir": out / "no-reranker"})  # fmt: skip
+    deps = Deps(settings=rec, client=make_client(rec), counter=default_counter())
+    with db.session_scope(factory) as s:
+        case = exp2.load_episode_case(s, "j3-desktop:E2", rec)
+    slot = exp2.load_spec().schedule[1]
+    exp2.run_episode(case, deps.configs["G3"], slot, deps, factory)
+
+
 if __name__ == "__main__":
-    build(Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else REPO / "data" / "e2e")
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    build(Path(args[0]).resolve() if args else REPO / "data" / "e2e",
+          record="--record-replay" in sys.argv)  # fmt: skip

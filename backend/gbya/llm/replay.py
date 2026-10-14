@@ -12,6 +12,7 @@ runs created with it are flagged ``replay=true`` and excluded from analysis (§F
 from __future__ import annotations
 
 import json
+import threading
 from pathlib import Path
 from typing import Any
 
@@ -65,6 +66,7 @@ class RecordingLLMClient:
         self.inner = inner
         self.cassette = cassette
         self.total_usage = Usage()
+        self._lock = threading.Lock()  # the worker calls concurrently
 
     def chat_json(
         self,
@@ -85,8 +87,9 @@ class RecordingLLMClient:
             "output": output,
             "usage": usage.model_dump(),
         }
-        self.cassette.parent.mkdir(parents=True, exist_ok=True)
-        with self.cassette.open("a") as f:
-            f.write(json.dumps(entry, sort_keys=True) + "\n")
-        self.total_usage = self.total_usage + usage
+        with self._lock:
+            self.cassette.parent.mkdir(parents=True, exist_ok=True)
+            with self.cassette.open("a") as f:
+                f.write(json.dumps(entry, sort_keys=True) + "\n")
+            self.total_usage = self.total_usage + usage
         return output, usage

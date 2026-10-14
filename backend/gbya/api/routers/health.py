@@ -50,6 +50,7 @@ def _model(settings: Settings) -> dict[str, Any]:
                            else cfg["default"],
                            "model_id": f"{prof['model_repo']}@{prof['model_revision']}",
                            "last_pilot": None}  # fmt: skip
+    out["recording"] = str(settings.record_cassette) if settings.record_cassette else None
     if settings.llm_backend == "live":
         try:
             r = httpx.get(f"{settings.model_base_url}/models", timeout=1.0)
@@ -78,4 +79,15 @@ def health(settings: Annotated[Settings, Depends(get_settings)],
         "worker": _worker(settings),
         "model": _model(settings),
         "data": {"windows": windows, "index": index},
+        "case_set": _case_set(settings),
     }
+
+
+def _case_set(settings: Settings) -> dict[str, Any]:
+    """The frozen case set, if any (header: "Case set: frozen cases-v1" or "draft")."""
+    path = settings.resolve(settings.cases_dir) / "FROZEN.json"
+    try:
+        m = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return {"frozen": False, "version": None, "case_set_hash": None}
+    return {"frozen": True, "version": m.get("version"), "case_set_hash": m.get("case_set_hash")}

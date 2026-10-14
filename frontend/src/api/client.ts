@@ -87,8 +87,10 @@ export interface Health {
       out_tps: number | null
       peak_vram_mb: number | null
     } | null
+    recording?: string | null // demo recording into a replay cassette (T8.2)
   }
   data?: { windows: number; index: boolean }
+  case_set?: { frozen: boolean; version: string | null; case_set_hash: string | null }
 }
 
 export interface WindowSummary {

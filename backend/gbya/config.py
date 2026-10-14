@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     llm_backend: Literal["live", "fake", "replay"] = "live"
     fake_llm_delay_ms: int = 0
     replay_cassette: Path | None = None
+    # Demo recording (T8.2): every successful model call is also appended to this cassette, which
+    # ``llm_backend=replay`` later replays (``make demo-record``). Never set for research runs.
+    record_cassette: Path | None = None
     # CPU reranker for bm25_rerank (A6); tests point this at a missing directory so that A6's
     # availability does not depend on whether the model happens to be downloaded.
     reranker_dir: Path = Path("models/bge-reranker-base")

@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up regenerate-e2 prepare-e2e new-e2e
+.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -84,8 +84,8 @@ test:  ## Python unit + integration tests (no GPU) and frontend unit tests
 	$(UV) run pytest
 	$(NVM_USE) cd frontend && $(PNPM) test
 
-e2e:  ## Playwright journeys (fixture data, no GPU) at 1280 and 768 px, with axe checks
-	$(NVM_USE) cd frontend && $(PNPM) e2e
+e2e:  ## Playwright journeys (fixture data, no GPU) at 1280 and 768 px, axe on every page, then the replay-profile demo
+	$(NVM_USE) cd frontend && $(PNPM) e2e && $(PNPM) exec playwright test -c playwright.replay.config.ts
 
 build-web:  ## Build the SPA into frontend/dist (served by the API)
 	$(NVM_USE) cd frontend && $(PNPM) build
@@ -122,6 +122,24 @@ demo-up: build-web  ## API + worker on the demo environment (data/demo; never th
 	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases \
 	  $(UV) run uvicorn gbya.api.main:app --app-dir backend --host $(API_HOST) --port $(API_PORT) & \
 	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases \
+	  $(UV) run python -m gbya.worker & \
+	wait
+
+CASSETTE ?= data/fixtures/demo/replay/demo.jsonl
+
+demo-record: build-web  ## Demo with the live model, recording every call into CASSETTE (then run scripts/record_replay.py)
+	@trap 'kill 0' INT TERM EXIT; \
+	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases GBYA_RECORD_CASSETTE=$(CASSETTE) \
+	  $(UV) run uvicorn gbya.api.main:app --app-dir backend --host $(API_HOST) --port $(API_PORT) & \
+	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases GBYA_RECORD_CASSETTE=$(CASSETTE) \
+	  $(UV) run python -m gbya.worker & \
+	wait
+
+demo-replay: build-web  ## Demo from the recorded CASSETTE, no model (header: REPLAY; runs flagged replay)
+	@trap 'kill 0' INT TERM EXIT; \
+	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases GBYA_LLM_BACKEND=replay GBYA_REPLAY_CASSETTE=$(CASSETTE) \
+	  $(UV) run uvicorn gbya.api.main:app --app-dir backend --host $(API_HOST) --port $(API_PORT) & \
+	GBYA_APP_DB_PATH=data/demo/app.db GBYA_DATA_DIR=data/demo GBYA_CASES_DIR=data/demo/cases GBYA_LLM_BACKEND=replay GBYA_REPLAY_CASSETTE=$(CASSETTE) \
 	  $(UV) run python -m gbya.worker & \
 	wait
 

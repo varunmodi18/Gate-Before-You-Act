@@ -112,7 +112,9 @@ def model_provenance(settings: Settings) -> dict[str, Any]:
     every file the server loads."""
     if settings.llm_backend == "fake":
         return {"model_id": "fake", "model_file_sha256": None, "backend": "fake",
-                "backend_flags": {"delay_ms": settings.fake_llm_delay_ms}}  # fmt: skip
+                "backend_flags": {"delay_ms": settings.fake_llm_delay_ms,
+                                  "recording": str(settings.record_cassette)
+                                  if settings.record_cassette else None}}  # fmt: skip
     prof = _profile()
     manifest = REPO_ROOT / str(prof["model_path"]) / "MANIFEST.json"
     digest = None
@@ -127,7 +129,9 @@ def model_provenance(settings: Settings) -> dict[str, Any]:
         "backend": backend,
         "backend_flags": {"version": prof.get("backend_version"), "command": prof["command"],
                           "cassette": str(settings.replay_cassette)
-                          if settings.llm_backend == "replay" else None},
+                          if settings.llm_backend == "replay" else None,
+                          "recording": str(settings.record_cassette)
+                          if settings.record_cassette else None},
     }  # fmt: skip
 
 
@@ -147,6 +151,15 @@ class _DelayedFake(FakeLLMClient):
 
 
 def make_client(settings: Settings) -> LLMClient:
+    client = _make_client(settings)
+    if settings.record_cassette is not None and settings.llm_backend != "replay":
+        from gbya.llm.replay import RecordingLLMClient
+
+        return RecordingLLMClient(client, settings.resolve(settings.record_cassette))
+    return client
+
+
+def _make_client(settings: Settings) -> LLMClient:
     if settings.llm_backend == "fake":
         return _DelayedFake(settings.fake_llm_delay_ms, fake_rules())
     if settings.llm_backend == "replay":
