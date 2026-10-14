@@ -19,8 +19,8 @@ double-annotate, freeze; week 3: Exp 1 and Exp 2; week 4: Exp 3, analysis, repor
 follow it; the team lead moves them if needed and records the change in `STATUS.md`.
 
 - [x] **Week 1, 8–14 Oct** — code (M0–M7) ready; this guide.
-- [ ] **Thu 15 Oct** — shared server running (§2); **calibration**: dev-01 and dev-02 by all four
-      together (§3a), before anything else.
+- [ ] **Wed 14 Oct** — shared server running (§2); **calibration**: dev-01 and dev-02 by all four
+      together (§3a), before anything else (`docs/TODAY.md`).
 - [ ] **Thu 15 – Fri 16 Oct** — dev-03 … dev-10 authored, annotated and adjudicated.
 - [ ] **Fri 16 – Sun 18 Oct** — all test scenarios and e2e windows **authored** (e2e: `make
       new-e2e`, `make prepare-e2e`, context check).
@@ -161,56 +161,56 @@ Calibration counts the full 80 min for each of the four. Total **110.7 h** (prop
 
 | # | Window | Title | Tactic | Author = annotator A | Annotator B | Adjudicator | Context checker |
 |---|---|---|---|---|---|---|---|
-| dev-01 (calibration: all four together) | `SDWIN-190625133822` | dev | credential_access | Varun | Aayush | Srushti | — |
-| dev-02 (calibration: all four together) | `SDWIN-191027223020` | dev | defense_evasion | Aayush | Varun | Dhruv | — |
-| dev-03 | `SDWIN-200806035621` | dev | execution | Srushti | Dhruv | Varun | — |
-| dev-04 | `SDWIN-190518210125` | dev | lateral_movement | Aayush | Varun | Dhruv | — |
-| dev-05 | `SDWIN-190519005224` | dev | discovery | Varun | Dhruv | Aayush | — |
-| dev-06 | `SDWIN-201019224718` | dev | persistence | Srushti | Aayush | Dhruv | — |
-| dev-07 | `SDWIN-210611210814` | dev | privilege_escalation | Dhruv | Varun | Aayush | — |
-| dev-08 | `SDWIN-191027055035` | dev | credential_access | Aayush | Srushti | Varun | — |
-| dev-09 | `SDWIN-220705170038` | dev | defense_evasion | Varun | Dhruv | Srushti | — |
-| dev-10 | `SDWIN-201219070027` | dev | execution | Srushti | Aayush | Dhruv | — |
-| test-01 | `SDWIN-190301125905` | test | defense_evasion | Dhruv | Varun | Aayush | — |
-| test-02 | `SDWIN-190301174830` | test | credential_access | Aayush | Srushti | Varun | — |
-| test-03 | `SDWIN-190518182022` | test | execution | Varun | Dhruv | Srushti | — |
-| test-04 | `SDWIN-200806015757` | test | lateral_movement | Srushti | Aayush | Dhruv | — |
-| test-05 | `SDWIN-190319020729` | test | discovery | Dhruv | Varun | Aayush | — |
-| test-06 | `SDWIN-190319024742` | test | persistence | Aayush | Srushti | Varun | — |
-| test-07 | `SDWIN-190518221344` | test | privilege_escalation | Varun | Dhruv | Srushti | — |
-| test-08 | `SDWIN-190518203650` | test | defense_evasion | Srushti | Aayush | Dhruv | — |
-| test-09 | `SDWIN-190319145126` | test | credential_access | Dhruv | Varun | Aayush | — |
-| test-10 | `SDWIN-190518211052` | test | execution | Aayush | Srushti | Varun | — |
-| test-11 | `SDWIN-200806022635` | test | lateral_movement | Varun | Dhruv | Srushti | — |
-| test-12 | `SDWIN-190319021158` | test | discovery | Srushti | Aayush | Dhruv | — |
-| test-13 | `SDWIN-201021204544` | test | persistence | Dhruv | Varun | Aayush | — |
-| test-14 | `SDWIN-201019232515` | test | privilege_escalation | Aayush | Srushti | Varun | — |
-| test-15 | `SDWIN-200721232741` | test | defense_evasion | Varun | Dhruv | Srushti | — |
-| test-16 | `SDWIN-190518235535` | test | credential_access | Srushti | Aayush | Dhruv | — |
-| test-17 | `SDWIN-200806115603` | test | execution | Dhruv | Varun | Aayush | — |
-| test-18 | `SDWIN-200806030120` | test | lateral_movement | Aayush | Srushti | Varun | — |
-| test-19 | `SDWIN-190518201207` | test | discovery | Varun | Dhruv | Srushti | — |
-| test-20 | `SDWIN-201023023651` | test | persistence | Srushti | Aayush | Dhruv | — |
-| test-21 | `SDWIN-201023031210` | test | privilege_escalation | Dhruv | Varun | Aayush | — |
-| test-22 | `SDWIN-201021001911` | test | defense_evasion | Aayush | Srushti | Varun | — |
-| test-23 | `SDWIN-190625103712` | test | credential_access | Varun | Dhruv | Srushti | — |
-| test-24 | `SDWIN-200921001437` | test | execution | Srushti | Aayush | Dhruv | — |
-| test-25 | `SDWIN-200917174542` | test | lateral_movement | Dhruv | Varun | Aayush | — |
-| test-26 | `SDWIN-200806130039` | test | discovery | Aayush | Srushti | Varun | — |
-| test-27 | `SDWIN-210314014019` | test | persistence | Varun | Dhruv | Srushti | — |
-| test-28 | `SDWIN-201022002145` | test | defense_evasion | Srushti | Aayush | Dhruv | — |
-| test-29 | `SDWIN-200807103913` | test | credential_access | Dhruv | Varun | Aayush | — |
-| test-30 | `SDWIN-201029001615` | test | execution | Aayush | Srushti | Varun | — |
-| test-31 (F2: dropped first) | `SDWIN-201009183000` | test | lateral_movement | Varun | Dhruv | Srushti | — |
-| test-32 (F2: dropped first) | `SDWIN-201022035214` | test | defense_evasion | Srushti | Aayush | Dhruv | — |
-| test-33 (F2: dropped first) | `SDWIN-200921230246` | test | credential_access | Dhruv | Varun | Aayush | — |
-| test-34 (F2: dropped first) | `SDWIN-201219075059` | test | execution | Aayush | Srushti | Varun | — |
-| test-35 (F2: dropped first) | `SDWIN-220630130349` | test | defense_evasion | Varun | Dhruv | Srushti | — |
-| test-36 (F2: dropped first) | `SDWIN-201020013208` | test | credential_access | Srushti | Aayush | Dhruv | — |
-| test-37 (F2: dropped first) | `SDWIN-220703123711` | test | defense_evasion | Dhruv | Varun | Aayush | — |
-| test-38 (F2: dropped first) | `SDWIN-201022042947` | test | credential_access | Aayush | Srushti | Varun | — |
-| test-39 (F2: dropped first) | `SDWIN-220803205800` | test | defense_evasion | Varun | Dhruv | Srushti | — |
-| test-40 (F2: dropped first) | `SDWIN-230720004300` | test | credential_access | Srushti | Aayush | Dhruv | — |
+| dev-01 (calibration: all four together) | `SDWIN-190625133822` | Empire Reg Dump SAM Hive | credential_access | Varun | Aayush | Srushti | — |
+| dev-02 (calibration: all four together) | `SDWIN-191027223020` | Covenant ShellCmd InstallUtil | defense_evasion | Aayush | Varun | Dhruv | — |
+| dev-03 | `SDWIN-200806035621` | Covenant SharpWMI Exec | execution | Srushti | Dhruv | Varun | — |
+| dev-04 | `SDWIN-190518210125` | Empire Invoke SMBExec | lateral_movement | Aayush | Varun | Dhruv | — |
+| dev-05 | `SDWIN-190519005224` | Empire Remote Get Session | discovery | Varun | Dhruv | Aayush | — |
+| dev-06 | `SDWIN-201019224718` | Logon Scripts via UserInitMprLogonScript | persistence | Srushti | Aayush | Dhruv | — |
+| dev-07 | `SDWIN-210611210814` | APT Simulator Cobalt Strike | privilege_escalation | Dhruv | Varun | Aayush | — |
+| dev-08 | `SDWIN-191027055035` | RDP TaskManager LSASS Dump | credential_access | Aayush | Srushti | Varun | — |
+| dev-09 | `SDWIN-220705170038` | Modifying Security Event Log File Path via Modification of Log Configuration | defense_evasion | Varun | Dhruv | Srushti | — |
+| dev-10 | `SDWIN-201219070027` | Remote Scheduled Task Creation | execution | Srushti | Aayush | Dhruv | — |
+| test-01 | `SDWIN-190301125905` | Empire Powerview Add-DomainObjectAcl | defense_evasion | Dhruv | Varun | Aayush | — |
+| test-02 | `SDWIN-190301174830` | Empire DCSync | credential_access | Aayush | Srushti | Varun | — |
+| test-03 | `SDWIN-190518182022` | Empire VBS Execution | execution | Varun | Dhruv | Srushti | — |
+| test-04 | `SDWIN-200806015757` | Covenant Remote File Copy | lateral_movement | Srushti | Aayush | Dhruv | — |
+| test-05 | `SDWIN-190319020729` | Empire Net Local Users | discovery | Dhruv | Varun | Aayush | — |
+| test-06 | `SDWIN-190319024742` | Empire Userland Scheduled Tasks | persistence | Aayush | Srushti | Varun | — |
+| test-07 | `SDWIN-190518221344` | Empire Invoke DLLInjection | privilege_escalation | Varun | Dhruv | Srushti | — |
+| test-08 | `SDWIN-190518203650` | Empire Enable RDP | defense_evasion | Srushti | Aayush | Dhruv | — |
+| test-09 | `SDWIN-190319145126` | Rubeus Userland ASKTGT PTT | credential_access | Dhruv | Varun | Aayush | — |
+| test-10 | `SDWIN-190518211052` | Empire Invoke DCOM ShellWindows | execution | Aayush | Srushti | Varun | — |
+| test-11 | `SDWIN-200806022635` | Covenant SharpSC Create | lateral_movement | Varun | Dhruv | Srushti | — |
+| test-12 | `SDWIN-190319021158` | Empire Net Domain Users | discovery | Srushti | Aayush | Dhruv | — |
+| test-13 | `SDWIN-201021204544` | Service Modification Fax | persistence | Dhruv | Varun | Aayush | — |
+| test-14 | `SDWIN-201019232515` | Mavinject Process DLL Injection | privilege_escalation | Aayush | Srushti | Varun | — |
+| test-15 | `SDWIN-200721232741` | Empire Regsvr32 Execution | defense_evasion | Varun | Dhruv | Srushti | — |
+| test-16 | `SDWIN-190518235535` | Empire Mimikatz Backup Keys | credential_access | Srushti | Aayush | Dhruv | — |
+| test-17 | `SDWIN-200806115603` | Covenant PowerShell Remoting Command | execution | Dhruv | Varun | Aayush | — |
+| test-18 | `SDWIN-200806030120` | Covenant SharpSC Start | lateral_movement | Aayush | Srushti | Varun | — |
+| test-19 | `SDWIN-190518201207` | Empire Shell Net Domain Admins | discovery | Varun | Dhruv | Srushti | — |
+| test-20 | `SDWIN-201023023651` | Bitsadmin Download Malicious File | persistence | Srushti | Aayush | Dhruv | — |
+| test-21 | `SDWIN-201023031210` | PurpleSharp PE Injection CreateRemoteThread | privilege_escalation | Dhruv | Varun | Aayush | — |
+| test-22 | `SDWIN-201021001911` | Netsh Open FW Proxy Ports | defense_evasion | Aayush | Srushti | Varun | — |
+| test-23 | `SDWIN-190625103712` | Empire Mimikatz SAM Extract Hashes | credential_access | Varun | Dhruv | Srushti | — |
+| test-24 | `SDWIN-200921001437` | Empire Invoke WMI | execution | Srushti | Aayush | Dhruv | — |
+| test-25 | `SDWIN-200917174542` | DCOM ExecuteExcel4macro | lateral_movement | Dhruv | Varun | Aayush | — |
+| test-26 | `SDWIN-200806130039` | Covenant GetDomainGroup Domain Admins | discovery | Aayush | Srushti | Varun | — |
+| test-27 | `SDWIN-210314014019` | Exchange ProxyLogon SSRF RCE Vuln POC | persistence | Varun | Dhruv | Srushti | — |
+| test-28 | `SDWIN-201022002145` | HH Execution of Local Compiled HTML Payload | defense_evasion | Srushti | Aayush | Dhruv | — |
+| test-29 | `SDWIN-200807103913` | Empire Mimikatz Lsadump LSA Patch | credential_access | Dhruv | Varun | Aayush | — |
+| test-30 | `SDWIN-201029001615` | Python HTTP Server | execution | Aayush | Srushti | Varun | — |
+| test-31 (F2: dropped first) | `SDWIN-201009183000` | Covenant Remote DCOM Iertutil DLL Hijacking | lateral_movement | Varun | Dhruv | Srushti | — |
+| test-32 (F2: dropped first) | `SDWIN-201022035214` | Mshta HTML Application (HTA) Execution | defense_evasion | Srushti | Aayush | Dhruv | — |
+| test-33 (F2: dropped first) | `SDWIN-200921230246` | Rubeus Elevated ASKTGT CreateNetOnly | credential_access | Dhruv | Varun | Aayush | — |
+| test-34 (F2: dropped first) | `SDWIN-201219075059` | Remote Scheduled Task Modification | execution | Aayush | Srushti | Varun | — |
+| test-35 (F2: dropped first) | `SDWIN-220630130349` | Disabling Windows Event Logging via Audit Policy Modification | defense_evasion | Varun | Dhruv | Srushti | — |
+| test-36 (F2: dropped first) | `SDWIN-201020013208` | UI Prompt For Credentials Function | credential_access | Srushti | Aayush | Dhruv | — |
+| test-37 (F2: dropped first) | `SDWIN-220703123711` | Disabling Process Command Line Logging via Registry Modification | defense_evasion | Dhruv | Varun | Aayush | — |
+| test-38 (F2: dropped first) | `SDWIN-201022042947` | PurpleSharp Active Directory Playbook I | credential_access | Aayush | Srushti | Varun | — |
+| test-39 (F2: dropped first) | `SDWIN-220803205800` | Stopping Event Logging via Creation of MiniNt Registry Key | defense_evasion | Varun | Dhruv | Srushti | — |
+| test-40 (F2: dropped first) | `SDWIN-230720004300` | Dumping NTDS.dit using NinjaCopy | credential_access | Srushti | Aayush | Dhruv | — |
 | e2e-01 | `SDWIN-190518230752` | Empire Mimikatz Extract Kerberos Keys | credential_access | Dhruv | Varun | Aayush | Aayush |
 | e2e-02 | `SDWIN-201012183248` | Covenant Wuauclt CreateRemoteThread Execution | defense_evasion | Srushti | Aayush | Varun | Varun |
 | e2e-03 | `SDWIN-190518213907` | Empire Invoke Execute MSBuild | execution | Varun | Aayush | Dhruv | Dhruv |

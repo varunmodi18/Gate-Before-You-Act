@@ -39,7 +39,7 @@ test('J6: create an Exp 1 run, follow its progress, read the verifier tables and
     page.getByRole('heading', { name: /^Results for run \d+: Experiment 1$/ }),
   ).toBeVisible()
   await expect(page.getByRole('note')).toContainText('Illustrative mode — not a research result')
-  await expect(page.getByText('Provenance')).toBeVisible()
+  await expect(page.getByText('Provenance', { exact: true })).toBeVisible()
   await expect(page.getByText(/^H1 \(G1 - G3, E2-E5\): /)).toContainText('pp')
   await expect(
     page.getByRole('img', { name: /^Illustrative differences with 95% intervals/ }),
