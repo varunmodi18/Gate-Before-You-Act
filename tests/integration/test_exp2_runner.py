@@ -352,3 +352,29 @@ def test_results_endpoint_reports_fr21_episode_metrics(done_run: tuple[Settings,
     # episode, so no E2 episode meets INSUFFICIENT: the rate has no denominator (unit-tested)
     assert g3["e2_recovery"] == {"total": 0, "n": 0, "rate": None, "rate_pp": None,
                                  "mean_proposals": None}  # fmt: skip
+
+
+def test_episode_export_and_taxonomy(done_run: tuple[Settings, int]) -> None:
+    """T7.5: one export row per episode (tags and starred included) and tag counts per system."""
+    settings, run_id = done_run
+    client = TestClient(create_app(settings))
+    with db.session_scope(factory_of(settings)) as s:
+        eps = s.scalars(select(Episode).where(Episode.run_id == run_id)).all()
+        ep_id, system, n = eps[0].id, eps[0].system, len(eps)
+    res = client.put(f"/api/v1/episodes/{ep_id}/tags",
+                     json={"tags": ["over_deferral", "wrong_target"], "starred": True})  # fmt: skip
+    assert res.status_code == 200
+    body = client.get(f"/api/v1/export/{run_id}.json").json()
+    assert body["count"] == n == len(body["rows"])
+    row = next(r for r in body["rows"] if r["episode_id"] == ep_id)
+    assert row["tags"] == "over_deferral;wrong_target" and row["starred"] is True
+    csv_rows = [x for x in client.get(f"/api/v1/export/{run_id}.csv").text.splitlines()
+                if not x.startswith("#")]  # fmt: skip
+    assert len(csv_rows) - 1 == n
+    tax = client.get(f"/api/v1/runs/{run_id}/taxonomy").json()
+    assert (
+        tax["by_system"][system]["over_deferral"] == 1 and tax["by_system"][system]["tagged"] == 1
+    )
+    assert [x["episode_id"] for x in tax["starred"]] == [ep_id] and tax["starred_target"] == 10
+    detail = client.get(f"/api/v1/episodes/{ep_id}").json()
+    assert isinstance(detail["suggested_tags"], list)

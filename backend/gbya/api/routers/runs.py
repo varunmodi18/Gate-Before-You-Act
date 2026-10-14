@@ -270,6 +270,15 @@ def results(run_id: int, session: Annotated[Session, Depends(get_session)]) -> d
                                         "research_eligible": research_eligible(run)}  # fmt: skip
 
 
+@router.get("/{run_id}/taxonomy")
+def taxonomy(run_id: int, session: Annotated[Session, Depends(get_session)]) -> dict[str, Any]:
+    """Error-taxonomy tag counts per system and the starred traces (T7.5)."""
+    from gbya.scoring.taxonomy import run_taxonomy
+
+    _run(session, run_id)
+    return run_taxonomy(session, run_id)
+
+
 @router.get("/{run_id}/verifier-eval")
 def verifier_eval(run_id: int, session: Annotated[Session, Depends(get_session)]) -> dict[str, Any]:
     """Exp 1V diagnostic accuracy by verifier variant and case variant (with denominators), and

@@ -720,6 +720,7 @@ export interface EpisodeDetail extends EpisodeSummary {
   starred: boolean
   note: string | null
   error_tags: string[]
+  suggested_tags?: string[] // implied by the trace and labels; a person confirms (T7.5)
 }
 
 export interface ConsoleCase {
@@ -878,4 +879,17 @@ export interface IllustrativeOut {
   refused: Record<string, string>
   provenance: Provenance
   note: string
+}
+
+export interface Taxonomy {
+  tags: string[]
+  by_system: Record<string, Record<string, number>>
+  starred: {
+    episode_id: number
+    case_id: string
+    system: string
+    tags: string[]
+    note: string | null
+  }[]
+  starred_target: number
 }

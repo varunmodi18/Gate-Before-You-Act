@@ -51,6 +51,13 @@ Every path is under `/api/v1`. Errors use `{"error": {"code", "message", "hint",
 | GET | `/episodes/{episode_id}/stream` | Server-sent events for the episode's steps, from the first one, until it ends. | `episode_id` |  |
 | PUT | `/episodes/{episode_id}/tags` | Put Tags | `episode_id` | `Tags` |
 
+## export
+
+| Method | Path | Summary | Parameters | Body |
+|---|---|---|---|---|
+| GET | `/export/{run_id}.csv` | Export Csv | `run_id` |  |
+| GET | `/export/{run_id}.json` | Export Json | `run_id` |  |
+
 ## health
 
 | Method | Path | Summary | Parameters | Body |
@@ -82,6 +89,7 @@ Every path is under `/api/v1`. Errors use `{"error": {"code", "message", "hint",
 | POST | `/runs/{run_id}/resume` | Queue the run again; failed units get a fresh set of attempts. | `run_id` |  |
 | GET | `/runs/{run_id}/retrieval` | Retrieval metrics by mode and case variant, from the stored rankings of the run's cases (§D.3): Recall@5, Hit@5, nDCG@5, MRR@20, ATT&CK top-1, mean \|G\|, exclusions. | `run_id` |  |
 | POST | `/runs/{run_id}/start` | Start | `run_id` |  |
+| GET | `/runs/{run_id}/taxonomy` | Error-taxonomy tag counts per system and the starred traces (T7.5). | `run_id` |  |
 | GET | `/runs/{run_id}/verifier-eval` | Exp 1V diagnostic accuracy by verifier variant and case variant (with denominators), and C4 invocation counts per gate configuration (§D.7.2). | `run_id` |  |
 
 ## scenarios

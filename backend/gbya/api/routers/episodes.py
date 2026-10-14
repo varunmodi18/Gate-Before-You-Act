@@ -40,6 +40,7 @@ from gbya.experiments import exp2, exp3
 from gbya.experiments.runner import Deps, variant_availability
 from gbya.logging import get_logger
 from gbya.scoring import outcomes
+from gbya.scoring.taxonomy import episode_suggestions
 from gbya.store.db import session_scope
 from gbya.store.models import (
     ERROR_TAGS,
@@ -371,6 +372,7 @@ def get_episode(episode_id: int, request: Request,
         "pending_approval": live.pending if live else None,
         "tags": tag.tags if tag else [], "starred": bool(tag and tag.starred),
         "note": tag.note if tag else None, "error_tags": ERROR_TAGS,
+        "suggested_tags": episode_suggestions(session, episode_id),
     }  # fmt: skip
 
 

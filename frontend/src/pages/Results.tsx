@@ -3,6 +3,7 @@ import { useId, useState } from 'react'
 import { Link, useParams } from 'react-router'
 
 import {
+  API_BASE,
   apiGet,
   apiPost,
   type EpisodeSystemResults,
@@ -16,6 +17,7 @@ import {
   type Provenance,
   type RunOut,
   type RunResults,
+  type Taxonomy,
 } from '../api/client'
 import { Forest, type ForestRow } from '../charts/Forest'
 import { OutcomeBars } from '../charts/OutcomeBars'
@@ -119,6 +121,17 @@ export function Results() {
         {r.research_eligible ? <HypothesisPanel run={r} /> : <IllustrativePanel run={r} />}
         {res.isError && <ErrorBanner error={res.error} />}
         {res.data && <Tables data={res.data} />}
+        {r.experiment !== 1 && <TaxonomyTable runId={r.id} />}
+        <p className="mt-3 text-sm">
+          Export the run's rows with provenance:{' '}
+          <a className="text-blue-800 underline" href={`${API_BASE}/export/${r.id}.csv`}>
+            CSV
+          </a>{' '}
+          ·{' '}
+          <a className="text-blue-800 underline" href={`${API_BASE}/export/${r.id}.json`}>
+            JSON
+          </a>
+        </p>
       </div>
     </section>
   )
@@ -539,5 +552,64 @@ function EpisodeTables({ data, shown }: { data: RunResults; shown: Record<string
         </table>
       )}
     </>
+  )
+}
+
+/** Error taxonomy (T7.5): tags applied on the Traces page, per system, and the starred traces. */
+function TaxonomyTable({ runId }: { runId: number }) {
+  const tax = useQuery({
+    queryKey: ['taxonomy', runId],
+    queryFn: () => apiGet<Taxonomy>(`/runs/${runId}/taxonomy`),
+  })
+  if (!tax.data) return null
+  const t = tax.data
+  return (
+    <section aria-labelledby="tx-title" className="mb-4">
+      <h2 id="tx-title" className="text-lg font-semibold">
+        Error taxonomy
+      </h2>
+      <table className="mb-2 min-w-full border-collapse text-sm">
+        <caption className="sr-only">Error tags per system</caption>
+        <thead>
+          <tr>
+            {['System', 'Episodes', 'Tagged', ...t.tags.map((x) => x.replaceAll('_', ' '))].map(
+              (h) => (
+                <th key={h} scope="col" className={th}>
+                  {h}
+                </th>
+              ),
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(t.by_system).map(([s, v]) => (
+            <tr key={s} className="border-b border-gray-200">
+              <th scope="row" className="px-2 py-1 text-left font-mono">
+                {s}
+              </th>
+              <td className="px-2 py-1">{v.episodes}</td>
+              <td className="px-2 py-1">{v.tagged}</td>
+              {t.tags.map((x) => (
+                <td key={x} className="px-2 py-1">
+                  {v[x]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="text-sm">
+        Starred traces: {t.starred.length} of {t.starred_target}{' '}
+        {t.starred.map((x) => (
+          <Link
+            key={x.episode_id}
+            className="mr-2 text-blue-800 underline"
+            to={`/traces/${x.episode_id}`}
+          >
+            episode {x.episode_id}
+          </Link>
+        ))}
+      </p>
+    </section>
   )
 }

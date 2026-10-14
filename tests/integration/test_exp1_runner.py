@@ -393,3 +393,20 @@ def test_results_endpoint_reports_fr21_exp1_metrics(env: tuple[Settings, Any, in
         n = s.scalar(select(func.count()).select_from(GateDecisionRow).where(
             GateDecisionRow.run_id == run_id, GateDecisionRow.system == "G1"))  # fmt: skip
     assert g1["decisions"] == n
+
+
+def test_export_rows_equal_the_database(env: tuple[Settings, Any, int]) -> None:
+    """T7.5: one export row per gate decision, in JSON and CSV, with provenance."""
+    settings, factory, run_id = env
+    client = TestClient(create_app(settings))
+    with factory() as s:
+        n = s.scalar(select(func.count()).select_from(GateDecisionRow).where(
+            GateDecisionRow.run_id == run_id))  # fmt: skip
+    body = client.get(f"/api/v1/export/{run_id}.json").json()
+    assert body["count"] == len(body["rows"]) == n and body["provenance"]["run_id"] == run_id
+    assert {"verdict", "failed_check", "wrongly_admitted"} <= set(body["columns"])
+    text = client.get(f"/api/v1/export/{run_id}.csv").text
+    lines = [line for line in text.splitlines() if not line.startswith("#")]
+    assert lines[0].split(",")[:3] == ["run_id", "case_id", "scenario_id"]
+    assert len(lines) - 1 == n
+    assert any(line.startswith("# config_hash:") for line in text.splitlines())

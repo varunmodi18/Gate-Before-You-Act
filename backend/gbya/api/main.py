@@ -15,6 +15,7 @@ from gbya.api.routers import (
     analysis,
     annotate,
     episodes,
+    export,
     health,
     playground,
     runs,
@@ -63,6 +64,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(adjudications.router, prefix=API_PREFIX)
     app.include_router(episodes.router, prefix=API_PREFIX)
     app.include_router(analysis.router, prefix=API_PREFIX)
+    app.include_router(export.router, prefix=API_PREFIX)
 
     dist = settings.resolve(settings.frontend_dist)
     if (dist / "index.html").is_file():

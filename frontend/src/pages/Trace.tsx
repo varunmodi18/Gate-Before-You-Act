@@ -207,6 +207,19 @@ function TagEditor({ ep, onSave }: { ep: EpisodeDetail; onSave: (body: TagBody) 
     >
       <fieldset>
         <legend className="text-sm font-semibold">Error tags (taxonomy)</legend>
+        {(ep.suggested_tags ?? []).length > 0 && (
+          <p className="mb-1 text-xs">
+            Suggested from the trace (confirm or ignore):{' '}
+            {(ep.suggested_tags ?? []).map((t) => t.replaceAll('_', ' ')).join(', ')}{' '}
+            <button
+              type="button"
+              className="underline"
+              onClick={() => setTags((cur) => [...new Set([...cur, ...(ep.suggested_tags ?? [])])])}
+            >
+              Tick the suggestions
+            </button>
+          </p>
+        )}
         <div className="flex flex-wrap gap-3">
           {ep.error_tags.map((t) => (
             <label key={t} className="flex items-center gap-1 text-sm">
