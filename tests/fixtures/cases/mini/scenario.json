@@ -186,5 +186,6 @@
     "positive": 2,
     "negative": 0
   },
+  "author": null,
   "notes": "Test fixture on the hand-made mini window (not research data)."
 }

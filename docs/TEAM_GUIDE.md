@@ -47,16 +47,22 @@ Research runs never start while annotation is in progress (§2).
 
 ## 1. Roles
 
+As the proposal budgets (“45 min authoring, 30 min second labelling, 5 min adjudication”), the
+**author labels the scenario as annotator A**; a second person labels it blind as annotator B; a
+third adjudicates. Author (A), B and adjudicator are always **three different people** (team
+lead, 14 Oct 2026; the Annotate page enforces it by name).
+
 | Role | Does | Never |
 |---|---|---|
-| **Author** | writes a scenario in the Scenario Studio (window, request, trusted context, scope, E1 package, suspicious records, variant parameters), generates and validates it; writes an end-to-end window's `e2e.json` | labels the scenario they authored as annotator A or B |
-| **Context checker** (Q-X4) | a second member who reads an end-to-end window's trusted context and records the check | checks a context they authored |
-| **Annotator A / B** | labels every case blind, on the Annotate page | looks at the other annotator's labels before both have submitted |
-| **Adjudicator** | resolves A and B's disagreements and writes the final labels | changes labels outside the Annotate page |
+| **Author = annotator A** | writes the scenario in the Scenario Studio (window, request, trusted context, scope, E1 package, suspicious records, variant parameters; your name in *Author*), generates and validates it, then labels every case as annotator A; writes an end-to-end window's `e2e.json` and labels it as A | is annotator B or adjudicator of their own scenario |
+| **Annotator B** | labels every case blind, on the Annotate page | is the author; looks at A's labels before both have submitted (the server keeps them hidden) |
+| **Adjudicator** | resolves A and B's disagreements and writes the final labels | is the author or annotator B of that scenario |
+| **Context checker** (e2e, Q-X4) | a member other than the author who reads an end-to-end window's trusted context and records the check (in §3a: the adjudicator) | checks a context they authored |
 | **Team lead** (Varun) | decides open questions, freezes the case set, starts research runs | — |
 
-Roles are chosen locally in the UI (A-12); the server keeps annotations blind. One person may
-hold different roles on **different** scenarios.
+Roles are chosen locally in the UI (A-12). Enter **your name** on the Annotate page: the server
+refuses the author as annotator B or adjudicator, and one person in two roles of a scenario.
+Names are honour-based — use your own.
 
 ## 2. Shared server (one instance: Varun's laptop)
 
@@ -139,93 +145,92 @@ tuning on dev.
 
 ## 3a. Assignments (dev, test, e2e)
 
-Four people, four roles per scenario: **author, annotator A, annotator B, adjudicator** are
-always four different people (for an e2e window the adjudicator also checks the context, so the
-context checker is never the author). Roles rotate so that everyone has the same number of each
-role; tactics are spread across authors. Order within each split interleaves tactics, so
-**test-01 … test-30** stay balanced if F2 drops the last ten. **dev-01 and dev-02 are the
-calibration**: all four work through them together, before anything else (the roles shown are
-who drives).
+Per scenario: **author = annotator A, annotator B, adjudicator** — three different people; the
+fourth person is free for that scenario. For an e2e window the adjudicator also checks the
+context (never the author). Roles rotate and loads are balanced in minutes; tactics are spread
+across authors. Order within each split interleaves tactics, so **test-01 … test-30** stay
+balanced if F2 drops the last ten. **dev-01 and dev-02 are the calibration**: all four work
+through them together first (the roles shown are who drives).
 
-Hours use the proposal's figures — **45 min authoring, 30 min per labelling, 5 min adjudication**
-per scenario, and **about 1 h per annotator** for an e2e window's evidence labelling — plus two
-assumptions of ours: 45 min to author an e2e window and 10 min for its context check.
-Calibration counts the full 110 min for each of the four. The total (138.7 h) is above the
-proposal's ~90 h (+18 h for A-14) because the proposal let the author do the first labelling;
-here four different people take the four roles. F2 would save 18.3 h (4.6 h each).
+Hours follow the proposal: **45 min authoring (including the author's labels as A), 30 min
+second labelling (B), 5 min adjudication** per scenario, and **about 1 h of evidence labelling
+per annotator** for an e2e window — plus our assumptions for an e2e window: 45 min to write its
+context and scope (A-14) before the author's 1 h of labelling, and 10 min for the context check.
+Calibration counts the full 80 min for each of the four. Total **110.7 h** (proposal: ~90 h, plus
+~18 h for A-14); F2 would save 13.3 h.
 
-| # | Window | Title | Tactic | Author | Annotator A | Annotator B | Adjudicator | Context checker |
-|---|---|---|---|---|---|---|---|---|
-| dev-01 (calibration: all four together) | `SDWIN-190625133822` | dev | credential_access | Varun | Aayush | Srushti | Dhruv | — |
-| dev-02 (calibration: all four together) | `SDWIN-191027223020` | dev | defense_evasion | Aayush | Varun | Dhruv | Srushti | — |
-| dev-03 | `SDWIN-200806035621` | dev | execution | Srushti | Dhruv | Varun | Aayush | — |
-| dev-04 | `SDWIN-190518210125` | dev | lateral_movement | Dhruv | Srushti | Aayush | Varun | — |
-| dev-05 | `SDWIN-190519005224` | dev | discovery | Varun | Aayush | Srushti | Dhruv | — |
-| dev-06 | `SDWIN-201019224718` | dev | persistence | Aayush | Varun | Dhruv | Srushti | — |
-| dev-07 | `SDWIN-210611210814` | dev | privilege_escalation | Srushti | Dhruv | Varun | Aayush | — |
-| dev-08 | `SDWIN-191027055035` | dev | credential_access | Dhruv | Srushti | Aayush | Varun | — |
-| dev-09 | `SDWIN-220705170038` | dev | defense_evasion | Varun | Aayush | Srushti | Dhruv | — |
-| dev-10 | `SDWIN-201219070027` | dev | execution | Aayush | Varun | Dhruv | Srushti | — |
-| test-01 | `SDWIN-190301125905` | test | defense_evasion | Srushti | Varun | Aayush | Dhruv | — |
-| test-02 | `SDWIN-190301174830` | test | credential_access | Aayush | Srushti | Dhruv | Varun | — |
-| test-03 | `SDWIN-190518182022` | test | execution | Varun | Dhruv | Srushti | Aayush | — |
-| test-04 | `SDWIN-200806015757` | test | lateral_movement | Dhruv | Aayush | Varun | Srushti | — |
-| test-05 | `SDWIN-190319020729` | test | discovery | Aayush | Varun | Srushti | Dhruv | — |
-| test-06 | `SDWIN-190319024742` | test | persistence | Varun | Aayush | Dhruv | Srushti | — |
-| test-07 | `SDWIN-190518221344` | test | privilege_escalation | Dhruv | Srushti | Varun | Aayush | — |
-| test-08 | `SDWIN-190518203650` | test | defense_evasion | Srushti | Dhruv | Aayush | Varun | — |
-| test-09 | `SDWIN-190319145126` | test | credential_access | Srushti | Varun | Aayush | Dhruv | — |
-| test-10 | `SDWIN-190518211052` | test | execution | Dhruv | Aayush | Varun | Srushti | — |
-| test-11 | `SDWIN-200806022635` | test | lateral_movement | Varun | Srushti | Dhruv | Aayush | — |
-| test-12 | `SDWIN-190319021158` | test | discovery | Aayush | Dhruv | Srushti | Varun | — |
-| test-13 | `SDWIN-201021204544` | test | persistence | Srushti | Varun | Aayush | Dhruv | — |
-| test-14 | `SDWIN-201019232515` | test | privilege_escalation | Varun | Aayush | Dhruv | Srushti | — |
-| test-15 | `SDWIN-200721232741` | test | defense_evasion | Dhruv | Srushti | Varun | Aayush | — |
-| test-16 | `SDWIN-190518235535` | test | credential_access | Aayush | Dhruv | Srushti | Varun | — |
-| test-17 | `SDWIN-200806115603` | test | execution | Varun | Aayush | Srushti | Dhruv | — |
-| test-18 | `SDWIN-200806030120` | test | lateral_movement | Aayush | Varun | Dhruv | Srushti | — |
-| test-19 | `SDWIN-190518201207` | test | discovery | Srushti | Dhruv | Varun | Aayush | — |
-| test-20 | `SDWIN-201023023651` | test | persistence | Dhruv | Srushti | Aayush | Varun | — |
-| test-21 | `SDWIN-201023031210` | test | privilege_escalation | Aayush | Varun | Srushti | Dhruv | — |
-| test-22 | `SDWIN-201021001911` | test | defense_evasion | Varun | Aayush | Dhruv | Srushti | — |
-| test-23 | `SDWIN-190625103712` | test | credential_access | Srushti | Dhruv | Varun | Aayush | — |
-| test-24 | `SDWIN-200921001437` | test | execution | Dhruv | Srushti | Aayush | Varun | — |
-| test-25 | `SDWIN-200917174542` | test | lateral_movement | Srushti | Varun | Aayush | Dhruv | — |
-| test-26 | `SDWIN-200806130039` | test | discovery | Dhruv | Aayush | Varun | Srushti | — |
-| test-27 | `SDWIN-210314014019` | test | persistence | Varun | Srushti | Dhruv | Aayush | — |
-| test-28 | `SDWIN-201022002145` | test | defense_evasion | Aayush | Dhruv | Srushti | Varun | — |
-| test-29 | `SDWIN-200807103913` | test | credential_access | Varun | Aayush | Srushti | Dhruv | — |
-| test-30 | `SDWIN-201029001615` | test | execution | Aayush | Varun | Dhruv | Srushti | — |
-| test-31 (F2: dropped first) | `SDWIN-201009183000` | test | lateral_movement | Srushti | Dhruv | Varun | Aayush | — |
-| test-32 (F2: dropped first) | `SDWIN-201022035214` | test | defense_evasion | Dhruv | Srushti | Aayush | Varun | — |
-| test-33 (F2: dropped first) | `SDWIN-200921230246` | test | credential_access | Dhruv | Varun | Aayush | Srushti | — |
-| test-34 (F2: dropped first) | `SDWIN-201219075059` | test | execution | Srushti | Aayush | Varun | Dhruv | — |
-| test-35 (F2: dropped first) | `SDWIN-220630130349` | test | defense_evasion | Varun | Srushti | Dhruv | Aayush | — |
-| test-36 (F2: dropped first) | `SDWIN-201020013208` | test | credential_access | Aayush | Dhruv | Srushti | Varun | — |
-| test-37 (F2: dropped first) | `SDWIN-220703123711` | test | defense_evasion | Aayush | Varun | Srushti | Dhruv | — |
-| test-38 (F2: dropped first) | `SDWIN-201022042947` | test | credential_access | Varun | Aayush | Dhruv | Srushti | — |
-| test-39 (F2: dropped first) | `SDWIN-220803205800` | test | defense_evasion | Srushti | Dhruv | Varun | Aayush | — |
-| test-40 (F2: dropped first) | `SDWIN-230720004300` | test | credential_access | Dhruv | Srushti | Aayush | Varun | — |
-| e2e-01 | `SDWIN-190518230752` | Empire Mimikatz Extract Kerberos Keys | credential_access | Srushti | Varun | Aayush | Dhruv | Dhruv |
-| e2e-02 | `SDWIN-201012183248` | Covenant Wuauclt CreateRemoteThread Execution | defense_evasion | Dhruv | Aayush | Varun | Srushti | Srushti |
-| e2e-03 | `SDWIN-190518213907` | Empire Invoke Execute MSBuild | execution | Varun | Srushti | Dhruv | Aayush | Aayush |
-| e2e-04 | `SDWIN-190403133337` | IKEEXT Remote Service DLL Hijack | persistence | Aayush | Dhruv | Srushti | Varun | Varun |
-| e2e-05 | `SDWIN-200805034820` | Covenant SC.exe Utility Query | lateral_movement | Varun | Aayush | Srushti | Dhruv | Dhruv |
-| e2e-06 | `SDWIN-200904032946` | Invoke BypassUAC FodHelper | privilege_escalation | Aayush | Varun | Dhruv | Srushti | Srushti |
-| e2e-07 | `SDWIN-201021232814` | Internet Explorer Version Discovery | discovery | Srushti | Dhruv | Varun | Aayush | Aayush |
-| e2e-08 | `SDWIN-200805020926` | Covenant DCSync | credential_access | Dhruv | Srushti | Aayush | Varun | Varun |
-| e2e-09 | `SDWIN-201022022144` | Mshta Javascript GetObject Sct | defense_evasion | Varun | Aayush | Srushti | Dhruv | Dhruv |
-| e2e-10 | `SDWIN-201029202324` | SharpView PCRE.NET | execution | Aayush | Varun | Dhruv | Srushti | Srushti |
-| e2e-11 | `SDWIN-201019033054` | Psexec Reg LSA Secrets Dump | credential_access | Srushti | Dhruv | Varun | Aayush | Aayush |
-| e2e-12 | `SDWIN-201022025808` | Mshta VBScript Execute PowerShell | defense_evasion | Dhruv | Srushti | Aayush | Varun | Varun |
+| # | Window | Title | Tactic | Author = annotator A | Annotator B | Adjudicator | Context checker |
+|---|---|---|---|---|---|---|---|
+| dev-01 (calibration: all four together) | `SDWIN-190625133822` | dev | credential_access | Varun | Aayush | Srushti | — |
+| dev-02 (calibration: all four together) | `SDWIN-191027223020` | dev | defense_evasion | Aayush | Varun | Dhruv | — |
+| dev-03 | `SDWIN-200806035621` | dev | execution | Srushti | Dhruv | Varun | — |
+| dev-04 | `SDWIN-190518210125` | dev | lateral_movement | Aayush | Varun | Dhruv | — |
+| dev-05 | `SDWIN-190519005224` | dev | discovery | Varun | Dhruv | Aayush | — |
+| dev-06 | `SDWIN-201019224718` | dev | persistence | Srushti | Aayush | Dhruv | — |
+| dev-07 | `SDWIN-210611210814` | dev | privilege_escalation | Dhruv | Varun | Aayush | — |
+| dev-08 | `SDWIN-191027055035` | dev | credential_access | Aayush | Srushti | Varun | — |
+| dev-09 | `SDWIN-220705170038` | dev | defense_evasion | Varun | Dhruv | Srushti | — |
+| dev-10 | `SDWIN-201219070027` | dev | execution | Srushti | Aayush | Dhruv | — |
+| test-01 | `SDWIN-190301125905` | test | defense_evasion | Dhruv | Varun | Aayush | — |
+| test-02 | `SDWIN-190301174830` | test | credential_access | Aayush | Srushti | Varun | — |
+| test-03 | `SDWIN-190518182022` | test | execution | Varun | Dhruv | Srushti | — |
+| test-04 | `SDWIN-200806015757` | test | lateral_movement | Srushti | Aayush | Dhruv | — |
+| test-05 | `SDWIN-190319020729` | test | discovery | Dhruv | Varun | Aayush | — |
+| test-06 | `SDWIN-190319024742` | test | persistence | Aayush | Srushti | Varun | — |
+| test-07 | `SDWIN-190518221344` | test | privilege_escalation | Varun | Dhruv | Srushti | — |
+| test-08 | `SDWIN-190518203650` | test | defense_evasion | Srushti | Aayush | Dhruv | — |
+| test-09 | `SDWIN-190319145126` | test | credential_access | Dhruv | Varun | Aayush | — |
+| test-10 | `SDWIN-190518211052` | test | execution | Aayush | Srushti | Varun | — |
+| test-11 | `SDWIN-200806022635` | test | lateral_movement | Varun | Dhruv | Srushti | — |
+| test-12 | `SDWIN-190319021158` | test | discovery | Srushti | Aayush | Dhruv | — |
+| test-13 | `SDWIN-201021204544` | test | persistence | Dhruv | Varun | Aayush | — |
+| test-14 | `SDWIN-201019232515` | test | privilege_escalation | Aayush | Srushti | Varun | — |
+| test-15 | `SDWIN-200721232741` | test | defense_evasion | Varun | Dhruv | Srushti | — |
+| test-16 | `SDWIN-190518235535` | test | credential_access | Srushti | Aayush | Dhruv | — |
+| test-17 | `SDWIN-200806115603` | test | execution | Dhruv | Varun | Aayush | — |
+| test-18 | `SDWIN-200806030120` | test | lateral_movement | Aayush | Srushti | Varun | — |
+| test-19 | `SDWIN-190518201207` | test | discovery | Varun | Dhruv | Srushti | — |
+| test-20 | `SDWIN-201023023651` | test | persistence | Srushti | Aayush | Dhruv | — |
+| test-21 | `SDWIN-201023031210` | test | privilege_escalation | Dhruv | Varun | Aayush | — |
+| test-22 | `SDWIN-201021001911` | test | defense_evasion | Aayush | Srushti | Varun | — |
+| test-23 | `SDWIN-190625103712` | test | credential_access | Varun | Dhruv | Srushti | — |
+| test-24 | `SDWIN-200921001437` | test | execution | Srushti | Aayush | Dhruv | — |
+| test-25 | `SDWIN-200917174542` | test | lateral_movement | Dhruv | Varun | Aayush | — |
+| test-26 | `SDWIN-200806130039` | test | discovery | Aayush | Srushti | Varun | — |
+| test-27 | `SDWIN-210314014019` | test | persistence | Varun | Dhruv | Srushti | — |
+| test-28 | `SDWIN-201022002145` | test | defense_evasion | Srushti | Aayush | Dhruv | — |
+| test-29 | `SDWIN-200807103913` | test | credential_access | Dhruv | Varun | Aayush | — |
+| test-30 | `SDWIN-201029001615` | test | execution | Aayush | Srushti | Varun | — |
+| test-31 (F2: dropped first) | `SDWIN-201009183000` | test | lateral_movement | Varun | Dhruv | Srushti | — |
+| test-32 (F2: dropped first) | `SDWIN-201022035214` | test | defense_evasion | Srushti | Aayush | Dhruv | — |
+| test-33 (F2: dropped first) | `SDWIN-200921230246` | test | credential_access | Dhruv | Varun | Aayush | — |
+| test-34 (F2: dropped first) | `SDWIN-201219075059` | test | execution | Aayush | Srushti | Varun | — |
+| test-35 (F2: dropped first) | `SDWIN-220630130349` | test | defense_evasion | Varun | Dhruv | Srushti | — |
+| test-36 (F2: dropped first) | `SDWIN-201020013208` | test | credential_access | Srushti | Aayush | Dhruv | — |
+| test-37 (F2: dropped first) | `SDWIN-220703123711` | test | defense_evasion | Dhruv | Varun | Aayush | — |
+| test-38 (F2: dropped first) | `SDWIN-201022042947` | test | credential_access | Aayush | Srushti | Varun | — |
+| test-39 (F2: dropped first) | `SDWIN-220803205800` | test | defense_evasion | Varun | Dhruv | Srushti | — |
+| test-40 (F2: dropped first) | `SDWIN-230720004300` | test | credential_access | Srushti | Aayush | Dhruv | — |
+| e2e-01 | `SDWIN-190518230752` | Empire Mimikatz Extract Kerberos Keys | credential_access | Dhruv | Varun | Aayush | Aayush |
+| e2e-02 | `SDWIN-201012183248` | Covenant Wuauclt CreateRemoteThread Execution | defense_evasion | Srushti | Aayush | Varun | Varun |
+| e2e-03 | `SDWIN-190518213907` | Empire Invoke Execute MSBuild | execution | Varun | Aayush | Dhruv | Dhruv |
+| e2e-04 | `SDWIN-190403133337` | IKEEXT Remote Service DLL Hijack | persistence | Dhruv | Srushti | Aayush | Aayush |
+| e2e-05 | `SDWIN-200805034820` | Covenant SC.exe Utility Query | lateral_movement | Aayush | Srushti | Varun | Varun |
+| e2e-06 | `SDWIN-200904032946` | Invoke BypassUAC FodHelper | privilege_escalation | Varun | Dhruv | Srushti | Srushti |
+| e2e-07 | `SDWIN-201021232814` | Internet Explorer Version Discovery | discovery | Srushti | Aayush | Dhruv | Dhruv |
+| e2e-08 | `SDWIN-200805020926` | Covenant DCSync | credential_access | Dhruv | Varun | Aayush | Aayush |
+| e2e-09 | `SDWIN-201022022144` | Mshta Javascript GetObject Sct | defense_evasion | Aayush | Srushti | Varun | Varun |
+| e2e-10 | `SDWIN-201029202324` | SharpView PCRE.NET | execution | Varun | Dhruv | Srushti | Srushti |
+| e2e-11 | `SDWIN-201019033054` | Psexec Reg LSA Secrets Dump | credential_access | Srushti | Aayush | Dhruv | Dhruv |
+| e2e-12 | `SDWIN-201022025808` | Mshta VBScript Execute PowerShell | defense_evasion | Dhruv | Varun | Aayush | Aayush |
 
-| Person | Authoring | Labelling (A or B) | Adjudication | Context checks | Calibration | **Total hours** |
+| Person | Author = A | Annotator B | Adjudicator | Context checks | Calibration | **Total hours** |
 |---|---|---|---|---|---|---|
-| Varun | 15 | 30 | 15 | 3 | 2 | **34.7** |
-| Aayush | 15 | 30 | 15 | 3 | 2 | **34.7** |
-| Srushti | 15 | 30 | 15 | 3 | 2 | **34.7** |
-| Dhruv | 15 | 30 | 15 | 3 | 2 | **34.7** |
-| **All** | | | | | | **138.7** |
+| Varun | 15 | 15 | 15 | 3 | 2 | **27.7** |
+| Aayush | 14 | 16 | 16 | 4 | 2 | **27.2** |
+| Srushti | 16 | 14 | 13 | 2 | 2 | **27.6** |
+| Dhruv | 15 | 15 | 16 | 3 | 2 | **28.2** |
+| **All** | | | | | | **110.7** |
 
 ## 4. One scenario, start to finish
 
@@ -240,11 +245,11 @@ Follow `docs/case_authoring.md` §3 for the details.
    **injection marker** when the scenario is selected (§6). Nothing to do by hand.
 3. **Validate** — every cell green except the label checks (pending). Look at E2, E3 and E4 in
    the case view. If check **inj** fails, read its message (§6).
-4. **Annotate (A and B)** — each labels all seven cases blind, by rule A
+4. **Annotate (A = the author, then B)** — each labels all seven cases blind, by rule A
    (`docs/case_authoring.md` §6): every state-changing action on every target, permitted or
    prohibited; escalations; outcome; verifier label; evidence sets; decisive facts. **If the page
    shows an injection-marker notice, never label that record as evidence** (its call is already
-   prohibited). Submit locks your labels.
+   prohibited). Enter your name; submit locks your labels.
 5. **Adjudicate** — opens when both have submitted; resolve every disagreement; the final labels
    are written to the case files and the scenario is validated again (all green, nothing
    pending).
@@ -268,7 +273,7 @@ label drafted by the coding agent exists only in the demo fixture.
    frozen).
 4. **Context check** — the window's adjudicator (§3a) opens it on the Annotate page and records
    *I checked the context* with their name (Q-X4; refused for the author).
-5. **Annotate (A and B)** — only the set X fields: outcome, justified completion (yes / no),
+5. **Annotate (A = the author, then B)** — only the set X fields: outcome, justified completion (yes / no),
    evidence records, permitted, prohibited, acceptable escalations. The page shows the window's
    technique metadata (Q-X3). Never label the marker's record as evidence.
 6. **Adjudicate** — final labels go into `e2e.json`; the checks (*placeholders, scope, labels,

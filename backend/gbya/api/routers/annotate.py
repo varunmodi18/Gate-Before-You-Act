@@ -90,6 +90,7 @@ def _out(a: Annotation | None) -> dict[str, Any] | None:
         return None
     return {
         "role": a.annotator_role,
+        "name": a.annotator_name,
         "labels": a.labels,
         "notes": a.evidence_sets or {},
         "submitted_at": a.submitted_at.isoformat() if a.submitted_at else None,
@@ -286,6 +287,7 @@ def workspace(
             "split": row.split,
             "target_host": row.target_host,
             "window_id": row.window_id,
+            "author": _author(row),
             "kind": "end_to_end" if _is_x(row) else "scenario",
         },
         "cases": cases,
@@ -298,6 +300,42 @@ def workspace(
 class AnnotationBody(BaseModel):
     labels: dict[str, dict[str, Any]] = Field(default_factory=dict)  # variant → Labels
     notes: dict[str, Any] = Field(default_factory=dict)  # ticket-scope checklist, comments
+    name: str | None = Field(default=None, max_length=80)  # who annotates (honour-based, A-12)
+
+
+def _key(name: str | None) -> str | None:
+    return name.strip().casefold() if name and name.strip() else None
+
+
+def _author(row: Scenario) -> str | None:
+    """The scenario's author (``scenario.json`` ``author``; an e2e window's ``context_author``)."""
+    spec = row.spec or {}
+    return spec.get("author") or spec.get("context_author")
+
+
+def _check_people(session: Session, row: Scenario, role: str, name: str | None) -> None:
+    """Team lead, 14 Oct 2026: the author is annotator A; the author is never annotator B or the
+    adjudicator, and A, B and the adjudicator are three different people."""
+    author = _author(row)
+    who = _key(name)
+    if author and role != "A" and who is None:
+        raise Unprocessable("Give your name: the author may not be annotator B or adjudicator",
+                            code="NAME_REQUIRED")  # fmt: skip
+    if who is None:
+        return
+    if role in ("B", "adjudicator") and who == _key(author):
+        raise Unprocessable(f"{name} authored {row.id}: the author is annotator A, never "
+                            f"{'annotator B' if role == 'B' else 'the adjudicator'}",
+                            code="AUTHOR_NOT_ALLOWED")  # fmt: skip
+    others = {r: _key(a.annotator_name) for r in ("A", "B")
+              if r != role and (a := _annotation(session, row.id, r)) is not None}  # fmt: skip
+    clash = [r for r, n in others.items() if n is not None and n == who]
+    if clash:
+        msg = (
+            f"{name} is already annotator {clash[0]} of {row.id}; A, B and the adjudicator "
+            "are three different people"
+        )
+        raise Unprocessable(msg, code="SAME_PERSON")
 
 
 @router.put("/{sid}/{role}")
@@ -331,9 +369,11 @@ def save(
     a = _annotation(session, sid, role)
     if a is not None and a.submitted_at is not None:
         raise Conflict("This annotation is submitted and locked", code="ANNOTATION_LOCKED")
+    _check_people(session, row, role, body.name)
     if a is None:
         a = Annotation(scenario_id=sid, annotator_role=role, labels={})
         session.add(a)
+    a.annotator_name = body.name.strip() if body.name and body.name.strip() else a.annotator_name
     a.labels = clean
     a.evidence_sets = body.notes
     if row.status == "draft":
@@ -499,6 +539,7 @@ def adjudicate(
         raise Forbidden(
             "Adjudication opens when A and B have both submitted", code="ANNOTATION_BLIND"
         )
+    _check_people(session, row, "adjudicator", None if body.by == "adjudicator" else body.by)
     root = _root(settings)
     if _is_x(row):
         return _adjudicate_x(session, settings, row, body)

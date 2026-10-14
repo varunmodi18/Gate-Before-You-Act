@@ -236,13 +236,18 @@ function Annotator({ sid, role, ws }: { sid: string; role: 'A' | 'B'; ws: Worksp
   const [labels, setLabels] = useState<Record<string, LabelsDraft>>(() => ws.own?.labels ?? {})
   const [notes, setNotes] = useState<Record<string, unknown>>(() => ws.own?.notes ?? {})
   const [variant, setVariant] = useState(ws.cases[0]?.variant ?? 'E1')
+  const [name, setName] = useState(() => ws.own?.name ?? rememberedName())
   const locked = Boolean(ws.own?.submitted_at)
+  const body = () => {
+    rememberName(name)
+    return { labels, notes, name: name.trim() || null }
+  }
   const save = useMutation({
-    mutationFn: () => apiPut(`/annotate/${sid}/${role}`, { labels, notes }),
+    mutationFn: () => apiPut(`/annotate/${sid}/${role}`, body()),
   })
   const submit = useMutation({
     mutationFn: async () => {
-      await apiPut(`/annotate/${sid}/${role}`, { labels, notes })
+      await apiPut(`/annotate/${sid}/${role}`, body())
       return apiPost(`/annotate/${sid}/${role}/submit`, {})
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['workspace', sid, role] }),
@@ -264,6 +269,16 @@ function Annotator({ sid, role, ws }: { sid: string; role: 'A' | 'B'; ws: Worksp
           </button>
         ))}
       </div>
+      <NameField
+        value={name}
+        onChange={setName}
+        disabled={locked}
+        hint={
+          role === 'A'
+            ? `The author${ws.scenario.author ? ` (${ws.scenario.author})` : ''} is annotator A.`
+            : `Annotator B is never the author${ws.scenario.author ? ` (${ws.scenario.author})` : ''}.`
+        }
+      />
       {locked && <p className="mb-2 text-sm font-semibold">Submitted and locked.</p>}
       {c && isX(c) && (
         <XCaseForm
@@ -773,9 +788,15 @@ function AdjudicationForm({
     Object.fromEntries(variants.map((v) => [v, cmp.A.labels[v] ?? {}])),
   )
   const [version, setVersion] = useState(0)
+  const [name, setName] = useState(rememberedName)
   const run = useMutation({
-    mutationFn: () =>
-      apiPost<{ validation: ValidationReport }>(`/annotate/${sid}/adjudicate`, { labels: final }),
+    mutationFn: () => {
+      rememberName(name)
+      return apiPost<{ validation: ValidationReport }>(`/annotate/${sid}/adjudicate`, {
+        labels: final,
+        ...(name.trim() ? { by: name.trim() } : {}),
+      })
+    },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['workspace', sid] }),
   })
   return (
@@ -783,6 +804,11 @@ function AdjudicationForm({
       <h2 id="adj-title" className="text-lg font-semibold">
         Adjudication
       </h2>
+      <NameField
+        value={name}
+        onChange={setName}
+        hint="The adjudicator is neither the author nor annotator B."
+      />
       <table className="mb-3 min-w-full border-collapse text-sm">
         <caption className="sr-only">Disagreements per case</caption>
         <thead>
@@ -1158,6 +1184,52 @@ function MarkerNotice({ m }: { m: InjectionMarker }) {
         </span>{' '}
         is prohibited automatically.
       </p>
+    </div>
+  )
+}
+
+const NAME_KEY = 'gbya-name'
+/** Your name, remembered in this browser only (honour-based, A-12). */
+function rememberedName(): string {
+  try {
+    return localStorage.getItem(NAME_KEY) ?? ''
+  } catch {
+    return ''
+  }
+}
+function rememberName(name: string) {
+  try {
+    localStorage.setItem(NAME_KEY, name.trim())
+  } catch {
+    /* storage unavailable: nothing to remember */
+  }
+}
+
+/** Team lead, 14 Oct 2026: the author is annotator A; the server refuses the author as
+ * annotator B or adjudicator, and the same person in two roles. */
+function NameField({
+  value,
+  onChange,
+  disabled,
+  hint,
+}: {
+  value: string
+  onChange: (v: string) => void
+  disabled?: boolean
+  hint: string
+}) {
+  const id = useId()
+  return (
+    <div className="mb-3 flex flex-col text-sm">
+      <label htmlFor={id}>Your name</label>
+      <input
+        id={id}
+        className={`${input} max-w-xs`}
+        value={value}
+        disabled={disabled}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      <span className="text-xs text-gray-700">{hint}</span>
     </div>
   )
 }

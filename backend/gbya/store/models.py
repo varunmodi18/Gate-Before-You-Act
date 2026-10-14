@@ -145,6 +145,7 @@ class Annotation(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     scenario_id: Mapped[str] = mapped_column(ForeignKey("scenarios.id"))
     annotator_role: Mapped[str] = mapped_column(String)
+    annotator_name: Mapped[str | None] = mapped_column(String)  # who (0012); honour-based, A-12
     labels: Mapped[dict[str, Any]] = mapped_column()
     evidence_sets: Mapped[dict[str, Any] | None] = mapped_column()
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

@@ -166,6 +166,14 @@ function Editor({
           <fieldset className="mb-3 grid max-w-4xl grid-cols-1 gap-2 rounded border border-gray-400 p-3 md:grid-cols-2">
             <legend className="font-semibold">Request and E1 package</legend>
             <label className="flex flex-col text-sm">
+              Author (your name; you are also annotator A)
+              <input
+                className={input}
+                value={(draft.author as string | null | undefined) ?? ''}
+                onChange={(e) => set({ author: e.target.value || null })}
+              />
+            </label>
+            <label className="flex flex-col text-sm">
               Target host
               <input
                 className={input}

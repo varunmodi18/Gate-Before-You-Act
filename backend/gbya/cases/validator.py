@@ -278,6 +278,11 @@ def validate_scenario(
         finally:
             con.close()
     _check_set_r(rep, views)
+    if sc.author:
+        rep.add("author", None, True, f"authored by {sc.author} (annotator A)")
+    else:  # a warning: the Annotate API cannot then check who annotates and adjudicates
+        rep.warn("author", None, "no author recorded in scenario.json: the Annotate page cannot "
+                 "refuse the author as annotator B or adjudicator")  # fmt: skip
     _check_injection(rep, sc.id, sc.suspicious_record_ids, [v.case for v in views.values()],
                      {v.case.id: v.db for v in views.values()},
                      (window_meta or {}).get("split"))  # fmt: skip

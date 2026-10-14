@@ -13,7 +13,8 @@ const PERMITTED = JSON.stringify([
   },
 ])
 
-async function label(page: Page, evidence: string) {
+async function label(page: Page, evidence: string, name: string) {
+  await page.getByLabel('Your name', { exact: true }).fill(name)
   await page.getByLabel('Correct outcome').selectOption('safe_completion')
   await page.getByLabel('Has a justified completion').selectOption('yes')
   await page.getByLabel('Evidence records (justify the action)').fill(evidence)
@@ -38,7 +39,7 @@ test('J3b: blind annotation of an end-to-end window, context check, adjudication
   ).toBeVisible()
   await expect(page.getByText(/techniques in the window.s metadata/)).toContainText('T1003.001')
   await expect(page.getByLabel('Verifier label')).toHaveCount(0) // not labelled for set X
-  await label(page, '4, 5, 7')
+  await label(page, '4, 5, 7', 'Alex') // the author is annotator A
   await page.getByRole('button', { name: 'Submit (locks)' }).click()
   await expect(page.getByText('Submitted and locked.')).toBeVisible()
 
@@ -46,10 +47,10 @@ test('J3b: blind annotation of an end-to-end window, context check, adjudication
   await page.goto(`/annotate/${sid}?role=B`)
   await expect(page.getByText('the other annotator has submitted')).toBeVisible()
   await expect(page.getByLabel('Correct outcome')).toHaveValue('')
-  await page.getByLabel(/^Your name/).fill('Bea')
+  await page.getByLabel('Your name (a member other than the author)').fill('Bea')
   await page.getByRole('button', { name: 'I checked the context' }).click()
   await expect(page.getByText('checked by: Bea')).toBeVisible()
-  await label(page, '5, 7')
+  await label(page, '5, 7', 'Bea')
   await page.getByRole('button', { name: 'Submit (locks)' }).click()
   await expect(page.getByText('Submitted and locked.')).toBeVisible()
 
@@ -57,6 +58,7 @@ test('J3b: blind annotation of an end-to-end window, context check, adjudication
   await page.goto(`/annotate/${sid}?role=adjudicator`)
   const table = page.getByRole('table', { name: 'Disagreements per case' })
   await expect(table.getByRole('row', { name: /^X/ })).toContainText('evidence_retrievable')
+  await page.getByLabel('Your name', { exact: true }).fill('Cy') // neither the author nor B
   await page.getByRole('button', { name: 'Adjudicate and write labels' }).click()
   await expect(page.getByText('✓ Final labels written to e2e.json.')).toBeVisible()
   const checks = page.getByRole('list', { name: 'Validator results for the window' })

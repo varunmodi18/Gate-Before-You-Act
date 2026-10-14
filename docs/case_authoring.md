@@ -18,7 +18,7 @@ Contents: 1 What you produce · 2 Before you start · 3 Step by step · 4 Varian
 | `cases/<sid>/scenario.json` | the **author** (Scenario Studio) | window, target, request, trusted context, the **scope**, the E1 package, the suspicious records, E2–E5 and Set R parameters |
 | `cases/<sid>/cases/<variant>.json` | the **builder** (Generate variants) | the seven cases E1–E5, R_pos, R_neg; labels are added later |
 | `cases/<sid>/prefixes/<variant>.json` | the builder | the scripted investigation the agent starts from |
-| labels inside each case file | **annotators A and B**, then the **adjudicator** | permitted/prohibited actions, escalations, outcomes, verifier label, evidence sets, decisive facts |
+| labels inside each case file | **annotator A (the author)** and **annotator B**, then the **adjudicator** — three different people | permitted/prohibited actions, escalations, outcomes, verifier label, evidence sets, decisive facts |
 
 You never edit case files by hand. Edit `scenario.json` in the Studio, generate the variants, and
 validate. Annotation happens on the Annotate page.

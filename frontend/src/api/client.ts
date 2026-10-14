@@ -577,6 +577,7 @@ export interface AnnotateCase {
 
 export interface AnnotationOut {
   role: string
+  name?: string | null
   labels: Record<string, Record<string, unknown>>
   notes: Record<string, unknown>
   submitted_at: string | null
@@ -615,6 +616,7 @@ export interface Workspace {
     split: string | null
     target_host: string | null
     kind?: 'scenario' | 'end_to_end'
+    author?: string | null
   }
   cases: (AnnotateCase | XCase)[]
   own: AnnotationOut | null

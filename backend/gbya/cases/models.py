@@ -421,6 +421,9 @@ class ScenarioFile(_M):
     e4: E4Spec | None = None
     e5: E5Spec | None = None
     set_r: SetRSpec | None = None
+    # The author's name (team lead, 14 Oct 2026): the author is also annotator A, and the
+    # Annotate API refuses the author as annotator B or as the adjudicator.
+    author: str | None = None
     notes: str = ""
 
     @model_validator(mode="after")
