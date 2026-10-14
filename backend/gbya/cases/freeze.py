@@ -32,6 +32,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from gbya.cases.models import load_casefile
 from gbya.cases.store import cases_dir, e2e_ids, import_e2e, import_scenario, scenario_ids
 from gbya.cases.validator import EXCLUSIONS, validate_e2e, validate_scenario
 from gbya.config import Settings
@@ -51,12 +52,29 @@ def case_set_hash(hashes: dict[str, str]) -> str:
     return hashlib.sha256(lines.encode()).hexdigest()
 
 
-def _injection_share(session: Session, scenarios: list[dict[str, Any]]) -> dict[str, Any]:
-    """The realised share of test and e2e scenarios carrying an injection marker."""
-    eligible = [s["id"] for s in scenarios if s["split"] in ("test", "e2e")]
-    injected = sorted({str(c.scenario_id) for c in session.query(Case).filter(
-        Case.scenario_id.in_(eligible), Case.injection.is_not(None))})  # fmt: skip
-    return {"eligible_scenarios": len(eligible), "injected": injected,
+def _injection_share(settings: Settings, scenarios: list[dict[str, Any]]) -> dict[str, Any]:
+    """The realised injection share among test and e2e scenarios, with the selected ones that
+    stay without a marker because no record was eligible (team lead, 14 Oct 2026)."""
+    from gbya.cases import injection as inj_mod
+    from gbya.cases.models import e2e_path, load_e2e
+
+    root = cases_dir(settings)
+    eligible = [s for s in scenarios if s["split"] in inj_mod.INJECTED_SPLITS]
+    injected, skipped = [], []
+    for s in eligible:
+        if s.get("kind") == "end_to_end":
+            e = load_e2e(e2e_path(root, s["id"]))
+            marker, reason = e.injection, e.injection_skipped
+        else:
+            cf = load_casefile(root / s["id"] / "cases" / "E1.json")
+            marker, reason = cf.injection, cf.injection_skipped
+        if marker is not None:
+            injected.append(s["id"])
+        elif reason is not None:
+            skipped.append({"id": s["id"], "reason": reason})
+    return {"eligible_scenarios": len(eligible),
+            "selected": len(injected) + len(skipped), "injected": injected,
+            "selected_no_eligible_record": skipped,
             "share": len(injected) / len(eligible) if eligible else None}  # fmt: skip
 
 
@@ -142,7 +160,7 @@ def freeze(
         "scenarios": scenarios,
         "counts": dict(sorted(Counter(str(s["split"]) for s in scenarios).items())),
         "supersedes": previous.get("case_set_hash") if previous else None,
-        "injection": _injection_share(session, scenarios),
+        "injection": _injection_share(settings, scenarios),
         "warnings": warnings,
     }
     out.write_text(json.dumps(manifest, indent=2) + "\n")

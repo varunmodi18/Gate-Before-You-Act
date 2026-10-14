@@ -256,6 +256,9 @@ class Injection(_M):
 
 
 INJECTION_NOTE = "injection marker action (added automatically; prohibited)"
+# A selected scenario whose window has no eligible record keeps its place without a marker
+# (team lead, 14 Oct 2026); recorded in the case files, check inj and the freeze manifest.
+NO_ELIGIBLE_RECORD = "selected, no eligible record"
 
 
 def with_injection(labels: Labels, injection: Injection | None) -> Labels:
@@ -455,6 +458,7 @@ class EndToEndFile(_M):
     # is never planted in these records or in records of their processes
     attack_record_ids: list[int] = Field(default_factory=list)
     injection: Injection | None = None  # set by ``prepare-e2e`` for a seeded half of e2e windows
+    injection_skipped: str | None = None  # NO_ELIGIBLE_RECORD when selected but impossible
     # Decision D (Q-X4): the trusted context is authored once and checked by a second member
     context_author: str | None = None
     context_checked_by: str | None = None
@@ -490,6 +494,7 @@ def e2e_content_hash(e: EndToEndFile) -> str:
             "context": e.trusted_context.model_dump(mode="json"),
             "scope": e.scope.model_dump(mode="json"),
             "injection": e.injection.model_dump(mode="json") if e.injection else None,
+            "injection_skipped": e.injection_skipped,
             "labels": e.labels.model_dump(mode="json", by_alias=True)}  # fmt: skip
     return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"),
                                      ensure_ascii=False).encode()).hexdigest()  # fmt: skip
@@ -521,6 +526,7 @@ class CaseFile(_M):
     labels: Labels = Field(default_factory=Labels)
     e2_basis: E2Basis | None = None  # E2 only
     injection: Injection | None = None  # the scenario's marker, the same in every variant
+    injection_skipped: str | None = None  # NO_ELIGIBLE_RECORD when selected but impossible
 
     @model_validator(mode="after")
     def _ids(self) -> CaseFile:
@@ -547,6 +553,7 @@ def content_hash(case: CaseFile, context: TrustedContext) -> str:
         "toolset": effective_toolset(case.r_edit),
         "labels": case.labels.model_dump(mode="json", by_alias=True),
         "injection": case.injection.model_dump(mode="json") if case.injection else None,
+        "injection_skipped": case.injection_skipped,
     }
     return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":"),
                                      ensure_ascii=False).encode()).hexdigest()  # fmt: skip
@@ -573,3 +580,28 @@ def load_scenario(path: Path) -> ScenarioFile:
 
 def load_casefile(path: Path) -> CaseFile:
     return CaseFile.model_validate_json(path.read_text(encoding="utf-8"))
+
+
+# ---- scaffolds (make new-e2e) ---------------------------------------------------------------
+
+
+PLACEHOLDER = "TODO"
+
+
+def placeholders(e: Any) -> list[str]:
+    """Paths of the string values of an ``e2e.json`` that still start with TODO (notes aside)."""
+    out: list[str] = []
+
+    def walk(x: Any, path: str) -> None:
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if path or k != "notes":
+                    walk(v, f"{path}.{k}" if path else k)
+        elif isinstance(x, list):
+            for i, v in enumerate(x):
+                walk(v, f"{path}[{i}]")
+        elif isinstance(x, str) and x.startswith(PLACEHOLDER):
+            out.append(path)
+
+    walk(e.model_dump(mode="json"), "")
+    return out

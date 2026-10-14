@@ -19,6 +19,8 @@ from typing import Any
 from gbya.cases import injection
 from gbya.cases.builder import build_cases, evidence_records, window_facts
 from gbya.cases.models import (
+    NO_ELIGIBLE_RECORD,
+    PLACEHOLDER,
     Add,
     CaseFile,
     Injection,
@@ -28,6 +30,7 @@ from gbya.cases.models import (
     effective_context,
     load_casefile,
     load_scenario,
+    placeholders,
     scenario_path,
     with_injection,
 )
@@ -94,7 +97,13 @@ def generate(
     if inject and stored_injection is not None:
         facts = replace(facts, never_sample=frozenset({stored_injection.record_id}))
     cases = build_cases(sc, facts, existing)
-    inj = _injection(sc, wdb, cases, evidence, stored_injection) if inject else None
+    inj, skipped = None, None
+    if inject:
+        try:
+            inj = _injection(sc, wdb, cases, evidence, stored_injection)
+        except injection.NoEligibleRecord:  # stays in the set without a marker (team lead)
+            skipped = NO_ELIGIBLE_RECORD
+    cases = [c.model_copy(update={"injection_skipped": skipped}) for c in cases]
     if inj is not None:  # the same marker, and its prohibited action, in every variant
         cases = [
             c.model_copy(update={"injection": inj, "labels": with_injection(c.labels, inj)})
@@ -130,6 +139,7 @@ def generate(
         import_scenario(s, settings, sid)
     assert all(case_path(root, c.id).is_file() for c in cases)
     report["injection"] = inj.model_dump(mode="json") if inj else None
+    report["injection_skipped"] = skipped
     return report
 
 
@@ -190,7 +200,68 @@ def regenerate_e2(settings: Settings, sid: str, reason: str, *, by: str = "cli",
 
 USAGE = ("usage: python -m gbya.cases.cli generate <scenario_id>\n"
          "       python -m gbya.cases.cli regenerate-e2 <scenario_id> <reason>\n"
+         "       python -m gbya.cases.cli new-e2e <window_id>\n"
          "       python -m gbya.cases.cli prepare-e2e <window_case_id>")  # fmt: skip
+
+
+def new_e2e(settings: Settings, window_id: str) -> Any:
+    """Scaffold ``cases/<id>/e2e.json`` for an end-to-end window (``make new-e2e``): target host
+    = the window's primary host (``data/splits.json``), the scope computed from its records, a
+    starter trusted context, empty labels and TODO placeholders the author must replace
+    (``prepare-e2e`` and check *placeholders* refuse them)."""
+    from gbya.cases.models import EndToEndFile, e2e_path
+    from gbya.cases.scope import compute_scope
+    from gbya.cases.store import write_e2e
+    from gbya.config import REPO_ROOT
+    from gbya.store.db import make_engine, make_sessionmaker, session_scope
+
+    sid = window_id.lower()
+    path = e2e_path(cases_dir(settings), sid)
+    if path.exists():
+        raise SystemExit(f"{path} exists; edit it instead")
+    factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
+    with session_scope(factory) as s:
+        window = s.get(Window, window_id)
+        if window is None:
+            raise SystemExit(f"window {window_id} is not catalogued")
+        hosts = [str(h) for h in (window.hosts or [])]
+    splits = REPO_ROOT / "data" / "splits.json"
+    meta = (json.loads(splits.read_text()).get("windows", {}).get(window_id, {})
+            if splits.is_file() else {})  # fmt: skip
+    target = str(meta.get("primary_host") or (hosts[0] if hosts else ""))
+    if not target:
+        raise SystemExit(f"window {window_id} has no host")
+    wdb = settings.resolve(window_db(settings, window_id))
+    con = open_case_db(wdb)
+    try:
+        scope = compute_scope(con, [target])
+    finally:
+        con.close()
+    assets = [{"host": h, "role": f"{PLACEHOLDER}: workstation, server or domain_controller",
+               "tier": 2, "owner": f"{PLACEHOLDER}: owning team"}
+              for h in dict.fromkeys([target, *hosts])]  # fmt: skip
+    e = EndToEndFile.model_validate({
+        "id": sid, "window_id": window_id, "target_host": target,
+        "request": {"objective": "contain_host", "target": {"host": target},
+                    "text": f"{PLACEHOLDER}: the analyst's request, e.g. Contain host {target}."},
+        "trusted_context": {
+            "schema_version": 1, "assets": assets,
+            "identities": [{"account": a, "type": "human", "privilege": "standard",
+                            "dependents": []} for a in scope.accounts],
+            "network": {"internal_cidrs": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"],
+                        "protected_addresses": ["168.63.129.16"]},
+            "approval_script": {"mode": "unreachable"}, "change_tickets": [],
+        },
+        "scope": scope.model_dump(mode="json"),
+        "notes": "SCAFFOLD (make new-e2e). Replace every TODO value, then check: asset roles and "
+                 "tiers (0 domain controller, 1 server, 2 workstation); identities (type, "
+                 "privilege, dependents; pre-filled from the accounts acting on the host); change "
+                 "tickets; the approval script; attack_record_ids (the attack chain); "
+                 "context_author (your name); the scope (check it against the records). Then "
+                 "make prepare-e2e SID=" + sid + ".",
+    })  # fmt: skip
+    write_e2e(settings, e)
+    return path
 
 
 def prepare_e2e(settings: Settings, sid: str) -> dict[str, Any]:
@@ -205,6 +276,8 @@ def prepare_e2e(settings: Settings, sid: str) -> dict[str, Any]:
 
     root = cases_dir(settings)
     e = load_e2e(e2e_path(root, sid))
+    if todo := placeholders(e):
+        raise SystemExit(f"{sid}: replace the TODO placeholders first: {todo}")
     factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
     with session_scope(factory) as s:
         window = s.get(Window, e.window_id)
@@ -212,7 +285,7 @@ def prepare_e2e(settings: Settings, sid: str) -> dict[str, Any]:
         if row is not None and row.status == "frozen":
             raise SystemExit(f"{sid} is frozen; its marker cannot change")
         split = window.split if window else None
-    inj = None
+    inj, skipped = None, None
     if injection.selected(sid, split):
         if not e.attack_record_ids:
             raise SystemExit(f"{sid}: author attack_record_ids in e2e.json first (the attack "
@@ -224,25 +297,30 @@ def prepare_e2e(settings: Settings, sid: str) -> dict[str, Any]:
             seed = e.attack_record_ids
             eligible = injection.eligible_records(con, e.target_host, exclude, seed)
             keep = e.injection is not None and e.injection.record_id in eligible
-            inj = (
-                e.injection
-                if keep and e.injection is not None
-                else injection.choose(con, sid, e.target_host, exclude, seed)
-            )
+            if keep and e.injection is not None:
+                inj = e.injection
+            elif eligible:
+                inj = injection.choose(con, sid, e.target_host, exclude, seed)
+            else:  # stays in the set without a marker (team lead, 14 Oct 2026)
+                skipped = NO_ELIGIBLE_RECORD
         finally:
             con.close()
-        injection.plant(wdb, settings.resolve(base_db(settings, sid)), inj)
+        if inj is not None:
+            injection.plant(wdb, settings.resolve(base_db(settings, sid)), inj)
     labels = with_injection(e.labels, inj)
-    write_e2e(settings, e.model_copy(update={"injection": inj, "labels": labels}))
+    write_e2e(settings, e.model_copy(update={"injection": inj, "injection_skipped": skipped,
+                                             "labels": labels}))  # fmt: skip
     with session_scope(factory) as s:
         import_e2e(s, settings, sid)
     return {"window": sid, "split": split, "injection": inj.model_dump(mode="json") if inj
-            else None}  # fmt: skip
+            else None, "injection_skipped": skipped}  # fmt: skip
 
 
 def main(argv: list[str]) -> None:
     if len(argv) == 2 and argv[0] == "generate":
         print(json.dumps(generate(get_settings(), argv[1]), indent=1))
+    elif len(argv) == 2 and argv[0] == "new-e2e":
+        print(new_e2e(get_settings(), argv[1]))
     elif len(argv) == 2 and argv[0] == "prepare-e2e":
         print(json.dumps(prepare_e2e(get_settings(), argv[1]), indent=1))
     elif len(argv) == 3 and argv[0] == "regenerate-e2":

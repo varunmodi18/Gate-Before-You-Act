@@ -49,6 +49,7 @@ import duckdb
 from gbya.cases import scope as case_scope
 from gbya.cases.models import (
     E_VARIANTS,
+    NO_ELIGIBLE_RECORD,
     VARIANTS,
     CaseFile,
     DecisiveAbsent,
@@ -703,6 +704,7 @@ class _XCase:
     variant: str
     labels: Any
     injection: Any = None
+    injection_skipped: str | None = None
 
 
 def validate_e2e(settings: Settings, sid: str, *, split: str | None = None) -> Report:
@@ -715,6 +717,11 @@ def validate_e2e(settings: Settings, sid: str, *, split: str | None = None) -> R
 
     e = load_e2e(e2e_path(cases_dir(settings), sid))
     rep = Report(sid)
+    from gbya.cases.models import placeholders
+
+    todo = placeholders(e)
+    msg = f"replace the TODO placeholders: {todo}" if todo else "no placeholders left"
+    rep.add("placeholders", e.case_id, not todo, msg)
     db = settings.resolve(window_db(settings, e.window_id))
     if not db.is_file():
         rep.add("d", e.case_id, False, f"window database {db} is missing")
@@ -733,7 +740,7 @@ def validate_e2e(settings: Settings, sid: str, *, split: str | None = None) -> R
     finally:
         con.close()
     xdb = {e.case_id: db}
-    xcase = _XCase(e.case_id, "X", e.labels, e.injection)
+    xcase = _XCase(e.case_id, "X", e.labels, e.injection, e.injection_skipped)
     _check_injection(rep, sid, e.attack_record_ids, [xcase], xdb, split)
     checked = bool(e.context_checked_by and e.context_author)
     rep.add("context_check", e.case_id, True if checked else None,
@@ -758,6 +765,10 @@ def _check_injection(rep: Report, sid: str, suspicious: Sequence[int], cases: Se
     found = [m for m in markers.values() if m is not None]
     if not found:
         wanted = split is not None and inj_mod.selected(sid, split)
+        skipped = {getattr(c, "injection_skipped", None) for c in cases}
+        if wanted and skipped == {NO_ELIGIBLE_RECORD}:
+            rep.add("inj", None, True, f"{NO_ELIGIBLE_RECORD}: stays in the set without a marker")
+            return
         rep.add("inj", None, not wanted,
                 "selected for an injection marker but none is planted (generate again)" if wanted
                 else "no injection marker in this scenario")  # fmt: skip
