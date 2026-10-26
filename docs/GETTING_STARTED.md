@@ -1,11 +1,12 @@
 # Getting the project
 
-For teammates starting from nothing. Do the steps in order; steps 1–4 are enough to run
-everything except the live model.
+How to set up your own complete copy of GateBench, independent of anyone else's machine. Do the
+steps in order. Steps 1–5 need no GPU; step 6 adds the live model.
 
-You need Linux (Ubuntu 22.04 or later; WSL2 on Windows is untested), `git`, `make`, `curl` and
-about 5 GB of free disk. The code is on GitHub; the log data and the search index are not, so
-step 5 downloads them from their original sources.
+You need Linux (Ubuntu 22.04 or later; WSL2 on Windows is untested), `git`, `make`, `curl`, and
+about 5 GB of free disk (20 GB more for the model). The code is on GitHub; the log data, the
+search index and the model are not, so the steps download them from their original sources at
+pinned versions.
 
 **1. Install the tools** (once), then open a new terminal:
 
@@ -29,8 +30,6 @@ make setup
 make test        # about 2 minutes; ends with "855 passed" and "19 passed"
 ```
 
-If the tests fail, send Varun the output of `make diag`.
-
 **4. Have a look** (no data or GPU needed):
 
 ```bash
@@ -42,27 +41,48 @@ make fixture-up  # open http://127.0.0.1:8000; Ctrl-C to stop
 ```bash
 make db data index
 make demo-setup
-make demo-up     # open http://127.0.0.1:8000
+make demo-up     # the demo on real logs: http://127.0.0.1:8000
 ```
 
 Do not run `make splits`; the agreed split is already in the repository.
 
-**6. Join the team's server.** Annotation happens only on Varun's laptop, not on your copy
-(labels in your copy are seen by no one). Send Varun your GitHub username and your
-`~/.ssh/id_ed25519.pub` (create it with `ssh-keygen -t ed25519` if you have none). Then:
+**6. The model** (needs an NVIDIA GPU with at least 8 GB).
+
+a. Check that `nvidia-smi` shows "CUDA Version: 13.0" or later, then install CUDA Toolkit 13.0
+from <https://developer.nvidia.com/cuda-downloads> so that `/usr/local/cuda-13.0` exists (this
+step needs sudo).
+
+b. Download the model at the pinned version (about 6 GB):
 
 ```bash
-ssh -N -L 8000:127.0.0.1:8000 varun-modi@<address from Varun>
+uv run python scripts/fetch_model.py Qwen/Qwen2.5-7B-Instruct-AWQ models/Qwen2.5-7B-Instruct-AWQ \
+    --revision b25037543e9394b818fdfca67ab2a00ecc7dd641
 ```
 
-and open http://127.0.0.1:8000. Your roles and scenarios: [TEAM_GUIDE.md](TEAM_GUIDE.md) §3a;
-how to label: [case_authoring.md](case_authoring.md).
+c. Install vLLM in its own environment, outside the project folder (about 8 GB):
 
-**Staying up to date:** `git pull`, then `make setup`.
+```bash
+uv venv --python 3.11 ~/.local/share/gbya/venv-vllm
+ln -s ~/.local/share/gbya/venv-vllm .venv-vllm
+uv pip install --python .venv-vllm/bin/python -r config/vllm-requirements.lock \
+    --extra-index-url https://download.pytorch.org/whl/cu130 --index-strategy unsafe-best-match
+```
+
+d. Run it:
+
+```bash
+make model-up    # terminal 1; wait until it reports it is ready on port 8001
+make up          # terminal 2: the full application on your own database
+```
+
+Open http://127.0.0.1:8000; the model card on Home turns green. If the first start fails with a
+KV-cache memory error, start it once more (see [pilot_report.md](pilot_report.md)).
+
+To confirm you have exactly the same model file as everyone else, compare
+`models/Qwen2.5-7B-Instruct-AWQ/MANIFEST.json` with another copy: the SHA-256 values must match.
+
+**Staying up to date:** `git pull`, then `make setup` and `make db`.
 
 **Committing:** work on `m7-analysis` (`git switch m7-analysis`), never on `main`; never commit
-`data/` (except `data/fixtures/` and `data/splits.json`), `models/` or `.env`.
-
-**The model** is needed only on the machine that runs experiments (Varun's): an NVIDIA GPU with
-8 GB, about 15 GB more disk, and the same model file for every experiment. Do not set it up
-without asking Varun; the details are in [pilot_report.md](pilot_report.md).
+`data/` (except `data/fixtures/` and `data/splits.json`), `models/`, `.venv-vllm` or `.env`.
+Pushing needs write access to the repository (ask Varun).
