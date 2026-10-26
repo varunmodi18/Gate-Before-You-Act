@@ -29,8 +29,8 @@ Clone into a folder **without spaces** in its path (the model server's compiler 
 
 ```bash
 git clone https://github.com/varunmodi18/Gate-Before-You-Act.git
-cd Gate-Before-You-Act
-git switch m7-analysis          # the latest work; `main` holds only the base commit
+cd Gate-Before-You-Act          # you are on `main`, which has the full project
+git switch m7-analysis          # the working branch: team commits (e.g. `cases/`) go here
 ```
 
 ## 3. Install the dependencies
@@ -85,5 +85,6 @@ setting this up: every experiment must use the same model file.
 - Your roles and scenarios: [TEAM_GUIDE.md](TEAM_GUIDE.md) §3a. How to author and label:
   [case_authoring.md](case_authoring.md).
 - To receive updates: `git pull` on `m7-analysis`, then `make setup` if dependencies changed.
-- To contribute code or `cases/` files you need write access (ask Varun). Never push to `main`;
+- To contribute code or `cases/` files you need write access (ask Varun). Commit and push on
+  `m7-analysis`; only Varun moves `main` forward. Never push to `main`;
   never commit `data/` (except `data/fixtures/` and `data/splits.json`), `models/`, or `.env`.
