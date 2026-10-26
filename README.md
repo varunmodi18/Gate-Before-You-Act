@@ -7,7 +7,8 @@ the cited log evidence supports the action — and the experiments measure which
 
 - Plan (authoritative): [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) · progress and decisions:
   [STATUS.md](STATUS.md) · proposal: [docs/proposal/](docs/proposal/)
-- **Team members start with [docs/TEAM_GUIDE.md](docs/TEAM_GUIDE.md)** (shared server, roles,
+- **New to the project? [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)** (get the code, data and
+  model). **Team members then read [docs/TEAM_GUIDE.md](docs/TEAM_GUIDE.md)** (shared server, roles,
   assignments, dated checklist).
 
 ## Quickstart
