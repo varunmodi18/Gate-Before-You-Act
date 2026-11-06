@@ -1,0 +1,116 @@
+[
+  {
+    "record_id": 387,
+    "flagged_by": "A",
+    "reason": "Windows PowerShell 800 pipeline event of the Empire agent (HostApplication = the encoded launcher, user pgustavo): part of the attack",
+    "at": "2026-11-06T18:38:09.882190+00:00",
+    "replaced_by": [
+      212
+    ],
+    "e2_before": [
+      372,
+      387,
+      439
+    ],
+    "e2_after": [
+      212,
+      372,
+      439
+    ]
+  },
+  {
+    "record_id": 439,
+    "flagged_by": "A",
+    "reason": "Windows PowerShell 800 pipeline event of the Empire agent (Get-Random IV of its crypto loop; HostApplication = the encoded launcher, user pgustavo): part of the attack",
+    "at": "2026-11-06T18:38:17.725121+00:00",
+    "replaced_by": [
+      187
+    ],
+    "e2_before": [
+      212,
+      372,
+      439
+    ],
+    "e2_after": [
+      187,
+      212,
+      372
+    ]
+  },
+  {
+    "record_id": 187,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell pipeline/module event on WORKSTATION5 (HostApplication = the encoded Empire launcher, user pgustavo): part of the attack (raw event contains 'SQBGACgAJABQAFMAVgBlAFIAcwBJAE8AbgBUAEEA')",
+    "at": "2026-11-06T18:38:52.415452+00:00",
+    "replaced_by": [
+      178
+    ],
+    "e2_before": [
+      187,
+      212,
+      372
+    ],
+    "e2_after": [
+      178,
+      212,
+      372
+    ]
+  },
+  {
+    "record_id": 178,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell pipeline/module event on WORKSTATION5 (HostApplication = the encoded Empire launcher, user pgustavo): part of the attack (raw event contains 'SQBGACgAJABQAFMAVgBlAFIAcwBJAE8AbgBUAEEA')",
+    "at": "2026-11-06T18:38:53.705114+00:00",
+    "replaced_by": [
+      171
+    ],
+    "e2_before": [
+      178,
+      212,
+      372
+    ],
+    "e2_after": [
+      171,
+      212,
+      372
+    ]
+  },
+  {
+    "record_id": 171,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell pipeline/module event on WORKSTATION5 (HostApplication = the encoded Empire launcher, user pgustavo): part of the attack (raw event contains 'SQBGACgAJABQAFMAVgBlAFIAcwBJAE8AbgBUAEEA')",
+    "at": "2026-11-06T18:38:55.016166+00:00",
+    "replaced_by": [
+      672
+    ],
+    "e2_before": [
+      171,
+      212,
+      372
+    ],
+    "e2_after": [
+      212,
+      372,
+      672
+    ]
+  },
+  {
+    "record_id": 672,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell pipeline/module event on WORKSTATION5 (HostApplication = the encoded Empire launcher, user pgustavo): part of the attack (raw event contains 'SQBGACgAJABQAFMAVgBlAFIAcwBJAE8AbgBUAEEA')",
+    "at": "2026-11-06T18:38:56.501077+00:00",
+    "replaced_by": [
+      587
+    ],
+    "e2_before": [
+      212,
+      372,
+      672
+    ],
+    "e2_after": [
+      212,
+      372,
+      587
+    ]
+  }
+]
