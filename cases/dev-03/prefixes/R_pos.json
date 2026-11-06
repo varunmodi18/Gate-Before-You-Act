@@ -1,0 +1,54 @@
+{
+  "case_id": "dev-03:R_pos",
+  "profile": "Profile of window SDWIN-200806035621: 2343 events. Request: pgustavo's credentials appear to have been used to start a Covenant implant on WORKSTATION6 over WMI. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (854, 977, 996, 997) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 854, \"ts\": \"2020-08-06T07:56:42.135000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\GruntHTTP2.exe\", \"parent_command_line\": \"\\\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\GruntHTTP2.exe\\\"\", \"pid\": 4400, \"ppid\": 3824, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=11996F32DD85863A8C3BFF6D520F788A9211C8F7,MD5=C5E9B1D1103EDCEA2E408E9497A5A88F,SHA256=BAF97B2A629723947539CFF84E896CD29565AB4BB68B0CEC515EB5C5D6637B69,IMPHASH=F8DD0EF565DE87D97ABF9C62EA63EC21\"}\n{\"record_id\": 977, \"ts\": \"2020-08-06T07:56:43.173000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -secured -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 3460, \"ppid\": 896, \"user\": \"workstation6$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 996, \"ts\": \"2020-08-06T07:56:43.178000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\GruntHTTP2.exe\", \"command_line\": \"\\\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\GruntHTTP2.exe\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"parent_command_line\": null, \"pid\": 3824, \"ppid\": 3460, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 997, \"ts\": \"2020-08-06T07:56:43.178000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\GruntHTTP2.exe\", \"parent_command_line\": null, \"pid\": 4400, \"ppid\": 3824, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        854,
+        977,
+        996,
+        997
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (1082, 1132, 1179, 1180) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1082, \"ts\": \"2020-08-06T07:56:44.199000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 2688, \"src_ip\": \"172.18.39.5\", \"src_port\": 55275, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 52419, \"protocol\": \"tcp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 1132, \"ts\": \"2020-08-06T07:56:44.218000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\GruntHTTP2.exe\", \"pid\": 3824, \"src_ip\": \"172.18.39.6\", \"src_port\": 52548, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 1179, \"ts\": \"2020-08-06T07:56:45.218000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 1000, \"src_ip\": \"172.18.39.5\", \"src_port\": 55274, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 135, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"network service\"}\n{\"record_id\": 1180, \"ts\": \"2020-08-06T07:56:45.218000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"pid\": 7240, \"src_ip\": \"172.18.39.5\", \"src_port\": 55275, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 52419, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1082,
+        1132,
+        1179,
+        1180
+      ]
+    },
+    {
+      "sql": "SELECT * FROM logon WHERE record_id IN (956, 960, 968, 972) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 956, \"ts\": \"2020-08-06T07:56:43.169000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 960, \"ts\": \"2020-08-06T07:56:43.169000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 968, \"ts\": \"2020-08-06T07:56:43.171000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 972, \"ts\": \"2020-08-06T07:56:43.172000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        956,
+        960,
+        968,
+        972
+      ]
+    }
+  ],
+  "findings": "Records 956, 996, 1132 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    854,
+    956,
+    960,
+    968,
+    972,
+    977,
+    996,
+    997,
+    1082,
+    1132,
+    1179,
+    1180
+  ]
+}

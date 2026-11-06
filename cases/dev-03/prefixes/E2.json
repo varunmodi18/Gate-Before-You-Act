@@ -1,0 +1,48 @@
+{
+  "case_id": "dev-03:E2",
+  "profile": "Profile of window SDWIN-200806035621: 2343 events. Request: pgustavo's credentials appear to have been used to start a Covenant implant on WORKSTATION6 over WMI. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1784, 1785, 1786, 1787) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1784, \"ts\": \"2020-08-06T07:57:32.574000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 896, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3244, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1785, \"ts\": \"2020-08-06T07:57:32.574000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 896, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3244, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1786, \"ts\": \"2020-08-06T07:57:32.575000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 896, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3120, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1787, \"ts\": \"2020-08-06T07:57:32.575000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 896, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3120, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1784,
+        1785,
+        1786,
+        1787
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (1771, 1772, 1773, 1774) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1771, \"ts\": \"2020-08-06T07:57:31.574000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 3244, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Policies\\\\Microsoft\\\\SystemCertificates\", \"details\": null, \"user\": null}\n{\"record_id\": 1772, \"ts\": \"2020-08-06T07:57:31.575000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 3244, \"target_object\": \"HKLM\\\\SOFTWARE\", \"details\": null, \"user\": null}\n{\"record_id\": 1773, \"ts\": \"2020-08-06T07:57:31.575000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 3244, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\", \"details\": null, \"user\": null}\n{\"record_id\": 1774, \"ts\": \"2020-08-06T07:57:31.575000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 3244, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\EnterpriseCertificates\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1771,
+        1772,
+        1773,
+        1774
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1634) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1634, \"channel\": \"Security\", \"event_id\": 5158, \"json\": \"{\\\"@version\\\":\\\"1\\\",\\\"EventType\\\":\\\"AUDIT_SUCCESS\\\",\\\"Version\\\":0,\\\"ThreadID\\\":3912,\\\"EventTime\\\":\\\"2020-08-06 03:57:29\\\",\\\"Task\\\":12810,\\\"SourcePort\\\":\\\"57305\\\",\\\"Channel\\\":\\\"Security\\\",\\\"SourceName\\\":\\\"Microsoft-Windows-Securit…[cut: 1363 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        1634
+      ]
+    }
+  ],
+  "findings": "Records 1634, 1773, 1785 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1634,
+    1771,
+    1772,
+    1773,
+    1774,
+    1784,
+    1785,
+    1786,
+    1787
+  ]
+}

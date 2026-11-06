@@ -1,0 +1,30 @@
+{
+  "case_id": "dev-03:E4",
+  "profile": "Profile of window SDWIN-200806035621: 2339 events. Request: pgustavo's credentials appear to have been used to start a Covenant implant on WORKSTATION6 over WMI. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM logon WHERE record_id IN (956, 960, 968, 972) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 956, \"ts\": \"2020-08-06T07:56:43.169000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 960, \"ts\": \"2020-08-06T07:56:43.169000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 968, \"ts\": \"2020-08-06T07:56:43.171000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 972, \"ts\": \"2020-08-06T07:56:43.172000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        956,
+        960,
+        968,
+        972
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION6.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION6.theshire.local\", \"events\": 4}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 956 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    956,
+    960,
+    968,
+    972
+  ]
+}
