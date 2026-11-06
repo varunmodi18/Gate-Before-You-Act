@@ -1,0 +1,41 @@
+{
+  "case_id": "test-13:E5",
+  "profile": "Profile of window SDWIN-201021204544: 438 events. Request: wardog's elevated shell on WORKSTATION5 repointed the Fax service to PowerShell and started it. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (25, 26, 42, 43, 63) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 25, \"ts\": \"2020-10-21T09:05:33.684000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  config Fax binPath= \\\"C:\\\\windows\\\\system32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe -noexit -c \\\\\\\"write-host 'T1543.003 Test'\\\\\\\"\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 3112, \"ppid\": 8692, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 26, \"ts\": \"2020-10-21T09:05:33.686000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  config Fax binPath= \\\"C:\\\\windows\\\\system32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe -noexit -c \\\\\\\"write-host 'T1543.003 Test'\\\\\\\"\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 3112, \"ppid\": 8692, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=937FAB1F3A34287C44B11C3CB18A964FF6C84983,MD5=E46C638010C25479F66BACBE8596CA76,SHA256=39C59C362649090B4D34E5C8221C6E86552C07FE2DF3478D591A68B70917BC0A,IMPHASH=35A7FFDE18D444A92D32C8B2879450FF\"}\n{\"record_id\": 42, \"ts\": \"2020-10-21T09:05:35.266000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  start Fax\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 9176, \"ppid\": 8692, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 43, \"ts\": \"2020-10-21T09:05:35.268000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  start Fax\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 9176, \"ppid\": 8692, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=937FAB1F3A34287C44B11C3CB18A964FF6C84983,MD5=E46C638010C25479F66BACBE8596CA76,SHA256=39C59C362649090B4D34E5C8221C6E86552C07FE2DF3478D591A68B70917BC0A,IMPHASH=35A7FFDE18D444A92D32C8B2879450FF\"}\n{\"record_id\": 63, \"ts\": \"2020-10-21T09:05:35.280000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe -noexit -c \\\"write-host 'T1543.003 Test'\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": null, \"pid\": 1548, \"ppid\": 716, \"user\": \"wardog\", \"integrity_level\": \"System\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        25,
+        26,
+        42,
+        43,
+        63
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (20, 27, 28, 33) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 20, \"ts\": \"2020-10-21T08:45:32.955000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"target_pid\": 8692, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\TaskFlowDataEngine.dll+cf160|C:\\\\Windows\\\\System32\\\\TaskFlowDataEngine.dll+9827b|C:\\\\Windows\\\\System32\\\\TaskF…[cut: 651 chars]\", \"user\": null}\n{\"record_id\": 27, \"ts\": \"2020-10-21T09:05:33.686000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"source_pid\": 8692, \"target_image\": \"C:\\\\windows\\\\system32\\\\sc.exe\", \"target_pid\": 3112, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\system32\\\\cmd.exe+134fb|C:\\\\window…[cut: 433 chars]\", \"user\": \"wardog\"}\n{\"record_id\": 28, \"ts\": \"2020-10-21T08:45:33.686000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5672, \"target_image\": \"C:\\\\windows\\\\system32\\\\sc.exe\", \"target_pid\": 3112, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ceaf\", \"user\": null}\n{\"record_id\": 33, \"ts\": \"2020-10-21T08:45:33.689000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"source_pid\": 6148, \"target_image\": \"C:\\\\windows\\\\system32\\\\sc.exe\", \"target_pid\": 3112, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\conhost.exe+1260d|C:\\\\windows\\\\system32\\\\conhost.exe+12505|C:\\\\windows\\\\system32\\\\conhost.exe+895c|C:\\\\windows…[cut: 301 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        20,
+        27,
+        28,
+        33
+      ]
+    }
+  ],
+  "findings": "Records 25, 27, 63 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    20,
+    25,
+    26,
+    27,
+    28,
+    33,
+    42,
+    43,
+    63
+  ]
+}

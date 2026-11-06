@@ -1,0 +1,59 @@
+[
+  {
+    "record_id": 113,
+    "flagged_by": "A",
+    "reason": "record of the attack's service payload PowerShell PID 1548 (0x60c, started as the Fax service) or of the attack's shell (raw event contains '\"SourceProcessId\":\"0x60c\"')",
+    "at": "2026-11-06T20:00:51.042256+00:00",
+    "replaced_by": [
+      308
+    ],
+    "e2_before": [
+      113,
+      391,
+      418
+    ],
+    "e2_after": [
+      308,
+      391,
+      418
+    ]
+  },
+  {
+    "record_id": 308,
+    "flagged_by": "A",
+    "reason": "record of the attack's service payload PowerShell PID 1548 (0x60c, started as the Fax service) or of the attack's shell (raw event contains '\"SourceProcessId\":\"0x60c\"')",
+    "at": "2026-11-06T20:00:54.615260+00:00",
+    "replaced_by": [
+      364
+    ],
+    "e2_before": [
+      308,
+      391,
+      418
+    ],
+    "e2_after": [
+      364,
+      391,
+      418
+    ]
+  },
+  {
+    "record_id": 364,
+    "flagged_by": "A",
+    "reason": "record of the attack's service payload PowerShell PID 1548 (0x60c, started as the Fax service) or of the attack's shell (raw event contains '\"SourceProcessId\":\"0x60c\"')",
+    "at": "2026-11-06T20:00:58.170621+00:00",
+    "replaced_by": [
+      430
+    ],
+    "e2_before": [
+      364,
+      391,
+      418
+    ],
+    "e2_after": [
+      391,
+      418,
+      430
+    ]
+  }
+]

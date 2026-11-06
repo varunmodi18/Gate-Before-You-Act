@@ -1,0 +1,48 @@
+{
+  "case_id": "test-13:E2",
+  "profile": "Profile of window SDWIN-201021204544: 437 events. Request: wardog's elevated shell on WORKSTATION5 repointed the Fax service to PowerShell and started it. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (389, 390, 391, 392) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 389, \"ts\": \"2020-10-21T08:45:40.469000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2604, \"target_image\": \"C:\\\\windows\\\\System32\\\\rdpclip.exe\", \"target_pid\": 2920, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+2049d|C:\\\\windows\\\\System32\\\\shcore.dll+c540|C:\\\\windows\\\\System32\\\\shcore.dll+c1c8|C:\\\\windows\\\\Sy…[cut: 297 chars]\", \"user\": null}\n{\"record_id\": 390, \"ts\": \"2020-10-21T08:45:40.469000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2604, \"target_image\": \"C:\\\\windows\\\\System32\\\\rdpclip.exe\", \"target_pid\": 2920, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+221c5|C:\\\\Windows\\\\System32\\\\appresolver.dll+1edcc|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+205a4|C…[cut: 381 chars]\", \"user\": null}\n{\"record_id\": 391, \"ts\": \"2020-10-21T08:45:40.470000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2604, \"target_image\": \"C:\\\\windows\\\\System32\\\\rdpclip.exe\", \"target_pid\": 2920, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+1ee93|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+205a4|C:\\\\windows\\\\System32\\\\shcore.dll+c540|C:\\\\wind…[cut: 339 chars]\", \"user\": null}\n{\"record_id\": 392, \"ts\": \"2020-10-21T08:45:40.470000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2604, \"target_image\": \"C:\\\\windows\\\\System32\\\\rdpclip.exe\", \"target_pid\": 2920, \"granted_access\": \"0x1410\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+21ee8|C:\\\\Windows\\\\System32\\\\appresolver.dll+1ef46|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+205a4|C…[cut: 381 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        389,
+        390,
+        391,
+        392
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (430, 431, 436, 437) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 430, \"ts\": \"2020-10-21T08:45:42.274000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\{1NP14R77-02R7-4R5Q-O744-2RO1NR5198O7}\\\\pzq.rk…[cut: 201 chars]\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 431, \"ts\": \"2020-10-21T08:45:42.274000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\HRZR_PGYFRFFVBA\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 436, \"ts\": \"2020-10-21T08:45:42.285000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\ActivityDataModel\\\\ReaderRevisionInfo\\\\A972977C-95EC-9F21-DCC4-595CA3A0E033\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 437, \"ts\": \"2020-10-21T08:45:42.288000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\ActivityDataModel\\\\ReaderRevisionInfo\\\\A972977C-95EC-9F21-DCC4-595CA3A0E033\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        430,
+        431,
+        436,
+        437
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (418) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 418, \"channel\": \"Security\", \"event_id\": 5158, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-21T08:45:41.744Z\\\",\\\"TimeCreated\\\":\\\"2020-10-21T08:45:41.744Z\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"SourcePort\\\":\\\"49662\\\",\\\"LayerName\\\":\\\"%%14608\\\",\\\"SourceAddress\\\":\\\"0.…[cut: 1055 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        418
+      ]
+    }
+  ],
+  "findings": "Records 391, 418, 430 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    389,
+    390,
+    391,
+    392,
+    418,
+    430,
+    431,
+    436,
+    437
+  ]
+}

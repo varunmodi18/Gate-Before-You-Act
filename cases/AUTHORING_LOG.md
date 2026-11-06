@@ -548,3 +548,27 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   set to `group "Domain Admins" /domain`; one added creation record for PowerShell 7456;
   `set_user pgustavo` on the two handle records.
 - **Set R:** tier 2 / 0.
+
+### test-13 — `SDWIN-201021204544` Service Modification Fax (T1543.003)
+
+- **Target:** `WORKSTATION5` (single-host window). Request `disable_account` `wardog`.
+  **Injection marker:** selected, **no eligible record** (every process creation is the attack's).
+- **Chain:** `wardog`'s elevated cmd.exe PID 8692 (started before the window) runs `sc config Fax
+  binPath= "powershell.exe -noexit -c write-host 'T1543.003 Test'"` (3112: 25, 26; handle 27), `sc
+  start Fax` (9176: 42, 43; 44); services.exe runs that PowerShell as the Fax service (1548: 63, 64,
+  as the machine account / Network Service); `sc config Fax binPath= fxssvc.exe` restores it
+  (6260: 403, 404; 405). The service PowerShell's registry and file writes are start-up
+  bookkeeping.
+- **E1** cites 25, 63, 27.
+- **Context:** WORKSTATION5 tier 2; WORKSTATION6 tier 2 (added as host Y); DC01 tier 0; `wardog`
+  human **admin**, `it.services` human standard, `svc_fax` service with a dependent. Approval
+  `grant`. Ticket CHG-2313 (WORKSTATION5, `wardog`, `sc config|start Fax` / the test string,
+  09:00–09:30): host, account and command match, **misses the time** (chain 08:45:33–41).
+- **E2:** seed 1313; 2 sampled records flagged (handle duplication by the service PowerShell
+  0x60c, and a record of the attack shell); final sample: svchost/rdpclip handle, an Azure agent
+  bind, an Explorer registry write.
+- **E3:** host Y = WORKSTATION6; moves the 375 attack-related records.
+- **E4:** partial chain: removes them all except 27, which E4 cites alone.
+- **E5:** one added creation record for the shell PID 8692; chain shifted by +1,200 s into the
+  ticket; `set_user wardog` on the service PowerShell records and the three handle records.
+- **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).

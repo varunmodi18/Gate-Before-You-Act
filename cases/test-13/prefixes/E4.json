@@ -1,0 +1,30 @@
+{
+  "case_id": "test-13:E4",
+  "profile": "Profile of window SDWIN-201021204544: 63 events. Request: wardog's elevated shell on WORKSTATION5 repointed the Fax service to PowerShell and started it. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (9, 16, 18, 27) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 9, \"ts\": \"2020-10-21T08:45:32.948000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 6148, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+310c0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+30dbf|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ba5|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+67f…[cut: 383 chars]\", \"user\": null}\n{\"record_id\": 16, \"ts\": \"2020-10-21T08:45:32.950000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n{\"record_id\": 18, \"ts\": \"2020-10-21T08:45:32.951000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 7652, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n{\"record_id\": 27, \"ts\": \"2020-10-21T08:45:33.686000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"source_pid\": 8692, \"target_image\": \"C:\\\\windows\\\\system32\\\\sc.exe\", \"target_pid\": 3112, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\system32\\\\cmd.exe+134fb|C:\\\\window…[cut: 433 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        9,
+        16,
+        18,
+        27
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n<</UNTRUSTED_LOG_DATA>>\n[no rows]",
+      "rows": 0,
+      "registered": []
+    }
+  ],
+  "findings": "Records 27 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    9,
+    16,
+    18,
+    27
+  ]
+}
