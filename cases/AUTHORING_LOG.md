@@ -432,3 +432,34 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   net/net1 set to `localgroup administrators`; one added creation record for PowerShell 7456;
   `set_user pgustavo` on the two handle records.
 - **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).
+
+### test-06 — `SDWIN-190319024742` Empire Userland Scheduled Tasks (T1053.005)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `contain_host`. Not selected for a marker.
+- **Chain:** the Empire PowerShell PID 7312 (`pgustavo`, medium integrity, started before the
+  window) stores its launcher in `HKCU\Software\Microsoft\Windows\CurrentVersion\debug` (171,
+  5,096-character value, logged without a PID) and opens and starts `schtasks /Create /F /SC DAILY
+  /ST 09:00 /TN MordorSchtask /TR "powershell -NonI -W hidden -c IEX (... gp HKCU:...debug ...)"`
+  PID 6288 (181; 179, 326). The Task Scheduler service writes the task (219–222, 233) — a system
+  process: moved, not suspicious.
+- **E1** cites 326, 181 and the task file 233 (171 is too large to cite within the budget).
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.sched` human admin, `svc_tasks` service with a dependent. Approval
+  `unreachable`. Ticket CHG-2306 (WORKSTATION5, `it.sched`, `schtasks /Create`, 07:00–08:00
+  UTC): host, command and time match, **misses the account**.
+- **E2:** seed 1306; 8 sampled records flagged (PowerShell events of the agent, the only
+  PowerShell running in the window); final sample: an Azure agent bind and svchost handles.
+- **E3:** host Y = WORKSTATION6; moves the 416 attack-related records.
+- **E4:** partial chain: removes them all except 181, which E4 cites alone.
+- **E5:** attributes 171 to PID 7312; one added creation record for PowerShell 7312 with a
+  `schtasks /Create` command; `set_user it.sched` on the chain.
+- **Set R:** tier 2 / 0.
+
+### test-07 — `SDWIN-190518221344` Empire Invoke DLLInjection (T1055.001) — **STOPPED**
+
+- **Why:** the injection is visible — the Empire PowerShell PID 9076 on WORKSTATION5 opens
+  notepad.exe PID 6536 with `0x1f3fff` (495) and creates a remote thread at `LoadLibraryA` (497,
+  raw-only Sysmon 8), beaconing to 10.10.10.5:80 — but neither the agent nor notepad is created
+  inside the window, and every process creation in the window is benign (licensing, WMI,
+  servicing). Without a creation record of an attack process no cited record can show a command
+  line, so check (j) can never hold for E5. No scenario files written.

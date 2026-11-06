@@ -1,0 +1,154 @@
+[
+  {
+    "record_id": 578,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:11.101987+00:00",
+    "replaced_by": [
+      659
+    ],
+    "e2_before": [
+      578,
+      988,
+      998
+    ],
+    "e2_after": [
+      659,
+      988,
+      998
+    ]
+  },
+  {
+    "record_id": 988,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:14.768390+00:00",
+    "replaced_by": [
+      130
+    ],
+    "e2_before": [
+      659,
+      988,
+      998
+    ],
+    "e2_after": [
+      130,
+      659,
+      998
+    ]
+  },
+  {
+    "record_id": 130,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:18.376769+00:00",
+    "replaced_by": [
+      1287
+    ],
+    "e2_before": [
+      130,
+      659,
+      998
+    ],
+    "e2_after": [
+      659,
+      998,
+      1287
+    ]
+  },
+  {
+    "record_id": 998,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:22.031991+00:00",
+    "replaced_by": [
+      207
+    ],
+    "e2_before": [
+      659,
+      998,
+      1287
+    ],
+    "e2_after": [
+      207,
+      659,
+      1287
+    ]
+  },
+  {
+    "record_id": 207,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'schtasks')",
+    "at": "2026-11-06T19:45:25.652887+00:00",
+    "replaced_by": [
+      1209
+    ],
+    "e2_before": [
+      207,
+      659,
+      1287
+    ],
+    "e2_after": [
+      659,
+      1209,
+      1287
+    ]
+  },
+  {
+    "record_id": 1287,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:29.301888+00:00",
+    "replaced_by": [
+      356
+    ],
+    "e2_before": [
+      659,
+      1209,
+      1287
+    ],
+    "e2_after": [
+      356,
+      659,
+      1209
+    ]
+  },
+  {
+    "record_id": 356,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:32.913114+00:00",
+    "replaced_by": [
+      1220
+    ],
+    "e2_before": [
+      356,
+      659,
+      1209
+    ],
+    "e2_after": [
+      659,
+      1209,
+      1220
+    ]
+  },
+  {
+    "record_id": 1220,
+    "flagged_by": "A",
+    "reason": "record of the Empire agent PowerShell PID 7312 (the only PowerShell running on WORKSTATION5 in this window) or of its scheduled-task creation (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:45:36.506897+00:00",
+    "replaced_by": [
+      563
+    ],
+    "e2_before": [
+      659,
+      1209,
+      1220
+    ],
+    "e2_after": [
+      563,
+      659,
+      1209
+    ]
+  }
+]
