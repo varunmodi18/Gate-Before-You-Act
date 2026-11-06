@@ -259,3 +259,30 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   shifted by +1,500 s into the ticket; `set_user APT-Simulator` on them (incl. the SYSTEM-run
   service records).
 - **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).
+
+### dev-08 — `SDWIN-191027055035` RDP TaskManager LSASS Dump (T1003.001)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `contain_host`.
+- **Chain:** `pgustavo` logs on over RDP from the external address 1.2.3.4 (200, 534–541, 635–640),
+  starts Task Manager (PID 7488: 2737, 3121), then elevated after the consent prompt (PID 624,
+  high integrity: 2880, 3459), which opens lsass.exe with full access (4927, 4937 Sysmon; 4943,
+  4946, 4947, 4949 Security object access as `pgustavo`) and writes
+  `C:\Users\pgustavo\AppData\Local\Temp\lsass.DMP` (4928). Task Manager's ~640 other process
+  opens are its ordinary enumeration (moved in E3, not in the chain).
+- **E1** cites 2880, 4927, 4928 and the RDP logon 536.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.helpdesk` human admin, `svc_rdgateway` service with a dependent. Approval
+  `unreachable`. Ticket CHG-2208 (WORKSTATION5, `it.helpdesk`, `(?i)taskmgr\.exe`, 08:00–09:00
+  UTC): host, command and time match, **misses the account**.
+- **E2:** seed 1108; one Task Manager image load (3512) flagged; final sample: registry and
+  image-load background of the session (display class, device containers, Cortana, input app).
+- **E3:** host Y = WORKSTATION6; moves 1,009 attack-related records (Task Manager's, the dump, the
+  RDP logons).
+- **E4:** partial chain: removes them all except 2880 (an elevated Task Manager), which E4 cites
+  alone. (No natural single record contradicts an LSASS dump; the contradiction kind is used where
+  an administrative explanation exists.)
+- **E5:** attributes the dump file 4928 to PID 624; `set_user it.helpdesk` on the chain.
+- **Set R:** tier 2 / 0.
+- **Note:** 1.2.3.4 acts on the target (RDP logon source, rule A) and is external, so blocking it is
+  labelled where the evidence supports acting (no network record carries it as destination, so
+  C3 would reject a cited `block_ip`; the label states what is correct, not what the gate admits).

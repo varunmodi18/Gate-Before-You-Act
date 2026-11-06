@@ -1,0 +1,23 @@
+[
+  {
+    "record_id": 3512,
+    "flagged_by": "A",
+    "reason": "record of the elevated Task Manager session used to dump LSASS (the attacker's tool) (raw event contains 'Taskmgr.exe')",
+    "at": "2026-11-06T19:13:32.170061+00:00",
+    "replaced_by": [
+      2579
+    ],
+    "e2_before": [
+      1204,
+      2972,
+      2992,
+      3512
+    ],
+    "e2_after": [
+      1204,
+      2579,
+      2972,
+      2992
+    ]
+  }
+]

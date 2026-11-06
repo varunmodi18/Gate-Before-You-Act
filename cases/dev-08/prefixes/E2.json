@@ -1,0 +1,37 @@
+{
+  "case_id": "dev-08:E2",
+  "profile": "Profile of window SDWIN-191027055035: 5489 events. Request: Someone connected over RDP appears to have dumped LSASS memory with Task Manager on WORKSTATION5. Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (1204, 2096, 2098, 2100, 2579, 2992) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1204, \"ts\": \"2020-09-22T08:38:08.160000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"System\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\Class\\\\{4d36e968-e325-11ce-bfc1-08002be10318}\\\\0001\\\\VolatileSettings\", \"details\": null, \"user\": null}\n{\"record_id\": 2096, \"ts\": \"2020-09-22T08:38:10.627000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CloudStore\", \"details\": null, \"user\": null}\n{\"record_id\": 2098, \"ts\": \"2020-09-22T08:38:10.628000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CloudStore\\\\Store\\\\DefaultAccount\\\\CloudCacheInvalidator\", \"details\": null, \"user\": null}\n{\"record_id\": 2100, \"ts\": \"2020-09-22T08:38:10.629000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CloudStore\\\\Store\\\\DefaultAccount\\\\CloudCacheInvalidator\\\\82a51b15-706d-9f54-aba3-539b7e9f5639\", \"details\": \"{\\n   \\\"DatabaseInstanceId\\\" : 14679,\\n   \\\"Sequence\\\" : 1127,\\n   \\\"activityStoreId\\\" : \\\"82A51B15-706D-9F54-ABA3-539B7E9F5639\\\",\\n   \\\"filter\\\" : {\\n      \\\"isReadFilter\\\" : 0,\\n      \\\"originFilterKey\\\" : 0,\\n      \\\"st…[cut: 260 chars]\", \"user\": null}\n{\"record_id\": 2579, \"ts\": \"2020-09-22T08:38:11.863000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\DeviceContainers\\\\{a60fe720-00fa-0000-10e7-0fa6fa000000}\\\\Properties\\\\{78c34fc8-104a-4aca-9ea4-524d52996e57}\", \"details\": null, \"user\": null}\n{\"record_id\": 2992, \"ts\": \"2020-09-22T08:38:13.073000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"pid\": null, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{1747da27-b56a-66b7-e686-b5331a78174e}\\\\LocalState\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 6,
+      "registered": [
+        1204,
+        2096,
+        2098,
+        2100,
+        2579,
+        2992
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (2972) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2972, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"ImageLoaded\\\":\\\"C:\\\\\\\\Windows\\\\\\\\SystemApps\\\\\\\\Microsoft.Windows.Cortana_cw5n1h2txyewy\\\\\\\\BingConfigurationClient.dll\\\",\\\"SeverityValue\\\":2,\\\"EventReceivedTime\\\":\\\"2020-09-22 04:38:13\\\",\\\"EventID\\\":7,\\\"ProviderGuid\\\":\\\"{…[cut: 1591 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        2972
+      ]
+    }
+  ],
+  "findings": "Records 1204, 2579, 2972, 2992 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1204,
+    2096,
+    2098,
+    2100,
+    2579,
+    2972,
+    2992
+  ]
+}

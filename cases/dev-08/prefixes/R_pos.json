@@ -1,0 +1,69 @@
+{
+  "case_id": "dev-08:R_pos",
+  "profile": "Profile of window SDWIN-191027055035: 5489 events. Request: Someone connected over RDP appears to have dumped LSASS memory with Task Manager on WORKSTATION5. Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (2737, 2742, 2880, 3027) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2737, \"ts\": \"2020-09-22T08:38:12.943000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\Taskmgr.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\taskmgr.exe\\\" /4\", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": null, \"pid\": 7488, \"ppid\": 6636, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 2742, \"ts\": \"2020-09-22T08:38:12.946000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\consent.exe\", \"command_line\": \"consent.exe 5556 316 000001B0E7E22690\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 6568, \"ppid\": 5556, \"user\": \"workstation5$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 2880, \"ts\": \"2020-09-22T08:38:13.012000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\Taskmgr.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\taskmgr.exe\\\" /4\", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": null, \"pid\": 624, \"ppid\": 6636, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 3027, \"ts\": \"2020-09-22T08:38:13.090000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe\", \"command_line\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": null, \"ppid\": 908, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=4667A929AC9F824C7D240BE81A0AB9233237D71E,MD5=6033F55F30364319ED5B7E1C6E6C9ED4,SHA256=533A950B1B8A63226573E93604C11C241AB1AE34E1BE47D9919882A1681ACB42,IMPHASH=1CF27DAF6490453338CA3A6A3792FBBF\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        2737,
+        2742,
+        2880,
+        3027
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (4925, 4926, 4927, 4929) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 4925, \"ts\": \"2020-09-22T08:38:29.038000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\taskmgr.exe\", \"source_pid\": 624, \"target_image\": \"C:\\\\windows\\\\system32\\\\fontdrvhost.exe\", \"target_pid\": 5364, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\taskmgr.exe+2d95e|C:\\\\windows\\\\system32\\\\taskmgr.exe+4918|C:\\\\windows\\\\system32\\\\taskmgr.exe+777d5|C:\\\\windows…[cut: 378 chars]\", \"user\": null}\n{\"record_id\": 4926, \"ts\": \"2020-09-22T08:38:29.038000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\taskmgr.exe\", \"source_pid\": 624, \"target_image\": \"C:\\\\windows\\\\system32\\\\fontdrvhost.exe\", \"target_pid\": 5364, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\taskmgr.exe+2d95e|C:\\\\windows\\\\system32\\\\taskmgr.exe+4839|C:\\\\windows\\\\system32\\\\taskmgr.exe+777ed|C:\\\\windows…[cut: 378 chars]\", \"user\": null}\n{\"record_id\": 4927, \"ts\": \"2020-09-22T08:38:29.038000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\taskmgr.exe\", \"source_pid\": 624, \"target_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"target_pid\": 744, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\taskmgr.exe+2d95e|C:\\\\windows\\\\system32\\\\taskmgr.exe+42ea0|C:\\\\windows\\\\system32\\\\taskmgr.exe+18d7f|C:\\\\window…[cut: 840 chars]\", \"user\": null}\n{\"record_id\": 4929, \"ts\": \"2020-09-22T08:38:29.039000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 6636, \"target_image\": \"C:\\\\windows\\\\system32\\\\taskmgr.exe\", \"target_pid\": 624, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\SYSTEM32\\\\TWINAPI.dll+6d4c|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20880|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20…[cut: 778 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        4925,
+        4926,
+        4927,
+        4929
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (4875, 4876, 4885, 4928) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 4875, \"ts\": \"2020-09-22T08:38:23.024000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\CONHOST.EXE-1F3E9D7E.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 4876, \"ts\": \"2020-09-22T08:38:23.025000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\SMARTSCREEN.EXE-9B5E4173.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 4885, \"ts\": \"2020-09-22T08:38:24.023000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\TASKMGR.EXE-5F5F473D.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 4928, \"ts\": \"2020-09-22T08:38:29.039000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\taskmgr.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Users\\\\pgustavo\\\\AppData\\\\Local\\\\Temp\\\\lsass.DMP\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        4875,
+        4876,
+        4885,
+        4928
+      ]
+    },
+    {
+      "sql": "SELECT * FROM logon WHERE record_id IN (534, 536, 541, 617) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 534, \"ts\": \"2020-09-22T08:38:06.819000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4648, \"subject_user\": \"workstation5$\", \"target_user\": \"pgustavo\", \"logon_type\": null, \"src_ip\": \"1.2.3.4\", \"workstation\": null, \"process_name\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\"}\n{\"record_id\": 536, \"ts\": \"2020-09-22T08:38:06.820000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": \"workstation5$\", \"target_user\": \"pgustavo\", \"logon_type\": 7, \"src_ip\": \"1.2.3.4\", \"workstation\": \"WORKSTATION5\", \"process_name\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\"}\n{\"record_id\": 541, \"ts\": \"2020-09-22T08:38:06.823000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": \"workstation5$\", \"target_user\": \"pgustavo\", \"logon_type\": 7, \"src_ip\": \"1.2.3.4\", \"workstation\": \"WORKSTATION5\", \"process_name\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\"}\n{\"record_id\": 617, \"ts\": \"2020-09-22T08:38:06.856000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": \"workstation5$\", \"target_user\": \"system\", \"logon_type\": 5, \"src_ip\": null, \"workstation\": null, \"process_name\": \"C:\\\\Windows\\\\System32\\\\services.exe\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        534,
+        536,
+        541,
+        617
+      ]
+    }
+  ],
+  "findings": "Records 536, 2880, 4927, 4928 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    534,
+    536,
+    541,
+    617,
+    2737,
+    2742,
+    2880,
+    3027,
+    4875,
+    4876,
+    4885,
+    4925,
+    4926,
+    4927,
+    4928,
+    4929
+  ]
+}

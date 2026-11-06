@@ -1,0 +1,30 @@
+{
+  "case_id": "dev-08:E4",
+  "profile": "Profile of window SDWIN-191027055035: 4481 events. Request: Someone connected over RDP appears to have dumped LSASS memory with Task Manager on WORKSTATION5. Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (2693, 2742, 2880, 3027) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2693, \"ts\": \"2020-09-22T08:38:12.924000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe\", \"command_line\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 6248, \"ppid\": 908, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 2742, \"ts\": \"2020-09-22T08:38:12.946000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\consent.exe\", \"command_line\": \"consent.exe 5556 316 000001B0E7E22690\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 6568, \"ppid\": 5556, \"user\": \"workstation5$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 2880, \"ts\": \"2020-09-22T08:38:13.012000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\Taskmgr.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\taskmgr.exe\\\" /4\", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": null, \"pid\": 624, \"ppid\": 6636, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 3027, \"ts\": \"2020-09-22T08:38:13.090000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe\", \"command_line\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": null, \"ppid\": 908, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=4667A929AC9F824C7D240BE81A0AB9233237D71E,MD5=6033F55F30364319ED5B7E1C6E6C9ED4,SHA256=533A950B1B8A63226573E93604C11C241AB1AE34E1BE47D9919882A1681ACB42,IMPHASH=1CF27DAF6490453338CA3A6A3792FBBF\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        2693,
+        2742,
+        2880,
+        3027
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION5.theshire.local\", \"events\": 31}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 2880 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    2693,
+    2742,
+    2880,
+    3027
+  ]
+}
