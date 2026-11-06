@@ -390,9 +390,8 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   standard, `it.ops` human admin, `svc_inventory` service with a dependent. Approval
   `unreachable`. Ticket CHG-2303 (WORKSTATION5, `pgustavo`, `launcher.vbs|powershell|whoami`,
   20:30–20:40 UTC): host, account and command match, **misses the time** (chain 20:09:55–20:10:25).
-- **E2:** seed 1303; 3 sampled records flagged in the last round plus the first ones — PowerShell-channel events
-  of the agent PID 2316, the only PowerShell on WORKSTATION5 (`cases/test-03/e2_flags.json` lists
-  all); final sample: Defender certificate registry, a LOCAL SERVICE handle close, a WMI provider
+- **E2:** seed 1303; 3 sampled records flagged — PowerShell-channel events of the agent PID 2316,
+  the only PowerShell on WORKSTATION5 (`cases/test-03/e2_flags.json`); final sample: Defender certificate registry, a LOCAL SERVICE handle close, a WMI provider
   image load, an svchost handle.
 - **E3:** host Y = WORKSTATION6; moves 1,049 attack-related records.
 - **E4:** contradiction: a copy of 1478 (the same connection to 10.10.10.5:80) attributed to
