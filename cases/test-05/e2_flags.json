@@ -1,0 +1,230 @@
+[
+  {
+    "record_id": 242,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-06T19:43:00.571591+00:00",
+    "replaced_by": [
+      153
+    ],
+    "e2_before": [
+      108,
+      242,
+      288
+    ],
+    "e2_after": [
+      108,
+      153,
+      288
+    ]
+  },
+  {
+    "record_id": 153,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-06T19:43:02.830229+00:00",
+    "replaced_by": [
+      1767
+    ],
+    "e2_before": [
+      108,
+      153,
+      288
+    ],
+    "e2_after": [
+      108,
+      288,
+      1767
+    ]
+  },
+  {
+    "record_id": 288,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:43:05.152578+00:00",
+    "replaced_by": [
+      261
+    ],
+    "e2_before": [
+      108,
+      288,
+      1767
+    ],
+    "e2_after": [
+      108,
+      261,
+      1767
+    ]
+  },
+  {
+    "record_id": 261,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:43:07.392194+00:00",
+    "replaced_by": [
+      291
+    ],
+    "e2_before": [
+      108,
+      261,
+      1767
+    ],
+    "e2_after": [
+      108,
+      291,
+      1767
+    ]
+  },
+  {
+    "record_id": 291,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:43:09.628905+00:00",
+    "replaced_by": [
+      360
+    ],
+    "e2_before": [
+      108,
+      291,
+      1767
+    ],
+    "e2_after": [
+      108,
+      360,
+      1767
+    ]
+  },
+  {
+    "record_id": 360,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:43:11.884225+00:00",
+    "replaced_by": [
+      1731
+    ],
+    "e2_before": [
+      108,
+      360,
+      1767
+    ],
+    "e2_after": [
+      108,
+      1731,
+      1767
+    ]
+  },
+  {
+    "record_id": 1731,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-06T19:43:14.108645+00:00",
+    "replaced_by": [
+      244
+    ],
+    "e2_before": [
+      108,
+      1731,
+      1767
+    ],
+    "e2_after": [
+      108,
+      244,
+      1767
+    ]
+  },
+  {
+    "record_id": 1767,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 7456 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-06T19:43:16.380694+00:00",
+    "replaced_by": [
+      210
+    ],
+    "e2_before": [
+      108,
+      244,
+      1767
+    ],
+    "e2_after": [
+      108,
+      210,
+      244
+    ]
+  },
+  {
+    "record_id": 210,
+    "flagged_by": "A",
+    "reason": "record of the attack: net/net1 (local account discovery) or the Empire agent PowerShell PID 7456 (raw event contains 'net1.exe')",
+    "at": "2026-11-06T19:43:39.564629+00:00",
+    "replaced_by": [
+      66
+    ],
+    "e2_before": [
+      108,
+      210,
+      244
+    ],
+    "e2_after": [
+      66,
+      108,
+      244
+    ]
+  },
+  {
+    "record_id": 244,
+    "flagged_by": "A",
+    "reason": "record of the attack: net/net1 (local account discovery) or the Empire agent PowerShell PID 7456 (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:43:41.874691+00:00",
+    "replaced_by": [
+      1739
+    ],
+    "e2_before": [
+      66,
+      108,
+      244
+    ],
+    "e2_after": [
+      66,
+      108,
+      1739
+    ]
+  },
+  {
+    "record_id": 1739,
+    "flagged_by": "A",
+    "reason": "record of the attack: net/net1 (local account discovery) or the Empire agent PowerShell PID 7456 (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:43:44.189497+00:00",
+    "replaced_by": [
+      50
+    ],
+    "e2_before": [
+      66,
+      108,
+      1739
+    ],
+    "e2_after": [
+      50,
+      66,
+      108
+    ]
+  },
+  {
+    "record_id": 50,
+    "flagged_by": "A",
+    "reason": "record of the attack: net/net1 (local account discovery) or the Empire agent PowerShell PID 7456 (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:43:46.502356+00:00",
+    "replaced_by": [
+      162
+    ],
+    "e2_before": [
+      50,
+      66,
+      108
+    ],
+    "e2_after": [
+      66,
+      108,
+      162
+    ]
+  }
+]
