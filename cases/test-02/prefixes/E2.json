@@ -1,0 +1,37 @@
+{
+  "case_id": "test-02:E2",
+  "profile": "Profile of window SDWIN-190301174830: 8465 events. Request: A PowerShell session on WORKSTATION5 appears to be replicating credentials from the domain controller (DCSync). Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (8075, 8241, 8242, 8263, 8432) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 8075, \"ts\": \"2020-09-21T22:59:30.763000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1996, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1428, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 8241, \"ts\": \"2020-09-21T22:59:47.322000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 8242, \"ts\": \"2020-09-21T22:59:47.323000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 8263, \"ts\": \"2020-09-21T22:59:52.336000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 8432, \"ts\": \"2020-09-21T22:59:52.419000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        8075,
+        8241,
+        8242,
+        8263,
+        8432
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1055, 1247) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1055, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"ImageLoaded\\\":\\\"C:\\\\\\\\Windows\\\\\\\\System32\\\\\\\\powrprof.dll\\\",\\\"SeverityValue\\\":2,\\\"EventReceivedTime\\\":\\\"2020-09-21 18:59:00\\\",\\\"EventID\\\":7,\\\"ProviderGuid\\\":\\\"{5770385F-C22A-43E0-BF4C-06F5698FFBD9}\\\",\\\"ExecutionProcessID…[cut: 1506 chars]\"}\n{\"record_id\": 1247, \"channel\": \"Security\", \"event_id\": 5158, \"json\": \"{\\\"Keywords\\\":-9214364837600034816,\\\"SeverityValue\\\":2,\\\"Application\\\":\\\"\\\\\\\\device\\\\\\\\harddiskvolume2\\\\\\\\windows\\\\\\\\system32\\\\\\\\svchost.exe\\\",\\\"EventID\\\":5158,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"Exe…[cut: 1371 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        1055,
+        1247
+      ]
+    }
+  ],
+  "findings": "Records 1055, 1247, 8075, 8432 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1055,
+    1247,
+    8075,
+    8241,
+    8242,
+    8263,
+    8432
+  ]
+}

