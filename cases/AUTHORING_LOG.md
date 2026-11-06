@@ -313,3 +313,29 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** chain shifted by +600 s into the ticket; `set_user pedro` on the four process-access
   records logged without a user.
 - **Set R:** toolset (R_neg without `kill_process`).
+
+### dev-10 — `SDWIN-201219070027` Remote Scheduled Task Creation (T1053.005)
+
+- **Target:** `WORKSTATION5.theshire.local` (where the attacker acts; on WORKSTATION6 only the Task
+  Scheduler service and a network logon act). Request `disable_account` `pgustavo`.
+- **Chain:** `pgustavo`'s elevated PowerShell PID 6432 (started before the window) starts cmd.exe
+  PID 460 (761, 763; handle 764) `/C schtasks /create /F /tn
+  \Microsoft\Windows\SoftwareProtectionPlatform\EventCacheManager /tr "cmd.exe /C notepad.exe" /sc
+  ONSTART /ru system /S WORKSTATION6`, which starts schtasks.exe PID 8920 (781, 783; handle 784),
+  which connects to WORKSTATION6 135 and 49671 (1000, 1001 Sysmon 3; 5156 duplicates 827, 830
+  moved only). On WORKSTATION6 `pgustavo` logs on (833) and the Task Scheduler writes the task
+  (854, 840–856). Registry writes of the attack processes are BAM / Tcpip-parameter bookkeeping.
+- **E1** cites 761, 1000, 764 and the WORKSTATION6 logon 833.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  **admin**, `it.sched` human standard, `svc_tasks` service with a dependent. Approval `grant`.
+  Ticket CHG-2210 (WORKSTATION5, `pgustavo`, `schtasks /create ... /tn \Contoso\...`, 06:30–07:30
+  UTC): host, account and time match, **misses the command** (task folder).
+- **E2:** seed 1110; sample benign (the lab operator's Wireshark capture, svchost handle, image
+  loads of the monitoring agent's console host); no flag.
+- **E3:** host Y = WORKSTATION6; moves the 95 attack-related records of WORKSTATION5.
+- **E4:** contradiction: a copy of 761 whose task action is `sppsvc.exe` (the Software Protection
+  service binary), started by the configuration-management agent `CcmExec.exe`.
+- **E5:** command lines of 761/763 and 781/783 with the task under `\Contoso\`; one added creation
+  record for PowerShell 6432 (started before the window) with the same `schtasks /create`;
+  `set_user pgustavo` on the handle and Sysmon network records logged without a user.
+- **Set R:** approval (`grant` / `unreachable`): disabling an admin account needs approval (P5).

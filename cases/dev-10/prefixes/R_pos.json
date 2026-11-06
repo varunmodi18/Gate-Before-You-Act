@@ -1,0 +1,63 @@
+{
+  "case_id": "dev-10:R_pos",
+  "profile": "Profile of window SDWIN-201219070027: 1041 events. Request: pgustavo's session on WORKSTATION5 created a SYSTEM scheduled task on WORKSTATION6 disguised as a Windows task. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (761, 763, 781, 783) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 761, \"ts\": \"2020-12-19T07:00:22.176000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\cmd.exe\\\" /C schtasks /create /F /tn \\\\Microsoft\\\\Windows\\\\SoftwareProtectionPlatform\\\\EventCacheManager /tr \\\"C:\\\\Windows\\\\system32\\\\cmd.exe /C C:\\\\Windows\\\\System32\\\\notepad.exe\\\" /sc ONSTAR…[cut: 228 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 460, \"ppid\": 6432, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 763, \"ts\": \"2020-12-19T07:00:22.177000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\cmd.exe\\\" /C schtasks /create /F /tn \\\\Microsoft\\\\Windows\\\\SoftwareProtectionPlatform\\\\EventCacheManager /tr \\\"C:\\\\Windows\\\\system32\\\\cmd.exe /C C:\\\\Windows\\\\System32\\\\notepad.exe\\\" /sc ONSTAR…[cut: 228 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 460, \"ppid\": 6432, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=8DCA9749CD48D286950E7A9FA1088C937CBCCAD4,MD5=D7AB69FAD18D4A643D84A271DFC0DBDF,SHA256=FF79D3C4A0B7EB191783C323AB8363EBD1FD10BE58D8BCC96B07067743CA81D5,IMPHASH=272245E2988E1E430500B852C4FB5E18\"}\n{\"record_id\": 781, \"ts\": \"2020-12-19T07:00:22.190000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\schtasks.exe\", \"command_line\": \"schtasks  /create /F /tn \\\\Microsoft\\\\Windows\\\\SoftwareProtectionPlatform\\\\EventCacheManager /tr \\\"C:\\\\Windows\\\\system32\\\\cmd.exe /C C:\\\\Windows\\\\System32\\\\notepad.exe\\\" /sc ONSTART /ru system /S WORKSTATION6\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 8920, \"ppid\": 460, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 783, \"ts\": \"2020-12-19T07:00:22.191000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\schtasks.exe\", \"command_line\": \"schtasks  /create /F /tn \\\\Microsoft\\\\Windows\\\\SoftwareProtectionPlatform\\\\EventCacheManager /tr \\\"C:\\\\Windows\\\\system32\\\\cmd.exe /C C:\\\\Windows\\\\System32\\\\notepad.exe\\\" /sc ONSTART /ru system /S WORKSTATION6\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\cmd.exe\\\" /C schtasks /create /F /tn \\\\Microsoft\\\\Windows\\\\SoftwareProtectionPlatform\\\\EventCacheManager /tr \\\"C:\\\\Windows\\\\system32\\\\cmd.exe /C C:\\\\Windows\\\\System32\\\\notepad.exe\\\" /sc ONSTAR…[cut: 228 chars]\", \"pid\": 8920, \"ppid\": 460, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=912BA122331D7BA3DBA56868AD3CFA3C11C1D63E,MD5=A50ADB3775DB1BF3BC77CC598F68B57D,SHA256=52E53619604DE033B4CE2A82BDF59AC10732AE1DC3D8EE026EAD8BA84890A944,IMPHASH=BA9DA670C0D807BB93D0F91006DC0CA4\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        761,
+        763,
+        781,
+        783
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (759, 760, 764, 765) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 759, \"ts\": \"2020-12-19T07:00:22.034000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 876, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4212, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 542 chars]\", \"user\": null}\n{\"record_id\": 760, \"ts\": \"2020-12-19T07:00:22.035000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 876, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4212, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 542 chars]\", \"user\": null}\n{\"record_id\": 764, \"ts\": \"2020-12-19T07:00:22.177000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 6432, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 460, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9df64|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1236 chars]\", \"user\": null}\n{\"record_id\": 765, \"ts\": \"2020-12-19T07:00:22.177000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5604, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 460, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6d4df\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        759,
+        760,
+        764,
+        765
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (998, 999, 1000, 1001) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 998, \"ts\": \"2020-12-19T07:00:23.245000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 984, \"src_ip\": \"172.18.39.5\", \"src_port\": 56587, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 135, \"protocol\": \"tcp\", \"direction\": \"inbound\", \"user\": \"network service\"}\n{\"record_id\": 999, \"ts\": \"2020-12-19T07:00:23.245000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 2220, \"src_ip\": \"172.18.39.5\", \"src_port\": 56588, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 49671, \"protocol\": \"tcp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 1000, \"ts\": \"2020-12-19T07:00:23.430000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"<unknown process>\", \"pid\": 8920, \"src_ip\": \"172.18.39.5\", \"src_port\": 56587, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 135, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1001, \"ts\": \"2020-12-19T07:00:23.430000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"<unknown process>\", \"pid\": 8920, \"src_ip\": \"172.18.39.5\", \"src_port\": 56588, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 49671, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        998,
+        999,
+        1000,
+        1001
+      ]
+    },
+    {
+      "sql": "SELECT * FROM logon WHERE record_id IN (833) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 833, \"ts\": \"2020-12-19T07:00:22.238000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        833
+      ]
+    }
+  ],
+  "findings": "Records 761, 764, 833, 1000 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    759,
+    760,
+    761,
+    763,
+    764,
+    765,
+    781,
+    783,
+    833,
+    998,
+    999,
+    1000,
+    1001
+  ]
+}
