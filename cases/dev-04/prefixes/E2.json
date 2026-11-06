@@ -1,0 +1,43 @@
+{
+  "case_id": "dev-04:E2",
+  "profile": "Profile of window SDWIN-190518210125: 7504 events. Request: A remote service appears to have launched an Empire agent on WORKSTATION6. Contain host WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (108, 2782, 2783, 2784, 5459) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 108, \"ts\": \"2020-09-20T06:57:26.447000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 428, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 6604, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6aec5|c:\\\\windows\\\\system32\\\\lsm.dll+1184f|c:\\\\windows\\\\system32\\\\lsm.dll+1172e|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a53|C:\\\\windows\\\\System3…[cut: 698 chars]\", \"user\": null}\n{\"record_id\": 2782, \"ts\": \"2020-09-20T06:57:54.956000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\WindowsAzure\\\\GuestAgent_2.7.41491.993_2020-09-17_150914\\\\CollectGuestLogs.exe\", \"source_pid\": 7872, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 1212, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\84043d42d91958316db595f1576a37d5\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 642 chars]\", \"user\": null}\n{\"record_id\": 2783, \"ts\": \"2020-09-20T06:57:54.958000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\WindowsAzure\\\\GuestAgent_2.7.41491.993_2020-09-17_150914\\\\CollectGuestLogs.exe\", \"source_pid\": 7872, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1220, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\84043d42d91958316db595f1576a37d5\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 642 chars]\", \"user\": null}\n{\"record_id\": 2784, \"ts\": \"2020-09-20T06:57:54.959000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\WindowsAzure\\\\GuestAgent_2.7.41491.993_2020-09-17_150914\\\\CollectGuestLogs.exe\", \"source_pid\": 7872, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 1212, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\84043d42d91958316db595f1576a37d5\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 642 chars]\", \"user\": null}\n{\"record_id\": 5459, \"ts\": \"2020-09-20T06:58:02.351000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        108,
+        2782,
+        2783,
+        2784,
+        5459
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (6318, 6620, 6621, 6622, 6925) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 6318, \"ts\": \"2020-09-20T06:58:37.822000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-20\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\DeliveryOptimization\\\\Usage\\\\DownloadMonthlyRateFrBps\", \"details\": \"QWORD (0x00000000-0x00dcb99c)\", \"user\": null}\n{\"record_id\": 6620, \"ts\": \"2020-09-20T06:58:53.044000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\State\", \"details\": null, \"user\": null}\n{\"record_id\": 6621, \"ts\": \"2020-09-20T06:58:53.045000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\BindPaths\\\\{AFD3B9FC-85E3-31AE-CA58-C6C829075072}\\\\Properties\\\\{a111f1f2-5923-47c0-9a68-d0bafb577901}\\\\0052\", \"details\": null, \"user\": null}\n{\"record_id\": 6622, \"ts\": \"2020-09-20T06:58:53.046000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\BindPaths\\\\{AFD3B9FC-85E3-31AE-CA58-C6C829075072}\\\\Properties\\\\{a111f1f2-5923-47c0-9a68-d0bafb577901}\\\\0052\\\\(Default)\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 6925, \"ts\": \"2020-09-20T06:58:56.210000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\BindPaths\\\\{687827A3-803D-385B-CB2A-31607699FBB5}\\\\Properties\\\\{a111f1f2-5923-47c0-9a68-d0bafb577901}\\\\0054\\\\(Default)\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        6318,
+        6620,
+        6621,
+        6622,
+        6925
+      ]
+    }
+  ],
+  "findings": "Records 108, 5459, 6318, 6925 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    108,
+    2782,
+    2783,
+    2784,
+    5459,
+    6318,
+    6620,
+    6621,
+    6622,
+    6925
+  ]
+}
