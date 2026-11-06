@@ -374,3 +374,37 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** attributes 5236/5239 to PID 7456; one added creation record for PowerShell 7456 (started
   before the window); `set_user it.adsync` on the chain.
 - **Set R:** tier 2 / 0.
+
+### test-03 — `SDWIN-190518182022` Empire VBS Execution (T1059.005)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `stop_process` PID 2316 (the Empire
+  PowerShell). Not selected for an injection marker.
+- **Chain:** `pgustavo` runs `C:\Users\pgustavo\Desktop\launcher.vbs` with wscript.exe PID 2440
+  (73, 247), which opens and starts the encoded launcher powershell.exe PID 2316 (261; 259, 328),
+  which connects to 10.10.10.5:80 (1478; 5156 duplicate 1410 moved only) and runs whoami PID 9152
+  (1817, 1820; handle 1822). Registry and file writes of these processes are start-up
+  bookkeeping.
+- **E1** cites 247, 1478, 1822, 261 (the PowerShell creation records carry the whole encoded
+  launcher and would exceed the evidence budget).
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.ops` human admin, `svc_inventory` service with a dependent. Approval
+  `unreachable`. Ticket CHG-2303 (WORKSTATION5, `pgustavo`, `launcher.vbs|powershell|whoami`,
+  20:30–20:40 UTC): host, account and command match, **misses the time** (chain 20:09:55–20:10:25).
+- **E2:** seed 1303; 3 sampled records flagged in the last round plus the first ones — PowerShell-channel events
+  of the agent PID 2316, the only PowerShell on WORKSTATION5 (`cases/test-03/e2_flags.json` lists
+  all); final sample: Defender certificate registry, a LOCAL SERVICE handle close, a WMI provider
+  image load, an svchost handle.
+- **E3:** host Y = WORKSTATION6; moves 1,049 attack-related records.
+- **E4:** contradiction: a copy of 1478 (the same connection to 10.10.10.5:80) attributed to
+  `C:\Program Files\Contoso\Inventory\InventoryAgent.exe` as `svc_inventory`.
+- **E5:** chain shifted by +1,500 s into the ticket; `set_user pgustavo` on the two handle records.
+- **Set R:** toolset (R_neg without `kill_process`).
+
+### test-04 — `SDWIN-200806015757` Covenant Remote File Copy (T1021.002) — **STOPPED**
+
+- **Why:** the window has no process-creation record at all. The copy is visible only as
+  `pgustavo`'s network logon and share accesses on WORKSTATION6 (56, 58–62: `C$\ProgramData\
+  GruntHTTP.exe` written from 172.18.39.5) and a file record written by the kernel's System
+  process (212); on WORKSTATION5 the SMB client traffic is also System's. No record has an attack
+  process as actor, so no chain E5 could cover exists and check (j) can never hold (no creation
+  record to cite). No scenario files written.

@@ -1,0 +1,65 @@
+[
+  {
+    "record_id": 1336,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 2316 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:40:40.040412+00:00",
+    "replaced_by": [
+      864
+    ],
+    "e2_before": [
+      1336,
+      1506,
+      1902,
+      1934
+    ],
+    "e2_after": [
+      864,
+      1506,
+      1902,
+      1934
+    ]
+  },
+  {
+    "record_id": 864,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 2316 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:40:45.374768+00:00",
+    "replaced_by": [
+      204
+    ],
+    "e2_before": [
+      864,
+      1506,
+      1902,
+      1934
+    ],
+    "e2_after": [
+      204,
+      1506,
+      1902,
+      1934
+    ]
+  },
+  {
+    "record_id": 1902,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 2316 (the only PowerShell on WORKSTATION5 in this window) (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:40:50.666371+00:00",
+    "replaced_by": [
+      420
+    ],
+    "e2_before": [
+      204,
+      1506,
+      1902,
+      1934
+    ],
+    "e2_after": [
+      204,
+      420,
+      1506,
+      1934
+    ]
+  }
+]

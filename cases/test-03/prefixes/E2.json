@@ -1,0 +1,50 @@
+{
+  "case_id": "test-03:E2",
+  "profile": "Profile of window SDWIN-190518182022: 2067 events. Request: A VBScript on pgustavo's desktop launched an encoded PowerShell that is beaconing out from WORKSTATION5. Stop process 2316 (powershell.exe) on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 2316}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1932, 1933, 1934, 1935) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1932, \"ts\": \"2020-09-04T20:10:34.022000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1868, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 5100, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+271ee|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 1933, \"ts\": \"2020-09-04T20:10:34.023000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1868, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3244, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+271ee|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 1934, \"ts\": \"2020-09-04T20:10:34.025000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1868, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 2364, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+271ee|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 1935, \"ts\": \"2020-09-04T20:10:34.025000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1868, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3040, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+271ee|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1932,
+        1933,
+        1934,
+        1935
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (202, 203, 204, 205) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 202, \"ts\": \"2020-09-04T20:09:56.027000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Program Files\\\\Windows Defender\\\\MsMpEng.exe\", \"pid\": 3136, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\SystemCertificates\\\\SmartCardRoot\", \"details\": null, \"user\": null}\n{\"record_id\": 203, \"ts\": \"2020-09-04T20:09:56.028000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Program Files\\\\Windows Defender\\\\MsMpEng.exe\", \"pid\": 3136, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\SystemCertificates\\\\CA\", \"details\": null, \"user\": null}\n{\"record_id\": 204, \"ts\": \"2020-09-04T20:09:56.028000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Program Files\\\\Windows Defender\\\\MsMpEng.exe\", \"pid\": 3136, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\SystemCertificates\\\\CA\", \"details\": null, \"user\": null}\n{\"record_id\": 205, \"ts\": \"2020-09-04T20:09:56.029000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Program Files\\\\Windows Defender\\\\MsMpEng.exe\", \"pid\": 3136, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\EnterpriseCertificates\\\\CA\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        202,
+        203,
+        204,
+        205
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (420, 1506) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 420, \"channel\": \"Security\", \"event_id\": 4658, \"json\": \"{\\\"EventID\\\":4658,\\\"SubjectUserSid\\\":\\\"S-1-5-19\\\",\\\"RecordNumber\\\":67025,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"SourceName\\\":\\\"Microsoft-Windows-Security-Auditing\\\",\\\"OpcodeValue\\\":0,\\\"EventTime\\\":…[cut: 1302 chars]\"}\n{\"record_id\": 1506, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"EventID\\\":7,\\\"RecordNumber\\\":251833,\\\"ProviderGuid\\\":\\\"{5770385F-C22A-43E0-BF4C-06F5698FFBD9}\\\",\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"OpcodeValue\\\":0,\\\"ProcessGuid\\\":\\\"{860ba2e3-9f19-5f52-2903-000000000400}…[cut: 2278 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        420,
+        1506
+      ]
+    }
+  ],
+  "findings": "Records 204, 420, 1506, 1934 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    202,
+    203,
+    204,
+    205,
+    420,
+    1506,
+    1932,
+    1933,
+    1934,
+    1935
+  ]
+}
