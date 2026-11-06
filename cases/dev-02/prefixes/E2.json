@@ -1,0 +1,52 @@
+{
+  "case_id": "dev-02:E2",
+  "profile": "Profile of window SDWIN-191027223020: 1730 events. Request: A Covenant implant appears to be running inside InstallUtil.exe on WORKSTATION5. Stop process 4232 on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 4232}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (781, 1084, 1085, 1189, 1553) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 781, \"ts\": \"2020-09-20T01:18:15.991000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 880, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 704, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1084, \"ts\": \"2020-09-20T01:18:55.247000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 428, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3212, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6aec5|c:\\\\windows\\\\system32\\\\lsm.dll+106fe|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a53|C:\\\\windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\windows\\\\Syst…[cut: 664 chars]\", \"user\": null}\n{\"record_id\": 1085, \"ts\": \"2020-09-20T01:18:55.248000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 428, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 6604, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6aec5|c:\\\\windows\\\\system32\\\\lsm.dll+1184f|c:\\\\windows\\\\system32\\\\lsm.dll+1172e|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a53|C:\\\\windows\\\\System3…[cut: 698 chars]\", \"user\": null}\n{\"record_id\": 1189, \"ts\": \"2020-09-20T01:18:55.285000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 428, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1656, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6aec5|c:\\\\windows\\\\system32\\\\lsm.dll+1184f|c:\\\\windows\\\\system32\\\\lsm.dll+1172e|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a53|C:\\\\windows\\\\System3…[cut: 698 chars]\", \"user\": null}\n{\"record_id\": 1553, \"ts\": \"2020-09-20T01:19:54.663000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 880, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 704, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        781,
+        1084,
+        1085,
+        1189,
+        1553
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (1498, 1499, 1500, 1501) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1498, \"ts\": \"2020-09-20T01:19:49.653000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\SecureTimeHigh\", \"details\": \"QWORD (0x01d68ef4-0x82b1d5d1)\", \"user\": null}\n{\"record_id\": 1499, \"ts\": \"2020-09-20T01:19:49.653000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\SecureTimeEstimated\", \"details\": \"QWORD (0x01d68eec-0x20ed6dd1)\", \"user\": null}\n{\"record_id\": 1500, \"ts\": \"2020-09-20T01:19:49.654000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\SecureTimeLow\", \"details\": \"QWORD (0x01d68ee3-0xbf2905d1)\", \"user\": null}\n{\"record_id\": 1501, \"ts\": \"2020-09-20T01:19:49.654000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\RunTime\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1498,
+        1499,
+        1500,
+        1501
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (250, 1601) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 250, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"Keywords\\\":-9214364837600034816,\\\"SeverityValue\\\":2,\\\"SubjectDomainName\\\":\\\"THESHIRE\\\",\\\"EventID\\\":4690,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"ExecutionProcessID\\\":4,\\\"Channel\\\":\\\"Security\\\",\\\"ho…[cut: 1336 chars]\"}\n{\"record_id\": 1601, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"Keywords\\\":-9214364837600034816,\\\"SeverityValue\\\":2,\\\"SubjectDomainName\\\":\\\"THESHIRE\\\",\\\"EventID\\\":4690,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"ExecutionProcessID\\\":4,\\\"Channel\\\":\\\"Security\\\",\\\"ho…[cut: 1336 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        250,
+        1601
+      ]
+    }
+  ],
+  "findings": "Records 250, 781, 1500, 1553, 1601 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    250,
+    781,
+    1084,
+    1085,
+    1189,
+    1498,
+    1499,
+    1500,
+    1501,
+    1553,
+    1601
+  ]
+}

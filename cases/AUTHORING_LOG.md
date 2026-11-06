@@ -71,3 +71,34 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   creation record for PowerShell 5972 with the ticket's command (it was started before the
   window); `set_user it.admin` on the four chain records.
 - **Set R:** tier 2 / 0.
+
+### dev-02 — `SDWIN-191027223020` Covenant ShellCmd InstallUtil (T1218.004)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `stop_process` PID 4232 (InstallUtil.exe,
+  which runs the implant DLL and beacons to 10.10.10.5:80).
+- **Chain:** GruntHTTP.exe (PID 5520, started before the window, user `pgustavo`) writes
+  `C:\ProgramData\GruntHTTP.dll` (84), opens the new cmd.exe (578); cmd.exe PID 3776 `/c
+  InstallUtil.exe /logfile= /LogToConsole=false /u c:\ProgramData\GruntHTTP.dll` (577, 637) opens
+  InstallUtil (627); InstallUtil.exe PID 4232 with the same arguments (626, 665) connects to
+  10.10.10.5:80 (900, Sysmon 3). The Security 5156 record of the same connection (825) carries no
+  user field, so no ticket account can ever match it: it is moved in E3, not in the chain.
+  InstallUtil's registry writes (RAS tracing, ZoneMap, Tcpip parameters, Internet settings) and the
+  BAM entries are process start-up bookkeeping: moved in E3, not in the chain.
+- **E1** cites 665, 627, 578, 900, 84 (one creation record only: with the E4 record a second long
+  creation record made E4's canned prefix query exceed its result limit).
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `svc_deploy` service with a dependent, `helpdesk.admin` human admin. Approval `deny`.
+  Ticket CHG-2202 (WORKSTATION5, `pgustavo`, `(?i)GruntHTTP`, 01:18:50–01:20:00 UTC): host,
+  account and command match, **misses the time** (the chain runs 01:17:19–01:18:17).
+- **E2:** seed 1102, same host; the sample (Security 4690 handle duplication by the machine
+  account, svchost handles, lsass W32Time key) is benign; no flag.
+- **E3:** host Y = WORKSTATION6; moves 245 records (chain, image loads, handle and object-access
+  events of the attack processes, prefetch files, DNS query, the 5156 record).
+- **E4:** contradiction: a copy of 665 (InstallUtil PID 4232) whose command installs
+  `Contoso.Inventory.dll` under the configuration-management agent `CcmExec.exe` as `svc_deploy`
+  (the guide's form: a real record with a benign change), cited in addition.
+- **E5:** attributes 84 (PID 5520), 577 (PID 3776), 900 (PID 4232); adds one creation record for
+  GruntHTTP.exe PID 5520 (started before the window) whose command is its own path; shifts the
+  chain by +100 s into the ticket window (still inside the window's time range); sets `pgustavo`
+  on the three records logged without a user.
+- **Set R:** toolset (R_neg without `kill_process`).

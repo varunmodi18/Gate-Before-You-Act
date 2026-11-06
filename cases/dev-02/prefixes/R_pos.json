@@ -1,0 +1,71 @@
+{
+  "case_id": "dev-02:R_pos",
+  "profile": "Profile of window SDWIN-191027223020: 1730 events. Request: A Covenant implant appears to be running inside InstallUtil.exe on WORKSTATION5. Stop process 4232 on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 4232}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (626, 637, 642, 665) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 626, \"ts\": \"2020-09-20T01:18:13.927000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe\", \"command_line\": \"C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe  /logfile= /LogToConsole=false /u c:\\\\ProgramData\\\\GruntHTTP.dll\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"cmd.exe\\\" /c C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe /logfile= /LogToConsole=false /u c:\\\\ProgramData\\\\GruntHTTP.dll\", \"pid\": null, \"ppid\": 3776, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=BE9360E88838D064C2A13E8F154FD79D3B8BA0E1,MD5=4E481FD8FB0F3BDEE93ABF6D3C614EB7,SHA256=9E8EB9A066BCC4DCC56AED56B73688922B5F921901938D8C02817D5390543585,IMPHASH=00000000000000000000000000000000\"}\n{\"record_id\": 637, \"ts\": \"2020-09-20T01:18:14.927000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"cmd.exe\\\" /c C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe /logfile= /LogToConsole=false /u c:\\\\ProgramData\\\\GruntHTTP.dll\", \"parent_image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"parent_command_line\": null, \"pid\": 3776, \"ppid\": 5520, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 642, \"ts\": \"2020-09-20T01:18:14.929000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 10056, \"ppid\": 3776, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 665, \"ts\": \"2020-09-20T01:18:14.939000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe\", \"command_line\": \"C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe  /logfile= /LogToConsole=false /u c:\\\\ProgramData\\\\GruntHTTP.dll\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 4232, \"ppid\": 3776, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        626,
+        637,
+        642,
+        665
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (578, 591, 601, 617, 627) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 578, \"ts\": \"2020-09-20T01:18:13.902000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"source_pid\": 5520, \"target_image\": \"C:\\\\windows\\\\SYSTEM32\\\\cmd.exe\", \"target_pid\": 3776, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.dll+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 506 chars]\", \"user\": null}\n{\"record_id\": 591, \"ts\": \"2020-09-20T01:18:13.908000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 1320, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 10056, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d104|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+1430|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5fd9|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ce5f\", \"user\": null}\n{\"record_id\": 601, \"ts\": \"2020-09-20T01:18:13.913000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"source_pid\": 10056, \"target_image\": \"C:\\\\windows\\\\SYSTEM32\\\\cmd.exe\", \"target_pid\": 3776, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\conhost.exe+1260d|C:\\\\windows\\\\system32\\\\conhost.exe+12505|C:\\\\windows\\\\system32\\\\conhost.exe+895c|C:\\\\windows…[cut: 301 chars]\", \"user\": null}\n{\"record_id\": 617, \"ts\": \"2020-09-20T01:18:13.922000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"source_pid\": 1920, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 10056, \"granted_access\": \"0x1478\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|c:\\\\windows\\\\system32\\\\themeservice.dll+1a9a|c:\\\\windows\\\\system32\\\\themeservice.dll+1736|c:\\\\windows\\\\system32\\\\themeservice.dll+6026|c:\\\\windows\\\\system32\\\\themeservice.dll+a…[cut: 394 chars]\", \"user\": null}\n{\"record_id\": 627, \"ts\": \"2020-09-20T01:18:13.927000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\SYSTEM32\\\\cmd.exe\", \"source_pid\": 3776, \"target_image\": \"C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe\", \"target_pid\": 4232, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\SYSTEM32\\\\cmd.exe+134fb|C:\\\\window…[cut: 433 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        578,
+        591,
+        601,
+        617,
+        627
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (862, 868, 869, 900) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 862, \"ts\": \"2020-09-20T01:18:17.026000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 696, \"src_ip\": \"fe80::9582:39e0:356b:ef4e\", \"src_port\": 58254, \"dst_ip\": \"fe80::9582:39e0:356b:ef4e\", \"dst_port\": 389, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 868, \"ts\": \"2020-09-20T01:18:17.028000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\dfsrs.exe\", \"pid\": 3324, \"src_ip\": \"fe80::9582:39e0:356b:ef4e\", \"src_port\": 58255, \"dst_ip\": \"fe80::9582:39e0:356b:ef4e\", \"dst_port\": 389, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 869, \"ts\": \"2020-09-20T01:18:17.029000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 696, \"src_ip\": \"fe80::9582:39e0:356b:ef4e\", \"src_port\": 58255, \"dst_ip\": \"fe80::9582:39e0:356b:ef4e\", \"dst_port\": 389, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 900, \"ts\": \"2020-09-20T01:18:17.044000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\Microsoft.NET\\\\Framework64\\\\v4.0.30319\\\\InstallUtil.exe\", \"pid\": null, \"src_ip\": \"172.18.39.5\", \"src_port\": 63102, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        862,
+        868,
+        869,
+        900
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (84, 144, 186, 988) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 84, \"ts\": \"2020-09-20T01:17:19.476000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"pid\": null, \"target_filename\": \"C:\\\\ProgramData\\\\GruntHTTP.dll\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 144, \"ts\": \"2020-09-20T01:17:49.583000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Windows\\\\ServiceState\\\\EventLog\\\\Data\\\\lastalive0.dat\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 186, \"ts\": \"2020-09-20T01:17:56.644000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Windows\\\\ServiceState\\\\EventLog\\\\Data\\\\lastalive1.dat\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 988, \"ts\": \"2020-09-20T01:18:26.118000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\CMD.EXE-4A81B364.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        84,
+        144,
+        186,
+        988
+      ]
+    }
+  ],
+  "findings": "Records 84, 578, 627, 665, 900 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    84,
+    144,
+    186,
+    578,
+    591,
+    601,
+    617,
+    626,
+    627,
+    637,
+    642,
+    665,
+    862,
+    868,
+    869,
+    900,
+    988
+  ]
+}
