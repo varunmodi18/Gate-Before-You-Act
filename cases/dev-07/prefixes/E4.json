@@ -1,0 +1,30 @@
+{
+  "case_id": "dev-07:E4",
+  "profile": "Profile of window SDWIN-210611210814: 397 events. Request: The APT-Simulator account on WORKSTATION5 is running Cobalt Strike-style named-pipe and service tricks to obtain SYSTEM. Disable account APT-Simulator. Target: {\"account\": \"APT-Simulator\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1932, 1934, 1936, 1963) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1932, \"ts\": \"2021-06-11T09:07:40.757000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\Explorer.EXE\", \"source_pid\": 1320, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 8912, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d364|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+305ee|C:\\\\Windows\\\\System32\\\\appresolver.dll+1c746|C:\\\\Windows\\\\System32\\\\appresolver.dll+225d3|C:\\\\Windows\\\\System32\\\\appresolver.dll+1f0…[cut: 659 chars]\", \"user\": null}\n{\"record_id\": 1934, \"ts\": \"2021-06-11T09:07:40.757000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\Explorer.EXE\", \"source_pid\": 1320, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 8912, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d364|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+305ee|C:\\\\Windows\\\\System32\\\\NPSMDesktopProvider.dll+1dfba|C:\\\\Windows\\\\System32\\\\NPSMDesktopProvider.dll+13b42|C:\\\\Windows\\\\System32\\\\NPS…[cut: 484 chars]\", \"user\": null}\n{\"record_id\": 1936, \"ts\": \"2021-06-11T09:07:40.757000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\Explorer.EXE\", \"source_pid\": 1320, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 8912, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d364|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+305ee|C:\\\\Windows\\\\System32\\\\TaskFlowDataEngine.dll+ce360|C:\\\\Windows\\\\System32\\\\TaskFlowDataEngine.dll+97afb|C:\\\\Windows\\\\System32\\\\TaskF…[cut: 654 chars]\", \"user\": null}\n{\"record_id\": 1963, \"ts\": \"2021-06-11T09:07:41.208000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"source_pid\": 5632, \"target_image\": \"C:\\\\Windows\\\\system32\\\\sc.exe\", \"target_pid\": 6116, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9e714|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+59e0a|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+567a6|C:\\\\Windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\Windows\\\\system32\\\\cmd.exe+1350b|C:\\\\Window…[cut: 797 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1932,
+        1934,
+        1936,
+        1963
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION5\", \"events\": 4}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 1963 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1932,
+    1934,
+    1936,
+    1963
+  ]
+}

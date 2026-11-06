@@ -44,6 +44,11 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   `suspicious_record_ids`, but §D.11 check (b) requires E5 to cover every suspicious event; the
   attacker's logons and share accesses are therefore moved in E3 (and may be cited) but are not
   listed as suspicious. Reported at the end of the run.
+- **`disable_account` requests:** the verifier's CHANGE_TICKETS block lists only tickets whose
+  account is the account being disabled (a call without a host), so the ticket names the
+  requested account and misses on command or time.
+- **Time misses:** C2's window range is the case database's own (`window_time_range` of the case
+  database), so an E5 time shift may move the chain past the window's original end.
 - **Ticket host** is never the field E1 misses: with a host miss E5 would have to move the
   activity off the target host, which is what E3 tests.
 - **Host Y (E3).** Another workstation of the window when there is one, otherwise another host
@@ -210,7 +215,7 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   host); DC01 tier 0; `wardog` human **admin** (SID …-500, high integrity), `it.helpdesk` human
   standard, `svc_gpo` service with a dependent. Approval `unreachable`. Ticket CHG-2206
   (WORKSTATION5, `wardog`, logon scripts from `\\…\NETLOGON\`, 10:00–11:00): host, account and time
-  match, **misses the command** (a time-miss could not be shifted inside the 33-second window).
+  match, **misses the command** (rotation).
 - **E2:** seed 1406 (1106–1306 overflowed E2's canned query); sample: Explorer UserAssist registry
   writes and svchost/Explorer handles — user-interface bookkeeping, not identifiable as the
   attack; no flag.
@@ -221,3 +226,36 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   shell PID 8836 (started before the window) with the same `reg add`; `set_user wardog` on the
   file, handle and registry records.
 - **Set R:** toolset (R_neg without `kill_process`).
+
+### dev-07 — `SDWIN-210611210814` APT Simulator Cobalt Strike (T1134.001 / T1134.002)
+
+- **Target:** `WORKSTATION5`. Request `disable_account` `APT-Simulator` (the account running the
+  simulated intrusion).
+- **Chain:** the batch shell cmd.exe PID 5632 (user `APT-Simulator`, high integrity, started before
+  the window) unpacks a toolset with 7z, creates Cobalt Strike-style named pipes
+  (CreateNamedPipe.exe `MSSE-1337-server`, `msagent_*`, `postex_ssh_*`), then the getsystem-style
+  token impersonation: pipe server `334485` (1749/1750), `sc create tbbd05 binpath= "%COMSPEC%
+  echo /c b6a1458f396 > \\.\pipe\334485"` (1961/1962), `sc start` (1987/1988), services.exe runs
+  that command as SYSTEM (2003/2004), `b6a1458f396.exe` (copied over ADMIN$) runs as SYSTEM
+  (2031/2032), `sc stop/delete`, and an HTTP beacon with curl to 10.0.2.15 (5156 only, 2436).
+  Suspicious: the creation records of the 29 attack processes and of the service chain, their
+  32 process-access records and the toolset extraction (61) — 90 records. Registry writes of
+  these processes are BAM entries and WMI CIMOM keys (bookkeeping); share records have no actor.
+- **E1** cites 1749, 1961, 2003 (short Security 4688 records) and 1963 (the shell opening sc.exe).
+- **Context:** WORKSTATION5 tier 2; WORKSTATION6 tier 2 (added as host Y); DC01 tier 0;
+  `APT-Simulator` human **admin** (SID …-500), `it.redteam` human standard, `svc_scom` service with
+  a dependent. Approval `grant`. Ticket CHG-2207 (WORKSTATION5, `APT-Simulator`, any command,
+  09:30–09:45 UTC): host, account and command match, **misses the time** (the chain runs
+  09:07–09:08). A first version with a ticket for `it.redteam` was replaced before labelling: the
+  verifier is shown only tickets of the account being disabled.
+- **E2:** seed 1107; 13 sampled records flagged: the console host of an attack process, WmiPrvSE
+  PID 4752 (0x1290) — active only at the five `taskkill /IM` times, 123 process accesses each,
+  enumerating processes for the attack —, the shell's console host 5740 opening an attack PING,
+  and the ADMIN$ copy of the payload. Final sample: Explorer registry updates and the monitoring
+  agent's cscript (image load, exit).
+- **E3:** host Y = WORKSTATION6; moves 2,215 attack-related records (incl. WmiPrvSE 4752's).
+- **E4:** partial chain: removes them all except 1963, which E4 cites alone.
+- **E5:** one added creation record for the batch shell PID 5632 at 09:32:00; the 90 chain records
+  shifted by +1,500 s into the ticket; `set_user APT-Simulator` on them (incl. the SYSTEM-run
+  service records).
+- **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).

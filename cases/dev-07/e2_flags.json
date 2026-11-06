@@ -1,0 +1,275 @@
+[
+  {
+    "record_id": 539,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"ProcessId\":\"7024\"')",
+    "at": "2026-11-06T19:04:52.668697+00:00",
+    "replaced_by": [
+      608
+    ],
+    "e2_before": [
+      539,
+      1231,
+      1623,
+      2256
+    ],
+    "e2_after": [
+      608,
+      1231,
+      1623,
+      2256
+    ]
+  },
+  {
+    "record_id": 1601,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"SourceProcessId\":\"4752\"')",
+    "at": "2026-11-06T19:05:42.043360+00:00",
+    "replaced_by": [
+      8
+    ],
+    "e2_before": [
+      369,
+      1601,
+      1623,
+      2256
+    ],
+    "e2_after": [
+      8,
+      369,
+      1623,
+      2256
+    ]
+  },
+  {
+    "record_id": 1623,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"SourceProcessId\":\"4752\"')",
+    "at": "2026-11-06T19:05:58.815387+00:00",
+    "replaced_by": [
+      1293
+    ],
+    "e2_before": [
+      8,
+      369,
+      1623,
+      2256
+    ],
+    "e2_after": [
+      8,
+      369,
+      1293,
+      2256
+    ]
+  },
+  {
+    "record_id": 1293,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"SourceProcessId\":\"4752\"')",
+    "at": "2026-11-06T19:06:15.387839+00:00",
+    "replaced_by": [
+      1004
+    ],
+    "e2_before": [
+      8,
+      369,
+      1293,
+      2256
+    ],
+    "e2_after": [
+      8,
+      369,
+      1004,
+      2256
+    ]
+  },
+  {
+    "record_id": 1004,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"ProcessId\":\"1588\"')",
+    "at": "2026-11-06T19:06:32.016174+00:00",
+    "replaced_by": [
+      2351
+    ],
+    "e2_before": [
+      8,
+      369,
+      1004,
+      2256
+    ],
+    "e2_after": [
+      8,
+      369,
+      2256,
+      2351
+    ]
+  },
+  {
+    "record_id": 2256,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"SourceProcessId\":\"4752\"')",
+    "at": "2026-11-06T19:06:48.551114+00:00",
+    "replaced_by": [
+      1591
+    ],
+    "e2_before": [
+      8,
+      369,
+      2256,
+      2351
+    ],
+    "e2_after": [
+      8,
+      369,
+      1591,
+      2351
+    ]
+  },
+  {
+    "record_id": 1591,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"SourceProcessId\":\"4752\"')",
+    "at": "2026-11-06T19:07:05.623926+00:00",
+    "replaced_by": [
+      2556
+    ],
+    "e2_before": [
+      8,
+      369,
+      1591,
+      2351
+    ],
+    "e2_after": [
+      8,
+      369,
+      2351,
+      2556
+    ]
+  },
+  {
+    "record_id": 2351,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 enumerating processes for the attack's taskkill /IM runs (active only at the five taskkill times), or the console host of an attack process (raw event contains '\"SourceProcessId\":\"4752\"')",
+    "at": "2026-11-06T19:07:22.260093+00:00",
+    "replaced_by": [
+      515
+    ],
+    "e2_before": [
+      8,
+      369,
+      2351,
+      2556
+    ],
+    "e2_after": [
+      8,
+      369,
+      515,
+      2556
+    ]
+  },
+  {
+    "record_id": 8,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 (0x1290) serving the attack's taskkill /IM runs, or the console host of the attack shell or of an attack process (raw event contains '\"SourceProcessId\":\"5740\"')",
+    "at": "2026-11-06T19:07:53.152849+00:00",
+    "replaced_by": [
+      1184
+    ],
+    "e2_before": [
+      8,
+      369,
+      515,
+      2556
+    ],
+    "e2_after": [
+      369,
+      515,
+      1184,
+      2556
+    ]
+  },
+  {
+    "record_id": 369,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 (0x1290) serving the attack's taskkill /IM runs, or the console host of the attack shell or of an attack process (raw event contains '\"ProcessId\":\"0x1290\"')",
+    "at": "2026-11-06T19:08:09.783818+00:00",
+    "replaced_by": [
+      541
+    ],
+    "e2_before": [
+      369,
+      515,
+      1184,
+      2556
+    ],
+    "e2_after": [
+      515,
+      541,
+      1184,
+      2556
+    ]
+  },
+  {
+    "record_id": 541,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 (0x1290) serving the attack's taskkill /IM runs, or the console host of the attack shell or of an attack process (raw event contains '\"ProcessId\":\"7024\"')",
+    "at": "2026-11-06T19:08:26.397114+00:00",
+    "replaced_by": [
+      2490
+    ],
+    "e2_before": [
+      515,
+      541,
+      1184,
+      2556
+    ],
+    "e2_after": [
+      515,
+      1184,
+      2490,
+      2556
+    ]
+  },
+  {
+    "record_id": 1184,
+    "flagged_by": "A",
+    "reason": "attack-induced: WmiPrvSE 4752 (0x1290) serving the attack's taskkill /IM runs, or the console host of the attack shell or of an attack process (raw event contains '\"ProcessId\":\"0x1290\"')",
+    "at": "2026-11-06T19:08:42.916387+00:00",
+    "replaced_by": [
+      1949
+    ],
+    "e2_before": [
+      515,
+      1184,
+      2490,
+      2556
+    ],
+    "e2_after": [
+      515,
+      1949,
+      2490,
+      2556
+    ]
+  },
+  {
+    "record_id": 1949,
+    "flagged_by": "A",
+    "reason": "attack record or attack-induced (ADMIN$ copy of the payload, WmiPrvSE 4752 serving taskkill, console host of an attack process, or a record naming the simulator, its pipe or its service) (raw event contains 'b6a1458f396')",
+    "at": "2026-11-06T19:09:09.088762+00:00",
+    "replaced_by": [
+      1507
+    ],
+    "e2_before": [
+      515,
+      1949,
+      2490,
+      2556
+    ],
+    "e2_after": [
+      515,
+      1507,
+      2490,
+      2556
+    ]
+  }
+]

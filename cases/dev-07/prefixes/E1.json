@@ -1,0 +1,43 @@
+{
+  "case_id": "dev-07:E1",
+  "profile": "Profile of window SDWIN-210611210814: 2611 events. Request: The APT-Simulator account on WORKSTATION5 is running Cobalt Strike-style named-pipe and service tricks to obtain SYSTEM. Disable account APT-Simulator. Target: {\"account\": \"APT-Simulator\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (1749, 1766, 1961, 1962, 1987, 2003) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1749, \"ts\": \"2021-06-11T09:07:39.284000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\TMP\\\\CreateNamedPipe.exe\", \"command_line\": \"\\\"C:\\\\TMP\\\\CreateNamedPipe.exe\\\"  334485\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 7664, \"ppid\": 5632, \"user\": \"apt-simulator\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 1766, \"ts\": \"2021-06-11T09:07:39.299000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\Windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\TMP\\\\CreateNamedPipe.exe\", \"parent_command_line\": \"\\\"C:\\\\TMP\\\\CreateNamedPipe.exe\\\"  334485\", \"pid\": 6428, \"ppid\": 7664, \"user\": \"apt-simulator\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=0535FF469675A24B425D9BB58ECC28409ABC27C3,MD5=8793C15FBBEE2F80EC3BC07A6A648D39,SHA256=0B2853C993EEDB2F36D77804516D76C944482944135F89C2BF891CDC8707EC54,IMPHASH=F8DD0EF565DE87D97ABF9C62EA63EC21\"}\n{\"record_id\": 1961, \"ts\": \"2021-06-11T09:07:41.205000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  create tbbd05 binpath= \\\"%COMSPEC% echo /c b6a1458f396 > \\\\\\\\.\\\\pipe\\\\334485\\\" DisplayName= \\\"tbbd05\\\" start= demand\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 6116, \"ppid\": 5632, \"user\": \"apt-simulator\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 1962, \"ts\": \"2021-06-11T09:07:41.208000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  create tbbd05 binpath= \\\"%%COMSPEC%% echo /c b6a1458f396 > \\\\\\\\.\\\\pipe\\\\334485\\\" DisplayName= \\\"tbbd05\\\" start= demand\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 6116, \"ppid\": 5632, \"user\": \"apt-simulator\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=937FAB1F3A34287C44B11C3CB18A964FF6C84983,MD5=E46C638010C25479F66BACBE8596CA76,SHA256=39C59C362649090B4D34E5C8221C6E86552C07FE2DF3478D591A68B70917BC0A,IMPHASH=35A7FFDE18D444A92D32C8B2879450FF\"}\n{\"record_id\": 1987, \"ts\": \"2021-06-11T09:07:41.224000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\sc.exe\", \"command_line\": \"sc  start tbbd05 \", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 8840, \"ppid\": 5632, \"user\": \"apt-simulator\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 2003, \"ts\": \"2021-06-11T09:07:41.235000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"C:\\\\Windows\\\\system32\\\\cmd.exe echo /c b6a1458f396 > \\\\\\\\.\\\\pipe\\\\334485\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": null, \"pid\": 3948, \"ppid\": 732, \"user\": \"workstation5$\", \"integrity_level\": \"System\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 6,
+      "registered": [
+        1749,
+        1766,
+        1961,
+        1962,
+        1987,
+        2003
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1963, 1964, 1969, 1981) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1963, \"ts\": \"2021-06-11T09:07:41.208000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"source_pid\": 5632, \"target_image\": \"C:\\\\Windows\\\\system32\\\\sc.exe\", \"target_pid\": 6116, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9e714|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+59e0a|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+567a6|C:\\\\Windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\Windows\\\\system32\\\\cmd.exe+1350b|C:\\\\Window…[cut: 797 chars]\", \"user\": null}\n{\"record_id\": 1964, \"ts\": \"2021-06-11T09:07:41.209000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\csrss.exe\", \"source_pid\": 1876, \"target_image\": \"C:\\\\Windows\\\\system32\\\\sc.exe\", \"target_pid\": 6116, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d364|C:\\\\Windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\Windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+6d72f\", \"user\": null}\n{\"record_id\": 1969, \"ts\": \"2021-06-11T09:07:41.211000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\conhost.exe\", \"source_pid\": 5740, \"target_image\": \"C:\\\\Windows\\\\system32\\\\sc.exe\", \"target_pid\": 6116, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d364|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+305ee|C:\\\\Windows\\\\system32\\\\conhost.exe+1297d|C:\\\\Windows\\\\system32\\\\conhost.exe+12875|C:\\\\Windows\\\\system32\\\\conhost.exe+8ccc|C:\\\\Windows…[cut: 301 chars]\", \"user\": null}\n{\"record_id\": 1981, \"ts\": \"2021-06-11T09:07:41.219000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\services.exe\", \"source_pid\": 732, \"target_image\": \"C:\\\\Windows\\\\system32\\\\sc.exe\", \"target_pid\": 6116, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d364|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+305ee|C:\\\\Windows\\\\system32\\\\services.exe+35154|C:\\\\Windows\\\\system32\\\\services.exe+26b5f|C:\\\\Windows\\\\system32\\\\services.exe+268f3|C:\\\\Win…[cut: 825 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1963,
+        1964,
+        1969,
+        1981
+      ]
+    }
+  ],
+  "findings": "Records 1749, 1961, 1963, 2003 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1749,
+    1766,
+    1961,
+    1962,
+    1963,
+    1964,
+    1969,
+    1981,
+    1987,
+    2003
+  ]
+}
