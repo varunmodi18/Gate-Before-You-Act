@@ -16,7 +16,11 @@ authoritative; known plan/proposal differences are in §0.7. Any other conflict:
 - `data/splits.json` is the team-accepted split (8 Oct 2026). Changing it needs a new split version and a team decision (plan §D.2 step 5); never regenerate it with a different seed or rule silently. Stage files by name.
 - Never use sudo. If a system package is missing, give the user the exact command.
 - Never invent results: only numbers and test outcomes actually produced. Say so when something was not run.
-- Not for the coding agent: annotation (T4.9), adjudication, freezing (T4.10), starting research runs (T9.x).
+- Research labels (T4.9) are made by AI agent sessions (team lead, 2026-10-26; supersedes decision E):
+  the author is annotator A (session 1, name `agent-A`); annotator B and the adjudicator are each a separate
+  agent session, and no session takes two roles on a scenario. Labels follow the written rules
+  (`docs/case_authoring.md` §6, policy table, rule A, verifier table) with a reason per label.
+- Not for the coding agent: freezing (T4.10), starting research runs (T9.x).
 - Stop and report at every milestone end and at team questions Q-0…Q-5 (§K.3). After 3 failures of the same step, stop and explain.
 
 ## Constraints that must never be weakened (plan §L.4, short form)

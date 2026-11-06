@@ -145,6 +145,10 @@ tuning on dev.
 
 ## 3a. Assignments (dev, test, e2e)
 
+> **Superseded for research labels (team lead, 26 Oct 2026):** scenarios are authored and labelled
+> by three separate AI agent sessions (author = annotator A, annotator B, adjudicator); see
+> `STATUS.md`. The table below is the original plan for people.
+
 Per scenario: **author = annotator A, annotator B, adjudicator** — three different people; the
 fourth person is free for that scenario. For an e2e window the adjudicator also checks the
 context (never the author). Roles rotate and loads are balanced in minutes; tactics are spread
@@ -254,8 +258,9 @@ Follow `docs/case_authoring.md` §3 for the details.
    are written to the case files and the scenario is validated again (all green, nothing
    pending).
 
-Real labels come **only** from annotators A and B and the adjudicator (team decision E). Any
-label drafted by the coding agent exists only in the demo fixture.
+Real labels come **only** from annotators A and B and the adjudicator. **Since 26 Oct 2026 (team
+lead; supersedes decision E)** these are three separate AI agent sessions, not the people in §3a:
+the author is annotator A (`agent-A`); B and the adjudicator are separate blind sessions.
 
 ## 5. End-to-end windows (Exp 3)
 

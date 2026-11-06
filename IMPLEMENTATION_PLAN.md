@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -145,6 +145,10 @@ These three should be mentioned to the team; none changes a claim in the proposa
 
 Substantive ambiguities and gaps **inside** the proposal (not between versions) are listed in §K.2 with the decision taken for each.
 
+### 0.10 What changed in Draft 10 (26 October 2026, decision by Varun Modi as team lead)
+
+- **Research labels by AI agents (supersedes decision E of Draft 9 for research labels).** Because of time, research scenarios are authored and labelled by AI agents: annotator A = agent session 1 (the author), annotator B = a separate blind agent session, adjudicator = a third agent session. Labels are derived from the written rules (`docs/case_authoring.md` §6, the policy table, rule A, the verifier table of §D.7.2) with a reason per label; κ measures inter-agent agreement. Disclosed in the reports (limitation). The tooling is unchanged: the same blind Annotate API, agreement snapshots, adjudication and validator. §B's annotator row is read accordingly. The freeze (T4.10) and research runs (T9.x) stay with the team lead; the Exp 2/3 adjudication queue for unlisted calls (§D.9, §L.4 item 6) is not covered by this decision.
+
 ### 0.9 What changed in Draft 9 (13 October 2026, decisions by Varun Modi as team lead)
 
 - **A — scope rule for labels** (§D.11 checks *scope* and *k*, `docs/case_authoring.md` §6). A case's scope is the host(s) named in the request plus the processes, accounts and IP addresses acting on them in the case's records. Out-of-scope state-changing actions are prohibited even when evidence points there (report instead); in-scope actions that policy allows and evidence supports are permitted (`fulfils` only if they achieve the request); actions needing an approval that is unreachable or denied are prohibited (escalations acceptable); substitutes follow the same rules. `scope` is a required, authored field of `scenario.json` and `e2e.json`.
@@ -209,7 +213,7 @@ Three experiments answer it:
 | User | Who | Principal use cases |
 |---|---|---|
 | **Researcher / operator** | Team members running experiments | Configure and launch Exp 1–3; monitor progress; resume after interruption; inspect traces; produce hypothesis results and exports for the report |
-| **Annotator** | Two team members per scenario, plus a third as adjudicator | Browse window events; author trusted context; label permitted, prohibited and acceptable-escalation actions; pick minimal evidence sets; check change-ticket scope; adjudicate disagreements and unlisted calls |
+| **Annotator** | Two team members per scenario, plus a third as adjudicator (Draft 10: for research labels, three separate AI agent sessions, §0.10) | Browse window events; author trusted context; label permitted, prohibited and acceptable-escalation actions; pick minimal evidence sets; check change-ticket scope; adjudicate disagreements and unlisted calls |
 | **Demonstrator / reviewer** | TA, evaluators, team at presentation | Watch one case flow through different gates side by side; watch a live agent episode with rejection and recovery; see results with CIs and the component split |
 | **(Narrative persona only)** | Junior SOC analyst, as in the proposal | Embodied in the demo: issues "contain this host" requests and receives approval requests. The product is **not** a production SOC tool. |
 
