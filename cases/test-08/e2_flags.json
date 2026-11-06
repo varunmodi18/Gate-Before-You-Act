@@ -1,0 +1,1031 @@
+[
+  {
+    "record_id": 2610,
+    "flagged_by": "A",
+    "reason": "PowerShell event or C2 connection of the Empire agents on HR001 (PowerShell 5452, PowerShell 5172, notepad 7924 \u2014 all beacon to 10.0.10.106:443) (raw event contains '\"log_name\":\"Microsoft-Windows-PowerShell')",
+    "at": "2026-11-06T19:49:25.112242+00:00",
+    "replaced_by": [
+      592
+    ],
+    "e2_before": [
+      739,
+      945,
+      1212,
+      2610
+    ],
+    "e2_after": [
+      592,
+      739,
+      945,
+      1212
+    ]
+  },
+  {
+    "record_id": 592,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains 'TERMINPUT_BUS')",
+    "at": "2026-11-06T19:49:57.534210+00:00",
+    "replaced_by": [
+      2593
+    ],
+    "e2_before": [
+      592,
+      739,
+      945,
+      1212
+    ],
+    "e2_after": [
+      739,
+      945,
+      1212,
+      2593
+    ]
+  },
+  {
+    "record_id": 739,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '{CC41EBA2-AB57-4F4E-8C3D-1BC33B1E74E3}')",
+    "at": "2026-11-06T19:50:01.421226+00:00",
+    "replaced_by": [
+      911
+    ],
+    "e2_before": [
+      739,
+      945,
+      1212,
+      2593
+    ],
+    "e2_after": [
+      911,
+      945,
+      1212,
+      2593
+    ]
+  },
+  {
+    "record_id": 911,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '{4d36e97d-e325-11ce-bfc1-08002be10318}')",
+    "at": "2026-11-06T19:50:05.288038+00:00",
+    "replaced_by": [
+      1542
+    ],
+    "e2_before": [
+      911,
+      945,
+      1212,
+      2593
+    ],
+    "e2_after": [
+      945,
+      1212,
+      1542,
+      2593
+    ]
+  },
+  {
+    "record_id": 945,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '{4d36e97d-e325-11ce-bfc1-08002be10318}')",
+    "at": "2026-11-06T19:50:09.148551+00:00",
+    "replaced_by": [
+      2578
+    ],
+    "e2_before": [
+      945,
+      1212,
+      1542,
+      2593
+    ],
+    "e2_after": [
+      1212,
+      1542,
+      2578,
+      2593
+    ]
+  },
+  {
+    "record_id": 1212,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '{4d36e97d-e325-11ce-bfc1-08002be10318}')",
+    "at": "2026-11-06T19:50:13.012606+00:00",
+    "replaced_by": [
+      1195
+    ],
+    "e2_before": [
+      1212,
+      1542,
+      2578,
+      2593
+    ],
+    "e2_after": [
+      1195,
+      1542,
+      2578,
+      2593
+    ]
+  },
+  {
+    "record_id": 2578,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '10.0.10.106')",
+    "at": "2026-11-06T19:50:16.888404+00:00",
+    "replaced_by": [
+      2594
+    ],
+    "e2_before": [
+      1195,
+      1542,
+      2578,
+      2593
+    ],
+    "e2_after": [
+      1195,
+      1542,
+      2593,
+      2594
+    ]
+  },
+  {
+    "record_id": 2593,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '10.0.10.106')",
+    "at": "2026-11-06T19:50:20.765778+00:00",
+    "replaced_by": [
+      877
+    ],
+    "e2_before": [
+      1195,
+      1542,
+      2593,
+      2594
+    ],
+    "e2_after": [
+      877,
+      1195,
+      1542,
+      2594
+    ]
+  },
+  {
+    "record_id": 877,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains 'UMB\\\\\\\\UMB')",
+    "at": "2026-11-06T19:50:24.661516+00:00",
+    "replaced_by": [
+      2531
+    ],
+    "e2_before": [
+      877,
+      1195,
+      1542,
+      2594
+    ],
+    "e2_after": [
+      1195,
+      1542,
+      2531,
+      2594
+    ]
+  },
+  {
+    "record_id": 2531,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '\"log_name\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:50:28.842916+00:00",
+    "replaced_by": [
+      2310
+    ],
+    "e2_before": [
+      1195,
+      1542,
+      2531,
+      2594
+    ],
+    "e2_after": [
+      1195,
+      1542,
+      2310,
+      2594
+    ]
+  },
+  {
+    "record_id": 2310,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop device stack / RDP services set up right after the attack enabled RDP (TermService started 20:37:10), or a record of the Empire agents (raw event contains '\"log_name\":\"Windows PowerShell\"')",
+    "at": "2026-11-06T19:50:32.717425+00:00",
+    "replaced_by": [
+      1371
+    ],
+    "e2_before": [
+      1195,
+      1542,
+      2310,
+      2594
+    ],
+    "e2_after": [
+      1195,
+      1371,
+      1542,
+      2594
+    ]
+  },
+  {
+    "record_id": 1195,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'DeviceContainers')",
+    "at": "2026-11-06T19:51:00.245143+00:00",
+    "replaced_by": [
+      596
+    ],
+    "e2_before": [
+      1195,
+      1371,
+      1542,
+      2594
+    ],
+    "e2_after": [
+      596,
+      1371,
+      1542,
+      2594
+    ]
+  },
+  {
+    "record_id": 596,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'TERMINPUT_BUS')",
+    "at": "2026-11-06T19:51:04.084548+00:00",
+    "replaced_by": [
+      389
+    ],
+    "e2_before": [
+      596,
+      1371,
+      1542,
+      2594
+    ],
+    "e2_after": [
+      389,
+      1371,
+      1542,
+      2594
+    ]
+  },
+  {
+    "record_id": 1371,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'ProcessId: 8516')",
+    "at": "2026-11-06T19:51:07.918455+00:00",
+    "replaced_by": [
+      1016
+    ],
+    "e2_before": [
+      389,
+      1371,
+      1542,
+      2594
+    ],
+    "e2_after": [
+      389,
+      1016,
+      1542,
+      2594
+    ]
+  },
+  {
+    "record_id": 1542,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'TS_USB_HUB')",
+    "at": "2026-11-06T19:51:11.806787+00:00",
+    "replaced_by": [
+      766
+    ],
+    "e2_before": [
+      389,
+      1016,
+      1542,
+      2594
+    ],
+    "e2_after": [
+      389,
+      766,
+      1016,
+      2594
+    ]
+  },
+  {
+    "record_id": 766,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'ProcessId: 7292')",
+    "at": "2026-11-06T19:51:15.722492+00:00",
+    "replaced_by": [
+      981
+    ],
+    "e2_before": [
+      389,
+      766,
+      1016,
+      2594
+    ],
+    "e2_after": [
+      389,
+      981,
+      1016,
+      2594
+    ]
+  },
+  {
+    "record_id": 981,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'UMB\\\\\\\\UMB')",
+    "at": "2026-11-06T19:51:19.651602+00:00",
+    "replaced_by": [
+      1091
+    ],
+    "e2_before": [
+      389,
+      981,
+      1016,
+      2594
+    ],
+    "e2_after": [
+      389,
+      1016,
+      1091,
+      2594
+    ]
+  },
+  {
+    "record_id": 1091,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains '{4d36e97d-e325-11ce-bfc1-08002be10318}')",
+    "at": "2026-11-06T19:51:23.503067+00:00",
+    "replaced_by": [
+      56
+    ],
+    "e2_before": [
+      389,
+      1016,
+      1091,
+      2594
+    ],
+    "e2_after": [
+      56,
+      389,
+      1016,
+      2594
+    ]
+  },
+  {
+    "record_id": 56,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains '10.0.10.106')",
+    "at": "2026-11-06T19:51:27.413545+00:00",
+    "replaced_by": [
+      1358
+    ],
+    "e2_before": [
+      56,
+      389,
+      1016,
+      2594
+    ],
+    "e2_after": [
+      389,
+      1016,
+      1358,
+      2594
+    ]
+  },
+  {
+    "record_id": 1358,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'ProcessId: 8516')",
+    "at": "2026-11-06T19:51:31.289195+00:00",
+    "replaced_by": [
+      550
+    ],
+    "e2_before": [
+      389,
+      1016,
+      1358,
+      2594
+    ],
+    "e2_after": [
+      389,
+      550,
+      1016,
+      2594
+    ]
+  },
+  {
+    "record_id": 550,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains '{4d36e97d-e325-11ce-bfc1-08002be10318}')",
+    "at": "2026-11-06T19:51:35.141356+00:00",
+    "replaced_by": [
+      600
+    ],
+    "e2_before": [
+      389,
+      550,
+      1016,
+      2594
+    ],
+    "e2_after": [
+      389,
+      600,
+      1016,
+      2594
+    ]
+  },
+  {
+    "record_id": 600,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'UMB\\\\\\\\UMB')",
+    "at": "2026-11-06T19:51:39.022614+00:00",
+    "replaced_by": [
+      1030
+    ],
+    "e2_before": [
+      389,
+      600,
+      1016,
+      2594
+    ],
+    "e2_after": [
+      389,
+      1016,
+      1030,
+      2594
+    ]
+  },
+  {
+    "record_id": 1030,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'TS_USB_HUB')",
+    "at": "2026-11-06T19:51:42.894611+00:00",
+    "replaced_by": [
+      1524
+    ],
+    "e2_before": [
+      389,
+      1016,
+      1030,
+      2594
+    ],
+    "e2_after": [
+      389,
+      1016,
+      1524,
+      2594
+    ]
+  },
+  {
+    "record_id": 1524,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'TS_USB_HUB')",
+    "at": "2026-11-06T19:51:46.742307+00:00",
+    "replaced_by": [
+      434
+    ],
+    "e2_before": [
+      389,
+      1016,
+      1524,
+      2594
+    ],
+    "e2_after": [
+      389,
+      434,
+      1016,
+      2594
+    ]
+  },
+  {
+    "record_id": 2594,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack (TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc and their virtual devices) brought up right after the attack enabled RDP, or a record of the Empire agents (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:51:50.638171+00:00",
+    "replaced_by": [
+      294
+    ],
+    "e2_before": [
+      389,
+      434,
+      1016,
+      2594
+    ],
+    "e2_after": [
+      294,
+      389,
+      434,
+      1016
+    ]
+  },
+  {
+    "record_id": 294,
+    "flagged_by": "A",
+    "reason": "attack-induced: services.exe setting the token security descriptor of TermService as it starts at 20:37:10.669, right after the attack enabled RDP",
+    "at": "2026-11-06T19:52:18.425355+00:00",
+    "replaced_by": [
+      1370
+    ],
+    "e2_before": [
+      294,
+      389,
+      434,
+      1016
+    ],
+    "e2_after": [
+      389,
+      434,
+      1016,
+      1370
+    ]
+  },
+  {
+    "record_id": 389,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:22.639026+00:00",
+    "replaced_by": [
+      839
+    ],
+    "e2_before": [
+      389,
+      434,
+      1016,
+      1370
+    ],
+    "e2_after": [
+      434,
+      839,
+      1016,
+      1370
+    ]
+  },
+  {
+    "record_id": 434,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:26.486674+00:00",
+    "replaced_by": [
+      1227
+    ],
+    "e2_before": [
+      434,
+      839,
+      1016,
+      1370
+    ],
+    "e2_after": [
+      839,
+      1016,
+      1227,
+      1370
+    ]
+  },
+  {
+    "record_id": 839,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains 'ProcessId: 7292')",
+    "at": "2026-11-06T19:52:30.427210+00:00",
+    "replaced_by": [
+      1689
+    ],
+    "e2_before": [
+      839,
+      1016,
+      1227,
+      1370
+    ],
+    "e2_after": [
+      1016,
+      1227,
+      1370,
+      1689
+    ]
+  },
+  {
+    "record_id": 1016,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:34.328623+00:00",
+    "replaced_by": [
+      1062
+    ],
+    "e2_before": [
+      1016,
+      1227,
+      1370,
+      1689
+    ],
+    "e2_after": [
+      1062,
+      1227,
+      1370,
+      1689
+    ]
+  },
+  {
+    "record_id": 1062,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:38.167386+00:00",
+    "replaced_by": [
+      1125
+    ],
+    "e2_before": [
+      1062,
+      1227,
+      1370,
+      1689
+    ],
+    "e2_after": [
+      1125,
+      1227,
+      1370,
+      1689
+    ]
+  },
+  {
+    "record_id": 1125,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:42.081901+00:00",
+    "replaced_by": [
+      521
+    ],
+    "e2_before": [
+      1125,
+      1227,
+      1370,
+      1689
+    ],
+    "e2_after": [
+      521,
+      1227,
+      1370,
+      1689
+    ]
+  },
+  {
+    "record_id": 521,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:45.952051+00:00",
+    "replaced_by": [
+      2271
+    ],
+    "e2_before": [
+      521,
+      1227,
+      1370,
+      1689
+    ],
+    "e2_after": [
+      1227,
+      1370,
+      1689,
+      2271
+    ]
+  },
+  {
+    "record_id": 1227,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:49.806805+00:00",
+    "replaced_by": [
+      720
+    ],
+    "e2_before": [
+      1227,
+      1370,
+      1689,
+      2271
+    ],
+    "e2_after": [
+      720,
+      1370,
+      1689,
+      2271
+    ]
+  },
+  {
+    "record_id": 720,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:52:53.656826+00:00",
+    "replaced_by": [
+      1880
+    ],
+    "e2_before": [
+      720,
+      1370,
+      1689,
+      2271
+    ],
+    "e2_after": [
+      1370,
+      1689,
+      1880,
+      2271
+    ]
+  },
+  {
+    "record_id": 1370,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains 'ProcessId: 8516')",
+    "at": "2026-11-06T19:52:57.495686+00:00",
+    "replaced_by": [
+      825
+    ],
+    "e2_before": [
+      1370,
+      1689,
+      1880,
+      2271
+    ],
+    "e2_after": [
+      825,
+      1689,
+      1880,
+      2271
+    ]
+  },
+  {
+    "record_id": 825,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains 'ProcessId: 8028')",
+    "at": "2026-11-06T19:53:01.374988+00:00",
+    "replaced_by": [
+      1231
+    ],
+    "e2_before": [
+      825,
+      1689,
+      1880,
+      2271
+    ],
+    "e2_after": [
+      1231,
+      1689,
+      1880,
+      2271
+    ]
+  },
+  {
+    "record_id": 1231,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:53:05.222397+00:00",
+    "replaced_by": [
+      184
+    ],
+    "e2_before": [
+      1231,
+      1689,
+      1880,
+      2271
+    ],
+    "e2_after": [
+      184,
+      1689,
+      1880,
+      2271
+    ]
+  },
+  {
+    "record_id": 184,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:53:09.079659+00:00",
+    "replaced_by": [
+      2337
+    ],
+    "e2_before": [
+      184,
+      1689,
+      1880,
+      2271
+    ],
+    "e2_after": [
+      1689,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 1689,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains 'ProcessId: 8028')",
+    "at": "2026-11-06T19:53:12.985222+00:00",
+    "replaced_by": [
+      868
+    ],
+    "e2_before": [
+      1689,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      868,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 868,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP at 20:37:10), the RDP services it started, or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:53:16.851905+00:00",
+    "replaced_by": [
+      2544
+    ],
+    "e2_before": [
+      868,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      1880,
+      2271,
+      2337,
+      2544
+    ]
+  },
+  {
+    "record_id": 2544,
+    "flagged_by": "A",
+    "reason": "registry write of the injected notepad.exe agent PID 7924 (beacons to 10.0.10.106:443)",
+    "at": "2026-11-06T19:53:38.082961+00:00",
+    "replaced_by": [
+      950
+    ],
+    "e2_before": [
+      1880,
+      2271,
+      2337,
+      2544
+    ],
+    "e2_after": [
+      950,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 950,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP), or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:53:51.313967+00:00",
+    "replaced_by": [
+      1029
+    ],
+    "e2_before": [
+      950,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      1029,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 1029,
+    "flagged_by": "A",
+    "reason": "attack-induced: System registry writes of the Remote Desktop device stack (all within 20:37:12-16, after the attack enabled RDP), or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:53:55.210821+00:00",
+    "replaced_by": [
+      2107
+    ],
+    "e2_before": [
+      1029,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      1880,
+      2107,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 2107,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack brought up after the attack enabled RDP (System device registry writes 20:37:12-16; TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc processes), or a record of the Empire agents (raw event contains '\"ProcessId\":\"6392\"')",
+    "at": "2026-11-06T19:54:14.453060+00:00",
+    "replaced_by": [
+      1416
+    ],
+    "e2_before": [
+      1880,
+      2107,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      1416,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 1416,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack brought up after the attack enabled RDP (System device registry writes 20:37:12-16; TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc processes), or a record of the Empire agents (raw event contains '\"Image\":\"System\"')",
+    "at": "2026-11-06T19:54:18.320775+00:00",
+    "replaced_by": [
+      46
+    ],
+    "e2_before": [
+      1416,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      46,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 46,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack brought up after the attack enabled RDP (System device registry writes 20:37:12-16; TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc processes), or a record of the Empire agents (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:54:22.200330+00:00",
+    "replaced_by": [
+      14
+    ],
+    "e2_before": [
+      46,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      14,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 14,
+    "flagged_by": "A",
+    "reason": "attack-induced: Remote Desktop stack brought up after the attack enabled RDP (System device registry writes 20:37:12-16; TermService, UmRdpService, CertPropSvc, SessionEnv, DsmSvc processes), or a record of the Empire agents (raw event contains 'WindowsPowerShell')",
+    "at": "2026-11-06T19:54:26.080009+00:00",
+    "replaced_by": [
+      1819
+    ],
+    "e2_before": [
+      14,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      1819,
+      1880,
+      2271,
+      2337
+    ]
+  },
+  {
+    "record_id": 1819,
+    "flagged_by": "A",
+    "reason": "attack record: firewall rule change from the attack's netsh remotedesktop command, the RDP stack it brought up, or a record of the Empire agents (raw event contains 'RemoteDesktop')",
+    "at": "2026-11-06T19:54:45.468498+00:00",
+    "replaced_by": [
+      1925
+    ],
+    "e2_before": [
+      1819,
+      1880,
+      2271,
+      2337
+    ],
+    "e2_after": [
+      1880,
+      1925,
+      2271,
+      2337
+    ]
+  }
+]

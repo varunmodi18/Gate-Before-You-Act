@@ -1,0 +1,37 @@
+{
+  "case_id": "test-08:E2",
+  "profile": "Profile of window SDWIN-190518203650: 2668 events. Request: An Empire PowerShell on HR001 is enabling Remote Desktop and weakening its authentication. Stop process 5452 (powershell.exe) on HR001.shire.com. Target: {\"host\": \"HR001.shire.com\", \"pid\": 5452}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1923, 1924, 1925, 1926) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1923, \"ts\": \"2019-05-18T20:37:21.693000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3756, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+20d0e|c:\\\\windows\\\\system32\\\\fwbase.dll+16e5|c:\\\\windows\\\\system32\\\\fwbase.dll+1639|c:\\\\windows\\\\system32\\\\mpssvc.dll+e42d|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 1924, \"ts\": \"2019-05-18T20:37:21.693000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3756, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+20d0e|c:\\\\windows\\\\system32\\\\fwbase.dll+16e5|c:\\\\windows\\\\system32\\\\fwbase.dll+1639|c:\\\\windows\\\\system32\\\\mpssvc.dll+e42d|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 1925, \"ts\": \"2019-05-18T20:37:21.694000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3756, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+20d0e|c:\\\\windows\\\\system32\\\\fwbase.dll+16e5|c:\\\\windows\\\\system32\\\\fwbase.dll+1639|c:\\\\windows\\\\system32\\\\mpssvc.dll+e42d|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 1926, \"ts\": \"2019-05-18T20:37:21.694000\", \"host\": \"HR001.shire.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3756, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9fb54|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+20d0e|c:\\\\windows\\\\system32\\\\fwbase.dll+16e5|c:\\\\windows\\\\system32\\\\fwbase.dll+1639|c:\\\\windows\\\\system32\\\\mpssvc.dll+e42d|c:\\\\windows\\\\syst…[cut: 848 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1923,
+        1924,
+        1925,
+        1926
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1880, 2271, 2337) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1880, \"channel\": \"Security\", \"event_id\": 4673, \"json\": \"{\\\"@timestamp\\\":\\\"2019-05-18T20:37:21.438Z\\\",\\\"@metadata\\\":{\\\"beat\\\":\\\"winlogbeat\\\",\\\"type\\\":\\\"doc\\\",\\\"version\\\":\\\"6.7.0\\\",\\\"topic\\\":\\\"winlogbeat\\\"},\\\"task\\\":\\\"Sensitive Privilege Use\\\",\\\"message\\\":\\\"A privileged service was call…[cut: 1349 chars]\"}\n{\"record_id\": 2271, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2019-05-18T20:37:26.844Z\\\",\\\"@metadata\\\":{\\\"beat\\\":\\\"winlogbeat\\\",\\\"type\\\":\\\"doc\\\",\\\"version\\\":\\\"6.7.0\\\",\\\"topic\\\":\\\"winlogbeat\\\"},\\\"user\\\":{\\\"type\\\":\\\"User\\\",\\\"identifier\\\":\\\"S-1-5-18\\\",\\\"name\\\":\\\"SYSTEM\\\",\\\"domain\\\":\\\"N…[cut: 2031 chars]\"}\n{\"record_id\": 2337, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"@timestamp\\\":\\\"2019-05-18T20:37:33.363Z\\\",\\\"@metadata\\\":{\\\"beat\\\":\\\"winlogbeat\\\",\\\"type\\\":\\\"doc\\\",\\\"version\\\":\\\"6.7.0\\\",\\\"topic\\\":\\\"winlogbeat\\\"},\\\"record_number\\\":\\\"287823\\\",\\\"event_id\\\":4690,\\\"process_id\\\":4,\\\"level\\\":\\\"Informat…[cut: 1158 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 3,
+      "registered": [
+        1880,
+        2271,
+        2337
+      ]
+    }
+  ],
+  "findings": "Records 1880, 1925, 2271, 2337 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1880,
+    1923,
+    1924,
+    1925,
+    1926,
+    2271,
+    2337
+  ]
+}
