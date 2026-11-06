@@ -1,0 +1,41 @@
+{
+  "case_id": "test-12:E2",
+  "profile": "Profile of window SDWIN-190319021158: 633 events. Request: An implant-like PowerShell on WORKSTATION5 is enumerating the domain's user accounts. Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (305, 533, 535, 538, 629) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 305, \"ts\": \"2020-09-21T23:36:00.087000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 533, \"ts\": \"2020-09-21T23:36:10.261000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 535, \"ts\": \"2020-09-21T23:36:10.262000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 538, \"ts\": \"2020-09-21T23:36:10.263000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 629, \"ts\": \"2020-09-21T23:36:10.306000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        305,
+        533,
+        535,
+        538,
+        629
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (388, 391, 392, 393) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 388, \"ts\": \"2020-09-21T23:36:09.179000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Internet Settings\\\\Connections\", \"details\": null, \"user\": null}\n{\"record_id\": 391, \"ts\": \"2020-09-21T23:36:09.179000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\Packages\\\\Plugins\\\\Microsoft.Azure.NetworkWatcher.NetworkWatcherAgentWindows\\\\1.4.1654.1\\\\NetworkWatcherAgent\\\\NetworkWatcherAgent.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\NdisCap\\\\Parameters\\\\RefCount\", \"details\": \"DWORD (0x00000000)\", \"user\": null}\n{\"record_id\": 392, \"ts\": \"2020-09-21T23:36:09.180000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\Packages\\\\Plugins\\\\Microsoft.Azure.NetworkWatcher.NetworkWatcherAgentWindows\\\\1.4.1654.1\\\\NetworkWatcherAgent\\\\NetworkWatcherAgent.exe\", \"pid\": null, \"target_object\": \"HKU\\\\.DEFAULT\\\\System\\\\CurrentControlSet\\\\Control\\\\NetTrace\\\\Session\\\\CaptureEnabled\", \"details\": \"DWORD (0x00000000)\", \"user\": null}\n{\"record_id\": 393, \"ts\": \"2020-09-21T23:36:09.181000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\Protocols\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        388,
+        391,
+        392,
+        393
+      ]
+    }
+  ],
+  "findings": "Records 305, 391, 629 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    305,
+    388,
+    391,
+    392,
+    393,
+    533,
+    535,
+    538,
+    629
+  ]
+}
