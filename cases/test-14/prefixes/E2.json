@@ -1,0 +1,50 @@
+{
+  "case_id": "test-14:E2",
+  "profile": "Profile of window SDWIN-201019232515: 509 events. Request: A DLL downloaded from the internet was injected into notepad.exe on WORKSTATION5. Stop process 3440 (notepad.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 3440}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (329, 390, 391, 394, 448) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 329, \"ts\": \"2020-10-21T09:40:55.437000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 1444, \"granted_access\": \"0x1410\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+21ee8|C:\\\\Windows\\\\System32\\\\appresolver.dll+1ef46|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+…[cut: 325 chars]\", \"user\": null}\n{\"record_id\": 390, \"ts\": \"2020-10-21T09:40:56.473000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\mavinject.exe\", \"source_pid\": 3224, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x1438\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\mavinject.exe+1e83|C:\\\\windows\\\\system32\\\\mavinject.exe+2a32|C:\\\\windows\\\\system32\\\\mavinject.exe+9d56|C:\\\\win…[cut: 268 chars]\", \"user\": null}\n{\"record_id\": 391, \"ts\": \"2020-10-21T09:40:56.473000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\mavinject.exe\", \"source_pid\": 3224, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x10143a\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\mavinject.exe+26c8|C:\\\\windows\\\\system32\\\\mavinject.exe+2e70|C:\\\\windows\\\\system32\\\\mavinject.exe+9d56|C:\\\\win…[cut: 268 chars]\", \"user\": null}\n{\"record_id\": 394, \"ts\": \"2020-10-21T09:40:56.485000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\SYSTEM32\\\\TWINAPI.dll+6d4c|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20880|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20…[cut: 778 chars]\", \"user\": null}\n{\"record_id\": 448, \"ts\": \"2020-10-21T09:41:01.888000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        329,
+        390,
+        391,
+        394,
+        448
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (13, 14, 15, 16) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 13, \"ts\": \"2020-10-21T09:40:41.706000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\{1NP14R77-02R7-4R5Q-O744-2RO1NR5198O7}\\\\Jvaqbj…[cut: 231 chars]\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 14, \"ts\": \"2020-10-21T09:40:41.706000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\HRZR_PGYFRFFVBA\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 15, \"ts\": \"2020-10-21T09:40:41.712000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\ActivityDataModel\\\\ReaderRevisionInfo\\\\A972977C-95EC-9F21-DCC4-595CA3A0E033\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 16, \"ts\": \"2020-10-21T09:40:41.715000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\ActivityDataModel\\\\ReaderRevisionInfo\\\\A972977C-95EC-9F21-DCC4-595CA3A0E033\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (344) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 344, \"channel\": \"Security\", \"event_id\": 5158, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-21T09:40:55.740Z\\\",\\\"TimeCreated\\\":\\\"2020-10-21T09:40:55.740Z\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"SourcePort\\\":\\\"50008\\\",\\\"LayerName\\\":\\\"%%14608\\\",\\\"SourceAddress\\\":\\\"0.…[cut: 1103 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        344
+      ]
+    }
+  ],
+  "findings": "Records 14, 329, 344, 448 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    13,
+    14,
+    15,
+    16,
+    329,
+    344,
+    390,
+    391,
+    394,
+    448
+  ]
+}

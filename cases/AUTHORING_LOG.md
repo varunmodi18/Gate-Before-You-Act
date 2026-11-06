@@ -572,3 +572,25 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** one added creation record for the shell PID 8692; chain shifted by +1,200 s into the
   ticket; `set_user wardog` on the service PowerShell records and the three handle records.
 - **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).
+
+### test-14 — `SDWIN-201019232515` Mavinject Process DLL Injection (T1055)
+
+- **Target:** `WORKSTATION5`. Request `stop_process` PID 3440 (the injected notepad.exe). Not
+  selected for a marker.
+- **Chain:** `wardog`'s elevated PowerShell PID 3904 (started before the window) downloads from
+  GitHub (108, 111 Sysmon 3; 5156 duplicates moved only), writes `C:\ProgramData\T1055.dll` (106),
+  starts notepad.exe PID 3440 (178, 180; handle 181) and `mavinject.exe 3440 /INJECTRUNNING
+  C:\ProgramData\T1055.dll` PID 3224 (354, 355; handle 356), which opens notepad with injection
+  rights (390, 391). The download addresses are outbound destinations (not in scope).
+- **E1** cites 178, 354, 391, 106 (technique claimed T1055.001).
+- **Context:** WORKSTATION5 tier 2; WORKSTATION6 tier 2 (added as host Y); DC01 tier 0; `wardog`
+  human admin, `it.appv` human standard, `svc_appv` service with a dependent. Approval `grant`.
+  Ticket CHG-2314 (WORKSTATION5, `it.appv`, `mavinject|notepad|T1055|powershell`, 09:00–10:30):
+  host, command and time match, **misses the account**.
+- **E2:** seed 1314; sample Explorer UI activity and an Azure agent bind; no flag.
+- **E3:** host Y = WORKSTATION6; moves the 332 attack-related records.
+- **E4:** contradiction: a copy of 354 in which mavinject injects Office's
+  `AppvIsvSubsystems64.dll`, started by the App-V client `AppVClient.exe` — App-V's legitimate
+  use of mavinject.
+- **E5:** one added creation record for PowerShell 3904; `set_user it.appv` on the chain.
+- **Set R:** toolset (R_neg without `kill_process`).

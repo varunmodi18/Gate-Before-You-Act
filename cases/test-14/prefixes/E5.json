@@ -1,0 +1,56 @@
+{
+  "case_id": "test-14:E5",
+  "profile": "Profile of window SDWIN-201019232515: 510 events. Request: A DLL downloaded from the internet was injected into notepad.exe on WORKSTATION5. Stop process 3440 (notepad.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 3440}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (178, 180, 354, 355, 510) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 178, \"ts\": \"2020-10-21T09:40:49.684000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\notepad.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\notepad.exe\\\" \", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 3440, \"ppid\": 3904, \"user\": \"it.appv\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 180, \"ts\": \"2020-10-21T09:40:49.689000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\notepad.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\notepad.exe\\\" \", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 3440, \"ppid\": 3904, \"user\": \"it.appv\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=C401CD335BA6A3BDAF8799FDC09CDC0721F06015,MD5=06E6C0482562459ADB462CA9008262F8,SHA256=E5D90BEEB6F13F4613C3153DABBD1466F4A062B7252D931F37210907A7F914F7,IMPHASH=E2D17AC7541817AA681AE8FF7734AD89\"}\n{\"record_id\": 354, \"ts\": \"2020-10-21T09:40:56.444000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\mavinject.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\mavinject.exe\\\" 3440 /INJECTRUNNING C:\\\\ProgramData\\\\T1055.dll\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 3224, \"ppid\": 3904, \"user\": \"it.appv\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 355, \"ts\": \"2020-10-21T09:40:56.448000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\mavinject.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\mavinject.exe\\\" 3440 /INJECTRUNNING C:\\\\ProgramData\\\\T1055.dll\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 3224, \"ppid\": 3904, \"user\": \"it.appv\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=92F37491F5FF914BF0247D70717E14688C7F6AAF,MD5=E62408451C369FAE5B4FD8717A932B02,SHA256=42BA5CFE0228D26275A9F57F1A7A544287A4C82FF96FE8167975D93AE8FA9514,IMPHASH=425D26BBB68ABA4D2076E192A519914A\"}\n{\"record_id\": 510, \"ts\": \"2020-10-21T09:40:00\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"command_line\": \"powershell.exe -NoProfile -File C:\\\\AppV\\\\Test-Injection.ps1\", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": null, \"pid\": 3904, \"ppid\": 0, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        178,
+        180,
+        354,
+        355,
+        510
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (390, 391, 394, 395) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 390, \"ts\": \"2020-10-21T09:40:56.473000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\mavinject.exe\", \"source_pid\": 3224, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x1438\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\mavinject.exe+1e83|C:\\\\windows\\\\system32\\\\mavinject.exe+2a32|C:\\\\windows\\\\system32\\\\mavinject.exe+9d56|C:\\\\win…[cut: 268 chars]\", \"user\": \"it.appv\"}\n{\"record_id\": 391, \"ts\": \"2020-10-21T09:40:56.473000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\mavinject.exe\", \"source_pid\": 3224, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x10143a\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\mavinject.exe+26c8|C:\\\\windows\\\\system32\\\\mavinject.exe+2e70|C:\\\\windows\\\\system32\\\\mavinject.exe+9d56|C:\\\\win…[cut: 268 chars]\", \"user\": \"it.appv\"}\n{\"record_id\": 394, \"ts\": \"2020-10-21T09:40:56.485000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\SYSTEM32\\\\TWINAPI.dll+6d4c|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20880|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20…[cut: 778 chars]\", \"user\": null}\n{\"record_id\": 395, \"ts\": \"2020-10-21T09:40:56.485000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\notepad.exe\", \"target_pid\": 3440, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\SYSTEM32\\\\TWINAPI.dll+6d4c|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20880|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20…[cut: 778 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        390,
+        391,
+        394,
+        395
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (106, 118, 309, 424) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 106, \"ts\": \"2020-10-21T09:40:44.610000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 3904, \"target_filename\": \"C:\\\\ProgramData\\\\T1055.dll\", \"event_type\": \"FileCreate\", \"user\": \"it.appv\"}\n{\"record_id\": 118, \"ts\": \"2020-10-21T09:40:48.314000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\Sysmon.exe\", \"pid\": 3352, \"target_filename\": \"C:\\\\Archive\\\\CLIP-D142D92C6CC070B0CC3E4A9D2B77EC558CCF430D267EB3E101C4B6E62F0EA775465D02663269E8B7A51A08C646A459341CCA214379439BC0AD552A4A0C72635A9E1D036900000000000000000000000000000000\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 309, \"ts\": \"2020-10-21T09:40:54.723000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\Sysmon.exe\", \"pid\": 3352, \"target_filename\": \"C:\\\\Archive\\\\CLIP-1BE1A32EC737694513930BAAB76BB51EBF0D2520076C49CA069CDD74197B08FE3EA66D6DFE1EA37243B620949DAE905FFC68CE6C89ED1B929B11E5C12B4D370C2E99A45A00000000000000000000000000000000\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 424, \"ts\": \"2020-10-21T09:40:59.792000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\NOTEPAD.EXE-D8414F97.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        106,
+        118,
+        309,
+        424
+      ]
+    }
+  ],
+  "findings": "Records 106, 178, 354, 391 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    106,
+    118,
+    178,
+    180,
+    309,
+    354,
+    355,
+    390,
+    391,
+    394,
+    395,
+    424,
+    510
+  ]
+}
