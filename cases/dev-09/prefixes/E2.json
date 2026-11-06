@@ -1,0 +1,43 @@
+{
+  "case_id": "dev-09:E2",
+  "profile": "Profile of window SDWIN-220705170038: 25208 events. Request: A downloaded payload on DESKTOP-CQF82L6 has opened a shell and is tampering with the Security event log. Stop process 7224 (payload.exe) on DESKTOP-CQF82L6. Target: {\"host\": \"DESKTOP-CQF82L6\", \"pid\": 7224}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (17270, 17271, 17272, 17273) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 17270, \"ts\": \"2022-07-05T02:01:50.325000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"source_pid\": 2088, \"target_image\": \"C:\\\\Windows\\\\system32\\\\BackgroundTransferHost.exe\", \"target_pid\": 1164, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d204|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2c13e|C:\\\\Windows\\\\System32\\\\twinapi.appcore.dll+22503|C:\\\\Windows\\\\System32\\\\twinapi.appcore.dll+31131|C:\\\\Windows\\\\System32\\\\twinapi.app…[cut: 1060 chars]\", \"user\": \"pedro\"}\n{\"record_id\": 17271, \"ts\": \"2022-07-05T02:01:50.325000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"source_pid\": 2088, \"target_image\": \"C:\\\\Windows\\\\system32\\\\BackgroundTransferHost.exe\", \"target_pid\": 1164, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d204|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2c13e|C:\\\\Windows\\\\System32\\\\twinapi.appcore.dll+22582|C:\\\\Windows\\\\System32\\\\twinapi.appcore.dll+31131|C:\\\\Windows\\\\System32\\\\twinapi.app…[cut: 1060 chars]\", \"user\": \"pedro\"}\n{\"record_id\": 17272, \"ts\": \"2022-07-05T02:01:50.342000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"source_pid\": 2088, \"target_image\": \"C:\\\\Windows\\\\system32\\\\BackgroundTransferHost.exe\", \"target_pid\": 1164, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9de14|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+3c344|C:\\\\Windows\\\\System32\\\\combase.dll+3943c|C:\\\\Windows\\\\SYSTEM32\\\\windows.storage.dll+9faa6|C:\\\\Windows\\\\SYSTEM32\\\\windows.storage.dll+9e7…[cut: 960 chars]\", \"user\": \"pedro\"}\n{\"record_id\": 17273, \"ts\": \"2022-07-05T02:01:50.343000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"source_pid\": 2088, \"target_image\": \"C:\\\\Windows\\\\system32\\\\BackgroundTransferHost.exe\", \"target_pid\": 1164, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9de14|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+3c344|C:\\\\Windows\\\\System32\\\\combase.dll+3943c|C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe+2a47|C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe+288b|C:\\\\…[cut: 908 chars]\", \"user\": \"pedro\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        17270,
+        17271,
+        17272,
+        17273
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (2856, 12506, 12507, 12508, 14103, 22141) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2856, \"ts\": \"2022-07-05T02:00:49.521000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 6288, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\WindowsUpdate\\\\UpdatePolicy\\\\PolicyState\\\\BranchReadinessLevel\", \"details\": \"CB\", \"user\": \"system\"}\n{\"record_id\": 12506, \"ts\": \"2022-07-05T02:01:29.268000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft\\\\Edge\\\\Application\\\\msedge.exe\", \"pid\": 3996, \"target_object\": \"HKU\\\\S-1-5-21-2073674718-3587034731-622476709-1001\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Internet Settings\\\\Connections\", \"details\": null, \"user\": \"pedro\"}\n{\"record_id\": 12507, \"ts\": \"2022-07-05T02:01:29.273000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\backgroundTaskHost.exe\", \"pid\": 4300, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{e311254a-70c6-4255-6fec-7ceab10cad46}\\\\LocalState\\\\ContentManagementSDK\\\\Creatives\\\\280811\\\\Batches\\\\1656435144\\\\ImpressionRecords\\\\128000000001627409\", \"details\": \"Binary Data\", \"user\": \"pedro\"}\n{\"record_id\": 12508, \"ts\": \"2022-07-05T02:01:29.292000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"DeleteKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 724, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{99e38443-e075-4da3-8af7-652ad34182f3}\\\\WorkItems\\\\{ce062a5a-c05d-424a-b5cf-e910c9ce12cd}\", \"details\": null, \"user\": \"system\"}\n{\"record_id\": 14103, \"ts\": \"2022-07-05T02:01:39.358000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 724, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{99e38443-e075-4da3-8af7-652ad34182f3}\\\\Events\\\\{cf9f70d3-e618-4b4b-b66e-a9c2091c3beb}\\\\EventType\", \"details\": \"DWORD (0x00000008)\", \"user\": \"system\"}\n{\"record_id\": 22141, \"ts\": \"2022-07-05T02:02:25.240000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\CompatTelRunner.exe\", \"pid\": 732, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{199b735e-c0ff-36e4-981a-79057420f31e}\\\\Root\\\\InventoryDevicePnp\\\\scsi/disk&ven_vbox&prod_harddisk/4&2617aeae&0&000000\", \"details\": null, \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 6,
+      "registered": [
+        2856,
+        12506,
+        12507,
+        12508,
+        14103,
+        22141
+      ]
+    }
+  ],
+  "findings": "Records 2856, 14103, 17272, 22141 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    2856,
+    12506,
+    12507,
+    12508,
+    14103,
+    17270,
+    17271,
+    17272,
+    17273,
+    22141
+  ]
+}

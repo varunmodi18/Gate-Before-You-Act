@@ -1,0 +1,30 @@
+{
+  "case_id": "dev-09:E4",
+  "profile": "Profile of window SDWIN-220705170038: 24655 events. Request: A downloaded payload on DESKTOP-CQF82L6 has opened a shell and is tampering with the Security event log. Stop process 7224 (payload.exe) on DESKTOP-CQF82L6. Target: {\"host\": \"DESKTOP-CQF82L6\", \"pid\": 7224}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (6564, 6578, 6580, 6581) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 6564, \"ts\": \"2022-07-05T02:01:01.538000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 376, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 8944, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d204|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2c13e|c:\\\\windows\\\\system32\\\\schedsvc.dll+311c7|c:\\\\windows\\\\system32\\\\schedsvc.dll+97b1|c:\\\\windows\\\\system32\\\\schedsvc.dll+20f7e|c:\\\\wind…[cut: 784 chars]\", \"user\": \"system\"}\n{\"record_id\": 6578, \"ts\": \"2022-07-05T02:01:01.803000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"source_pid\": 7224, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 1912, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9e634|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+8e73|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+63c3|C:\\\\Windows\\\\System32\\\\advapi32.dll+17d20|UNKNOWN(000000000076AFAE)\", \"user\": \"pedro\"}\n{\"record_id\": 6580, \"ts\": \"2022-07-05T02:01:01.803000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 884, \"target_image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"target_pid\": 2088, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d204|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+32ea6|c:\\\\windows\\\\system32\\\\lsm.dll+e3f8|c:\\\\windows\\\\system32\\\\lsm.dll+11518|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+79633|C:\\\\Windows\\\\System32…[cut: 697 chars]\", \"user\": \"system\"}\n{\"record_id\": 6581, \"ts\": \"2022-07-05T02:01:01.803000\", \"host\": \"DESKTOP-CQF82L6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 884, \"target_image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"target_pid\": 2088, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d204|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+32ea6|c:\\\\windows\\\\system32\\\\lsm.dll+e3f8|c:\\\\windows\\\\system32\\\\lsm.dll+d86b|c:\\\\windows\\\\system32\\\\lsm.dll+1161e|C:\\\\Windows\\\\System32\\\\RPC…[cut: 730 chars]\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        6564,
+        6578,
+        6580,
+        6581
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'DESKTOP-CQF82L6' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"DESKTOP-CQF82L6\", \"events\": 31}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 6578 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    6564,
+    6578,
+    6580,
+    6581
+  ]
+}

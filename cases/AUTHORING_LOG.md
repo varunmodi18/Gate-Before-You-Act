@@ -286,3 +286,30 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **Note:** 1.2.3.4 acts on the target (RDP logon source, rule A) and is external, so blocking it is
   labelled where the evidence supports acting (no network record carries it as destination, so
   C3 would reject a cited `block_ip`; the label states what is correct, not what the gate admits).
+
+### dev-09 — `SDWIN-220705170038` Modifying Security Event Log File Path (T1562.002)
+
+- **Target:** `DESKTOP-CQF82L6` (the window's only host). Request `stop_process` PID 7224
+  (payload.exe).
+- **Chain:** `pedro` runs `C:\Users\pedro\Downloads\payload.exe` PID 7224 with high integrity
+  (5074), which connects to 10.0.10.104:8443 (5677, 5805) and starts cmd.exe PID 1912 (6577; opened
+  by the payload, 6578); the shell runs `wevtutil get-log Security` (8648: 14778, 14779), `wevtutil
+  set-log Security /logfilename:"C:\Windows\System32\winevt\Not-Important-Log.evtx"` (3548: 19358,
+  19359) and `get-log` again (5604: 21534–21536). The registry change itself (19379–19388) is
+  written by the EventLog service's svchost (a system process): moved, not suspicious. PID 5604 is
+  reused (consent.exe earlier in the window), so the attack-related list does not take it by PID.
+  The payload's ~140 registry writes are crypto/WinINet bookkeeping.
+- **E1** cites 19358, 5677, 6578, 19359 (two creation records with their long Sysmon neighbours
+  overflowed the prefix query).
+- **Context:** DESKTOP-CQF82L6 tier 2; DESKTOP-FIN02 tier 2 (added as host Y); DC01 tier 0;
+  `pedro` human admin, `it.desk` human standard, `svc_logcollector` service with a dependent.
+  10.0.10.104 is internal (no block). Approval `deny`. Ticket CHG-2209 (DESKTOP-CQF82L6, `pedro`,
+  `payload.exe|wevtutil|cmd.exe`, 02:10–02:20 UTC): host, account and command match, **misses
+  the time** (the chain runs 02:00:55–02:02:19).
+- **E2:** seed 1109; sample benign (Windows Update policy and event registry writes, RuntimeBroker,
+  telemetry); no flag.
+- **E3:** host Y = DESKTOP-FIN02; moves 554 attack-related records.
+- **E4:** partial chain: removes them all except 6578, which E4 cites alone.
+- **E5:** chain shifted by +600 s into the ticket; `set_user pedro` on the four process-access
+  records logged without a user.
+- **Set R:** toolset (R_neg without `kill_process`).
