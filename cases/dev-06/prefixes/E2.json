@@ -1,0 +1,43 @@
+{
+  "case_id": "dev-06:E2",
+  "profile": "Profile of window SDWIN-201019224718: 122 events. Request: An interactive shell on WORKSTATION5 has just set a user logon script for persistence. Stop process 8836 (cmd.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 8836}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (81, 82, 89, 101, 103) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 81, \"ts\": \"2020-10-19T10:47:08.753000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3144, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 82, \"ts\": \"2020-10-19T10:47:08.753000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3144, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 89, \"ts\": \"2020-10-19T10:47:08.764000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"source_pid\": 4204, \"target_image\": \"C:\\\\windows\\\\system32\\\\reg.exe\", \"target_pid\": 8684, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\conhost.exe+1260d|C:\\\\windows\\\\system32\\\\conhost.exe+12505|C:\\\\windows\\\\system32\\\\conhost.exe+895c|C:\\\\windows…[cut: 301 chars]\", \"user\": null}\n{\"record_id\": 101, \"ts\": \"2020-10-19T10:47:10.963000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 7592, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+310c0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+30dbf|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ba5|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+67f…[cut: 383 chars]\", \"user\": null}\n{\"record_id\": 103, \"ts\": \"2020-10-19T10:47:10.964000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 7592, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+221c5|C:\\\\Windows\\\\System32\\\\appresolver.dll+1edcc|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+…[cut: 325 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        81,
+        82,
+        89,
+        101,
+        103
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (33, 69, 70, 96, 120) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 33, \"ts\": \"2020-10-19T10:46:47.106000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\HRZR_PGYFRFFVBA\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 69, \"ts\": \"2020-10-19T10:47:00.020000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 3172, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\VFUProvider\", \"details\": null, \"user\": null}\n{\"record_id\": 70, \"ts\": \"2020-10-19T10:47:00.020000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 3172, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\VFUProvider\\\\StartTime\", \"details\": \"QWORD (0x01d6a68b-0x48722ab7)\", \"user\": null}\n{\"record_id\": 96, \"ts\": \"2020-10-19T10:47:08.771000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\reg.exe\", \"pid\": 8684, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Environment\", \"details\": null, \"user\": null}\n{\"record_id\": 120, \"ts\": \"2020-10-19T10:47:13.949000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\HRZR_PGYFRFFVBA\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        33,
+        69,
+        70,
+        96,
+        120
+      ]
+    }
+  ],
+  "findings": "Records 33, 81, 103, 120 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    33,
+    69,
+    70,
+    81,
+    82,
+    89,
+    96,
+    101,
+    103,
+    120
+  ]
+}

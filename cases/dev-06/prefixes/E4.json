@@ -1,0 +1,67 @@
+{
+  "case_id": "dev-06:E4",
+  "profile": "Profile of window SDWIN-201019224718: 123 events. Request: An interactive shell on WORKSTATION5 has just set a user logon script for persistence. Stop process 8836 (cmd.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 8836}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (76, 77, 123) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 76, \"ts\": \"2020-10-19T10:47:08.745000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"REG.exe  ADD HKCU\\\\Environment /v UserInitMprLogonScript /t REG_SZ /d C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\art.bat /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 8684, \"ppid\": 8836, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 77, \"ts\": \"2020-10-19T10:47:08.749000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"REG.exe  ADD HKCU\\\\Environment /v UserInitMprLogonScript /t REG_SZ /d C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\art.bat /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 8684, \"ppid\": 8836, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=EB3B03616EEE42F16D0703F64DE23E7E34FE8524,MD5=601BDDF7691C5AF626A5719F1D7E35F1,SHA256=4ED2A27860FA154415F65452FF1F94BD6AF762982E2F3470030C504DC3C8A354,IMPHASH=BE482BE427FE212CFEF2CDA0E61F19AC\"}\n{\"record_id\": 123, \"ts\": \"2020-10-19T10:47:08.745000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"REG.exe  ADD HKCU\\\\Environment /v UserInitMprLogonScript /t REG_SZ /d \\\\\\\\theshire.local\\\\NETLOGON\\\\corp-logon.bat /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\gpscript.exe\", \"parent_command_line\": null, \"pid\": 8684, \"ppid\": 8836, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 3,
+      "registered": [
+        76,
+        77,
+        123
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (78, 79, 81, 82) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 78, \"ts\": \"2020-10-19T10:47:08.749000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"source_pid\": 8836, \"target_image\": \"C:\\\\windows\\\\system32\\\\reg.exe\", \"target_pid\": 8684, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\system32\\\\cmd.exe+134fb|C:\\\\window…[cut: 433 chars]\", \"user\": null}\n{\"record_id\": 79, \"ts\": \"2020-10-19T10:47:08.749000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5672, \"target_image\": \"C:\\\\windows\\\\system32\\\\reg.exe\", \"target_pid\": 8684, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ceaf\", \"user\": null}\n{\"record_id\": 81, \"ts\": \"2020-10-19T10:47:08.753000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3144, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 82, \"ts\": \"2020-10-19T10:47:08.753000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3144, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        78,
+        79,
+        81,
+        82
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (96, 97, 100, 112) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 96, \"ts\": \"2020-10-19T10:47:08.771000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\reg.exe\", \"pid\": 8684, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Environment\", \"details\": null, \"user\": null}\n{\"record_id\": 97, \"ts\": \"2020-10-19T10:47:08.771000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\reg.exe\", \"pid\": 8684, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Environment\\\\UserInitMprLogonScript\", \"details\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\art.bat\", \"user\": null}\n{\"record_id\": 100, \"ts\": \"2020-10-19T10:47:09.303000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\ProgramData\\\\Microsoft\\\\Windows Defender\\\\platform\\\\4.18.2009.7-0\\\\MsMpEng.exe\", \"pid\": 3408, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows Defender\\\\Reporting\\\\SigUpdateTimestampsSinceLastHB\", \"details\": \"(Empty)\", \"user\": null}\n{\"record_id\": 112, \"ts\": \"2020-10-19T10:47:10.966000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\{1NP14R77-02R7-4R5Q-O744-2RO1NR5198O7}\\\\pzq.rk…[cut: 201 chars]\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        96,
+        97,
+        100,
+        112
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (25, 34, 37, 99) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 25, \"ts\": \"2020-10-19T10:46:45.194000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"pid\": 8836, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\art.bat\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 34, \"ts\": \"2020-10-19T10:46:48.959000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 1260, \"target_filename\": \"C:\\\\Windows\\\\ServiceState\\\\EventLog\\\\Data\\\\lastalive1.dat\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 37, \"ts\": \"2020-10-19T10:46:54.317000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\Sysmon.exe\", \"pid\": 3352, \"target_filename\": \"C:\\\\Archive\\\\CLIP-71EB9D4793E87CBAC3368D6CBF88DD802A654BABC0382082190B70C02979E559B82D3CB9FC277FA04A5D4DD7B528CBADD827C88711F8D21338F91A19A4B91BA13203D22C00000000000000000000000000000000\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 99, \"ts\": \"2020-10-19T10:47:08.775000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\REG.EXE-E7E8BD26.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        25,
+        34,
+        37,
+        99
+      ]
+    }
+  ],
+  "findings": "Records 25, 76, 78, 97, 123 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    25,
+    34,
+    37,
+    76,
+    77,
+    78,
+    79,
+    81,
+    82,
+    96,
+    97,
+    99,
+    100,
+    112,
+    123
+  ]
+}
