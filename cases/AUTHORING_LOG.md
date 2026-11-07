@@ -822,3 +822,11 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** one added creation record for GruntHTTP 6172 (record 8122, 21:45:50); `time_shift`
   +900 s on the chain, the 5156 copy and the added record; `set_user pgustavo` on the handles.
 - **Set R:** toolset (without `kill_process` / with it).
+
+### test-26 — `SDWIN-200806130039` Covenant GetDomainGroup Domain Admins (T1069.002) — **STOPPED**
+
+- **Why:** the window has no process-creation record at all. The Covenant implant
+  `GruntHTTP.exe` 3112 on WORKSTATION5 (started before the window) queries the domain
+  controller over LDAP (31, 35, 91, 133) in memory; the remaining records are lsass handles to it,
+  system handles and logon records on the DC. With no creation record, no cited record can show a
+  command line, so check (j) cannot hold for E5.
