@@ -1,0 +1,2459 @@
+[
+  {
+    "record_id": 1838,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:44:07.013220+00:00",
+    "replaced_by": [
+      7285
+    ],
+    "e2_before": [
+      1838,
+      2143,
+      6249,
+      7521
+    ],
+    "e2_after": [
+      2143,
+      6249,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 2143,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:44:25.851632+00:00",
+    "replaced_by": [
+      1105
+    ],
+    "e2_before": [
+      2143,
+      6249,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      1105,
+      6249,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 6249,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:44:45.334718+00:00",
+    "replaced_by": [
+      743
+    ],
+    "e2_before": [
+      1105,
+      6249,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      743,
+      1105,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 743,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:45:05.611043+00:00",
+    "replaced_by": [
+      300
+    ],
+    "e2_before": [
+      743,
+      1105,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      300,
+      1105,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 300,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:45:26.409121+00:00",
+    "replaced_by": [
+      3694
+    ],
+    "e2_before": [
+      300,
+      1105,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      1105,
+      3694,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 3694,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:45:47.736249+00:00",
+    "replaced_by": [
+      163
+    ],
+    "e2_before": [
+      1105,
+      3694,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      163,
+      1105,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 163,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:46:09.506929+00:00",
+    "replaced_by": [
+      7058
+    ],
+    "e2_before": [
+      163,
+      1105,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      1105,
+      7058,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 7058,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:46:31.374084+00:00",
+    "replaced_by": [
+      3018
+    ],
+    "e2_before": [
+      1105,
+      7058,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      1105,
+      3018,
+      7285,
+      7521
+    ]
+  },
+  {
+    "record_id": 3018,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:46:52.644736+00:00",
+    "replaced_by": [
+      7853
+    ],
+    "e2_before": [
+      1105,
+      3018,
+      7285,
+      7521
+    ],
+    "e2_after": [
+      1105,
+      7285,
+      7521,
+      7853
+    ]
+  },
+  {
+    "record_id": 7285,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:47:13.205629+00:00",
+    "replaced_by": [
+      2217
+    ],
+    "e2_before": [
+      1105,
+      7285,
+      7521,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      2217,
+      7521,
+      7853
+    ]
+  },
+  {
+    "record_id": 2217,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:47:33.371452+00:00",
+    "replaced_by": [
+      6470
+    ],
+    "e2_before": [
+      1105,
+      2217,
+      7521,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      6470,
+      7521,
+      7853
+    ]
+  },
+  {
+    "record_id": 6470,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:47:54.288499+00:00",
+    "replaced_by": [
+      4628
+    ],
+    "e2_before": [
+      1105,
+      6470,
+      7521,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      4628,
+      7521,
+      7853
+    ]
+  },
+  {
+    "record_id": 4628,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:48:14.813144+00:00",
+    "replaced_by": [
+      1486
+    ],
+    "e2_before": [
+      1105,
+      4628,
+      7521,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1486,
+      7521,
+      7853
+    ]
+  },
+  {
+    "record_id": 1486,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:48:35.469988+00:00",
+    "replaced_by": [
+      7635
+    ],
+    "e2_before": [
+      1105,
+      1486,
+      7521,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      7521,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 7521,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:48:56.054041+00:00",
+    "replaced_by": [
+      6538
+    ],
+    "e2_before": [
+      1105,
+      7521,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      6538,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 6538,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:49:16.556092+00:00",
+    "replaced_by": [
+      7041
+    ],
+    "e2_before": [
+      1105,
+      6538,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      7041,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 7041,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:49:37.246974+00:00",
+    "replaced_by": [
+      7197
+    ],
+    "e2_before": [
+      1105,
+      7041,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      7197,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 7197,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:49:57.980634+00:00",
+    "replaced_by": [
+      4796
+    ],
+    "e2_before": [
+      1105,
+      7197,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      4796,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 4796,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:50:18.613675+00:00",
+    "replaced_by": [
+      836
+    ],
+    "e2_before": [
+      1105,
+      4796,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      836,
+      1105,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 836,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:50:39.704411+00:00",
+    "replaced_by": [
+      4725
+    ],
+    "e2_before": [
+      836,
+      1105,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      4725,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 4725,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:51:00.263923+00:00",
+    "replaced_by": [
+      1152
+    ],
+    "e2_before": [
+      1105,
+      4725,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7635,
+      7853
+    ]
+  },
+  {
+    "record_id": 7635,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:51:20.922171+00:00",
+    "replaced_by": [
+      297
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7635,
+      7853
+    ],
+    "e2_after": [
+      297,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 297,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:51:41.609809+00:00",
+    "replaced_by": [
+      3084
+    ],
+    "e2_before": [
+      297,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3084,
+      7853
+    ]
+  },
+  {
+    "record_id": 3084,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:52:02.702121+00:00",
+    "replaced_by": [
+      6770
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3084,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6770,
+      7853
+    ]
+  },
+  {
+    "record_id": 6770,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:52:23.432422+00:00",
+    "replaced_by": [
+      2119
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6770,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2119,
+      7853
+    ]
+  },
+  {
+    "record_id": 2119,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:52:44.053345+00:00",
+    "replaced_by": [
+      6126
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2119,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6126,
+      7853
+    ]
+  },
+  {
+    "record_id": 6126,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:53:05.041327+00:00",
+    "replaced_by": [
+      882
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6126,
+      7853
+    ],
+    "e2_after": [
+      882,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 882,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:53:26.790550+00:00",
+    "replaced_by": [
+      1915
+    ],
+    "e2_before": [
+      882,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1915,
+      7853
+    ]
+  },
+  {
+    "record_id": 1915,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:53:47.949182+00:00",
+    "replaced_by": [
+      2398
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1915,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2398,
+      7853
+    ]
+  },
+  {
+    "record_id": 2398,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:54:09.925299+00:00",
+    "replaced_by": [
+      4656
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2398,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4656,
+      7853
+    ]
+  },
+  {
+    "record_id": 4656,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:54:31.044025+00:00",
+    "replaced_by": [
+      3235
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4656,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3235,
+      7853
+    ]
+  },
+  {
+    "record_id": 3235,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:54:51.948742+00:00",
+    "replaced_by": [
+      6531
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3235,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6531,
+      7853
+    ]
+  },
+  {
+    "record_id": 6531,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:55:12.990652+00:00",
+    "replaced_by": [
+      4615
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6531,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4615,
+      7853
+    ]
+  },
+  {
+    "record_id": 4615,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:55:34.137391+00:00",
+    "replaced_by": [
+      4383
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4615,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4383,
+      7853
+    ]
+  },
+  {
+    "record_id": 4383,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:55:55.194368+00:00",
+    "replaced_by": [
+      7633
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4383,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7633,
+      7853
+    ]
+  },
+  {
+    "record_id": 7633,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:56:15.885327+00:00",
+    "replaced_by": [
+      4086
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7633,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4086,
+      7853
+    ]
+  },
+  {
+    "record_id": 4086,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T03:56:36.823459+00:00",
+    "replaced_by": [
+      4472
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4086,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4472,
+      7853
+    ]
+  },
+  {
+    "record_id": 4472,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:56:58.539371+00:00",
+    "replaced_by": [
+      2734
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4472,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2734,
+      7853
+    ]
+  },
+  {
+    "record_id": 2734,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:57:19.572633+00:00",
+    "replaced_by": [
+      3407
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2734,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3407,
+      7853
+    ]
+  },
+  {
+    "record_id": 3407,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:57:40.729038+00:00",
+    "replaced_by": [
+      5505
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3407,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5505,
+      7853
+    ]
+  },
+  {
+    "record_id": 5505,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:58:01.528450+00:00",
+    "replaced_by": [
+      5903
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5505,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5903,
+      7853
+    ]
+  },
+  {
+    "record_id": 5903,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:58:22.117793+00:00",
+    "replaced_by": [
+      2465
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5903,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2465,
+      7853
+    ]
+  },
+  {
+    "record_id": 2465,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:58:43.163719+00:00",
+    "replaced_by": [
+      1409
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2465,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1409,
+      7853
+    ]
+  },
+  {
+    "record_id": 1409,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:59:04.227557+00:00",
+    "replaced_by": [
+      5243
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1409,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5243,
+      7853
+    ]
+  },
+  {
+    "record_id": 5243,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:59:24.853018+00:00",
+    "replaced_by": [
+      3528
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5243,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3528,
+      7853
+    ]
+  },
+  {
+    "record_id": 3528,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:59:45.900759+00:00",
+    "replaced_by": [
+      5249
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3528,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5249,
+      7853
+    ]
+  },
+  {
+    "record_id": 5249,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:00:06.876910+00:00",
+    "replaced_by": [
+      2235
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5249,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2235,
+      7853
+    ]
+  },
+  {
+    "record_id": 2235,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:00:27.367062+00:00",
+    "replaced_by": [
+      3518
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2235,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3518,
+      7853
+    ]
+  },
+  {
+    "record_id": 3518,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:00:48.532098+00:00",
+    "replaced_by": [
+      2454
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3518,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2454,
+      7853
+    ]
+  },
+  {
+    "record_id": 2454,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:01:09.155018+00:00",
+    "replaced_by": [
+      6630
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2454,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6630,
+      7853
+    ]
+  },
+  {
+    "record_id": 6630,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:01:30.051038+00:00",
+    "replaced_by": [
+      2194
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6630,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2194,
+      7853
+    ]
+  },
+  {
+    "record_id": 2194,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:01:50.627781+00:00",
+    "replaced_by": [
+      5393
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2194,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5393,
+      7853
+    ]
+  },
+  {
+    "record_id": 5393,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:02:11.443920+00:00",
+    "replaced_by": [
+      440
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5393,
+      7853
+    ],
+    "e2_after": [
+      440,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 440,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:02:32.441866+00:00",
+    "replaced_by": [
+      6592
+    ],
+    "e2_before": [
+      440,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6592,
+      7853
+    ]
+  },
+  {
+    "record_id": 6592,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:02:52.824606+00:00",
+    "replaced_by": [
+      6862
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6592,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6862,
+      7853
+    ]
+  },
+  {
+    "record_id": 6862,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:03:13.618776+00:00",
+    "replaced_by": [
+      1531
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6862,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1531,
+      7853
+    ]
+  },
+  {
+    "record_id": 1531,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:03:34.460136+00:00",
+    "replaced_by": [
+      1580
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1531,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1580,
+      7853
+    ]
+  },
+  {
+    "record_id": 1580,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:03:55.550553+00:00",
+    "replaced_by": [
+      1852
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1580,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1852,
+      7853
+    ]
+  },
+  {
+    "record_id": 1852,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:04:16.388008+00:00",
+    "replaced_by": [
+      540
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1852,
+      7853
+    ],
+    "e2_after": [
+      540,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 540,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:04:36.603706+00:00",
+    "replaced_by": [
+      372
+    ],
+    "e2_before": [
+      540,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      372,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 372,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:05:06.251938+00:00",
+    "replaced_by": [
+      2022
+    ],
+    "e2_before": [
+      372,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2022,
+      7853
+    ]
+  },
+  {
+    "record_id": 2022,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:05:25.297937+00:00",
+    "replaced_by": [
+      7483
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2022,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7483,
+      7853
+    ]
+  },
+  {
+    "record_id": 7483,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:05:44.747790+00:00",
+    "replaced_by": [
+      817
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7483,
+      7853
+    ],
+    "e2_after": [
+      817,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 817,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:06:04.451747+00:00",
+    "replaced_by": [
+      5097
+    ],
+    "e2_before": [
+      817,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5097,
+      7853
+    ]
+  },
+  {
+    "record_id": 5097,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:06:24.409607+00:00",
+    "replaced_by": [
+      2599
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5097,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2599,
+      7853
+    ]
+  },
+  {
+    "record_id": 2599,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:06:43.987534+00:00",
+    "replaced_by": [
+      4649
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2599,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4649,
+      7853
+    ]
+  },
+  {
+    "record_id": 4649,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:07:03.990394+00:00",
+    "replaced_by": [
+      4174
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4649,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4174,
+      7853
+    ]
+  },
+  {
+    "record_id": 4174,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:07:24.221372+00:00",
+    "replaced_by": [
+      5921
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4174,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5921,
+      7853
+    ]
+  },
+  {
+    "record_id": 5921,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:07:45.166993+00:00",
+    "replaced_by": [
+      4910
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5921,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4910,
+      7853
+    ]
+  },
+  {
+    "record_id": 4910,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:08:06.117510+00:00",
+    "replaced_by": [
+      7256
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4910,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7256,
+      7853
+    ]
+  },
+  {
+    "record_id": 7256,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:08:26.588695+00:00",
+    "replaced_by": [
+      4492
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7256,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4492,
+      7853
+    ]
+  },
+  {
+    "record_id": 4492,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:08:46.722221+00:00",
+    "replaced_by": [
+      5139
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4492,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5139,
+      7853
+    ]
+  },
+  {
+    "record_id": 5139,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:09:06.958477+00:00",
+    "replaced_by": [
+      3949
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5139,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3949,
+      7853
+    ]
+  },
+  {
+    "record_id": 3949,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:09:27.458281+00:00",
+    "replaced_by": [
+      6234
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3949,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6234,
+      7853
+    ]
+  },
+  {
+    "record_id": 6234,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:09:47.758092+00:00",
+    "replaced_by": [
+      7409
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6234,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7409,
+      7853
+    ]
+  },
+  {
+    "record_id": 7409,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:10:08.623873+00:00",
+    "replaced_by": [
+      4699
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7409,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4699,
+      7853
+    ]
+  },
+  {
+    "record_id": 4699,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:10:29.026007+00:00",
+    "replaced_by": [
+      5562
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4699,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5562,
+      7853
+    ]
+  },
+  {
+    "record_id": 5562,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:10:49.584216+00:00",
+    "replaced_by": [
+      2616
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5562,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2616,
+      7853
+    ]
+  },
+  {
+    "record_id": 2616,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:11:10.070371+00:00",
+    "replaced_by": [
+      1476
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2616,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1476,
+      7853
+    ]
+  },
+  {
+    "record_id": 1476,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:11:30.783998+00:00",
+    "replaced_by": [
+      884
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1476,
+      7853
+    ],
+    "e2_after": [
+      884,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 884,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:11:51.332923+00:00",
+    "replaced_by": [
+      7656
+    ],
+    "e2_before": [
+      884,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7656,
+      7853
+    ]
+  },
+  {
+    "record_id": 7656,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:12:11.766813+00:00",
+    "replaced_by": [
+      3917
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7656,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3917,
+      7853
+    ]
+  },
+  {
+    "record_id": 3917,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:12:32.205546+00:00",
+    "replaced_by": [
+      2010
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3917,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2010,
+      7853
+    ]
+  },
+  {
+    "record_id": 2010,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:12:53.202352+00:00",
+    "replaced_by": [
+      2415
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2010,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2415,
+      7853
+    ]
+  },
+  {
+    "record_id": 2415,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:13:14.184219+00:00",
+    "replaced_by": [
+      6548
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2415,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6548,
+      7853
+    ]
+  },
+  {
+    "record_id": 6548,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:13:34.698463+00:00",
+    "replaced_by": [
+      3103
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6548,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3103,
+      7853
+    ]
+  },
+  {
+    "record_id": 3103,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:13:55.773919+00:00",
+    "replaced_by": [
+      6481
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3103,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6481,
+      7853
+    ]
+  },
+  {
+    "record_id": 6481,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:14:16.129317+00:00",
+    "replaced_by": [
+      4439
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6481,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4439,
+      7853
+    ]
+  },
+  {
+    "record_id": 4439,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:14:36.935128+00:00",
+    "replaced_by": [
+      6681
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4439,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6681,
+      7853
+    ]
+  },
+  {
+    "record_id": 6681,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:14:57.389254+00:00",
+    "replaced_by": [
+      2285
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6681,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2285,
+      7853
+    ]
+  },
+  {
+    "record_id": 2285,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:15:18.589981+00:00",
+    "replaced_by": [
+      7154
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2285,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7154,
+      7853
+    ]
+  },
+  {
+    "record_id": 7154,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:15:39.382916+00:00",
+    "replaced_by": [
+      1938
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7154,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1938,
+      7853
+    ]
+  },
+  {
+    "record_id": 1938,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:15:59.897198+00:00",
+    "replaced_by": [
+      1788
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1938,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      1788,
+      7853
+    ]
+  },
+  {
+    "record_id": 1788,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:16:20.501675+00:00",
+    "replaced_by": [
+      4019
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      1788,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4019,
+      7853
+    ]
+  },
+  {
+    "record_id": 4019,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:16:41.541211+00:00",
+    "replaced_by": [
+      7840
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4019,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7840,
+      7853
+    ]
+  },
+  {
+    "record_id": 7840,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:17:02.210583+00:00",
+    "replaced_by": [
+      7452
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7840,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7452,
+      7853
+    ]
+  },
+  {
+    "record_id": 7452,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:17:23.075928+00:00",
+    "replaced_by": [
+      4965
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7452,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4965,
+      7853
+    ]
+  },
+  {
+    "record_id": 4965,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:17:43.402579+00:00",
+    "replaced_by": [
+      208
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4965,
+      7853
+    ],
+    "e2_after": [
+      208,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 208,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:18:04.169085+00:00",
+    "replaced_by": [
+      7237
+    ],
+    "e2_before": [
+      208,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7237,
+      7853
+    ]
+  },
+  {
+    "record_id": 7237,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:18:24.753461+00:00",
+    "replaced_by": [
+      6004
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7237,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6004,
+      7853
+    ]
+  },
+  {
+    "record_id": 6004,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:18:45.422856+00:00",
+    "replaced_by": [
+      7059
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6004,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      7059,
+      7853
+    ]
+  },
+  {
+    "record_id": 7059,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:19:05.818143+00:00",
+    "replaced_by": [
+      4883
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      7059,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4883,
+      7853
+    ]
+  },
+  {
+    "record_id": 4883,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:19:26.700943+00:00",
+    "replaced_by": [
+      6256
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4883,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6256,
+      7853
+    ]
+  },
+  {
+    "record_id": 6256,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:19:47.457568+00:00",
+    "replaced_by": [
+      4263
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6256,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4263,
+      7853
+    ]
+  },
+  {
+    "record_id": 4263,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:20:08.105043+00:00",
+    "replaced_by": [
+      2137
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4263,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2137,
+      7853
+    ]
+  },
+  {
+    "record_id": 2137,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:20:28.441106+00:00",
+    "replaced_by": [
+      597
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2137,
+      7853
+    ],
+    "e2_after": [
+      597,
+      1105,
+      1152,
+      7853
+    ]
+  },
+  {
+    "record_id": 597,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:20:49.343325+00:00",
+    "replaced_by": [
+      6142
+    ],
+    "e2_before": [
+      597,
+      1105,
+      1152,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6142,
+      7853
+    ]
+  },
+  {
+    "record_id": 6142,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:21:10.320182+00:00",
+    "replaced_by": [
+      2613
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6142,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2613,
+      7853
+    ]
+  },
+  {
+    "record_id": 2613,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:21:30.882520+00:00",
+    "replaced_by": [
+      4410
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2613,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4410,
+      7853
+    ]
+  },
+  {
+    "record_id": 4410,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:21:51.421807+00:00",
+    "replaced_by": [
+      3153
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4410,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3153,
+      7853
+    ]
+  },
+  {
+    "record_id": 3153,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:22:12.311626+00:00",
+    "replaced_by": [
+      5706
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3153,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      5706,
+      7853
+    ]
+  },
+  {
+    "record_id": 5706,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:22:32.884247+00:00",
+    "replaced_by": [
+      4417
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      5706,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      4417,
+      7853
+    ]
+  },
+  {
+    "record_id": 4417,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Microsoft-Windows-PowerShell/')",
+    "at": "2026-11-07T04:22:53.714123+00:00",
+    "replaced_by": [
+      6280
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      4417,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      6280,
+      7853
+    ]
+  },
+  {
+    "record_id": 6280,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:23:14.194015+00:00",
+    "replaced_by": [
+      3290
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      6280,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3290,
+      7853
+    ]
+  },
+  {
+    "record_id": 3290,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:23:35.162563+00:00",
+    "replaced_by": [
+      3073
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3290,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      3073,
+      7853
+    ]
+  },
+  {
+    "record_id": 3073,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:23:55.631821+00:00",
+    "replaced_by": [
+      2674
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      3073,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1152,
+      2674,
+      7853
+    ]
+  },
+  {
+    "record_id": 2674,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agent PID 4380 (the only PowerShell on WORKSTATION5 in this window) or a backup-key export record (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T04:24:15.846520+00:00",
+    "replaced_by": [
+      1146
+    ],
+    "e2_before": [
+      1105,
+      1152,
+      2674,
+      7853
+    ],
+    "e2_after": [
+      1105,
+      1146,
+      1152,
+      7853
+    ]
+  }
+]

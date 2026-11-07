@@ -618,3 +618,37 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** regsvr32 and PowerShell 9076 command lines pointed at `intranet.mordor.local`; one added
   creation record for PowerShell 8648; `set_user pgustavo` on the handle records.
 - **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).
+
+### test-16 — `SDWIN-190518235535` Empire Mimikatz Backup Keys (T1003)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `contain_host`. Injection not selected.
+- **Chain:** `pgustavo`'s high-integrity Empire PowerShell PID 4380 (started before the window)
+  runs `whoami /user` (4688 230, Sysmon 318; PID 10188) and, after reaching the domain
+  controller's LSA pipe, writes the domain DPAPI backup keys into `C:\Windows\System32`
+  (`ntds_capi_0_*.pfx/.pvk/.der`, `ntds_legacy_0_*.key`: 5186–5214, file creations and
+  deletions). 11 suspicious records (321 is the Security creation record of whoami as seen with
+  PowerShell as the creator).
+- **E1** cites 230, 5196, 5214, 321.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.pki` human admin, `svc_escrow` service with a dependent. Approval `deny`. Ticket
+  CHG-2316 (WORKSTATION5, `it.pki`, whoami|powershell, 18:00–19:00 UTC): host, command and time
+  match, **misses the account**.
+- **E2:** seed 1316; 117 sampled records flagged (Empire agent events: the agent's script-block,
+  pipeline and image-load records by PID 4380 dominate the window); final sample: a handle close by
+  the machine account, two WmiPrvSE image loads, an svchost-to-svchost handle.
+- **E3:** host Y = WORKSTATION6; moves the 4,942 attack-related records.
+- **E4:** contradiction: one added copy of 5186 whose writer is
+  `C:\Program Files\Contoso\KeyEscrow\KeyEscrow.exe` (record 7888), cited in addition.
+- **E5:** one added creation record for PowerShell 4380 (`-File C:\PKI\Export-BackupKey.ps1`,
+  18:33:15); `set_user it.pki` on the chain.
+- **Set R:** tier (2 / 0): isolating a tier-0 host needs approval (P1), and approval is denied.
+
+### test-18 — `SDWIN-200806030120` Covenant SharpSC Start (T1021.002) — **STOPPED**
+
+- **Why:** the remote action is `pgustavo` reaching WORKSTATION6's `svcctl` from WORKSTATION5
+  (logon 5412, share 5414/5415) and services.exe starting the stock IKEEXT service (svchost PID
+  5128: 5352, 5437). That svchost loads no DLL from a user or ProgramData path and makes no
+  connection, so it is a legitimate Windows service, not an attack process; the attacker's own
+  records are logon/share records with no acting process (no chain E5 could cover), and no
+  creation record of an attack process exists for check (j). The process creations on MORDORDC
+  are WMI provider hosts. No files written.

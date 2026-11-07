@@ -1,0 +1,37 @@
+{
+  "case_id": "test-16:E2",
+  "profile": "Profile of window SDWIN-190518235535: 7887 events. Request: An implant on WORKSTATION5 appears to have exported the domain's DPAPI backup keys. Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (7851, 7852, 7853, 7854) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 7851, \"ts\": \"2020-10-22T18:34:01.816000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1012, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 2220, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6af15|c:\\\\windows\\\\system32\\\\lsm.dll+f6ba|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\windows\\\\Syste…[cut: 663 chars]\", \"user\": null}\n{\"record_id\": 7852, \"ts\": \"2020-10-22T18:34:01.817000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1012, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 2220, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6af15|c:\\\\windows\\\\system32\\\\lsm.dll+f97f|c:\\\\windows\\\\system32\\\\lsm.dll+f7ad|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\System32\\\\…[cut: 696 chars]\", \"user\": null}\n{\"record_id\": 7853, \"ts\": \"2020-10-22T18:34:01.818000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1012, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 2220, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6af15|c:\\\\windows\\\\system32\\\\lsm.dll+f6ba|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\windows\\\\Syste…[cut: 663 chars]\", \"user\": null}\n{\"record_id\": 7854, \"ts\": \"2020-10-22T18:34:01.818000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1012, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 2220, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6af15|c:\\\\windows\\\\system32\\\\lsm.dll+f97f|c:\\\\windows\\\\system32\\\\lsm.dll+f7ad|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\System32\\\\…[cut: 696 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        7851,
+        7852,
+        7853,
+        7854
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1105, 1146, 1152) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1105, \"channel\": \"Security\", \"event_id\": 4658, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-22T18:33:17.776Z\\\",\\\"ProcessId\\\":\\\"0x3a4\\\",\\\"ObjectServer\\\":\\\"Security\\\",\\\"OpcodeValue\\\":0,\\\"port\\\":58121,\\\"Severity\\\":\\\"INFO\\\",\\\"SubjectUserSid\\\":\\\"S-1-5-20\\\",\\\"EventTime\\\":\\\"2020-10-22 14:33:15\\\",\\\"Sou…[cut: 1307 chars]\"}\n{\"record_id\": 1146, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-22T18:33:17.800Z\\\",\\\"AccountName\\\":\\\"SYSTEM\\\",\\\"port\\\":58121,\\\"OriginalFileName\\\":\\\"kernel.appcore.dll\\\",\\\"Severity\\\":\\\"INFO\\\",\\\"EventTime\\\":\\\"2020-10-22 14:33:15\\\",\\\"EventReceivedTime\\\":\\\"2020-10-22…[cut: 2283 chars]\"}\n{\"record_id\": 1152, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-22T18:33:17.804Z\\\",\\\"AccountName\\\":\\\"SYSTEM\\\",\\\"port\\\":58121,\\\"OriginalFileName\\\":\\\"wbemsvc.dll\\\",\\\"Severity\\\":\\\"INFO\\\",\\\"EventTime\\\":\\\"2020-10-22 14:33:15\\\",\\\"EventReceivedTime\\\":\\\"2020-10-22 14:33:…[cut: 2233 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 3,
+      "registered": [
+        1105,
+        1146,
+        1152
+      ]
+    }
+  ],
+  "findings": "Records 1105, 1146, 1152, 7853 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1105,
+    1146,
+    1152,
+    7851,
+    7852,
+    7853,
+    7854
+  ]
+}
