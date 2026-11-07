@@ -1,0 +1,37 @@
+{
+  "case_id": "test-33:E2",
+  "profile": "Profile of window SDWIN-200921230246: 3590 events. Request: wardog ran Rubeus on WORKSTATION6 to request a Kerberos ticket for pgustavo from a password hash and opened a shell with it. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (3102, 3131, 3132, 3133, 3159) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 3102, \"ts\": \"2020-09-22T03:04:04.017000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\WindowsUpdate\\\\UX\\\\StateVariables\\\\ScheduledRebootFailed\", \"details\": \"DWORD (0x00000000)\", \"user\": null}\n{\"record_id\": 3131, \"ts\": \"2020-09-22T03:04:04.031000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\Windows\\\\System32\\\\usocoreworker.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\WindowsUpdate\\\\UpdatePolicy\\\\Settings\", \"details\": null, \"user\": null}\n{\"record_id\": 3132, \"ts\": \"2020-09-22T03:04:04.031000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\Windows\\\\System32\\\\usocoreworker.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\WindowsUpdate\\\\UpdatePolicy\\\\Settings\\\\PausedFeatureStatus\", \"details\": \"DWORD (0x00000000)\", \"user\": null}\n{\"record_id\": 3133, \"ts\": \"2020-09-22T03:04:04.031000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\Windows\\\\System32\\\\usocoreworker.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\WindowsUpdate\\\\UpdatePolicy\\\\Settings\", \"details\": null, \"user\": null}\n{\"record_id\": 3159, \"ts\": \"2020-09-22T03:04:04.043000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\Windows\\\\System32\\\\usocoreworker.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\WaaSAssessment\\\\Cache\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        3102,
+        3131,
+        3132,
+        3133,
+        3159
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (2175, 2635) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2175, \"channel\": \"Security\", \"event_id\": 4703, \"json\": \"{\\\"Keywords\\\":-9214364837600034816,\\\"SeverityValue\\\":2,\\\"SubjectDomainName\\\":\\\"THESHIRE\\\",\\\"EventID\\\":4703,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"ExecutionProcessID\\\":4,\\\"Channel\\\":\\\"security\\\",\\\"ho…[cut: 2202 chars]\"}\n{\"record_id\": 2635, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 18, \"json\": \"{\\\"Keywords\\\":-9223372036854775808,\\\"SeverityValue\\\":2,\\\"PipeName\\\":\\\"\\\\\\\\lsass\\\",\\\"EventTypeOrignal\\\":\\\"INFO\\\",\\\"EventID\\\":18,\\\"ProviderGuid\\\":\\\"{5770385F-C22A-43E0-BF4C-06F5698FFBD9}\\\",\\\"ExecutionProcessID\\\":3392,\\\"host\\\":…[cut: 995 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        2175,
+        2635
+      ]
+    }
+  ],
+  "findings": "Records 2175, 2635, 3102, 3159 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    2175,
+    2635,
+    3102,
+    3131,
+    3132,
+    3133,
+    3159
+  ]
+}

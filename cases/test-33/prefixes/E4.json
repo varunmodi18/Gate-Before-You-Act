@@ -1,0 +1,30 @@
+{
+  "case_id": "test-33:E4",
+  "profile": "Profile of window SDWIN-200921230246: 3158 events. Request: wardog ran Rubeus on WORKSTATION6 to request a Kerberos ticket for pgustavo from a password hash and opened a shell with it. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (1033, 1038, 1131, 1137) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1033, \"ts\": \"2020-09-22T03:03:09.877000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\sbeavers\\\\desktop\\\\rubeus.exe\", \"pid\": 7520, \"src_ip\": \"172.18.39.6\", \"src_port\": 53650, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1038, \"ts\": \"2020-09-22T03:03:09.879000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 696, \"src_ip\": \"172.18.39.6\", \"src_port\": 53650, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 1131, \"ts\": \"2020-09-22T03:03:11.930000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"&lt;unknown process&gt;\", \"pid\": null, \"src_ip\": \"172.18.39.6\", \"src_port\": 53650, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1137, \"ts\": \"2020-09-22T03:03:13.939000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150607\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3596, \"src_ip\": \"172.18.38.5\", \"src_port\": 53822, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1033,
+        1038,
+        1131,
+        1137
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION6.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION6.theshire.local\", \"events\": 16}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 1033 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1033,
+    1038,
+    1131,
+    1137
+  ]
+}

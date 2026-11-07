@@ -1,0 +1,23 @@
+[
+  {
+    "record_id": 1446,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 5056 (its pipeline events) or Rubeus (attack) (raw event contains '\"ExecutionProcessID\":5056')",
+    "at": "2026-11-07T05:35:05.067681+00:00",
+    "replaced_by": [
+      3102
+    ],
+    "e2_before": [
+      1446,
+      2175,
+      2635,
+      3159
+    ],
+    "e2_after": [
+      2175,
+      2635,
+      3102,
+      3159
+    ]
+  }
+]
