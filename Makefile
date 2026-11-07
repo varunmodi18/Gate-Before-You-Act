@@ -152,8 +152,10 @@ fixture-up: build-web  ## Quick look without OTRF, GPU or model: fixture data + 
 	  $(UV) run python -m gbya.worker & \
 	wait
 
-budget:  ## T8.0 (one command, once 10 dev scenarios are adjudicated): token audit + regenerated budget -> docs/compute_budget.md; PILOT2=<run> PILOT3=<run> optional
-	$(UV) run python scripts/token_audit.py
+MIN_DEV ?= 9  # team lead 2026-11-08: dev-05 stays excluded, 9 dev scenarios (was the script's default 10)
+
+budget:  ## T8.0 (one command, once MIN_DEV=9 dev scenarios are adjudicated): token audit + regenerated budget -> docs/compute_budget.md; PILOT2=<run> PILOT3=<run> optional
+	$(UV) run python scripts/token_audit.py --min-dev $(MIN_DEV)
 	$(UV) run python scripts/budget.py $(if $(PILOT2),--pilot-exp2 $(PILOT2)) $(if $(PILOT3),--pilot-exp3 $(PILOT3))
 
 docs:  ## Regenerate docs/api.md (OpenAPI) and docs/gate_contract.md (plan §D.6)
