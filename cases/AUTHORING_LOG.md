@@ -1029,3 +1029,8 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** one added creation record for PowerShell 1648 (`-File C:\IT\SecOps\Test-LsaProtection.ps1`);
   `time_shift` +1800 s on the chain and the added record; `set_user pgustavo` on two handles.
 - **Set R:** toolset (without `kill_process` / with it).
+
+### test-36 — `SDWIN-201020013208` UI Prompt For Credentials Function (T1056.002) — **STOPPED**
+
+- **Why:** the window (163 events) has no process-creation record at all, so no cited record can
+  show a command line and check (j) cannot hold for E5 (as test-04, test-26).
