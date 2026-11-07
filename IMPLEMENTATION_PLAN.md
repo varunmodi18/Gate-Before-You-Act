@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 11, 8 November 2026 (derived verifier reference budget, validator check (v), dev-05 excluded and `--min-dev 9`, F2, §0.11); Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -144,6 +144,13 @@ The review found no blocking issue and asked for three consistency edits; all ar
 These three should be mentioned to the team; none changes a claim in the proposal.
 
 Substantive ambiguities and gaps **inside** the proposal (not between versions) are listed in §K.2 with the decision taken for each.
+
+### 0.11 What changed in Draft 11 (8 November 2026, decisions by Varun Modi as team lead)
+
+- **Reference budget derived (§D.7, deviation from Draft 10).** `BUDGETS["reference"] = 6 × DOC_TOKENS + REF_OVERHEAD` = 6 × 300 + 64 = 1,864 (was 1,800). `DOC_TOKENS` stays 300, so no rendered document or prompt changes; only blocks that 1,800 refused now render. Found while authoring (annotator A): four test scenarios and one E4 variant could not be built.
+- **Validator check (v) (§D.11).** Every case's verifier prompt is rendered in every verifier variant at authoring time, adjudication and freeze; a `PromptBudgetError` fails the case.
+- **dev-05 stays excluded**; T8.0 runs with `make budget` and `--min-dev 9` (9 authored dev scenarios).
+- **F2 applies**: the test set is the authored test scenarios that validate (target ≥ 30); the final count is in `STATUS.md`.
 
 ### 0.10 What changed in Draft 10 (26 October 2026, decision by Varun Modi as team lead)
 
@@ -971,7 +978,7 @@ The verifier receives the selected normalised fields listed below, rendered in f
 - **Reported in the write-up:** the number excluded, by technique and tactic and by reason; tactic and technique coverage before and after; and a statement that the benchmark under-represents very long evidence as a limitation.
 - **Exp 2 and Exp 3:** the gate rejects at C2 with a message naming the size and the limit; the agent may re-cite within its one retry. The verifier is never called on a trimmed package.
 
-**Verifier prompt budget** (all within the 8,000-token request limit of §D.10.3): system prompt ≤ 600; action and requirement ≤ 200; cited records ≤ 3,200; reference ≤ 1,800; change tickets ≤ 400; rationale (A3) ≤ 200; output ≤ 200.
+**Verifier prompt budget** (all within the 8,000-token request limit of §D.10.3): system prompt ≤ 600; action and requirement ≤ 200; cited records ≤ 3,200; reference ≤ 1,864; change tickets ≤ 400; rationale (A3) ≤ 200; output ≤ 200. *(Draft 11, team lead 8 Nov 2026 — deviation from the 1,800 of Draft 10.)* The reference budget is derived, not fixed: 6 documents (Sigma top-5 + ATT&CK top-1) × `DOC_TOKENS` 300 + `REF_OVERHEAD` 64, where 64 is the block header and separators (measured worst case 14 tokens with the model tokenizer over 400 blocks of six cut documents) plus a ~50-token margin. With 1,800, a block of six documents all at the 300-token cut (1,813–1,814 tokens) was refused. The per-document cut is unchanged, so no rendered prompt changes; the total stays within the 8,000-token request limit.
 
 **Rendering manifest.** Stored with every verifier call and every `verifier_evals` row: record IDs rendered; per record the fields and character counts; the auxiliary fields omitted; reference documents with their original and rendered token counts; ticket IDs included; total tokens. The manifest and a hash of the rendered prompt make each verifier input reproducible. Manifests are exported with the run data and kept with the research artefacts (FR-27).
 
@@ -1274,6 +1281,7 @@ The model context is 8,192 tokens, so the 40,000-token episode cap cannot be the
 - *scope* *(Draft 9, decision A)* the authored `scope` equals the processes, accounts and IP addresses acting on the scope hosts in the window's records (acting process and acting user per the role table; an IP acts when it is the remote source of a logon, share access or inbound connection);
 - *inj* *(Draft 9, team lead 14 Oct)* a scenario selected for an injection marker has one, identical in every variant; its record is outside every evidence set (E1 and E2 citations, suspicious records, labelled evidence, decisive records); its call is in every case's `prohibited` list; every variant's database contains the token (`gbya.cases.injection`).
 - (k) *(Draft 9, decision A, rule 1)* every `permitted` action targets something inside **that case's** scope, recomputed from the case's database (E3 moves the activity to host Y, E5 may rename the acting user).
+- (v) *(Draft 11, team lead 8 Nov 2026)* the verifier prompt of every case renders in every verifier variant (standard, rationale, none, rerank; retrieval through the retrieval cache) without `PromptBudgetError`; a variant whose retrieval is unavailable (no reranker and nothing cached) is skipped with a warning, never replaced. Run by the Studio's validation, adjudication and the freeze (`gbya.cases.prompts`).
 
 **Prefix builder:** deterministic. For each case it emits a scripted investigation transcript:
 1. a profile summary;

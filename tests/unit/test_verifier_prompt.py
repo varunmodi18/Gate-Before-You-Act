@@ -23,6 +23,7 @@ from gbya.llm.tokens import ApproxCounter, ModelTokenizer, model_tokenizer_path
 from gbya.policy.engine import load_evidence_requirements
 from gbya.retrieval import index as ix
 from gbya.retrieval import sources
+from gbya.retrieval.corpus import Doc
 from gbya.retrieval.query import build_query
 
 FIX = Path(__file__).resolve().parents[1] / "fixtures" / "retrieval"
@@ -311,3 +312,45 @@ def test_schema_identical_across_every_c4_variant(index: ix.RetrievalIndex, tick
         flags.append(p.manifest["ticket_scope_constrained"])
     assert all(s == schemas[0] for s in schemas) and len(set(flags)) == 1
     assert flags[0] is (ts == [])
+
+
+def _six_cut_docs() -> list[Doc]:
+    """Five Sigma rules and one ATT&CK technique, each far longer than the 300-token cut and with
+    distinct text (no duplicate is dropped)."""
+    words = ("process", "registry", "credential", "lsass", "powershell", "network", "service",
+             "detection", "logon", "token", "handle", "scheduled", "remote", "encoded")  # fmt: skip
+    docs = []
+    for i in range(6):
+        body = " ".join(f"{words[(i + j) % len(words)]}{j}" for j in range(900))
+        docs.append(Doc(doc_id=f"doc-{i}", kind="sigma" if i < 5 else "attack",
+                        title=f"Long reference document {i}", description=body,
+                        detection=f"selection_{i}: {body[:600]}"))  # fmt: skip
+    return docs
+
+
+def _counters() -> list[Any]:
+    out: list[Any] = [COUNTER]
+    if model_tokenizer_path().is_file():
+        out.append(ModelTokenizer(model_tokenizer_path()))
+    return out
+
+
+def test_reference_budget_is_derived_from_the_document_cut() -> None:
+    assert vf.BUDGETS["reference"] == vf.REF_DOCS * vf.DOC_TOKENS + vf.REF_OVERHEAD
+    assert vf.REF_DOCS == 6 and vf.DOC_TOKENS == 300  # five Sigma rules + one ATT&CK technique
+
+
+@pytest.mark.parametrize("variant", ["standard", "rationale", "rerank"])
+def test_six_documents_at_the_cut_fit_the_reference_budget(variant: vf.Variant) -> None:
+    """Decision 2026-11-08: six reference documents all cut at 300 tokens, plus the block header
+    and separators, render without PromptBudgetError (the 1,800 budget refused them)."""
+    for counter in _counters():
+        p = vf.build_prompt(
+            variant=variant, tool="isolate_host", args={"host": H, "cited": [7]}, claim=CLAIM,
+            requirement=REQS["isolate_host"], evidence=render_cited([ACCESS], counter),
+            reference=_six_cut_docs(), tickets=[], counter=counter,
+        )  # fmt: skip
+        ref = p.manifest["reference"]
+        assert len(ref) == 6 and all(d["cut"] and not d["dropped"] for d in ref)
+        assert all(d["rendered_tokens"] <= vf.DOC_TOKENS for d in ref)
+        assert p.manifest["tokens"]["reference"] <= vf.BUDGETS["reference"]

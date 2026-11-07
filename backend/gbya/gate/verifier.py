@@ -9,9 +9,11 @@ Verifier variants (§D.7.2): ``standard`` (bm25), ``rationale`` (bm25 + the agen
 ``none`` (no reference) and ``rerank`` (bm25_rerank).
 
 Budgets (§D.7.1, model tokenizer): system ≤ 600, action and requirement ≤ 200, cited records
-≤ 3,200, reference ≤ 1,800, tickets ≤ 400, rationale ≤ 200. Only reference documents are cut, each
-at 300 tokens — a stated retrieval-design choice recorded in the manifest. Any other per-call
-block over its budget raises ``PromptBudgetError``: nothing else is ever trimmed. The system
+≤ 3,200, reference ≤ 6 * 300 + 64 = 1,864 (six documents at the cut plus the measured header
+and separators with a margin; was 1,800), tickets ≤ 400, rationale ≤ 200. Only reference
+documents are cut, each at 300 tokens — a stated retrieval-design choice recorded in the
+manifest. Any other per-call block over its budget raises ``PromptBudgetError``: nothing else is
+ever trimmed. The system
 prompt is a fixed file whose budget is checked with the model tokenizer by the test suite.
 
 The verifier never sees ``technique_gold``, the case variant, labels, asset tiers or approval
@@ -50,9 +52,17 @@ VARIANT_MODE: dict[str, Literal["none", "bm25", "bm25_rerank"]] = {
     "standard": "bm25", "rationale": "bm25", "none": "none", "rerank": "bm25_rerank",
 }  # fmt: skip
 SYSTEM_PROMPT_PATH = Path(__file__).resolve().parents[1] / "agent" / "prompts" / "verifier.md"
-BUDGETS = {"system": 600, "action": 200, "cited": 3200, "reference": 1800, "tickets": 400,
-           "rationale": 200, "output": 200}  # fmt: skip
 DOC_TOKENS = 300
+# Six shown documents (Sigma top-5 + ATT&CK top-1) can each reach DOC_TOKENS; the block header and
+# the separators come on top. Measured worst case with the model tokenizer: 14 tokens (header;
+# 400 blocks of six cut documents, 2026-11-08); 64 = that plus a ~50-token margin. The reference
+# budget is derived from it, so a block of six cut documents always fits (decision 2026-11-08,
+# a deviation from the fixed 1,800 of plan Draft 10).
+REF_OVERHEAD = 64
+REF_DOCS = 6
+BUDGETS = {"system": 600, "action": 200, "cited": 3200,
+           "reference": REF_DOCS * DOC_TOKENS + REF_OVERHEAD, "tickets": 400,
+           "rationale": 200, "output": 200}  # fmt: skip
 TEMPERATURE = 0.0
 MAX_TOKENS = BUDGETS["output"]
 CUT_MARK = " [cut at 300 tokens]"
