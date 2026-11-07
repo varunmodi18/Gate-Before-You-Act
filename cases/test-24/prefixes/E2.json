@@ -1,0 +1,50 @@
+{
+  "case_id": "test-24:E2",
+  "profile": "Profile of window SDWIN-200921001437: 6383 events. Request: A remote WMI call from WORKSTATION5 started an encoded PowerShell on WORKSTATION6 that is now calling out. Contain host WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1181, 3101, 3102, 3104, 5029) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1181, \"ts\": \"2020-09-21T04:14:57.485000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 2304, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 3101, \"ts\": \"2020-09-21T04:15:18.318000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 3102, \"ts\": \"2020-09-21T04:15:18.320000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 3104, \"ts\": \"2020-09-21T04:15:18.321000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 5029, \"ts\": \"2020-09-21T04:15:22.080000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2304, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3344, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\fwbase.dll+3b35|c:\\\\windows\\\\system32\\\\fwbase.dll+3a89|c:\\\\windows\\\\system32\\\\mpssvc.dll+b907|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        1181,
+        3101,
+        3102,
+        3104,
+        5029
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (1492, 1494, 1509, 1526) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1492, \"ts\": \"2020-09-21T04:15:10.629000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150607\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3596, \"src_ip\": \"172.18.38.5\", \"src_port\": 62998, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1494, \"ts\": \"2020-09-21T04:15:10.629000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150914\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3192, \"src_ip\": \"172.18.39.5\", \"src_port\": 64147, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1509, \"ts\": \"2020-09-21T04:15:11.641000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150921\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3476, \"src_ip\": \"172.18.39.6\", \"src_port\": 55189, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1526, \"ts\": \"2020-09-21T04:15:13.650000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1984, \"src_ip\": \"172.18.39.6\", \"src_port\": 63405, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1492,
+        1494,
+        1509,
+        1526
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (5144) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 5144, \"channel\": \"Security\", \"event_id\": 4656, \"json\": \"{\\\"SeverityValue\\\":2,\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"EventReceivedTime\\\":\\\"2020-09-21 00:15:23\\\",\\\"EventID\\\":4656,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"ExecutionProcessID\\\":4,\\\"Channel\\\":…[cut: 1992 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        5144
+      ]
+    }
+  ],
+  "findings": "Records 1181, 1509, 5029, 5144 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1181,
+    1492,
+    1494,
+    1509,
+    1526,
+    3101,
+    3102,
+    3104,
+    5029,
+    5144
+  ]
+}

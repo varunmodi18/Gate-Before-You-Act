@@ -1,0 +1,58 @@
+{
+  "case_id": "test-24:E4",
+  "profile": "Profile of window SDWIN-200921001437: 6384 events. Request: A remote WMI call from WORKSTATION5 started an encoded PowerShell on WORKSTATION6 that is now calling out. Contain host WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (1618, 2721, 3402, 6241, 6384) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1618, \"ts\": \"2020-09-21T04:15:14.712000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\whoami.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\whoami.exe\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 2044, \"ppid\": 9804, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 2721, \"ts\": \"2020-09-21T04:15:17.151000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 3084, \"ppid\": 936, \"user\": \"mordordc$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 3402, \"ts\": \"2020-09-21T04:15:19.442000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 3416, \"ppid\": 936, \"user\": \"mordordc$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 6241, \"ts\": \"2020-09-21T04:16:00.752000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\UsoClient.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\usoclient.exe StartUWork\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k netsvcs -p -s Schedule\", \"pid\": null, \"ppid\": 1360, \"user\": \"system\", \"integrity_level\": \"System\", \"hashes\": \"SHA1=CE0C530E2DD7F3605032954BAE24A290E889F0E1,MD5=01AE5FD62205812E974A446C21B5EABE,SHA256=6DEF49B50A6FEBA64CBD73D0801B65133B47861170E0BE8EC1EFE3182E64D62C,IMPHASH=C729DF0ED63E0ACD0CD2E0B3310C0B02\"}\n{\"record_id\": 6384, \"ts\": \"2020-09-21T04:15:14.712000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\whoami.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\whoami.exe\\\"\", \"parent_image\": \"C:\\\\Program Files\\\\Contoso\\\\Inventory\\\\InvAgent.exe\", \"parent_command_line\": null, \"pid\": 2044, \"ppid\": 9804, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        1618,
+        2721,
+        3402,
+        6241,
+        6384
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1580, 1581, 1585, 1586) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1580, \"ts\": \"2020-09-21T04:15:14.692000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1581, \"ts\": \"2020-09-21T04:15:14.692000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1585, \"ts\": \"2020-09-21T04:15:14.694000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowershell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 9804, \"target_image\": \"C:\\\\windows\\\\system32\\\\whoami.exe\", \"target_pid\": 2044, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": null}\n{\"record_id\": 1586, \"ts\": \"2020-09-21T04:15:14.695000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 528, \"target_image\": \"C:\\\\windows\\\\system32\\\\whoami.exe\", \"target_pid\": 2044, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ce5f\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1580,
+        1581,
+        1585,
+        1586
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (486, 771, 774, 903, 1227) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 486, \"ts\": \"2020-09-21T04:14:55.105000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 996, \"src_ip\": \"172.18.39.5\", \"src_port\": 64139, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 135, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 771, \"ts\": \"2020-09-21T04:14:56.239000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": null, \"src_ip\": \"172.18.39.5\", \"src_port\": 64143, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 50937, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 774, \"ts\": \"2020-09-21T04:14:56.241000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": null, \"src_ip\": \"172.18.39.5\", \"src_port\": 64144, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n{\"record_id\": 903, \"ts\": \"2020-09-21T04:14:56.291000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150607\\\\waappagent.exe\", \"pid\": 3572, \"src_ip\": \"172.18.38.5\", \"src_port\": 62974, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1227, \"ts\": \"2020-09-21T04:14:57.513000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": null, \"src_ip\": \"172.18.39.6\", \"src_port\": 55186, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        486,
+        771,
+        774,
+        903,
+        1227
+      ]
+    }
+  ],
+  "findings": "Records 486, 1227, 1585, 1618, 6384 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    486,
+    771,
+    774,
+    903,
+    1227,
+    1580,
+    1581,
+    1585,
+    1586,
+    1618,
+    2721,
+    3402,
+    6241,
+    6384
+  ]
+}
