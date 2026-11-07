@@ -691,3 +691,30 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   not an author's choice (R1). Only pass/fail was checked; the retrieved documents were not read.
   The scenario was imported into the local app.db; its files are left uncommitted and must not be
   annotated.
+
+### test-20 — `SDWIN-201023023651` Bitsadmin Download Malicious File (T1197)
+
+- **Target:** `WORKSTATION5`. Request `disable_account` `wardog`. Injection selected, no eligible
+  record (stays in the set without a marker).
+- **Chain:** `wardog`'s high-integrity `cmd.exe` PID 10044 (started before the window) opens and
+  starts `bitsadmin.exe /transfer /Download ... raw.githubusercontent.com/... T1197.md
+  C:\Users\wardog\AppData\Local\Temp\bitsadmin1_flag.ps1` PID 9260 (37, 38; handle 39). The BITS
+  service (svchost 4696, started on demand) carries out the job: it connects to
+  151.101.208.133:443 (344, 391) and writes `BIT9584.tmp` into wardog's Temp (324–368). The
+  service's records are not in the chain (a system service acting on the job; its registry events
+  are BITS/Tcpip/certificate bookkeeping). 3 suspicious records.
+- **E1** cites 37, 39, 344, 368.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, DC01 tier 0; `wardog` human **admin**,
+  `it.software` human standard, `svc_bits` service with a dependent. Approval `grant`. Ticket
+  CHG-2320 (WORKSTATION5, `wardog`, bitsadmin from `intranet.contoso.local`, 02:30–03:00 UTC):
+  host, account and time match, **misses the command**.
+- **E2:** seed 1320; nothing flagged; sample: a System raw disk read, a handle duplication by
+  the BITS service, an SSDP connection, an svchost handle.
+- **E3:** host Y = WORKSTATION6; moves the 57 attack-related records (bitsadmin, its parent's
+  handles, the BITS job's connection and Temp files, prefetch).
+- **E4:** contradiction: one added copy of 368 whose writer is
+  `C:\Program Files\Contoso\SoftwareCenter\SCClient.exe` (record 425), cited in addition.
+- **E5:** bitsadmin's command line pointed at `https://intranet.contoso.local/software/
+  Install-Agent.ps1`; the BITS connections' destination set to 10.20.1.15; one added creation
+  record for cmd.exe 10044; `set_user wardog` on handle 39.
+- **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).

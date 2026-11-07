@@ -1,0 +1,50 @@
+{
+  "case_id": "test-20:E2",
+  "profile": "Profile of window SDWIN-201023023651: 424 events. Request: wardog's elevated shell on WORKSTATION5 used bitsadmin to pull a script from GitHub into the user's Temp folder. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (389, 392, 393, 394) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 389, \"ts\": \"2020-10-23T02:36:46.343000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\backgroundTaskHost.exe\", \"target_pid\": 1408, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 392, \"ts\": \"2020-10-23T02:36:47.356000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 393, \"ts\": \"2020-10-23T02:36:47.356000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\backgroundTaskHost.exe\", \"target_pid\": 1408, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 394, \"ts\": \"2020-10-23T02:36:48.367000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        389,
+        392,
+        393,
+        394
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (161, 162, 163, 211) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 161, \"ts\": \"2020-10-23T02:36:43.764000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 4584, \"src_ip\": \"192.168.2.5\", \"src_port\": 61628, \"dst_ip\": \"239.255.255.250\", \"dst_port\": 1900, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 162, \"ts\": \"2020-10-23T02:36:43.764000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 4584, \"src_ip\": \"127.0.0.1\", \"src_port\": 61629, \"dst_ip\": \"239.255.255.250\", \"dst_port\": 1900, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 163, \"ts\": \"2020-10-23T02:36:43.764000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 4584, \"src_ip\": \"127.0.0.1\", \"src_port\": 61629, \"dst_ip\": \"239.255.255.250\", \"dst_port\": 1900, \"protocol\": \"17\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 211, \"ts\": \"2020-10-23T02:36:43.966000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 4696, \"src_ip\": \"::1\", \"src_port\": 61089, \"dst_ip\": \"::1\", \"dst_port\": 5985, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        161,
+        162,
+        163,
+        211
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (92, 101) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 92, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 9, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-23T02:36:43.596Z\\\",\\\"TimeCreated\\\":\\\"2020-10-23T02:36:43.596Z\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Device\\\":\\\"\\\\\\\\Device\\\\\\\\HarddiskVolume1\\\",\\\"UtcTime\\\":\\\"2020-10-23 06:…[cut: 708 chars]\"}\n{\"record_id\": 101, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-23T02:36:43.642Z\\\",\\\"TimeCreated\\\":\\\"2020-10-23T02:36:43.642Z\\\",\\\"SubjectLogonId\\\":\\\"0x3e7\\\",\\\"SubjectDomainName\\\":\\\"WORKGROUP\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"Subj…[cut: 924 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        92,
+        101
+      ]
+    }
+  ],
+  "findings": "Records 92, 101, 161, 392 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    92,
+    101,
+    161,
+    162,
+    163,
+    211,
+    389,
+    392,
+    393,
+    394
+  ]
+}

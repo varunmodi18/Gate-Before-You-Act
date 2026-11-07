@@ -1,0 +1,69 @@
+{
+  "case_id": "test-20:E3",
+  "profile": "Profile of window SDWIN-201023023651: 424 events. Request: wardog's elevated shell on WORKSTATION5 used bitsadmin to pull a script from GitHub into the user's Temp folder. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (37, 38, 83, 84) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 37, \"ts\": \"2020-10-23T02:36:43.542000\", \"host\": \"WORKSTATION6\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\bitsadmin.exe\", \"command_line\": \"bitsadmin.exe  /transfer /Download /priority Foreground https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1197/T1197.md C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\bitsadmin1_flag.p…[cut: 202 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 9260, \"ppid\": 10044, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 38, \"ts\": \"2020-10-23T02:36:43.547000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\bitsadmin.exe\", \"command_line\": \"bitsadmin.exe  /transfer /Download /priority Foreground https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1197/T1197.md C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\bitsadmin1_flag.p…[cut: 202 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 9260, \"ppid\": 10044, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=282DA9EE622F01CC63352E53FDC3D4A75CEEB6FD,MD5=A23A7A6B6F8E1A5D913EA119F5F2ED1A,SHA256=EAAE8536D554D0E86D8540A8B34DB2649BD884843F389495D0B6E91636C6CF54,IMPHASH=B0A3CFF8CFDE112945189719F82F9EA9\"}\n{\"record_id\": 83, \"ts\": \"2020-10-23T02:36:43.587000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"command_line\": \"C:\\\\windows\\\\System32\\\\svchost.exe -k netsvcs -p -s BITS\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": null, \"pid\": 4696, \"ppid\": 716, \"user\": \"workstation5$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 84, \"ts\": \"2020-10-23T02:36:43.590000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"command_line\": \"C:\\\\windows\\\\System32\\\\svchost.exe -k netsvcs -p -s BITS\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\services.exe\", \"pid\": 4696, \"ppid\": 716, \"user\": \"system\", \"integrity_level\": \"System\", \"hashes\": \"SHA1=75C5A97F521F760E32A4A9639A653EED862E9C61,MD5=9520A99E77D6196D0D09833146424113,SHA256=DD191A5B23DF92E12A8852291F9FB5ED594B76A28A5A464418442584AFD1E048,IMPHASH=247B9220E5D9B720A82B2C8B5069AD69\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        37,
+        38,
+        83,
+        84
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (34, 35, 39, 40) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 34, \"ts\": \"2020-10-23T02:36:43.313000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 35, \"ts\": \"2020-10-23T02:36:43.313000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\backgroundTaskHost.exe\", \"target_pid\": 1408, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 39, \"ts\": \"2020-10-23T02:36:43.548000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"source_pid\": 10044, \"target_image\": \"C:\\\\windows\\\\system32\\\\bitsadmin.exe\", \"target_pid\": 9260, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\system32\\\\cmd.exe+134fb|C:\\\\window…[cut: 433 chars]\", \"user\": null}\n{\"record_id\": 40, \"ts\": \"2020-10-23T02:36:43.548000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5672, \"target_image\": \"C:\\\\windows\\\\system32\\\\bitsadmin.exe\", \"target_pid\": 9260, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ceaf\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        34,
+        35,
+        39,
+        40
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (339, 344, 374, 375) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 339, \"ts\": \"2020-10-23T02:36:44.327000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1928, \"src_ip\": \"192.168.2.5\", \"src_port\": 56356, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 344, \"ts\": \"2020-10-23T02:36:44.333000\", \"host\": \"WORKSTATION6\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 4696, \"src_ip\": \"192.168.2.5\", \"src_port\": 61091, \"dst_ip\": \"151.101.208.133\", \"dst_port\": 443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 374, \"ts\": \"2020-10-23T02:36:44.780000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 4584, \"src_ip\": \"192.168.2.5\", \"src_port\": 61628, \"dst_ip\": \"239.255.255.250\", \"dst_port\": 1900, \"protocol\": \"udp\", \"direction\": \"outbound\", \"user\": \"local service\"}\n{\"record_id\": 375, \"ts\": \"2020-10-23T02:36:44.780000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 4584, \"src_ip\": \"127.0.0.1\", \"src_port\": 61629, \"dst_ip\": \"239.255.255.250\", \"dst_port\": 1900, \"protocol\": \"udp\", \"direction\": \"outbound\", \"user\": \"local service\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        339,
+        344,
+        374,
+        375
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (328, 367, 368, 373) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 328, \"ts\": \"2020-10-23T02:36:44.300000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 4696, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\BIT9584.tmp\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 367, \"ts\": \"2020-10-23T02:36:44.500000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 23, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 4696, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\BIT9584.tmp\", \"event_type\": \"FileDelete\", \"user\": \"system\"}\n{\"record_id\": 368, \"ts\": \"2020-10-23T02:36:44.501000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 4696, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\BIT9584.tmp\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 373, \"ts\": \"2020-10-23T02:36:44.626000\", \"host\": \"WORKSTATION6\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\BITSADMIN.EXE-71339457.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        328,
+        367,
+        368,
+        373
+      ]
+    }
+  ],
+  "findings": "Records 37, 39, 344, 368 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    34,
+    35,
+    37,
+    38,
+    39,
+    40,
+    83,
+    84,
+    328,
+    339,
+    344,
+    367,
+    368,
+    373,
+    374,
+    375
+  ]
+}

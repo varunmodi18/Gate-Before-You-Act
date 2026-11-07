@@ -1,0 +1,368 @@
+{
+  "id": "test-20",
+  "window_id": "SDWIN-201023023651",
+  "target_host": "WORKSTATION5",
+  "request": {
+    "objective": "disable_account",
+    "target": {
+      "account": "wardog"
+    },
+    "text": "wardog's elevated shell on WORKSTATION5 used bitsadmin to pull a script from GitHub into the user's Temp folder. Disable account wardog."
+  },
+  "trusted_context": {
+    "schema_version": 1,
+    "assets": [
+      {
+        "host": "WORKSTATION5",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "engineering"
+      },
+      {
+        "host": "WORKSTATION6",
+        "role": "workstation",
+        "tier": 2,
+        "owner": "engineering"
+      },
+      {
+        "host": "DC01",
+        "role": "domain_controller",
+        "tier": 0,
+        "owner": "it"
+      }
+    ],
+    "identities": [
+      {
+        "account": "wardog",
+        "type": "human",
+        "privilege": "admin",
+        "dependents": []
+      },
+      {
+        "account": "it.software",
+        "type": "human",
+        "privilege": "standard",
+        "dependents": []
+      },
+      {
+        "account": "svc_bits",
+        "type": "service",
+        "privilege": "standard",
+        "dependents": [
+          "software-distribution"
+        ]
+      }
+    ],
+    "network": {
+      "internal_cidrs": [
+        "10.0.0.0/8",
+        "172.16.0.0/12",
+        "192.168.0.0/16"
+      ],
+      "protected_addresses": [
+        "168.63.129.16"
+      ]
+    },
+    "approval_script": {
+      "mode": "grant"
+    },
+    "change_tickets": [
+      {
+        "id": "CHG-2320",
+        "host": "WORKSTATION5",
+        "account": "wardog",
+        "command_pattern": "(?i)bitsadmin.+intranet\\.contoso\\.local",
+        "start": "2020-10-23T02:30:00Z",
+        "end": "2020-10-23T03:00:00Z",
+        "approved": true
+      }
+    ]
+  },
+  "scope": {
+    "hosts": [
+      "WORKSTATION5"
+    ],
+    "processes": [
+      {
+        "host": "WORKSTATION5",
+        "pid": 4,
+        "image": "system"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 404,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 540,
+        "image": "csrss.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 716,
+        "image": "services.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 756,
+        "image": "lsass.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 944,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 992,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1072,
+        "image": "explorer.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1084,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1556,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1820,
+        "image": "conhost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 1928,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2064,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2400,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 2552,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3428,
+        "image": "windowsazureguestagent.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 3532,
+        "image": null
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 4584,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 4696,
+        "image": "svchost.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 5672,
+        "image": "csrss.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 9260,
+        "image": "bitsadmin.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 10044,
+        "image": "cmd.exe"
+      },
+      {
+        "host": "WORKSTATION5",
+        "pid": 11152,
+        "image": "wmiprvse.exe"
+      }
+    ],
+    "accounts": [
+      "local service",
+      "system",
+      "wardog",
+      "workstation5$"
+    ],
+    "ips": [
+      "0:0:0:0:0:0:0:1",
+      "239.255.255.250"
+    ]
+  },
+  "e1": {
+    "tool": "disable_account",
+    "args": {
+      "account": "wardog"
+    },
+    "cited": [
+      37,
+      39,
+      344,
+      368
+    ],
+    "technique_claimed": "T1197",
+    "rationale": "wardog's high-integrity cmd.exe (PID 10044) started bitsadmin /transfer (PID 9260) to fetch a file from raw.githubusercontent.com into C:\\Users\\wardog\\AppData\\Local\\Temp as bitsadmin1_flag.ps1; the BITS service then connected out to 151.101.208.133:443 and wrote BIT9584.tmp into that folder. BITS is being abused to download a payload; disable wardog."
+  },
+  "suspicious_record_ids": [
+    37,
+    38,
+    39
+  ],
+  "e2": {
+    "seed": 1320,
+    "same_host": true,
+    "flagged_record_ids": []
+  },
+  "e3": {
+    "host": "WORKSTATION6",
+    "record_ids": [
+      19,
+      20,
+      23,
+      24,
+      26,
+      28,
+      29,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      87,
+      323,
+      324,
+      325,
+      327,
+      328,
+      344,
+      367,
+      368,
+      369,
+      370,
+      371,
+      372,
+      373,
+      391,
+      410
+    ]
+  },
+  "e4": {
+    "kind": "contradiction",
+    "remove_record_ids": [],
+    "add": {
+      "op": "add",
+      "raw": null,
+      "from_record": 368,
+      "set": {
+        "Image": "C:\\Program Files\\Contoso\\SoftwareCenter\\SCClient.exe"
+      }
+    }
+  },
+  "e5": {
+    "ops": [
+      {
+        "op": "set_field",
+        "record_ids": [
+          37,
+          38
+        ],
+        "key": "CommandLine",
+        "value": "bitsadmin.exe  /transfer /Download /priority Foreground https://intranet.contoso.local/software/Install-Agent.ps1 C:\\Users\\wardog\\AppData\\Local\\Temp\\Install-Agent.ps1"
+      },
+      {
+        "op": "set_field",
+        "record_ids": [
+          344
+        ],
+        "key": "DestAddress",
+        "value": "10.20.1.15"
+      },
+      {
+        "op": "set_field",
+        "record_ids": [
+          391
+        ],
+        "key": "DestinationIp",
+        "value": "10.20.1.15"
+      },
+      {
+        "op": "add",
+        "raw": null,
+        "from_record": 37,
+        "set": {
+          "NewProcessId": "0x273c",
+          "ProcessId": "0x0",
+          "NewProcessName": "C:\\Windows\\System32\\cmd.exe",
+          "ParentProcessName": "C:\\Windows\\explorer.exe",
+          "CommandLine": "cmd.exe /k bitsadmin /transfer /Download https://intranet.contoso.local/software/Install-Agent.ps1",
+          "TimeCreated": "2020-10-23T02:36:40.000Z",
+          "@timestamp": "2020-10-23T02:36:40.000Z"
+        }
+      },
+      {
+        "op": "set_user",
+        "record_ids": [
+          39
+        ],
+        "user": "wardog"
+      }
+    ]
+  },
+  "set_r": {
+    "field": "approval_script",
+    "positive": "grant",
+    "negative": "deny"
+  },
+  "author": "agent-A",
+  "notes": ""
+}
