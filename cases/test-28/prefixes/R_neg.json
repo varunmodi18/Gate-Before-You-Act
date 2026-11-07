@@ -1,0 +1,56 @@
+{
+  "case_id": "test-28:R_neg",
+  "profile": "Profile of window SDWIN-201022002145: 1221 events. Request: A help file downloaded by PowerShell on WORKSTATION5 was opened with hh.exe and started a shell. Contain host WORKSTATION5. Target: {\"host\": \"WORKSTATION5\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (108, 110, 301, 303, 309) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 108, \"ts\": \"2020-10-22T12:21:38.065000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\hh.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\hh.exe\\\" C:\\\\ProgramData\\\\T1218.001.chm\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 9144, \"ppid\": 2428, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 110, \"ts\": \"2020-10-22T12:21:38.066000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\hh.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\hh.exe\\\" C:\\\\ProgramData\\\\T1218.001.chm\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 9144, \"ppid\": 2428, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=F1452CCF7368531B7ABAC984582E9607A311A9C6,MD5=DF73D52FDCE65F90A2E49EFB5248C77C,SHA256=85518D00317A597DC83EE3FB78743538B9444664273BD592DF16603D2C3E4C28,IMPHASH=D3D9C3E81A404E7F5C5302429636F04C\"}\n{\"record_id\": 301, \"ts\": \"2020-10-22T12:21:38.973000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\cmd.exe\\\" /c calc.exe\", \"parent_image\": \"C:\\\\Windows\\\\hh.exe\", \"parent_command_line\": null, \"pid\": 10948, \"ppid\": 9144, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 303, \"ts\": \"2020-10-22T12:21:38.980000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\cmd.exe\\\" /c calc.exe\", \"parent_image\": \"C:\\\\Windows\\\\hh.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\hh.exe\\\" C:\\\\ProgramData\\\\T1218.001.chm\", \"pid\": 10948, \"ppid\": 9144, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=8DCA9749CD48D286950E7A9FA1088C937CBCCAD4,MD5=D7AB69FAD18D4A643D84A271DFC0DBDF,SHA256=FF79D3C4A0B7EB191783C323AB8363EBD1FD10BE58D8BCC96B07067743CA81D5,IMPHASH=272245E2988E1E430500B852C4FB5E18\"}\n{\"record_id\": 309, \"ts\": \"2020-10-22T12:21:38.984000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 5928, \"ppid\": 10948, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        108,
+        110,
+        301,
+        303,
+        309
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (76, 98, 100, 107) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 76, \"ts\": \"2020-10-22T12:21:36.854000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\windowspowershell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51524, \"dst_ip\": \"140.82.112.4\", \"dst_port\": 443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 98, \"ts\": \"2020-10-22T12:21:36.994000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1928, \"src_ip\": \"192.168.2.5\", \"src_port\": 62686, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 100, \"ts\": \"2020-10-22T12:21:36.999000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\windowspowershell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51525, \"dst_ip\": \"151.101.248.133\", \"dst_port\": 443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 107, \"ts\": \"2020-10-22T12:21:37.974000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51524, \"dst_ip\": \"140.82.112.4\", \"dst_port\": 443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"wardog\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        76,
+        98,
+        100,
+        107
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (104, 168, 169, 945) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 104, \"ts\": \"2020-10-22T12:21:37.248000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"target_filename\": \"C:\\\\ProgramData\\\\T1218.001.chm\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 168, \"ts\": \"2020-10-22T12:21:38.322000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\hh.exe\", \"pid\": 9144, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\~DF4FF36B6ACBF71B51.TMP\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 169, \"ts\": \"2020-10-22T12:21:38.349000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\hh.exe\", \"pid\": 9144, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Temp\\\\~DFF6C107A25537817C.TMP\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 945, \"ts\": \"2020-10-22T12:21:40.081000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\CALC.EXE-77FDF17F.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        104,
+        168,
+        169,
+        945
+      ]
+    }
+  ],
+  "findings": "Records 104, 107, 108, 301 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    76,
+    98,
+    100,
+    104,
+    107,
+    108,
+    110,
+    168,
+    169,
+    301,
+    303,
+    309,
+    945
+  ]
+}

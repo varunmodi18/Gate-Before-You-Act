@@ -1,0 +1,30 @@
+{
+  "case_id": "test-28:E4",
+  "profile": "Profile of window SDWIN-201022002145: 618 events. Request: A help file downloaded by PowerShell on WORKSTATION5 was opened with hh.exe and started a shell. Contain host WORKSTATION5. Target: {\"host\": \"WORKSTATION5\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (72, 98, 107, 1196) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 72, \"ts\": \"2020-10-22T12:21:36.846000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1928, \"src_ip\": \"192.168.2.5\", \"src_port\": 62354, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 98, \"ts\": \"2020-10-22T12:21:36.994000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1928, \"src_ip\": \"192.168.2.5\", \"src_port\": 62686, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 107, \"ts\": \"2020-10-22T12:21:37.974000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51524, \"dst_ip\": \"140.82.112.4\", \"dst_port\": 443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"wardog\"}\n{\"record_id\": 1196, \"ts\": \"2020-10-22T12:21:42.613000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-10-08_063613\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51526, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        72,
+        98,
+        107,
+        1196
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION5\", \"events\": 6}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 107 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    72,
+    98,
+    107,
+    1196
+  ]
+}

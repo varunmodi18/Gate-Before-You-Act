@@ -1,0 +1,50 @@
+{
+  "case_id": "test-28:E2",
+  "profile": "Profile of window SDWIN-201022002145: 1221 events. Request: A help file downloaded by PowerShell on WORKSTATION5 was opened with hh.exe and started a shell. Contain host WORKSTATION5. Target: {\"host\": \"WORKSTATION5\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (100, 107, 262, 1196) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 100, \"ts\": \"2020-10-22T12:21:36.999000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\windowspowershell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51525, \"dst_ip\": \"151.101.248.133\", \"dst_port\": 443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 107, \"ts\": \"2020-10-22T12:21:37.974000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51524, \"dst_ip\": \"140.82.112.4\", \"dst_port\": 443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"wardog\"}\n{\"record_id\": 262, \"ts\": \"2020-10-22T12:21:38.573000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 2428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51525, \"dst_ip\": \"151.101.248.133\", \"dst_port\": 443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"wardog\"}\n{\"record_id\": 1196, \"ts\": \"2020-10-22T12:21:42.613000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-10-08_063613\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3428, \"src_ip\": \"192.168.2.5\", \"src_port\": 51526, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        100,
+        107,
+        262,
+        1196
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (1010, 1011, 1012, 1013) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1010, \"ts\": \"2020-10-22T12:21:40.228000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CapabilityAccessManager\\\\Capabilities\", \"details\": null, \"user\": null}\n{\"record_id\": 1011, \"ts\": \"2020-10-22T12:21:40.228000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CapabilityAccessManager\\\\Capabilities\", \"details\": null, \"user\": null}\n{\"record_id\": 1012, \"ts\": \"2020-10-22T12:21:40.228000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CapabilityAccessManager\\\\Capabilities\", \"details\": null, \"user\": null}\n{\"record_id\": 1013, \"ts\": \"2020-10-22T12:21:40.229000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\Explorer.EXE\", \"pid\": 1072, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\CapabilityAccessManager\\\\Capabilities\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1010,
+        1011,
+        1012,
+        1013
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (778, 1129) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 778, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-22T12:21:39.490Z\\\",\\\"TimeCreated\\\":\\\"2020-10-22T12:21:39.490Z\\\",\\\"Hashes\\\":\\\"SHA1=5C986A06C21B5CDCFD799E3B5CA475CE2AFF6058,MD5=435009D1DDC0365BFA34B8C8D3F85286,SHA256=2F94628F056FE65EA8…[cut: 1916 chars]\"}\n{\"record_id\": 1129, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-22T12:21:40.452Z\\\",\\\"TimeCreated\\\":\\\"2020-10-22T12:21:40.452Z\\\",\\\"Hashes\\\":\\\"SHA1=9E91D74D5B9BF64A3D4BE8C5EA3594F5DA2BC299,MD5=2839609118F48DEA292084E43FAA72D8,SHA256=4FC9460147D5A3AA1F…[cut: 1744 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        778,
+        1129
+      ]
+    }
+  ],
+  "findings": "Records 778, 1012, 1129, 1196 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    100,
+    107,
+    262,
+    778,
+    1010,
+    1011,
+    1012,
+    1013,
+    1129,
+    1196
+  ]
+}
