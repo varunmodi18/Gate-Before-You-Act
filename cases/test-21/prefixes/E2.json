@@ -1,0 +1,37 @@
+{
+  "case_id": "test-21:E2",
+  "profile": "Profile of window SDWIN-201023031210: 692 events. Request: A tool on WORKSTATION5 wrote into a notepad process it had just started, and that notepad then launched its own commands. Contain host WORKSTATION5. Target: {\"host\": \"WORKSTATION5\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (644, 666, 667, 668, 690) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 644, \"ts\": \"2020-10-23T03:12:11.008000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1556, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 2584, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 666, \"ts\": \"2020-10-23T03:12:11.012000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1556, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 3144, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 667, \"ts\": \"2020-10-23T03:12:11.012000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1556, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 2996, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 668, \"ts\": \"2020-10-23T03:12:11.012000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1556, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 2948, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n{\"record_id\": 690, \"ts\": \"2020-10-23T03:12:11.017000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1556, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 992, \"granted_access\": \"0x3000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+44b1f|c:\\\\windows\\\\system32\\\\sysmain.dll+1e899|c:\\\\windows\\\\system32\\\\sysmain.dll+1e7be|c:\\\\window…[cut: 605 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        644,
+        666,
+        667,
+        668,
+        690
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (521, 525) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 521, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-23T03:12:05.499Z\\\",\\\"TimeCreated\\\":\\\"2020-10-23T03:12:05.499Z\\\",\\\"Hashes\\\":\\\"SHA1=F9E2F12438029B6CC54E25DC77E0CDAF4E2F60E6,MD5=EF7E6E4AA8B9EB0B9C2915F6C8F0C71A,SHA256=0428CCE46E90E78151…[cut: 1770 chars]\"}\n{\"record_id\": 525, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-23T03:12:05.501Z\\\",\\\"TimeCreated\\\":\\\"2020-10-23T03:12:05.501Z\\\",\\\"Hashes\\\":\\\"SHA1=BE97D68743A482E079B2444C526B2807A1A4944B,MD5=D688CD24DFA347ED9C3EFD8F7756D404,SHA256=F4BA3B1A3CFE6C6756…[cut: 1792 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        521,
+        525
+      ]
+    }
+  ],
+  "findings": "Records 521, 525, 644, 690 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    521,
+    525,
+    644,
+    666,
+    667,
+    668,
+    690
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "test-21:E4",
+  "profile": "Profile of window SDWIN-201023031210: 259 events. Request: A tool on WORKSTATION5 wrote into a notepad process it had just started, and that notepad then launched its own commands. Contain host WORKSTATION5. Target: {\"host\": \"WORKSTATION5\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (254, 260, 350, 444) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 254, \"ts\": \"2020-10-23T03:12:04.689000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n{\"record_id\": 260, \"ts\": \"2020-10-23T03:12:04.704000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 7652, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n{\"record_id\": 350, \"ts\": \"2020-10-23T03:12:04.930000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\notepad.exe\", \"source_pid\": 9908, \"target_image\": \"C:\\\\Windows\\\\System32\\\\ping.exe\", \"target_pid\": 5232, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\System32\\\\windows.storage.dll+136…[cut: 1447 chars]\", \"user\": null}\n{\"record_id\": 444, \"ts\": \"2020-10-23T03:12:05.028000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        254,
+        260,
+        350,
+        444
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION5\", \"events\": 4}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 350 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    254,
+    260,
+    350,
+    444
+  ]
+}

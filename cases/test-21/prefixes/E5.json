@@ -1,0 +1,54 @@
+{
+  "case_id": "test-21:E5",
+  "profile": "Profile of window SDWIN-201023031210: 693 events. Request: A tool on WORKSTATION5 wrote into a notepad process it had just started, and that notepad then launched its own commands. Contain host WORKSTATION5. Target: {\"host\": \"WORKSTATION5\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (44, 45, 137, 140) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 44, \"ts\": \"2020-10-23T03:12:04.346000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"command_line\": \"PurpleSharp.exe  /t T1055.002\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 8972, \"ppid\": 4840, \"user\": \"it.redteam\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 45, \"ts\": \"2020-10-23T03:12:04.351000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"command_line\": \"PurpleSharp.exe  /t T1055.002\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 8972, \"ppid\": 4840, \"user\": \"it.redteam\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=38733789E468C23C5172D18BD24EE0A84176CF9D,MD5=1DDCFC208163EDFA63347D54B67AC30C,SHA256=A58C5A337E855070A95AE012A2FE14ECC724C239F54AE597D822F373C57E5228,IMPHASH=F34D5F2D4577ED6D9CEEC516C1F5A744\"}\n{\"record_id\": 137, \"ts\": \"2020-10-23T03:12:04.441000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\notepad.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\notepad.exe\\\"\", \"parent_image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"parent_command_line\": null, \"pid\": 9908, \"ppid\": 8972, \"user\": \"it.redteam\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 140, \"ts\": \"2020-10-23T03:12:04.445000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\notepad.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\system32\\\\notepad.exe\\\"\", \"parent_image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"parent_command_line\": \"PurpleSharp.exe  /t T1055.002\", \"pid\": 9908, \"ppid\": 8972, \"user\": \"it.redteam\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=C401CD335BA6A3BDAF8799FDC09CDC0721F06015,MD5=06E6C0482562459ADB462CA9008262F8,SHA256=E5D90BEEB6F13F4613C3153DABBD1466F4A062B7252D931F37210907A7F914F7,IMPHASH=E2D17AC7541817AA681AE8FF7734AD89\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        44,
+        45,
+        137,
+        140
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (149, 248, 249, 250, 350) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 149, \"ts\": \"2020-10-23T03:12:04.461000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"source_pid\": 8972, \"target_image\": \"C:\\\\Windows\\\\system32\\\\notepad.exe\", \"target_pid\": 9908, \"granted_access\": \"0x143a\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|UNKNOWN(00007FFB225F5678)\", \"user\": \"it.redteam\"}\n{\"record_id\": 248, \"ts\": \"2020-10-23T03:12:04.676000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\system32\\\\notepad.exe\", \"target_pid\": 9908, \"granted_access\": \"0x1410\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+21ee8|C:\\\\Windows\\\\System32\\\\appresolver.dll+1ef46|C:\\\\Windows\\\\System32\\\\appresolver.dll+1ec…[cut: 647 chars]\", \"user\": null}\n{\"record_id\": 249, \"ts\": \"2020-10-23T03:12:04.689000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\system32\\\\notepad.exe\", \"target_pid\": 9908, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\SYSTEM32\\\\TWINAPI.dll+6d4c|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20880|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20…[cut: 778 chars]\", \"user\": null}\n{\"record_id\": 250, \"ts\": \"2020-10-23T03:12:04.689000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\Windows\\\\system32\\\\notepad.exe\", \"target_pid\": 9908, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+783a3|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\system32\\\\twinui.dll+1734c|C:\\\\windows\\\\s…[cut: 688 chars]\", \"user\": null}\n{\"record_id\": 350, \"ts\": \"2020-10-23T03:12:04.930000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\notepad.exe\", \"source_pid\": 9908, \"target_image\": \"C:\\\\Windows\\\\System32\\\\ping.exe\", \"target_pid\": 5232, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\System32\\\\windows.storage.dll+136…[cut: 1447 chars]\", \"user\": \"it.redteam\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        149,
+        248,
+        249,
+        250,
+        350
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (136, 197, 271) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 136, \"ts\": \"2020-10-23T03:12:04.438000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"pid\": 8972, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\0001.dat\", \"event_type\": \"FileCreate\", \"user\": \"it.redteam\"}\n{\"record_id\": 197, \"ts\": \"2020-10-23T03:12:04.527000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Users\\\\wardog\\\\Desktop\\\\PurpleSharp.exe\", \"pid\": 8972, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Microsoft\\\\CLR_v4.0\\\\UsageLogs\\\\PurpleSharp.exe.log\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 271, \"ts\": \"2020-10-23T03:12:04.746000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\PURPLESHARP.EXE-DD40A371.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 3,
+      "registered": [
+        136,
+        197,
+        271
+      ]
+    }
+  ],
+  "findings": "Records 136, 140, 149, 350 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    44,
+    45,
+    136,
+    137,
+    140,
+    149,
+    197,
+    248,
+    249,
+    250,
+    271,
+    350
+  ]
+}
