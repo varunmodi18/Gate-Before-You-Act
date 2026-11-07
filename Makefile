@@ -9,7 +9,7 @@ API_HOST ?= 127.0.0.1
 API_PORT ?= 8000
 PROFILE  ?= vllm-awq
 
-.PHONY: index freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up fixture-up budget docs diag demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
+.PHONY: index reopen-annotation freeze-cases generate-variants import-cases retrieval-cache help setup db data data-fetch catalogue normalise dedup splits splits-doc policy-table lint e2e format test up api worker web build-web model-up model-cmd pilot gpu-test demo-setup demo-up fixture-up budget docs diag demo-record demo-replay regenerate-e2 prepare-e2e new-e2e
 
 help:  ## List targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -59,6 +59,9 @@ new-e2e:  ## Scaffold cases/<id>/e2e.json for an end-to-end window (TODO placeho
 
 prepare-e2e:  ## Before annotating an end-to-end window: decide and plant its injection marker: SID=...
 	$(UV) run python -m gbya.cases.cli prepare-e2e $(SID)
+
+reopen-annotation:  ## TEAM LEAD ONLY: set one submitted annotation back to draft, logged in cases/ANNOTATION_REOPENS.json: SID=… ROLE=A BY="…" REASON="…"
+	$(UV) run python -m gbya.cases.reopen --sid "$(SID)" --role "$(ROLE)" --by "$(BY)" --reason "$(REASON)"
 
 freeze-cases:  ## TEAM ONLY (T4.10): freeze the adjudicated case set -> cases/FROZEN.json (VERSION=cases-v1)
 	$(UV) run python -m gbya.cases.freeze --version $(VERSION)
