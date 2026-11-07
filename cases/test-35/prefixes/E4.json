@@ -1,0 +1,43 @@
+{
+  "case_id": "test-35:E4",
+  "profile": "Profile of window SDWIN-220630130349: 13646 events. Request: A program run from the Downloads folder on pedro-computer is calling out and has been switching off Windows audit logging. Stop process 3432 (payload.exe) on pedro-computer. Target: {\"host\": \"pedro-computer\", \"pid\": 3432}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (6875, 10911, 10912, 10920, 12699, 13646) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 6875, \"ts\": \"2022-08-18T06:57:16.613000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\auditpol.exe\", \"command_line\": \"auditpol.exe /set /user:pedro /category:\\\"DS Access\\\" /success:disable\", \"parent_image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"parent_command_line\": null, \"pid\": 4392, \"ppid\": 3432, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 10911, \"ts\": \"2022-08-18T06:58:14.334000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\auditpol.exe\", \"command_line\": \"auditpol.exe /set /category:\\\"Account Logon\\\" /success:disable\", \"parent_image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"parent_command_line\": null, \"pid\": 472, \"ppid\": 3432, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 10912, \"ts\": \"2022-08-18T06:58:14.340000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\auditpol.exe\", \"command_line\": \"auditpol.exe /set /category:\\\"Account Logon\\\" /success:disable\", \"parent_image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"parent_command_line\": \"\\\"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\\\" \", \"pid\": 472, \"ppid\": 3432, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=E8DE077E9FB7AA7220A8F1343051CF2C9A7E12AE,MD5=538128A46A0D751E789A984A9E6E8BF8,SHA256=643278719C680385D173588FDF2ACD752A65E12180D416D07C1BE79B49231D73,IMPHASH=E7FA00A5B8F1ED1EE6046B12D7B402ED\"}\n{\"record_id\": 10920, \"ts\": \"2022-08-18T06:58:14.351000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\Windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\auditpol.exe\", \"parent_command_line\": null, \"pid\": 5056, \"ppid\": 472, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 12699, \"ts\": \"2022-08-18T06:58:41.957000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\auditpol.exe\", \"command_line\": \"auditpol.exe /clear /y\", \"parent_image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"parent_command_line\": null, \"pid\": 7016, \"ppid\": 3432, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 13646, \"ts\": \"2022-08-18T06:58:41.957000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\auditpol.exe\", \"command_line\": \"auditpol.exe /clear /y\", \"parent_image\": \"C:\\\\Program Files\\\\Contoso\\\\Compliance\\\\AuditBaseline.exe\", \"parent_command_line\": null, \"pid\": 7016, \"ppid\": 3432, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 6,
+      "registered": [
+        6875,
+        10911,
+        10912,
+        10920,
+        12699,
+        13646
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (3381, 3556, 3571, 3573) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 3381, \"ts\": \"2022-08-18T06:56:26.835000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\pedro\\\\downloads\\\\payload.exe\", \"pid\": 3432, \"src_ip\": \"192.168.56.44\", \"src_port\": 49678, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 3556, \"ts\": \"2022-08-18T06:56:27.166000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\pedro\\\\downloads\\\\payload.exe\", \"pid\": 3432, \"src_ip\": \"192.168.56.44\", \"src_port\": 49679, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 3571, \"ts\": \"2022-08-18T06:56:27.862000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"pid\": 3432, \"src_ip\": \"192.168.56.44\", \"src_port\": 49678, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pedro-admin\"}\n{\"record_id\": 3573, \"ts\": \"2022-08-18T06:56:28.378000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"pid\": 3432, \"src_ip\": \"192.168.56.44\", \"src_port\": 49679, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pedro-admin\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        3381,
+        3556,
+        3571,
+        3573
+      ]
+    }
+  ],
+  "findings": "Records 3571, 6875, 12699, 13646 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    3381,
+    3556,
+    3571,
+    3573,
+    6875,
+    10911,
+    10912,
+    10920,
+    12699,
+    13646
+  ]
+}

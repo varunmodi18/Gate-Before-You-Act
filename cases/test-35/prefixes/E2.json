@@ -1,0 +1,41 @@
+{
+  "case_id": "test-35:E2",
+  "profile": "Profile of window SDWIN-220630130349: 13645 events. Request: A program run from the Downloads folder on pedro-computer is calling out and has been switching off Windows audit logging. Stop process 3432 (payload.exe) on pedro-computer. Target: {\"host\": \"pedro-computer\", \"pid\": 3432}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (11617, 12104, 12105, 12106, 12594) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 11617, \"ts\": \"2022-08-18T06:58:23.838000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1136, \"target_image\": \"C:\\\\Windows\\\\system32\\\\AUDIODG.EXE\", \"target_pid\": 6124, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14569|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 12104, \"ts\": \"2022-08-18T06:58:34.103000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1136, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1352, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14594|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 12105, \"ts\": \"2022-08-18T06:58:34.104000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1136, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1352, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+145bf|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 12106, \"ts\": \"2022-08-18T06:58:34.105000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1136, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1392, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14569|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 12594, \"ts\": \"2022-08-18T06:58:39.419000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1136, \"target_image\": \"C:\\\\Users\\\\pedro\\\\AppData\\\\Local\\\\Microsoft\\\\OneDrive\\\\OneDrive.exe\", \"target_pid\": 6140, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14594|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        11617,
+        12104,
+        12105,
+        12106,
+        12594
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (1679, 1688, 1689, 1690) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1679, \"ts\": \"2022-08-18T06:56:14.580000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\System32\\\\smartscreen.exe\", \"pid\": 5624, \"target_object\": \"HKU\\\\S-1-5-21-3768430097-3400800235-1714852860-1002_Classes\\\\Local Settings\\\\MrtCache\\\\C:%5CWindows%5CSystemApps%5CMicrosoft.Windows.AppRep.ChxApp_cw5n1h2txyewy%5Cresources.pri\", \"details\": null, \"user\": null}\n{\"record_id\": 1688, \"ts\": \"2022-08-18T06:56:14.738000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 768, \"target_object\": \"HKU\\\\S-1-5-21-3768430097-3400800235-1714852860-1002\\\\Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\HostActivityManager\", \"details\": null, \"user\": null}\n{\"record_id\": 1689, \"ts\": \"2022-08-18T06:56:14.738000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 768, \"target_object\": \"HKU\\\\S-1-5-21-3768430097-3400800235-1714852860-1002\\\\Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\HostActivityManager\\\\Volatile\", \"details\": null, \"user\": null}\n{\"record_id\": 1690, \"ts\": \"2022-08-18T06:56:14.739000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 768, \"target_object\": \"HKU\\\\S-1-5-21-3768430097-3400800235-1714852860-1002\\\\Software\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\HostActivityManager\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1679,
+        1688,
+        1689,
+        1690
+      ]
+    }
+  ],
+  "findings": "Records 1679, 11617, 12594 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1679,
+    1688,
+    1689,
+    1690,
+    11617,
+    12104,
+    12105,
+    12106,
+    12594
+  ]
+}
