@@ -1,0 +1,30 @@
+{
+  "case_id": "test-17:E4",
+  "profile": "Profile of window SDWIN-200806115603: 2312 events. Request: A remote PowerShell session from WORKSTATION5 is running commands on WORKSTATION6 as pgustavo. Stop process 1280 (wsmprovhost.exe) on WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\", \"pid\": 1280}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1127, 1188, 1256, 1267) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1127, \"ts\": \"2020-08-06T15:56:26.558000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3280, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 1188, \"ts\": \"2020-08-06T15:56:26.579000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"source_pid\": 768, \"target_image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"target_pid\": 7240, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\lsasrv.dll+31ff3|C:\\\\windows\\\\system32\\\\lsasrv.dll+2b2bb|C:\\\\windows\\\\system32\\\\kerberos.DLL+95f90|C:\\\\windows\\\\system32\\\\kerberos.DLL+44c1e|C:\\\\windows\\\\s…[cut: 894 chars]\", \"user\": null}\n{\"record_id\": 1256, \"ts\": \"2020-08-06T15:56:26.606000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 452, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3132, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6a7f5|c:\\\\windows\\\\system32\\\\lsm.dll+1184f|c:\\\\windows\\\\system32\\\\lsm.dll+1172e|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76953|C:\\\\windows\\\\System3…[cut: 698 chars]\", \"user\": null}\n{\"record_id\": 1267, \"ts\": \"2020-08-06T15:56:26.616000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\windows\\\\system32\\\\ApplicationFrameHost.exe\", \"target_pid\": 7996, \"granted_access\": \"0x1f3fff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\36b90e5ba6d9ea1017ac036f93fce3e0\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 642 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1127,
+        1188,
+        1256,
+        1267
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION6.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION6.theshire.local\", \"events\": 14}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 1267 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1127,
+    1188,
+    1256,
+    1267
+  ]
+}

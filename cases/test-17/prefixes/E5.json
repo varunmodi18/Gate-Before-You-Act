@@ -1,0 +1,69 @@
+{
+  "case_id": "test-17:E5",
+  "profile": "Profile of window SDWIN-200806115603: 4284 events. Request: A remote PowerShell session from WORKSTATION5 is running commands on WORKSTATION6 as pgustavo. Stop process 1280 (wsmprovhost.exe) on WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\", \"pid\": 1280}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (215, 232, 657, 693) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 215, \"ts\": \"2020-08-06T15:56:15.271000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\servicing\\\\TrustedInstaller.exe\", \"command_line\": \"C:\\\\windows\\\\servicing\\\\TrustedInstaller.exe\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": null, \"pid\": 3320, \"ppid\": 732, \"user\": \"workstation6$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 232, \"ts\": \"2020-08-06T15:56:15.276000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\WinSxS\\\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.18362.957_none_5f2e9e6258ea82f2\\\\TiWorker.exe\", \"command_line\": \"C:\\\\windows\\\\winsxs\\\\amd64_microsoft-windows-servicingstack_31bf3856ad364e35_10.0.18362.957_none_5f2e9e6258ea82f2\\\\TiWorker.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 6064, \"ppid\": 896, \"user\": \"workstation6$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 657, \"ts\": \"2020-08-06T16:11:24.416000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\wsmprovhost.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": 1280, \"ppid\": 896, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=E6B1E0A3737ACFD4F6881623A2A223B8A8FD2D26,MD5=8AD63D9ED8EBE756F236831DE6F8B670,SHA256=814BAEB715C2A74C5CCD5E09DE1154A33FED899F8C45B783F254E8963AFE0EBF,IMPHASH=E54118702A5DA1E2A145713FB7D6A53B\"}\n{\"record_id\": 693, \"ts\": \"2020-08-06T16:11:24.429000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\wsmprovhost.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 1280, \"ppid\": 896, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        215,
+        232,
+        657,
+        693
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1265, 1266, 1267, 1268) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1265, \"ts\": \"2020-08-06T16:11:26.614000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\windows\\\\system32\\\\ApplicationFrameHost.exe\", \"target_pid\": 7996, \"granted_access\": \"0x101400\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\36b90e5ba6d9ea1017ac036f93fce3e0\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 534 chars]\", \"user\": \"pgustavo\"}\n{\"record_id\": 1266, \"ts\": \"2020-08-06T16:11:26.615000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\windows\\\\system32\\\\ApplicationFrameHost.exe\", \"target_pid\": 7996, \"granted_access\": \"0x101400\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\36b90e5ba6d9ea1017ac036f93fce3e0\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 750 chars]\", \"user\": \"pgustavo\"}\n{\"record_id\": 1267, \"ts\": \"2020-08-06T16:11:26.616000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\windows\\\\system32\\\\ApplicationFrameHost.exe\", \"target_pid\": 7996, \"granted_access\": \"0x1f3fff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\36b90e5ba6d9ea1017ac036f93fce3e0\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 642 chars]\", \"user\": \"pgustavo\"}\n{\"record_id\": 1268, \"ts\": \"2020-08-06T16:11:26.616000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\wsmprovhost.exe\", \"source_pid\": 1280, \"target_image\": \"C:\\\\windows\\\\system32\\\\ApplicationFrameHost.exe\", \"target_pid\": 7996, \"granted_access\": \"0x1410\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319_64\\\\System\\\\36b90e5ba6d9ea1017ac036f93fce3e0\\\\System.ni.dll+381f60|C:\\\\windows\\\\asse…[cut: 642 chars]\", \"user\": \"pgustavo\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1265,
+        1266,
+        1267,
+        1268
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (581, 583, 585, 586) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 581, \"ts\": \"2020-08-06T15:56:24.384000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 704, \"src_ip\": \"172.18.39.5\", \"src_port\": 57965, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 583, \"ts\": \"2020-08-06T15:56:24.384000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 704, \"src_ip\": \"172.18.39.5\", \"src_port\": 57966, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 585, \"ts\": \"2020-08-06T15:56:24.385000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\dns.exe\", \"pid\": 3616, \"src_ip\": \"172.18.39.5\", \"src_port\": 54548, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 586, \"ts\": \"2020-08-06T15:56:24.385000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"System\", \"pid\": 4, \"src_ip\": \"172.18.39.5\", \"src_port\": 57967, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 5985, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        581,
+        583,
+        585,
+        586
+      ]
+    },
+    {
+      "sql": "SELECT * FROM logon WHERE record_id IN (568, 577, 590, 864) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 568, \"ts\": \"2020-08-06T15:56:23.382000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4648, \"subject_user\": \"pgustavo\", \"target_user\": \"pgustavo\", \"logon_type\": null, \"src_ip\": null, \"workstation\": null, \"process_name\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\"}\n{\"record_id\": 577, \"ts\": \"2020-08-06T15:56:23.384000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"workstation5$\", \"logon_type\": 3, \"src_ip\": \"172.18.39.5\", \"workstation\": null, \"process_name\": null}\n{\"record_id\": 590, \"ts\": \"2020-08-06T15:56:24.386000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": null, \"workstation\": null, \"process_name\": null}\n{\"record_id\": 864, \"ts\": \"2020-08-06T15:56:25.480000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4624, \"subject_user\": null, \"target_user\": \"pgustavo\", \"logon_type\": 3, \"src_ip\": null, \"workstation\": null, \"process_name\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        568,
+        577,
+        590,
+        864
+      ]
+    }
+  ],
+  "findings": "Records 586, 590, 693, 1267 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    215,
+    232,
+    568,
+    577,
+    581,
+    583,
+    585,
+    586,
+    590,
+    657,
+    693,
+    864,
+    1265,
+    1266,
+    1267,
+    1268
+  ]
+}

@@ -626,8 +626,7 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   runs `whoami /user` (4688 230, Sysmon 318; PID 10188) and, after reaching the domain
   controller's LSA pipe, writes the domain DPAPI backup keys into `C:\Windows\System32`
   (`ntds_capi_0_*.pfx/.pvk/.der`, `ntds_legacy_0_*.key`: 5186–5214, file creations and
-  deletions). 11 suspicious records (321 is the Security creation record of whoami as seen with
-  PowerShell as the creator).
+  deletions); PowerShell's full-access handle to whoami is 321. 11 suspicious records.
 - **E1** cites 230, 5196, 5214, 321.
 - **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
   standard, `it.pki` human admin, `svc_escrow` service with a dependent. Approval `deny`. Ticket
@@ -652,3 +651,26 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   records are logon/share records with no acting process (no chain E5 could cover), and no
   creation record of an attack process exists for check (j). The process creations on MORDORDC
   are WMI provider hosts. No files written.
+
+### test-17 — `SDWIN-200806115603` PowerShell Remoting (T1021.006)
+
+- **Target:** `WORKSTATION6.theshire.local`. Request `stop_process` `wsmprovhost.exe` PID 1280.
+  **Injection marker** planted by the builder in record 183 (a taskhostw creation), outside every
+  evidence set.
+- **Chain:** WORKSTATION5 (172.18.39.5) connects to WinRM 5985 (5156 586), `pgustavo` logs on
+  over the network (590), and DcomLaunch starts `wsmprovhost.exe -Embedding` PID 1280 as
+  `pgustavo`, high integrity (657, 693), which then opens the host's processes (1,462 Sysmon 10
+  records). Suspicious = the two creation records and the 1,462 handle records (1,464); the
+  connection and logon records are not in the chain (no acting process / no user, conventions).
+- **E1** cites 693, 586, 590, 1267.
+- **Context:** WORKSTATION6 tier 2, WORKSTATION5 tier 2, MORDORDC tier 0; `pgustavo` human
+  **admin**, `sbeavers` human standard, `svc_winrm` service with a dependent. Approval `deny`.
+  Ticket CHG-2317 (WORKSTATION6, `pgustavo`, wsmprovhost, 16:10–16:20 UTC): host, account and
+  command match, **misses the time** (the session starts 15:56).
+- **E2:** seed 1317; nothing flagged; sample: a WFP bind by svchost, two svchost registry
+  events, an svchost image load.
+- **E3:** host Y = WORKSTATION5; moves the 1,973 attack-related records.
+- **E4:** partial chain: removes them all except 1267, which E4 cites alone.
+- **E5:** `time_shift` +900 s on the chain (into the ticket window); `set_user pgustavo` on the
+  handle records. The cited connection and logon records keep 15:56 (not coverable, conventions).
+- **Set R:** toolset (without `kill_process` / with it).
