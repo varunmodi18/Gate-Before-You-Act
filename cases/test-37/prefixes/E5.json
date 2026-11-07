@@ -1,0 +1,69 @@
+{
+  "case_id": "test-37:E5",
+  "profile": "Profile of window SDWIN-220703123711: 21457 events. Request: A program from the Downloads folder on pedro-computer keeps calling out and has turned off command-line logging for new processes. Contain host pedro-computer. Target: {\"host\": \"pedro-computer\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (15375, 15377, 20278, 20280) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 15375, \"ts\": \"2022-08-18T05:34:40.378000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\Windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 4632, \"ppid\": 5028, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 15377, \"ts\": \"2022-08-18T05:34:40.379000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\Windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"pid\": 4632, \"ppid\": 5028, \"user\": \"pedro-admin\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=11996F32DD85863A8C3BFF6D520F788A9211C8F7,MD5=C5E9B1D1103EDCEA2E408E9497A5A88F,SHA256=BAF97B2A629723947539CFF84E896CD29565AB4BB68B0CEC515EB5C5D6637B69,IMPHASH=F8DD0EF565DE87D97ABF9C62EA63EC21\"}\n{\"record_id\": 20278, \"ts\": \"2022-08-18T05:35:58.802000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"reg  add HKEY_LOCAL_MACHINE\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System\\\\Audit /t REG_DWORD /v ProcessCreationIncludeCmdLine_Enabled /d 0 /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 4964, \"ppid\": 5028, \"user\": \"it.endpoint\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 20280, \"ts\": \"2022-08-18T05:35:58.805000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"reg  add HKEY_LOCAL_MACHINE\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System\\\\Audit /t REG_DWORD /v ProcessCreationIncludeCmdLine_Enabled /d 0 /f\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"pid\": 4964, \"ppid\": 5028, \"user\": \"it.endpoint\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=077A4479A2CF23D3709324F21F4D19DC0EF041C8,MD5=05CF3CE225B05B669E3118092F4C8EAB,SHA256=B211C25BF0B10A82B47E9D8DA12155AAD95CFF14CEBDA7C4ACB35A94B433DDFB,IMPHASH=BE482BE427FE212CFEF2CDA0E61F19AC\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        15375,
+        15377,
+        20278,
+        20280
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (15359, 15368, 15369, 15370) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 15359, \"ts\": \"2022-08-18T05:34:40.145000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 880, \"target_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"target_pid\": 1172, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+6a685|c:\\\\windows\\\\system32\\\\lsm.dll+111b6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+76963|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\Windows\\\\Syst…[cut: 664 chars]\", \"user\": null}\n{\"record_id\": 15368, \"ts\": \"2022-08-18T05:34:40.373000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"source_pid\": 3068, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 5028, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d8d4|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+5e4c0|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+5b593|C:\\\\Windows\\\\System32\\\\advapi32.dll+184df|UNKNOWN(00000000029AB2AE)\", \"user\": \"it.endpoint\"}\n{\"record_id\": 15369, \"ts\": \"2022-08-18T05:34:40.373000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\csrss.exe\", \"source_pid\": 496, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 5028, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\Windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+6ce7f\", \"user\": null}\n{\"record_id\": 15370, \"ts\": \"2022-08-18T05:34:40.373000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 4904, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 5028, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|c:\\\\windows\\\\system32\\\\pcasvc.dll+1452b|c:\\\\windows\\\\system32\\\\pcasvc.dll+fc06|c:\\\\windows\\\\system32\\\\pcasvc.dll+17544|C:\\\\Windows\\\\Sy…[cut: 261 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        15359,
+        15368,
+        15369,
+        15370
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (14537, 14712, 15041, 15042) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 14537, \"ts\": \"2022-08-18T05:34:34.660000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\pedro\\\\downloads\\\\payload.exe\", \"pid\": 3068, \"src_ip\": \"192.168.56.44\", \"src_port\": 49686, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 14712, \"ts\": \"2022-08-18T05:34:34.798000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\pedro\\\\downloads\\\\payload.exe\", \"pid\": 3068, \"src_ip\": \"192.168.56.44\", \"src_port\": 49687, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 15041, \"ts\": \"2022-08-18T05:34:35.938000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"pid\": 3068, \"src_ip\": \"192.168.56.44\", \"src_port\": 49687, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"it.endpoint\"}\n{\"record_id\": 15042, \"ts\": \"2022-08-18T05:34:36.704000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pedro\\\\Downloads\\\\payload.exe\", \"pid\": 3068, \"src_ip\": \"192.168.56.44\", \"src_port\": 49686, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"it.endpoint\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        14537,
+        14712,
+        15041,
+        15042
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (20298, 20307, 20308, 20309) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 20298, \"ts\": \"2022-08-18T05:35:58.816000\", \"host\": \"pedro-computer\", \"channel\": \"Security\", \"event_id\": 4657, \"event_type\": \"%%1905\", \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"pid\": 4964, \"target_object\": \"\\\\REGISTRY\\\\MACHINE\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System\\\\Audit\\\\ProcessCreationIncludeCmdLine_Enabled\", \"details\": \"0\", \"user\": \"it.endpoint\"}\n{\"record_id\": 20307, \"ts\": \"2022-08-18T05:35:58.817000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"pid\": 4964, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System\\\\Audit\", \"details\": null, \"user\": null}\n{\"record_id\": 20308, \"ts\": \"2022-08-18T05:35:58.817000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"pid\": 4964, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System\\\\Audit\\\\ProcessCreationIncludeCmdLine_Enabled\", \"details\": \"DWORD (0x00000000)\", \"user\": \"it.endpoint\"}\n{\"record_id\": 20309, \"ts\": \"2022-08-18T05:35:58.817000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\lsass.exe\", \"pid\": 620, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System\\\\Audit\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        20298,
+        20307,
+        20308,
+        20309
+      ]
+    }
+  ],
+  "findings": "Records 15042, 15368, 20278, 20308 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    14537,
+    14712,
+    15041,
+    15042,
+    15359,
+    15368,
+    15369,
+    15370,
+    15375,
+    15377,
+    20278,
+    20280,
+    20298,
+    20307,
+    20308,
+    20309
+  ]
+}

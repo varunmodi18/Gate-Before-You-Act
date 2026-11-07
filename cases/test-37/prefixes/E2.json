@@ -1,0 +1,37 @@
+{
+  "case_id": "test-37:E2",
+  "profile": "Profile of window SDWIN-220703123711: 21457 events. Request: A program from the Downloads folder on pedro-computer keeps calling out and has turned off command-line logging for new processes. Contain host pedro-computer. Target: {\"host\": \"pedro-computer\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (7461, 7803, 7804, 7805, 8147) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 7461, \"ts\": \"2022-08-18T03:47:53.313000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1172, \"target_image\": \"C:\\\\Windows\\\\System32\\\\SecurityHealthHost.exe\", \"target_pid\": 4972, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+145bf|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 7803, \"ts\": \"2022-08-18T03:47:58.343000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1172, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1220, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+145bf|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 7804, \"ts\": \"2022-08-18T03:47:58.343000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1172, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 4904, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14569|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 7805, \"ts\": \"2022-08-18T03:47:58.343000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1172, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 4904, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13317|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14594|C:\\\\Windows\\\\System32\\\\VBoxService.exe+148…[cut: 572 chars]\", \"user\": null}\n{\"record_id\": 8147, \"ts\": \"2022-08-18T03:48:03.387000\", \"host\": \"pedro-computer\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 880, \"target_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"target_pid\": 1172, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+6a685|c:\\\\windows\\\\system32\\\\lsm.dll+111b6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+76963|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\Windows\\\\Syst…[cut: 664 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        7461,
+        7803,
+        7804,
+        7805,
+        8147
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (13855, 20645) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 13855, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Level\\\":\\\"4\\\",\\\"Keywords\\\":\\\"0x8000000000000000\\\",\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"Hostname\\\"…[cut: 1790 chars]\"}\n{\"record_id\": 20645, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 18, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Level\\\":\\\"4\\\",\\\"Keywords\\\":\\\"0x8000000000000000\\\",\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"Hostname\\\"…[cut: 818 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        13855,
+        20645
+      ]
+    }
+  ],
+  "findings": "Records 7461, 8147, 13855, 20645 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    7461,
+    7803,
+    7804,
+    7805,
+    8147,
+    13855,
+    20645
+  ]
+}
