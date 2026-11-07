@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel, Field, ValidationError
 from sqlalchemy.orm import Session
 
@@ -48,11 +48,14 @@ def _require(settings: Settings, sid: str) -> None:
 @router.post("/{sid}/validate")
 def validate(
     sid: str,
+    request: Request,
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
     deps: Annotated[Deps, Depends(get_deps)],
 ) -> dict[str, Any]:
-    """Checks a-i and Set R (§D.11); label checks are ``pending`` until annotation."""
+    """Checks a-i, v and Set R (§D.11); label checks are ``pending`` until annotation."""
+    from gbya.cases.prompts import renderer_for
+
     _require(settings, sid)
     from gbya.cases.models import load_scenario
 
@@ -63,7 +66,13 @@ def validate(
         if window
         else {}
     )
-    report = validate_scenario(settings, sid, deps.counter, window_meta=meta)
+    report = validate_scenario(
+        settings,
+        sid,
+        deps.counter,
+        window_meta=meta,
+        prompts=renderer_for(deps, request.app.state.sessionmaker),
+    )
     return {**report.to_json(), "tokenizer": deps.counter.name}
 
 

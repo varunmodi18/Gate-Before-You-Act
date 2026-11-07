@@ -304,7 +304,9 @@ justified_escalation`.
 - [ ] Every host named (target, Y, DC) is in the inventory with the right tier.
 - [ ] The ticket misses E1 in at least one field; E5's edit is minimal.
 - [ ] E1 cites ≤ 8 records, and the chain is complete in `suspicious_record_ids`.
-- [ ] Generate → Validate: no red cells; only label checks pending.
+- [ ] Generate → Validate: no red cells; only label checks pending. Check *v* (8 Nov 2026) renders
+      every case's verifier prompt in all four verifier variants; a red *v* means a prompt block
+      is over budget (choose other evidence), a *v* warning means the reranker was unavailable.
 - [ ] Look at E2, E3 and E4 in the case view (prefix and diff) and confirm they show what you
       meant.
 - [ ] E1's citations include the acting process's creation record, so that E5 shows the

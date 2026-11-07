@@ -522,6 +522,7 @@ class AdjudicationBody(BaseModel):
 def adjudicate(
     sid: str,
     body: AdjudicationBody,
+    request: Request,
     session: Annotated[Session, Depends(get_session)],
     settings: Annotated[Settings, Depends(get_settings)],
     deps: Annotated[Deps, Depends(get_deps)],
@@ -586,7 +587,15 @@ def adjudicate(
     session.commit()
     sc_window = row.window_id
     meta = {"split": row.split, "window_id": sc_window}
-    report = validate_scenario(settings, sid, deps.counter, window_meta=meta)
+    from gbya.cases.prompts import renderer_for
+
+    report = validate_scenario(
+        settings,
+        sid,
+        deps.counter,
+        window_meta=meta,
+        prompts=renderer_for(deps, request.app.state.sessionmaker),
+    )
     return {"adjudicated": True, "validation": {**report.to_json(), "tokenizer": deps.counter.name}}
 
 

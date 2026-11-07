@@ -33,16 +33,20 @@ labelled). A scenario is valid when nothing fails; it is complete when nothing i
 * e2 — a warning when labelled evidence added after E2 was generated would now exclude a record
   E2 samples (or E2 has no stored basis); E2 only changes through ``make regenerate-e2``;
 * set_r — R_pos and R_neg differ in exactly one field (tier, approval script or toolset) and
-  otherwise equal E1.
+  otherwise equal E1;
+* (v) when a prompt renderer is given (API validation, freeze; ``gbya.cases.prompts``), the
+  verifier prompt of every case renders in every verifier variant (standard, rationale, none,
+  rerank) without ``PromptBudgetError`` (decision 2026-11-08); a variant whose retrieval is
+  unavailable (no reranker, nothing cached) is skipped with a warning, never replaced.
 """
 
 from __future__ import annotations
 
 import json
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 import duckdb
 
@@ -81,7 +85,12 @@ from gbya.gate.types import Claim
 from gbya.gate.verifier import build_prompt, target_tickets
 from gbya.llm.tokens import TokenCounter
 
+if TYPE_CHECKING:
+    from gbya.cases.prompts import PromptResult
+
 Status = Literal["pass", "fail", "pending", "warn"]
+# (case file, case database, effective trusted context, counter) -> one result per variant
+PromptsFn = Callable[[CaseFile, Path, TrustedContext, TokenCounter], Sequence["PromptResult"]]
 EXCLUSIONS = "EXCLUSIONS.json"
 
 
@@ -184,6 +193,7 @@ def validate_scenario(
     *,
     window_meta: dict[str, Any] | None = None,
     write_exclusions: bool = True,
+    prompts: PromptsFn | None = None,
 ) -> Report:
     root = settings.resolve(settings.cases_dir)
     sc = load_scenario(scenario_path(root, sid))
@@ -277,6 +287,8 @@ def validate_scenario(
             _check_k(rep, view, sc.scope, con)
         finally:
             con.close()
+        if prompts is not None:
+            _check_v(rep, view, prompts, counter)
     _check_set_r(rep, views)
     if sc.author:
         rep.add("author", None, True, f"authored by {sc.author} (annotator A)")
@@ -289,6 +301,21 @@ def validate_scenario(
     if "E2" in views and wdb.is_file():
         _check_e2_basis(rep, views["E2"], sc, {v: views[v].case.labels for v in views}, wdb)
     return rep
+
+
+def _check_v(rep: Report, view: CaseView, prompts: PromptsFn, counter: TokenCounter) -> None:
+    """(v) the verifier prompt renders in every variant (decision 2026-11-08)."""
+    cid = view.case.id
+    results = prompts(view.case, view.db, view.context, counter)
+    over = [f"{r.variant}: {r.message}" for r in results if r.status == "over_budget"]
+    skipped = [f"{r.variant} ({r.message})" for r in results if r.status == "skipped"]
+    ok = [r.variant for r in results if r.status == "ok"]
+    if over:
+        rep.add("v", cid, False, "verifier prompt over budget: " + "; ".join(over))
+    else:
+        rep.add("v", cid, True, f"verifier prompt renders in {', '.join(ok)}")
+    if skipped:
+        rep.warn("v", cid, "not rendered, retrieval unavailable: " + "; ".join(skipped))
 
 
 def _check_e2_basis(rep: Report, view: CaseView, sc: ScenarioFile, labels: dict[str, Labels],

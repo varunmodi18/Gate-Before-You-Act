@@ -103,7 +103,7 @@ Every path is under `/api/v1`. Errors use `{"error": {"code", "message", "hint",
 | GET | `/scenarios/{sid}/cases/{variant}` | The case file, its prefix and, for E3-E5, the database diff against the window. | `sid`, `variant` |  |
 | POST | `/scenarios/{sid}/generate` | Build the variants through the construction-path command line, as a short-lived subprocess (§D.1.1): the API never patches a database itself. | `sid` |  |
 | POST | `/scenarios/{sid}/scope` | The scope computed from the scenario window's records for the given hosts (decision A): the Studio's "Fill from the window" button; the author reviews it before saving. | `sid` | `ScopeRequest` |
-| POST | `/scenarios/{sid}/validate` | Checks a-i and Set R (§D.11); label checks are ``pending`` until annotation. | `sid` |  |
+| POST | `/scenarios/{sid}/validate` | Checks a-i, v and Set R (§D.11); label checks are ``pending`` until annotation. | `sid` |  |
 
 ## windows
 

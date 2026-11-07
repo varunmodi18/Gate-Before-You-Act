@@ -34,7 +34,7 @@ from sqlalchemy.orm import Session
 
 from gbya.cases.models import load_casefile
 from gbya.cases.store import cases_dir, e2e_ids, import_e2e, import_scenario, scenario_ids
-from gbya.cases.validator import EXCLUSIONS, validate_e2e, validate_scenario
+from gbya.cases.validator import EXCLUSIONS, PromptsFn, validate_e2e, validate_scenario
 from gbya.config import Settings
 from gbya.errors import Conflict, Unprocessable
 from gbya.llm.tokens import TokenCounter
@@ -86,6 +86,7 @@ def freeze(
     version: str,
     supersede: bool = False,
     git_sha: str | None = None,
+    prompts: PromptsFn | None = None,
 ) -> dict[str, Any]:
     root = cases_dir(settings)
     out = root / FROZEN_FILE
@@ -118,7 +119,12 @@ def freeze(
         if any(e.get("scenario_id") == sid for e in excluded):
             problems.append(f"{sid}: listed in {EXCLUSIONS}")
         report = validate_scenario(
-            settings, sid, counter, write_exclusions=False, window_meta={"split": row.split}
+            settings,
+            sid,
+            counter,
+            write_exclusions=False,
+            window_meta={"split": row.split},
+            prompts=prompts,
         )
         bad = [
             f"({c.check}) {c.case_id or sid}: {c.status}"
@@ -184,14 +190,21 @@ def main(argv: list[str] | None = None) -> None:
     args = ap.parse_args(argv)
     settings = get_settings()
     factory = make_sessionmaker(make_engine(settings.resolve(settings.app_db_path)))
+    from gbya.cases.prompts import renderer_for
+    from gbya.experiments.runner import Deps
+    from gbya.llm.factory import make_client
+
+    counter = default_counter()
+    deps = Deps(settings=settings, client=make_client(settings), counter=counter)
     with session_scope(factory) as s:
         m = freeze(
             s,
             settings,
-            default_counter(),
+            counter,
             version=args.version,
             supersede=args.supersede,
             git_sha=git_sha(),
+            prompts=renderer_for(deps, factory),  # check (v), decision 2026-11-08
         )
     path = Path(cases_dir(settings)) / FROZEN_FILE
     print(f"Frozen {len(m['cases'])} cases ({m['counts']}), case_set_hash {m['case_set_hash']}")

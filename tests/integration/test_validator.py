@@ -319,3 +319,36 @@ def test_j_failure_blocks_the_freeze(env: Settings) -> None:
     rep = run(env)
     assert not rep.valid  # freeze requires every check to pass (cases/freeze.py)
     assert any(c.check == "j" and c.status == "fail" for c in rep.checks)
+
+
+def _prompts(results: dict[str, str]) -> Any:
+    """A stand-in renderer (the real one needs the index and app.db): one status per variant."""
+    from gbya.cases.prompts import PromptResult
+
+    def render(case: CaseFile, db: Any, ctx: Any, counter: Any) -> list[PromptResult]:
+        return [PromptResult(v, s, f"{v} {s}") for v, s in results.items()]  # type: ignore[arg-type]
+
+    return render
+
+
+def _run_v(env: Settings, results: dict[str, str]) -> val.Report:
+    return val.validate_scenario(env, "mini", COUNTER, window_meta={"split": "dev"},
+                                 prompts=_prompts(results))  # fmt: skip
+
+
+def test_v_runs_only_with_a_renderer(env: Settings) -> None:
+    assert not status(run(env), "v")
+    ok = dict.fromkeys(("standard", "rationale", "none", "rerank"), "ok")
+    rep = _run_v(env, ok)
+    assert status(rep, "v") == {"pass"} and len([c for c in rep.checks if c.check == "v"]) == 7
+
+
+def test_v_fails_on_an_over_budget_variant(env: Settings) -> None:
+    rep = _run_v(env, {"standard": "ok", "rationale": "ok", "none": "ok", "rerank": "over_budget"})
+    assert status(rep, "v", "mini:E1") == {"fail"} and not rep.valid
+    assert "rerank" in next(c.message for c in rep.checks if c.check == "v" and c.status == "fail")
+
+
+def test_v_skipped_variant_is_a_warning_not_a_pass_of_it(env: Settings) -> None:
+    rep = _run_v(env, {"standard": "ok", "rationale": "ok", "none": "ok", "rerank": "skipped"})
+    assert status(rep, "v", "mini:E1") == {"pass", "warn"} and rep.valid
