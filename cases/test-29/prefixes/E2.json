@@ -1,0 +1,50 @@
+{
+  "case_id": "test-29:E2",
+  "profile": "Profile of window SDWIN-200807103913: 6982 events. Request: A PowerShell implant on WORKSTATION5 that beacons to 10.10.10.5 has opened lsass with write access. Stop process 1648 (powershell.exe) on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 1648}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (57, 2682, 3063, 3371, 6615) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 57, \"ts\": \"2020-08-07T14:39:18.260000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\packages\\\\plugins\\\\microsoft.azure.networkwatcher.networkwatcheragentwindows\\\\1.4.1587.1\\\\networkwatcheragent\\\\networkwatcheragent.exe\", \"pid\": 3472, \"src_ip\": \"172.18.39.5\", \"src_port\": 52810, \"dst_ip\": \"169.254.169.254\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 2682, \"ts\": \"2020-08-07T14:39:52.363000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\packages\\\\plugins\\\\microsoft.azure.networkwatcher.networkwatcheragentwindows\\\\1.4.1587.1\\\\networkwatcheragent\\\\networkwatcheragent.exe\", \"pid\": 3548, \"src_ip\": \"172.18.39.6\", \"src_port\": 50110, \"dst_ip\": \"169.254.169.254\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 3063, \"ts\": \"2020-08-07T14:39:54.048000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\windowspowershell\\\\v1.0\\\\powershell.exe\", \"pid\": 1648, \"src_ip\": \"172.18.39.5\", \"src_port\": 65497, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 3371, \"ts\": \"2020-08-07T14:39:54.081000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 1648, \"src_ip\": \"172.18.39.5\", \"src_port\": 65497, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 6615, \"ts\": \"2020-08-07T14:41:46.993000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1448, \"src_ip\": \"172.18.39.5\", \"src_port\": 52317, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        57,
+        2682,
+        3063,
+        3371,
+        6615
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (5997, 5998, 5999, 6000) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 5997, \"ts\": \"2020-08-07T14:41:27.740000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 768, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\SecureTimeLow\", \"details\": \"QWORD (0x01d66cc0-0x717838e1)\", \"user\": null}\n{\"record_id\": 5998, \"ts\": \"2020-08-07T14:41:27.741000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 768, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\RunTime\", \"details\": null, \"user\": null}\n{\"record_id\": 5999, \"ts\": \"2020-08-07T14:41:27.741000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 768, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\RunTime\\\\SecureTimeTickCount\", \"details\": \"QWORD (0x00000000-0x07fe9f3d)\", \"user\": null}\n{\"record_id\": 6000, \"ts\": \"2020-08-07T14:41:27.742000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 768, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\W32Time\\\\SecureTimeLimits\\\\RunTime\\\\SecureTimeConfidence\", \"details\": \"DWORD (0x00000006)\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        5997,
+        5998,
+        5999,
+        6000
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (6523) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 6523, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"@version\\\":\\\"1\\\",\\\"EventType\\\":\\\"INFO\\\",\\\"AccountType\\\":\\\"User\\\",\\\"ThreadID\\\":4364,\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"OpcodeValue\\\":0,\\\"OriginalFileName\\\":\\\"gdi32\\\",\\\"Hostname\\\":\\\"WORKSTATION5.theshire.lo…[cut: 2168 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        6523
+      ]
+    }
+  ],
+  "findings": "Records 57, 6000, 6523, 6615 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    57,
+    2682,
+    3063,
+    3371,
+    5997,
+    5998,
+    5999,
+    6000,
+    6523,
+    6615
+  ]
+}

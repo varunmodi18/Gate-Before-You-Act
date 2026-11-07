@@ -1,0 +1,359 @@
+[
+  {
+    "record_id": 1596,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:29:58.899140+00:00",
+    "replaced_by": [
+      3743
+    ],
+    "e2_before": [
+      1596,
+      3673,
+      4357,
+      5349
+    ],
+    "e2_after": [
+      3673,
+      3743,
+      4357,
+      5349
+    ]
+  },
+  {
+    "record_id": 3673,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:30:44.801957+00:00",
+    "replaced_by": [
+      4616
+    ],
+    "e2_before": [
+      3673,
+      3743,
+      4357,
+      5349
+    ],
+    "e2_after": [
+      3743,
+      4357,
+      4616,
+      5349
+    ]
+  },
+  {
+    "record_id": 3743,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:31:34.955883+00:00",
+    "replaced_by": [
+      6941
+    ],
+    "e2_before": [
+      3743,
+      4357,
+      4616,
+      5349
+    ],
+    "e2_after": [
+      4357,
+      4616,
+      5349,
+      6941
+    ]
+  },
+  {
+    "record_id": 4357,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:32:24.450044+00:00",
+    "replaced_by": [
+      997
+    ],
+    "e2_before": [
+      4357,
+      4616,
+      5349,
+      6941
+    ],
+    "e2_after": [
+      997,
+      4616,
+      5349,
+      6941
+    ]
+  },
+  {
+    "record_id": 997,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:33:11.759037+00:00",
+    "replaced_by": [
+      3786
+    ],
+    "e2_before": [
+      997,
+      4616,
+      5349,
+      6941
+    ],
+    "e2_after": [
+      3786,
+      4616,
+      5349,
+      6941
+    ]
+  },
+  {
+    "record_id": 3786,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:33:58.961320+00:00",
+    "replaced_by": [
+      2922
+    ],
+    "e2_before": [
+      3786,
+      4616,
+      5349,
+      6941
+    ],
+    "e2_after": [
+      2922,
+      4616,
+      5349,
+      6941
+    ]
+  },
+  {
+    "record_id": 2922,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:34:49.271684+00:00",
+    "replaced_by": [
+      57
+    ],
+    "e2_before": [
+      2922,
+      4616,
+      5349,
+      6941
+    ],
+    "e2_after": [
+      57,
+      4616,
+      5349,
+      6941
+    ]
+  },
+  {
+    "record_id": 4616,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:35:37.416812+00:00",
+    "replaced_by": [
+      3713
+    ],
+    "e2_before": [
+      57,
+      4616,
+      5349,
+      6941
+    ],
+    "e2_after": [
+      57,
+      3713,
+      5349,
+      6941
+    ]
+  },
+  {
+    "record_id": 3713,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:36:24.759831+00:00",
+    "replaced_by": [
+      6523
+    ],
+    "e2_before": [
+      57,
+      3713,
+      5349,
+      6941
+    ],
+    "e2_after": [
+      57,
+      5349,
+      6523,
+      6941
+    ]
+  },
+  {
+    "record_id": 5349,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:37:13.509836+00:00",
+    "replaced_by": [
+      297
+    ],
+    "e2_before": [
+      57,
+      5349,
+      6523,
+      6941
+    ],
+    "e2_after": [
+      57,
+      297,
+      6523,
+      6941
+    ]
+  },
+  {
+    "record_id": 297,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:37:59.355223+00:00",
+    "replaced_by": [
+      2762
+    ],
+    "e2_before": [
+      57,
+      297,
+      6523,
+      6941
+    ],
+    "e2_after": [
+      57,
+      2762,
+      6523,
+      6941
+    ]
+  },
+  {
+    "record_id": 2762,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:38:51.155890+00:00",
+    "replaced_by": [
+      6136
+    ],
+    "e2_before": [
+      57,
+      2762,
+      6523,
+      6941
+    ],
+    "e2_after": [
+      57,
+      6136,
+      6523,
+      6941
+    ]
+  },
+  {
+    "record_id": 6136,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:39:43.713433+00:00",
+    "replaced_by": [
+      6000
+    ],
+    "e2_before": [
+      57,
+      6136,
+      6523,
+      6941
+    ],
+    "e2_after": [
+      57,
+      6000,
+      6523,
+      6941
+    ]
+  },
+  {
+    "record_id": 6941,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:40:37.833527+00:00",
+    "replaced_by": [
+      735
+    ],
+    "e2_before": [
+      57,
+      6000,
+      6523,
+      6941
+    ],
+    "e2_after": [
+      57,
+      735,
+      6000,
+      6523
+    ]
+  },
+  {
+    "record_id": 735,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"ExecutionProcessID\":1648')",
+    "at": "2026-11-07T05:41:30.392756+00:00",
+    "replaced_by": [
+      3725
+    ],
+    "e2_before": [
+      57,
+      735,
+      6000,
+      6523
+    ],
+    "e2_after": [
+      57,
+      3725,
+      6000,
+      6523
+    ]
+  },
+  {
+    "record_id": 3725,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:42:20.908513+00:00",
+    "replaced_by": [
+      2768
+    ],
+    "e2_before": [
+      57,
+      3725,
+      6000,
+      6523
+    ],
+    "e2_after": [
+      57,
+      2768,
+      6000,
+      6523
+    ]
+  },
+  {
+    "record_id": 2768,
+    "flagged_by": "A",
+    "reason": "Empire agent PowerShell 1648: its pipeline events (4103, and the 800 copies in the same seconds), handles or whoami (attack) (raw event contains '\"EventID\":800,')",
+    "at": "2026-11-07T05:43:11.528093+00:00",
+    "replaced_by": [
+      6615
+    ],
+    "e2_before": [
+      57,
+      2768,
+      6000,
+      6523
+    ],
+    "e2_after": [
+      57,
+      6000,
+      6523,
+      6615
+    ]
+  }
+]

