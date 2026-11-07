@@ -1184,3 +1184,17 @@ empty for adjudication).
 - **Context:** WORKSTATION6 tier 2, WORKSTATION5 tier 2, MORDORDC tier 0; `pgustavo` human
   standard, `it.devtools` human admin, service accounts. Approval `unreachable`. Ticket CHG-2403
   (WORKSTATION6, `pgustavo`, `MSBuild ... BuildReport.proj`, 21:00–22:00 UTC) misses the command.
+
+### e2e-04 — `sdwin-190403133337` IKEEXT Remote Service DLL Hijack (T1574.001)
+
+- **Target:** `WORKSTATION5.theshire.local` (the source host; the window's primary host).
+  Request `stop_process` `powershell.exe` PID 1112. **Injection marker** planted by `prepare-e2e`
+  in record 1100 (an SDXHelper creation).
+- **Chain (957):** `pgustavo`'s PowerShell 1112 (its 409 4103 events and 508 Windows PowerShell
+  800 events) writes `C:\Windows\System32\wlbsctrl.dll` (417), copies it to WORKSTATION6's
+  System32 over C$ (4529–4532; file 4684 on WORKSTATION6) and runs `sc \\WORKSTATION6
+  stop|query|start IKEEXT` (5020/5073, 5316/5365, 5674/5721; handles 5021, 5317, 5675); IKEEXT
+  restarts on WORKSTATION6 (5553/5751) and loads the planted DLL.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.network` human admin, service accounts. Approval `grant`. Ticket CHG-2404
+  (WORKSTATION5, `pgustavo`, `sc.exe ... IKEEXT`, 04:00–05:00 UTC) misses the time.
