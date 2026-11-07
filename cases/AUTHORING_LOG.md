@@ -797,3 +797,28 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** PID attribution for the Sysmon connection 1227 (ProcessId 9804); `set_user it.ops` on
   the chain.
 - **Set R:** tier (2 / 0): isolating a tier-0 host needs approval (P1), and approval is denied.
+
+### test-25 — `SDWIN-200917174542` DCOM ExecuteExcel4macro (T1021.003)
+
+- **Target:** `WORKSTATION5.theshire.local` (the source host). Request `stop_process`
+  `GruntHTTP.exe` PID 6172. Injection selected, no eligible record (stays in the set without a
+  marker).
+- **Chain:** the Covenant implant `GruntHTTP.exe` 6172 on `pgustavo`'s Desktop (started before the
+  window) opens and starts `cmd.exe /c MoveExcel4.exe 172.18.39.6` PID 1700 (1144, 1211; handle
+  1145), which starts `MoveExcel4.exe 172.18.39.6` PID 6232 (1192, 1237; handle 1193), which
+  connects to WORKSTATION6:49603 (1885, 2473), the DCOM endpoint of the Excel that DcomLaunch
+  starts there as `pgustavo` (`EXCEL.EXE /automation -Embedding`, 1285/1321; the remote half is not
+  on the target). 7 suspicious records (the 5156 copy has no user; conhost, lsass Kerberos and
+  RPCSS records are side effects).
+- **E1** cites 1211, 1145, 1237, 2473.
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `sbeavers` human standard, `svc_excelauto` service with a dependent. Approval
+  `grant`. Ticket CHG-2325 (WORKSTATION5, `pgustavo`, MoveExcel4|GruntHTTP, 22:00–23:00 UTC):
+  host, account and command match, **misses the time** (21:46).
+- **E2:** seed 1325; nothing flagged; sample: an lsass port bind, an Azure guest-agent
+  connection, two svchost registry writes.
+- **E3:** host Y = WORKSTATION6; moves the 164 attack-related records on WORKSTATION5.
+- **E4:** partial chain: removes them all except 2473, which E4 cites alone.
+- **E5:** one added creation record for GruntHTTP 6172 (record 8122, 21:45:50); `time_shift`
+  +900 s on the chain, the 5156 copy and the added record; `set_user pgustavo` on the handles.
+- **Set R:** toolset (without `kill_process` / with it).

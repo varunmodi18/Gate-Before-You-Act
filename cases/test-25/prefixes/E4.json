@@ -1,0 +1,30 @@
+{
+  "case_id": "test-25:E4",
+  "profile": "Profile of window SDWIN-200917174542: 7958 events. Request: An implant on WORKSTATION5 launched a tool that drove Excel on WORKSTATION6 over DCOM. Stop process 6172 (GruntHTTP.exe) on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 6172}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (2461, 2463, 2473, 2475) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2461, \"ts\": \"2020-09-17T21:46:14.861000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\dns.exe\", \"pid\": 3340, \"src_ip\": \"172.18.38.5\", \"src_port\": 53, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 61923, \"protocol\": \"udp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 2463, \"ts\": \"2020-09-17T21:46:14.863000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\dns.exe\", \"pid\": 3340, \"src_ip\": \"172.18.38.5\", \"src_port\": 53, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 56356, \"protocol\": \"udp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 2473, \"ts\": \"2020-09-17T21:46:14.867000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe\", \"pid\": 6232, \"src_ip\": \"172.18.39.5\", \"src_port\": 61545, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 49603, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 2475, \"ts\": \"2020-09-17T21:46:14.868000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": 736, \"src_ip\": \"172.18.39.5\", \"src_port\": 58842, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 389, \"protocol\": \"udp\", \"direction\": \"outbound\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        2461,
+        2463,
+        2473,
+        2475
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n<</UNTRUSTED_LOG_DATA>>\n[no rows]",
+      "rows": 0,
+      "registered": []
+    }
+  ],
+  "findings": "Records 2473 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    2461,
+    2463,
+    2473,
+    2475
+  ]
+}

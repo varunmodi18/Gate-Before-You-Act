@@ -1,0 +1,50 @@
+{
+  "case_id": "test-25:E2",
+  "profile": "Profile of window SDWIN-200917174542: 8121 events. Request: An implant on WORKSTATION5 launched a tool that drove Excel on WORKSTATION6 over DCOM. Stop process 6172 (GruntHTTP.exe) on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 6172}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (7061, 7064, 7118, 7121) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 7061, \"ts\": \"2020-09-17T21:46:51.219000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\dns.exe\", \"pid\": 3340, \"src_ip\": \"172.18.38.5\", \"src_port\": 53, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 58353, \"protocol\": \"udp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 7064, \"ts\": \"2020-09-17T21:46:51.221000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 8612, \"src_ip\": \"172.18.39.6\", \"src_port\": 49633, \"dst_ip\": \"40.90.22.191\", \"dst_port\": 443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n{\"record_id\": 7118, \"ts\": \"2020-09-17T21:46:57.254000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150921\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3268, \"src_ip\": \"172.18.39.6\", \"src_port\": 49641, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 7121, \"ts\": \"2020-09-17T21:47:01.281000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150914\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3192, \"src_ip\": \"172.18.39.5\", \"src_port\": 61567, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        7061,
+        7064,
+        7118,
+        7121
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (7223, 7643, 7644, 7645, 8066) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 7223, \"ts\": \"2020-09-17T21:47:01.330000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 2448, \"target_object\": \"HKU\\\\S-1-5-20\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\DeliveryOptimization\\\\Config\\\\DODownloadMode\", \"details\": \"DWORD (0x00000001)\", \"user\": null}\n{\"record_id\": 7643, \"ts\": \"2020-09-17T21:47:22.572000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 2448, \"target_object\": \"HKU\\\\S-1-5-20\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\DeliveryOptimization\\\\Usage\\\\DownloadMonthlyLanBytes\", \"details\": \"QWORD (0x00000000-0x00000000)\", \"user\": null}\n{\"record_id\": 7644, \"ts\": \"2020-09-17T21:47:22.573000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 2448, \"target_object\": \"HKU\\\\S-1-5-20\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\DeliveryOptimization\\\\Usage\\\\DownloadMonthlyCdnBytes\", \"details\": \"QWORD (0x00000000-0x4fbbbca0)\", \"user\": null}\n{\"record_id\": 7645, \"ts\": \"2020-09-17T21:47:22.574000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 2448, \"target_object\": \"HKU\\\\S-1-5-20\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\DeliveryOptimization\\\\Usage\\\\DownloadMonthlyRateFrBps\", \"details\": \"QWORD (0x00000000-0x00bb8cde)\", \"user\": null}\n{\"record_id\": 8066, \"ts\": \"2020-09-17T21:48:07.900000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 4740, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\Class\\\\{4d36e972-e325-11ce-bfc1-08002be10318}\\\\0000\\\\Linkage\\\\UpperBind\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        7223,
+        7643,
+        7644,
+        7645,
+        8066
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1896) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1896, \"channel\": \"Security\", \"event_id\": 5158, \"json\": \"{\\\"Keywords\\\":-9214364837600034816,\\\"SeverityValue\\\":2,\\\"Application\\\":\\\"\\\\\\\\device\\\\\\\\harddiskvolume2\\\\\\\\windows\\\\\\\\system32\\\\\\\\lsass.exe\\\",\\\"EventID\\\":5158,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"Execu…[cut: 1366 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        1896
+      ]
+    }
+  ],
+  "findings": "Records 1896, 7121, 7223, 8066 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1896,
+    7061,
+    7064,
+    7118,
+    7121,
+    7223,
+    7643,
+    7644,
+    7645,
+    8066
+  ]
+}

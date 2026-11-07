@@ -1,0 +1,56 @@
+{
+  "case_id": "test-25:E1",
+  "profile": "Profile of window SDWIN-200917174542: 8121 events. Request: An implant on WORKSTATION5 launched a tool that drove Excel on WORKSTATION6 over DCOM. Stop process 6172 (GruntHTTP.exe) on WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\", \"pid\": 6172}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (1192, 1211, 1214, 1237, 1285) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1192, \"ts\": \"2020-09-17T21:46:06.330000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe\", \"command_line\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe  172.18.39.6\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"cmd.exe\\\" /c C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe 172.18.39.6\", \"pid\": 6232, \"ppid\": 1700, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=8B61BE44EB536F2A83FD23BA38BD02CEAACF105C,MD5=838AA3C1E3E2097C1EBBED7381FE0F2C,SHA256=AF9BDA72B0AE9E58077ED2919D682A7F46E907F53FC9BA1F47200401C238B2F5,IMPHASH=F34D5F2D4577ED6D9CEEC516C1F5A744\"}\n{\"record_id\": 1211, \"ts\": \"2020-09-17T21:46:07.346000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"cmd.exe\\\" /c C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe 172.18.39.6\", \"parent_image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"parent_command_line\": null, \"pid\": 1700, \"ppid\": 6172, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 1214, \"ts\": \"2020-09-17T21:46:07.347000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 6280, \"ppid\": 1700, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 1237, \"ts\": \"2020-09-17T21:46:07.356000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe\", \"command_line\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe  172.18.39.6\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 6232, \"ppid\": 1700, \"user\": \"pgustavo\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 1285, \"ts\": \"2020-09-17T21:46:07.376000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft Office\\\\root\\\\Office16\\\\EXCEL.EXE\", \"command_line\": \"\\\"C:\\\\Program Files (x86)\\\\Microsoft Office\\\\Root\\\\Office16\\\\EXCEL.EXE\\\" /automation -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 1324, \"ppid\": 896, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        1192,
+        1211,
+        1214,
+        1237,
+        1285
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1143, 1145, 1146, 1151) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1143, \"ts\": \"2020-09-17T21:46:06.305000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 3356, \"target_image\": \"C:\\\\windows\\\\SYSTEM32\\\\cmd.exe\", \"target_pid\": 1700, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\pcasvc.dll+13827|c:\\\\windows\\\\system32\\\\pcasvc.dll+f736|c:\\\\windows\\\\system32\\\\pcasvc.dll+16844|C:\\\\windows\\\\Sy…[cut: 261 chars]\", \"user\": null}\n{\"record_id\": 1145, \"ts\": \"2020-09-17T21:46:06.306000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\GruntHTTP.exe\", \"source_pid\": 6172, \"target_image\": \"C:\\\\windows\\\\SYSTEM32\\\\cmd.exe\", \"target_pid\": 1700, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.dll+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 506 chars]\", \"user\": null}\n{\"record_id\": 1146, \"ts\": \"2020-09-17T21:46:06.306000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 1320, \"target_image\": \"C:\\\\windows\\\\SYSTEM32\\\\cmd.exe\", \"target_pid\": 1700, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ce5f\", \"user\": null}\n{\"record_id\": 1151, \"ts\": \"2020-09-17T21:46:06.309000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 3356, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 6280, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\pcasvc.dll+13827|c:\\\\windows\\\\system32\\\\pcasvc.dll+f736|c:\\\\windows\\\\system32\\\\pcasvc.dll+16844|C:\\\\windows\\\\Sy…[cut: 261 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1143,
+        1145,
+        1146,
+        1151
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (2461, 2463, 2473, 2475) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2461, \"ts\": \"2020-09-17T21:46:14.861000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\dns.exe\", \"pid\": 3340, \"src_ip\": \"172.18.38.5\", \"src_port\": 53, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 61923, \"protocol\": \"udp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 2463, \"ts\": \"2020-09-17T21:46:14.863000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\dns.exe\", \"pid\": 3340, \"src_ip\": \"172.18.38.5\", \"src_port\": 53, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 56356, \"protocol\": \"udp\", \"direction\": \"inbound\", \"user\": \"system\"}\n{\"record_id\": 2473, \"ts\": \"2020-09-17T21:46:14.867000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Desktop\\\\MoveExcel4.exe\", \"pid\": 6232, \"src_ip\": \"172.18.39.5\", \"src_port\": 61545, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 49603, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 2475, \"ts\": \"2020-09-17T21:46:14.868000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": 736, \"src_ip\": \"172.18.39.5\", \"src_port\": 58842, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 389, \"protocol\": \"udp\", \"direction\": \"outbound\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        2461,
+        2463,
+        2473,
+        2475
+      ]
+    }
+  ],
+  "findings": "Records 1145, 1211, 1237, 2473 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1143,
+    1145,
+    1146,
+    1151,
+    1192,
+    1211,
+    1214,
+    1237,
+    1285,
+    2461,
+    2463,
+    2473,
+    2475
+  ]
+}
