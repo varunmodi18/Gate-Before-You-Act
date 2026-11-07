@@ -1,0 +1,69 @@
+{
+  "case_id": "test-40:R_pos",
+  "profile": "Profile of window SDWIN-230720004300: 13969 events. Request: An implant launched as Administrator on domain controller DC01 has copied the Active Directory database to a temp folder. Disable account administrator. Target: {\"account\": \"administrator\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (799, 802, 812, 817) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 799, \"ts\": \"2023-07-19T05:33:01.592000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\launcher.exe\", \"command_line\": \"\\\"C:\\\\Users\\\\Administrator\\\\Desktop\\\\launcher.exe\\\" \", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": null, \"pid\": 5728, \"ppid\": 2088, \"user\": \"administrator\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 802, \"ts\": \"2023-07-19T05:33:01.624000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\launcher.exe\", \"command_line\": \"\\\"C:\\\\Users\\\\Administrator\\\\Desktop\\\\launcher.exe\\\" \", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\Explorer.EXE\\\" /NoUACCheck\", \"pid\": 5728, \"ppid\": 2088, \"user\": \"administrator\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=CF089C6C2C954ECEB622150E83167D15C05E1A93,MD5=4491E56ABD4171BA0A3DA55740FAE28D,SHA256=5F87065D21D607C0464287824156447BD0E475485824F40856E3EEE777D07E2F,IMPHASH=B4C6FFF030479AA3B12625BE67BF4914\"}\n{\"record_id\": 812, \"ts\": \"2023-07-19T05:33:01.635000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"command_line\": \"C:\\\\Windows\\\\system32\\\\svchost.exe -k netsvcs -p -s wlidsvc\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": null, \"pid\": 3680, \"ppid\": 592, \"user\": \"dc01$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 817, \"ts\": \"2023-07-19T05:33:01.639000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"command_line\": \"C:\\\\Windows\\\\system32\\\\svchost.exe -k netsvcs -p -s wlidsvc\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\services.exe\", \"parent_command_line\": \"C:\\\\Windows\\\\system32\\\\services.exe\", \"pid\": 3680, \"ppid\": 592, \"user\": \"system\", \"integrity_level\": \"System\", \"hashes\": \"SHA1=DA7A6E7798D448CD593B11735E2B614EC2B75B29,MD5=DC32ABA4669EAFB22FCACD5EC836A107,SHA256=31780FF2AAF7BC71F755BA0E4FEF1D61B060D1D2741EAFB33CBAB44D889595A0,IMPHASH=D8C4E4978657CEA220B495778C972E64\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        799,
+        802,
+        812,
+        817
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (837, 838, 839, 840) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 837, \"ts\": \"2023-07-19T05:33:01.677000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\launcher.exe\", \"source_pid\": 5728, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 6448, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+a0de4|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+4fff9|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+75d8e|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+75936|C:\\\\Windows\\\\System32\\\\KERNEL32.DLL+131b|C:\\\\…[cut: 245 chars]\", \"user\": \"administrator\"}\n{\"record_id\": 838, \"ts\": \"2023-07-19T05:33:01.678000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\csrss.exe\", \"source_pid\": 468, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 6448, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\system32\\\\basesrv.DLL+33ef|C:\\\\Windows\\\\SYSTEM32\\\\CSRSRV.dll+1cfd|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+7e3f3\", \"user\": \"system\"}\n{\"record_id\": 839, \"ts\": \"2023-07-19T05:33:01.678000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\lsass.exe\", \"source_pid\": 600, \"target_image\": \"C:\\\\Windows\\\\system32\\\\services.exe\", \"target_pid\": 592, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\system32\\\\lsasrv.dll+2138d|C:\\\\Windows\\\\system32\\\\lsasrv.dll+2482a|C:\\\\Windows\\\\SYSTEM32\\\\SspiSrv.dll+196c|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+75893|C:\\\\Windows\\\\Syste…[cut: 735 chars]\", \"user\": \"system\"}\n{\"record_id\": 840, \"ts\": \"2023-07-19T05:33:01.678000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 884, \"target_image\": \"C:\\\\Windows\\\\system32\\\\lsass.exe\", \"target_pid\": 600, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+71836|c:\\\\windows\\\\system32\\\\lsm.dll+d7e6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+75893|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da8f9|C:\\\\Windows\\\\Syste…[cut: 698 chars]\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        837,
+        838,
+        839,
+        840
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (2347, 2355, 2356, 2357) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2347, \"ts\": \"2023-07-19T05:33:07.350000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 6448, \"src_ip\": \"192.168.1.4\", \"src_port\": 59559, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8888, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"administrator\"}\n{\"record_id\": 2355, \"ts\": \"2023-07-19T05:33:08.086000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1072, \"src_ip\": \"127.0.0.1\", \"src_port\": 54341, \"dst_ip\": \"127.0.0.1\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 2356, \"ts\": \"2023-07-19T05:33:08.086000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\dns.exe\", \"pid\": 2348, \"src_ip\": \"127.0.0.1\", \"src_port\": 54341, \"dst_ip\": \"127.0.0.1\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 2357, \"ts\": \"2023-07-19T05:33:08.086000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 1072, \"src_ip\": \"0:0:0:0:0:0:0:1\", \"src_port\": 54341, \"dst_ip\": \"0:0:0:0:0:0:0:1\", \"dst_port\": 53, \"protocol\": \"udp\", \"direction\": \"outbound\", \"user\": \"network service\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        2347,
+        2355,
+        2356,
+        2357
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (6155, 9731, 10541, 10546) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 6155, \"ts\": \"2023-07-19T05:33:47.023000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"pid\": 1176, \"target_filename\": \"C:\\\\Windows\\\\security\\\\audit\\\\audit.csv\", \"event_type\": \"FileCreate\", \"user\": \"system\"}\n{\"record_id\": 9731, \"ts\": \"2023-07-19T05:34:20.831000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 6448, \"target_filename\": \"C:\\\\Windows\\\\Temp\\\\ntds-copy.dit\", \"event_type\": \"FileCreate\", \"user\": \"administrator\"}\n{\"record_id\": 10541, \"ts\": \"2023-07-19T05:34:25.155000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\system32\\\\DFSRs.exe\", \"pid\": 2340, \"target_filename\": \"C:\\\\System Volume Information\\\\DFSR\\\\Config\\\\Replica_7E9C58E1-C158-47E8-A6D7-C031B8FB57F5.XML.TMP\", \"event_type\": \"FileCreate\", \"user\": \"system\"}\n{\"record_id\": 10546, \"ts\": \"2023-07-19T05:34:25.160000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\system32\\\\DFSRs.exe\", \"pid\": 2340, \"target_filename\": \"C:\\\\System Volume Information\\\\DFSR\\\\Config\\\\Volume_EC127B5F-0000-0000-0000-500600000000.XML.TMP\", \"event_type\": \"FileCreate\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        6155,
+        9731,
+        10541,
+        10546
+      ]
+    }
+  ],
+  "findings": "Records 799, 837, 2347, 9731 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    799,
+    802,
+    812,
+    817,
+    837,
+    838,
+    839,
+    840,
+    2347,
+    2355,
+    2356,
+    2357,
+    6155,
+    9731,
+    10541,
+    10546
+  ]
+}

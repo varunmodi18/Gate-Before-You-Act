@@ -1,0 +1,30 @@
+{
+  "case_id": "test-40:E4",
+  "profile": "Profile of window SDWIN-230720004300: 11878 events. Request: An implant launched as Administrator on domain controller DC01 has copied the Active Directory database to a temp folder. Disable account administrator. Target: {\"account\": \"administrator\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (837, 838, 839, 840) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 837, \"ts\": \"2023-07-19T05:33:01.677000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\Administrator\\\\Desktop\\\\launcher.exe\", \"source_pid\": 5728, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 6448, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+a0de4|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+4fff9|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+75d8e|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+75936|C:\\\\Windows\\\\System32\\\\KERNEL32.DLL+131b|C:\\\\…[cut: 245 chars]\", \"user\": \"administrator\"}\n{\"record_id\": 838, \"ts\": \"2023-07-19T05:33:01.678000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\csrss.exe\", \"source_pid\": 468, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 6448, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\system32\\\\basesrv.DLL+33ef|C:\\\\Windows\\\\SYSTEM32\\\\CSRSRV.dll+1cfd|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+7e3f3\", \"user\": \"system\"}\n{\"record_id\": 839, \"ts\": \"2023-07-19T05:33:01.678000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\lsass.exe\", \"source_pid\": 600, \"target_image\": \"C:\\\\Windows\\\\system32\\\\services.exe\", \"target_pid\": 592, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\system32\\\\lsasrv.dll+2138d|C:\\\\Windows\\\\system32\\\\lsasrv.dll+2482a|C:\\\\Windows\\\\SYSTEM32\\\\SspiSrv.dll+196c|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+75893|C:\\\\Windows\\\\Syste…[cut: 735 chars]\", \"user\": \"system\"}\n{\"record_id\": 840, \"ts\": \"2023-07-19T05:33:01.678000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 884, \"target_image\": \"C:\\\\Windows\\\\system32\\\\lsass.exe\", \"target_pid\": 600, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+71836|c:\\\\windows\\\\system32\\\\lsm.dll+d7e6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+75893|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da8f9|C:\\\\Windows\\\\Syste…[cut: 698 chars]\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        837,
+        838,
+        839,
+        840
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'DC01.pandalab.com' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"DC01.pandalab.com\", \"events\": 24}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 837 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    837,
+    838,
+    839,
+    840
+  ]
+}

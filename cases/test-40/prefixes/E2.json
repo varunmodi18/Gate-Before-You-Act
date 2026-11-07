@@ -1,0 +1,50 @@
+{
+  "case_id": "test-40:E2",
+  "profile": "Profile of window SDWIN-230720004300: 13969 events. Request: An implant launched as Administrator on domain controller DC01 has copied the Active Directory database to a temp folder. Disable account administrator. Target: {\"account\": \"administrator\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (121, 2877, 2878, 2879, 5636) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 121, \"ts\": \"2023-07-19T05:32:51.948000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1244, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1568, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+44a5e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13bad|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13a2f|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14d…[cut: 444 chars]\", \"user\": \"system\"}\n{\"record_id\": 2877, \"ts\": \"2023-07-19T05:33:13.343000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1244, \"target_image\": \"C:\\\\Windows\\\\system32\\\\sihost.exe\", \"target_pid\": 4472, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+44a5e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13bad|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13a2f|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14d…[cut: 444 chars]\", \"user\": \"system\"}\n{\"record_id\": 2878, \"ts\": \"2023-07-19T05:33:13.343000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1244, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 4508, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+44a5e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13bad|C:\\\\Windows\\\\System32\\\\VBoxService.exe+139d9|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14d…[cut: 444 chars]\", \"user\": \"system\"}\n{\"record_id\": 2879, \"ts\": \"2023-07-19T05:33:13.343000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1244, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 4508, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+44a5e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13bad|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13a04|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14d…[cut: 444 chars]\", \"user\": \"system\"}\n{\"record_id\": 5636, \"ts\": \"2023-07-19T05:33:43.713000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"source_pid\": 1244, \"target_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1288, \"granted_access\": \"0x1400\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9f934|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+44a5e|C:\\\\Windows\\\\System32\\\\VBoxService.exe+13bad|C:\\\\Windows\\\\System32\\\\VBoxService.exe+139d9|C:\\\\Windows\\\\System32\\\\VBoxService.exe+14d…[cut: 444 chars]\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        121,
+        2877,
+        2878,
+        2879,
+        5636
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (6833, 6834, 6849, 6850) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 6833, \"ts\": \"2023-07-19T05:33:51.496000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft\\\\EdgeUpdate\\\\MicrosoftEdgeUpdate.exe\", \"pid\": 5804, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\EdgeUpdate\\\\ClientState\\\\{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}\\\\CurrentState\", \"details\": null, \"user\": \"system\"}\n{\"record_id\": 6834, \"ts\": \"2023-07-19T05:33:51.496000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft\\\\EdgeUpdate\\\\MicrosoftEdgeUpdate.exe\", \"pid\": 5804, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\EdgeUpdate\\\\ClientState\\\\{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}\\\\CurrentState\\\\StateValue\", \"details\": \"DWORD (0x00000003)\", \"user\": \"system\"}\n{\"record_id\": 6849, \"ts\": \"2023-07-19T05:33:51.534000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\wbem\\\\wmiprvse.exe\", \"pid\": 824, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Wbem\\\\CIMOM\", \"details\": null, \"user\": \"system\"}\n{\"record_id\": 6850, \"ts\": \"2023-07-19T05:33:51.534000\", \"host\": \"DC01.pandalab.com\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\wbem\\\\wmiprvse.exe\", \"pid\": 824, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Wbem\\\\CIMOM\", \"details\": null, \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        6833,
+        6834,
+        6849,
+        6850
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (3797) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 3797, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 22, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Level\\\":\\\"4\\\",\\\"Keywords\\\":\\\"0x8000000000000000\\\",\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"Hostname\\\"…[cut: 926 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        3797
+      ]
+    }
+  ],
+  "findings": "Records 121, 3797, 5636, 6849 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    121,
+    2877,
+    2878,
+    2879,
+    3797,
+    5636,
+    6833,
+    6834,
+    6849,
+    6850
+  ]
+}

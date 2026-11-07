@@ -1,0 +1,23 @@
+[
+  {
+    "record_id": 9980,
+    "flagged_by": "A",
+    "reason": "Windows PowerShell pipeline event of the implant (the only PowerShell process on the host; PSReflect/NinjaCopy code) (attack) (raw event contains 'Pipeline execution details')",
+    "at": "2026-11-07T05:58:22.114637+00:00",
+    "replaced_by": [
+      121
+    ],
+    "e2_before": [
+      3797,
+      5636,
+      6849,
+      9980
+    ],
+    "e2_after": [
+      121,
+      3797,
+      5636,
+      6849
+    ]
+  }
+]
