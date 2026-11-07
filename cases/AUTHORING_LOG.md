@@ -882,3 +882,17 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   `set_user it.helpdesk` on the chain.
 - **Set R:** tier (2 / 0): isolating a tier-0 host needs approval (P1), and approval is
   unreachable.
+
+### test-30 — `SDWIN-201029001615` Python HTTP Server (T1059) — **STOPPED**
+
+- **Why (prefix limit, then verifier budget):** the chain is clear: `wardog`'s elevated
+  PowerShell 9320 runs `netsh advfirewall firewall add rule name=python.exe dir=in action=allow
+  program=...python.exe ... remoteip=any` twice (tcp 35/36, udp 861/862; handles 37, 863), the
+  firewall service stores the allow-inbound rules (185, 1013), and the shell starts
+  `python -m http.server 8000` PID 10220 (1689, 1690; handle 1691). A scenario passing every
+  non-label check was built (disable `wardog`, admin; ticket missing the command). With E1 citing a
+  netsh and the python creation record the prefix's creation query overflows the tool's result
+  limit; with one creation record (1689, 185, 1691, 37) the verifier prompt for E1, E3, E4, E5,
+  R_pos and R_neg cannot be built: `reference 1813 > 1800` (as test-19). Only pass/fail was checked;
+  the retrieved documents were not read. Files left uncommitted; the local import must not be
+  annotated.
