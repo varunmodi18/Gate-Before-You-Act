@@ -896,3 +896,16 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   R_pos and R_neg cannot be built: `reference 1813 > 1800` (as test-19). Only pass/fail was checked;
   the retrieved documents were not read. Files left uncommitted; the local import must not be
   annotated.
+
+### test-31 — `SDWIN-201009183000` Covenant Remote DCOM Iertutil DLL Hijacking (T1021.003) — **STOPPED**
+
+- **Why (verifier budget):** the chain is clear: from WORKSTATION5, `pgustavo` writes
+  `iertutil.dll` into `C:\Program Files\Internet Explorer` on WORKSTATION6 over C$ (12883–12890;
+  file 12873), DcomLaunch starts `iexplore.exe -Embedding` as `pgustavo` (21161, 21579), which
+  loads the planted DLL and opens and starts `notepad.exe` PID 3532 (21268, 21599; handle 21274),
+  which connects to 10.10.10.5:80 (22184, 22339). A scenario passing every non-label check was
+  built (disable `pgustavo`, admin; ticket missing the command), but the verifier prompt for E1,
+  E3, E5, R_pos and R_neg cannot be built: `reference 1814 > 1800`; the one alternative evidence
+  set (12873, 21268, 21274, 22339) fails the same way (also E4). Same cause as test-19 and
+  test-30. Only pass/fail was checked. Files left uncommitted; the local import must not be
+  annotated.
