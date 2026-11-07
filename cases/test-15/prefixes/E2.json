@@ -1,0 +1,37 @@
+{
+  "case_id": "test-15:E2",
+  "profile": "Profile of window SDWIN-200721232741: 2390 events. Request: pgustavo's elevated PowerShell on WORKSTATION5 used regsvr32 to fetch and run a remote scriptlet that started a new beaconing PowerShell. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (1573, 1574, 1575, 1576) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1573, \"ts\": \"2020-07-22T03:28:27.230000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 996, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\SecurityManager\\\\CapAuthz\", \"details\": null, \"user\": null}\n{\"record_id\": 1574, \"ts\": \"2020-07-22T03:28:27.231000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 996, \"target_object\": \"HKLM\\\\SOFTWARE\", \"details\": null, \"user\": null}\n{\"record_id\": 1575, \"ts\": \"2020-07-22T03:28:27.231000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 996, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\", \"details\": null, \"user\": null}\n{\"record_id\": 1576, \"ts\": \"2020-07-22T03:28:27.232000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 996, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\SecurityManager\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1573,
+        1574,
+        1575,
+        1576
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1548, 1817, 1832) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1548, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"EventReceivedTime\\\":\\\"2020-07-21 23:28:26\\\",\\\"Product\\\":\\\"Microsoft® Windows® Operating System\\\",\\\"SignatureStatus\\\":\\\"Valid\\\",\\\"port\\\":55069,\\\"SeverityValue\\\":2,\\\"RuleName\\\":\\\"-\\\",\\\"Keywords\\\":-9223372036854775808,\\\"Pro…[cut: 2177 chars]\"}\n{\"record_id\": 1817, \"channel\": \"Security\", \"event_id\": 4663, \"json\": \"{\\\"Task\\\":12801,\\\"EventReceivedTime\\\":\\\"2020-07-21 23:28:27\\\",\\\"Opcode\\\":\\\"Info\\\",\\\"port\\\":55069,\\\"SeverityValue\\\":2,\\\"SubjectUserSid\\\":\\\"S-1-5-21-2253742117-2054739524-205962475-1104\\\",\\\"Keywords\\\":-9214364837600034816,…[cut: 1796 chars]\"}\n{\"record_id\": 1832, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"EventReceivedTime\\\":\\\"2020-07-21 23:28:27\\\",\\\"Product\\\":\\\"Microsoft® Windows® Operating System\\\",\\\"SignatureStatus\\\":\\\"Valid\\\",\\\"port\\\":55069,\\\"SeverityValue\\\":2,\\\"RuleName\\\":\\\"-\\\",\\\"Keywords\\\":-9223372036854775808,\\\"Pro…[cut: 2217 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 3,
+      "registered": [
+        1548,
+        1817,
+        1832
+      ]
+    }
+  ],
+  "findings": "Records 1548, 1575, 1817, 1832 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1548,
+    1573,
+    1574,
+    1575,
+    1576,
+    1817,
+    1832
+  ]
+}

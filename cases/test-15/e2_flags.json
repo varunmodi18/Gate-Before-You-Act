@@ -1,0 +1,25 @@
+[
+  {
+    "record_id": 1462,
+    "flagged_by": "A",
+    "reason": "PowerShell event of the Empire agents (PIDs 8648 and 9076, the only PowerShells on WORKSTATION5) or a record of the regsvr32 launch (raw event contains '\"Channel\":\"Windows PowerShell\"')",
+    "at": "2026-11-07T03:41:30.786859+00:00",
+    "replaced_by": [
+      1575,
+      1817,
+      1832
+    ],
+    "e2_before": [
+      1462,
+      1548,
+      1816,
+      1831
+    ],
+    "e2_after": [
+      1548,
+      1575,
+      1817,
+      1832
+    ]
+  }
+]

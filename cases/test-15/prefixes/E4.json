@@ -1,0 +1,30 @@
+{
+  "case_id": "test-15:E4",
+  "profile": "Profile of window SDWIN-200721232741: 1437 events. Request: pgustavo's elevated PowerShell on WORKSTATION5 used regsvr32 to fetch and run a remote scriptlet that started a new beaconing PowerShell. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (78, 79, 80, 98) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 78, \"ts\": \"2020-07-22T03:27:51.548000\", \"host\": \"WORKSTATION6.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 6732, \"target_image\": \"C:\\\\windows\\\\System32\\\\rdpclip.exe\", \"target_pid\": 2720, \"granted_access\": \"0x1410\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|C:\\\\Windows\\\\System32\\\\appresolver.dll+21ee8|C:\\\\Windows\\\\System32\\\\appresolver.dll+1ef46|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+205a4|C…[cut: 381 chars]\", \"user\": null}\n{\"record_id\": 79, \"ts\": \"2020-07-22T03:27:51.549000\", \"host\": \"WORKSTATION6.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 5064, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 6732, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d104|C:\\\\windows\\\\System32\\\\RPCRT4.dll+2d2c4|C:\\\\windows\\\\System32\\\\combase.dll+b1c3b|c:\\\\windows\\\\system32\\\\windows.staterepository.dll+268b5|c:\\\\windows\\\\system32\\\\windows.statere…[cut: 930 chars]\", \"user\": null}\n{\"record_id\": 80, \"ts\": \"2020-07-22T03:27:51.549000\", \"host\": \"WORKSTATION6.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 6732, \"target_image\": \"C:\\\\windows\\\\System32\\\\rdpclip.exe\", \"target_pid\": 2720, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+2726e|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+1f662|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+1f2c6|c:\\\\windows\\\\system32\\\\cbdhsvc.dll+1ef1e|c:\\\\window…[cut: 563 chars]\", \"user\": null}\n{\"record_id\": 98, \"ts\": \"2020-07-22T03:27:53.548000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 8648, \"target_image\": \"C:\\\\windows\\\\system32\\\\regsvr32.exe\", \"target_pid\": 9384, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5f36a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5bd06|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        78,
+        79,
+        80,
+        98
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5.mordor.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION5.mordor.local\", \"events\": 8}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 98 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    78,
+    79,
+    80,
+    98
+  ]
+}

