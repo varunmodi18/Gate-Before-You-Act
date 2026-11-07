@@ -909,3 +909,17 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
   set (12873, 21268, 21274, 22339) fails the same way (also E4). Same cause as test-19 and
   test-30. Only pass/fail was checked. Files left uncommitted; the local import must not be
   annotated.
+
+### test-32 — `SDWIN-201022035214` Mshta HTML Application (HTA) Execution (T1218.005) — **STOPPED**
+
+- **Why (verifier budget):** the chain is clear: `wardog`'s elevated PowerShell 10848 reaches
+  151.101.208.133:443 (214, 985), writes `T1218.005.hta` into wardog's Startup folder (368) and
+  starts `mshta.exe "...\Startup\T1218.005.hta"` PID 9160 (369, 371; handle 372), which starts
+  `cmd.exe /c calc.exe` PID 7144 (554, 557; handle 558), which starts `calc.exe` (724, 725; handle
+  726). A scenario passing every non-label check was built (disable `wardog`, admin; ticket
+  missing the time), but the verifier prompt for E1, E3, E5, R_pos, R_neg (and E4 with the
+  first set) cannot be built: `reference 1813 > 1800`, with E1 = 369, 368, 558, 985 and with the
+  one alternative 369, 368, 558, 726. Same cause as test-19/30/31: the reference block holds up
+  to 6 documents of at most 300 tokens plus a header, which can exceed `BUDGETS["reference"] =
+  1800` in `gbya/gate/verifier.py`. Only pass/fail was checked. Files left uncommitted; the local
+  import must not be annotated.
