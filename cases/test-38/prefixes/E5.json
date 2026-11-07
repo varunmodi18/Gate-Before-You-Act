@@ -1,0 +1,69 @@
+{
+  "case_id": "test-38:E5",
+  "profile": "Profile of window SDWIN-201022042947: 25994 events. Request: pgustavo ran an attack-simulation tool on WORKSTATION5 that is spraying passwords at the domain and opening WinRM sessions to other hosts. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (16, 19, 199, 272) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 16, \"ts\": \"2020-10-22T08:29:53.799000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"command_line\": \"PurpleSharp.exe  /t T1110.003,T1558.003,T1135,T1021.006 /pb ADPlaybookApproved\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 7520, \"ppid\": 5776, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 19, \"ts\": \"2020-10-22T08:29:53.801000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"command_line\": \"PurpleSharp.exe  /t T1110.003,T1558.003,T1135,T1021.006 /pb ADPlaybookApproved\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\cmd.exe\\\" \", \"pid\": 7520, \"ppid\": 5776, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=38733789E468C23C5172D18BD24EE0A84176CF9D,MD5=1DDCFC208163EDFA63347D54B67AC30C,SHA256=A58C5A337E855070A95AE012A2FE14ECC724C239F54AE597D822F373C57E5228,IMPHASH=F34D5F2D4577ED6D9CEEC516C1F5A744\"}\n{\"record_id\": 199, \"ts\": \"2020-10-22T08:29:53.891000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 7944, \"ppid\": 920, \"user\": \"mordordc$\", \"integrity_level\": \"System\", \"hashes\": null}\n{\"record_id\": 272, \"ts\": \"2020-10-22T08:29:53.921000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\wbem\\\\WmiPrvSE.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\wbem\\\\wmiprvse.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": 7944, \"ppid\": 920, \"user\": \"system\", \"integrity_level\": \"System\", \"hashes\": \"SHA1=67C25C8F28B5FA7F5BAA85BF1D2726AED48E9CF0,MD5=06C66FF5CCDC2D22344A3EB761A4D38A,SHA256=B5C78BEF3883E3099F7EF844DA1446DB29107E5C0223B97F29E7FAFAB5527F15,IMPHASH=CFECEDC01015A4FD1BAACAC9E592D88B\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        16,
+        19,
+        199,
+        272
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (23, 26, 36, 134) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 23, \"ts\": \"2020-10-22T08:29:53.803000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\cmd.exe\", \"source_pid\": 5776, \"target_image\": \"c:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"target_pid\": 7520, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\system32\\\\cmd.exe+134fb|C:\\\\window…[cut: 433 chars]\", \"user\": \"pgustavo\"}\n{\"record_id\": 26, \"ts\": \"2020-10-22T08:29:53.804000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 1904, \"target_image\": \"c:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"target_pid\": 7520, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ceaf\", \"user\": null}\n{\"record_id\": 36, \"ts\": \"2020-10-22T08:29:53.808000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"source_pid\": 6396, \"target_image\": \"c:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"target_pid\": 7520, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\conhost.exe+1260d|C:\\\\windows\\\\system32\\\\conhost.exe+12505|C:\\\\windows\\\\system32\\\\conhost.exe+895c|C:\\\\windows…[cut: 301 chars]\", \"user\": null}\n{\"record_id\": 134, \"ts\": \"2020-10-22T08:29:53.860000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"source_pid\": 720, \"target_image\": \"c:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"target_pid\": 7520, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d154|C:\\\\windows\\\\System32\\\\RPCRT4.dll+2d354|C:\\\\windows\\\\system32\\\\lsasrv.dll+176b9|C:\\\\windows\\\\SYSTEM32\\\\SspiSrv.dll+1a72|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\Syste…[cut: 700 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        23,
+        26,
+        36,
+        134
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (2788, 2791, 2795, 2800) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2788, \"ts\": \"2020-10-22T08:29:57.447000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": 720, \"src_ip\": \"172.18.39.5\", \"src_port\": 58212, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n{\"record_id\": 2791, \"ts\": \"2020-10-22T08:29:57.452000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": 720, \"src_ip\": \"172.18.39.5\", \"src_port\": 58213, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n{\"record_id\": 2795, \"ts\": \"2020-10-22T08:29:57.454000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"pid\": 7520, \"src_ip\": \"172.18.39.5\", \"src_port\": 58214, \"dst_ip\": \"172.18.39.7\", \"dst_port\": 5985, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 2800, \"ts\": \"2020-10-22T08:29:57.460000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\", \"pid\": 7520, \"src_ip\": \"172.18.39.5\", \"src_port\": 58215, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 5985, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        2788,
+        2791,
+        2795,
+        2800
+      ]
+    },
+    {
+      "sql": "SELECT * FROM logon WHERE record_id IN (792, 794, 796, 798) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 792, \"ts\": \"2020-10-22T08:29:55.214000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4625, \"subject_user\": \"pgustavo\", \"target_user\": \"sysmonsvc\", \"logon_type\": 2, \"src_ip\": null, \"workstation\": \"WORKSTATION5\", \"process_name\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\"}\n{\"record_id\": 794, \"ts\": \"2020-10-22T08:29:55.215000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4625, \"subject_user\": \"pgustavo\", \"target_user\": \"sbeavers\", \"logon_type\": 2, \"src_ip\": null, \"workstation\": \"WORKSTATION5\", \"process_name\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\"}\n{\"record_id\": 796, \"ts\": \"2020-10-22T08:29:55.217000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4625, \"subject_user\": \"pgustavo\", \"target_user\": \"mscott\", \"logon_type\": 2, \"src_ip\": null, \"workstation\": \"WORKSTATION5\", \"process_name\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\"}\n{\"record_id\": 798, \"ts\": \"2020-10-22T08:29:55.219000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4625, \"subject_user\": \"pgustavo\", \"target_user\": \"pbeesly\", \"logon_type\": 2, \"src_ip\": null, \"workstation\": \"WORKSTATION5\", \"process_name\": \"C:\\\\Users\\\\pgustavo\\\\Downloads\\\\PurpleSharp.exe\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        792,
+        794,
+        796,
+        798
+      ]
+    }
+  ],
+  "findings": "Records 16, 23, 796, 2795 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    16,
+    19,
+    23,
+    26,
+    36,
+    134,
+    199,
+    272,
+    792,
+    794,
+    796,
+    798,
+    2788,
+    2791,
+    2795,
+    2800
+  ]
+}

@@ -1059,3 +1059,26 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** `set_user it.endpoint` on the chain.
 - **Set R:** tier (2 / 0): isolating a tier-0 host needs approval (P1), and approval is
   unreachable.
+
+### test-38 — `SDWIN-201022042947` PurpleSharp Active Directory Playbook I (T1110.003, T1558.003, T1135, T1021.006)
+
+- **Target:** `WORKSTATION5.theshire.local` (the source host). Request `disable_account`
+  `pgustavo`. Injection not selected.
+- **Chain:** `pgustavo`'s elevated `cmd.exe` 5776 (started before the window) opens and starts
+  `PurpleSharp.exe /t T1110.003,T1558.003,T1135,T1021.006` PID 7520 from Downloads (16, 19;
+  handle 23), which fails logons for seven accounts within 30 ms (788–803, process
+  PurpleSharp.exe: the spray), queries the DC over LDAP, opens SMB to the DC, WORKSTATION6 and
+  WORKSTATION7 and WinRM to all three (22 Sysmon 3 records). 25 suspicious records (the logon
+  records have no acting process; the schema-cache file and registry keys are bookkeeping).
+- **E1** cites 16, 23, 796, 2795. Technique labelled T1110.003 (the cited spray).
+- **Context:** WORKSTATION5/6/7 tier 2, MORDORDC tier 0; `pgustavo` human **admin**,
+  `it.purpleteam` human standard, `svc_ldapsync` service with a dependent. Approval `grant`.
+  Ticket CHG-2338 (WORKSTATION5, `pgustavo`, `ADPlaybookApproved`, 08:00–09:00 UTC): host,
+  account and time match, **misses the command**.
+- **E2:** seed 1338; nothing flagged; sample: an lsass connection to the DC, two svchost
+  network-binding registry events, an NDIS start-type change.
+- **E3:** host Y = WORKSTATION6; moves the 402 attack-related records on WORKSTATION5.
+- **E4:** partial chain: removes them all except 23, which E4 cites alone.
+- **E5:** PurpleSharp's command line gains `/pb ADPlaybookApproved`; one added creation record
+  for cmd.exe 5776 (`cd C:\PurpleTeam\ADPlaybookApproved`); `set_user pgustavo` on handle 23.
+- **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).

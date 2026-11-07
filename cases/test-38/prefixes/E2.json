@@ -1,0 +1,50 @@
+{
+  "case_id": "test-38:E2",
+  "profile": "Profile of window SDWIN-201022042947: 25993 events. Request: pgustavo ran an attack-simulation tool on WORKSTATION5 that is spraying passwords at the domain and opening WinRM sessions to other hosts. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (1596, 1633, 1638, 1665) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1596, \"ts\": \"2020-10-22T08:29:55.760000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\pgustavo\\\\downloads\\\\purplesharp.exe\", \"pid\": 7520, \"src_ip\": \"172.18.39.5\", \"src_port\": 58208, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 445, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1633, \"ts\": \"2020-10-22T08:29:55.784000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": 720, \"src_ip\": \"172.18.39.5\", \"src_port\": 58183, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 135, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n{\"record_id\": 1638, \"ts\": \"2020-10-22T08:29:55.787000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\lsass.exe\", \"pid\": 720, \"src_ip\": \"172.18.39.5\", \"src_port\": 58184, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 49674, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n{\"record_id\": 1665, \"ts\": \"2020-10-22T08:29:55.803000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 720, \"src_ip\": \"172.18.39.5\", \"src_port\": 58209, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1596,
+        1633,
+        1638,
+        1665
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (20544, 20590, 20591, 20592, 20638) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 20544, \"ts\": \"2020-10-22T08:30:30.182000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 10096, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\BindPaths\\\\{110969DB-6E58-5323-D81B-B7410ED78ACC}\\\\Properties\\\\{a111f1f2-5923-47c0-9a68-d0bafb577901}\\\\0052\\\\(Default)\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 20590, \"ts\": \"2020-10-22T08:30:30.204000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_object\": \"HKCR\", \"details\": null, \"user\": null}\n{\"record_id\": 20591, \"ts\": \"2020-10-22T08:30:30.205000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 10096, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\BindRules\\\\{2D24B8D5-64EA-4DD7-BEDF-010BE4FD0224}\\\\Properties\", \"details\": null, \"user\": null}\n{\"record_id\": 20592, \"ts\": \"2020-10-22T08:30:30.205000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_object\": \"HKCR\", \"details\": null, \"user\": null}\n{\"record_id\": 20638, \"ts\": \"2020-10-22T08:30:30.230000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"pid\": 10096, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\NetworkSetup2\\\\BindPaths\\\\{8A716A8A-1B9A-22B6-D374-696E5FD4F257}\\\\Properties\\\\{a111f1f2-5923-47c0-9a68-d0bafb577901}\\\\0054\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        20544,
+        20590,
+        20591,
+        20592,
+        20638
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (21006) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 21006, \"channel\": \"System\", \"event_id\": 7040, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-22T08:30:31.407Z\\\",\\\"OpcodeValue\\\":0,\\\"AccountName\\\":\\\"SYSTEM\\\",\\\"port\\\":58121,\\\"AccountType\\\":\\\"User\\\",\\\"Severity\\\":\\\"INFO\\\",\\\"EventTime\\\":\\\"2020-10-22 04:30:29\\\",\\\"SourceName\\\":\\\"Service Control Mana…[cut: 925 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        21006
+      ]
+    }
+  ],
+  "findings": "Records 1633, 20544, 20638, 21006 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1596,
+    1633,
+    1638,
+    1665,
+    20544,
+    20590,
+    20591,
+    20592,
+    20638,
+    21006
+  ]
+}
