@@ -1,0 +1,69 @@
+{
+  "case_id": "test-39:E1",
+  "profile": "Profile of window SDWIN-220803205800: 47496 events. Request: A program from the Downloads folder on Pedro01 keeps calling out and is creating the MiniNt registry key to stop event logging. Stop process 5572 (payload.exe) on Pedro01. Target: {\"host\": \"Pedro01\", \"pid\": 5572}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (46116, 46118, 47364, 47365) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 46116, \"ts\": \"2022-08-03T07:31:26.757000\", \"host\": \"Pedro01\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": null, \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": null, \"pid\": 7384, \"ppid\": 8316, \"user\": \"pedro\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 46118, \"ts\": \"2022-08-03T07:31:26.763000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\reg.exe\", \"command_line\": \"REG  ADD HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\ControlSet001\\\\Control\\\\MiniNt\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"parent_command_line\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"pid\": 7384, \"ppid\": 8316, \"user\": \"pedro\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=077A4479A2CF23D3709324F21F4D19DC0EF041C8,MD5=05CF3CE225B05B669E3118092F4C8EAB,SHA256=B211C25BF0B10A82B47E9D8DA12155AAD95CFF14CEBDA7C4ACB35A94B433DDFB,IMPHASH=BE482BE427FE212CFEF2CDA0E61F19AC\"}\n{\"record_id\": 47364, \"ts\": \"2022-08-03T11:35:11.106000\", \"host\": \"Pedro01\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\slui.exe\", \"command_line\": null, \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 3888, \"ppid\": 796, \"user\": \"it01-pedro\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 47365, \"ts\": \"2022-08-03T11:35:11.110000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\slui.exe\", \"command_line\": \"C:\\\\Windows\\\\System32\\\\slui.exe -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\Windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": 3888, \"ppid\": 796, \"user\": \"it01-pedro\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=0BE7E88616532822C9B22875154C780A4B599B76,MD5=28E32F800AA2522C5DDDF5CB29AD7536,SHA256=C19A3BF8557FD648AE6750CBBDFA736DFC630D94AE6356C8CD9F04F0D3C28B42,IMPHASH=A7D9AE5981DB25E498B7E31387AF81BF\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        46116,
+        46118,
+        47364,
+        47365
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (42251, 42261, 42262, 42263) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 42251, \"ts\": \"2022-08-03T07:30:37.924000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\Explorer.EXE\", \"source_pid\": 4072, \"target_image\": \"C:\\\\Windows\\\\System32\\\\MicrosoftEdgeCP.exe\", \"target_pid\": 1880, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|C:\\\\Windows\\\\system32\\\\twinui.dll+72169|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+30739|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+345c4|C:\\\\Windows\\\\Sys…[cut: 260 chars]\", \"user\": \"it01-pedro\"}\n{\"record_id\": 42261, \"ts\": \"2022-08-03T07:30:40.053000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Users\\\\IT01-Pedro\\\\Downloads\\\\payload.exe\", \"source_pid\": 5572, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 8316, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9d8d4|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+5e4c0|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+5b593|C:\\\\Windows\\\\System32\\\\advapi32.dll+184df|UNKNOWN(000000000326B2AE)\", \"user\": \"pedro\"}\n{\"record_id\": 42262, \"ts\": \"2022-08-03T07:30:40.053000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\csrss.exe\", \"source_pid\": 512, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 8316, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\Windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+6ce7f\", \"user\": \"system\"}\n{\"record_id\": 42263, \"ts\": \"2022-08-03T07:30:40.053000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1032, \"target_image\": \"C:\\\\Windows\\\\system32\\\\cmd.exe\", \"target_pid\": 8316, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+2730e|c:\\\\windows\\\\system32\\\\pcasvc.dll+1452b|c:\\\\windows\\\\system32\\\\pcasvc.dll+fc06|c:\\\\windows\\\\system32\\\\pcasvc.dll+17544|C:\\\\Windows\\\\Sy…[cut: 261 chars]\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        42251,
+        42261,
+        42262,
+        42263
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (37041, 37224, 37343, 37661) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 37041, \"ts\": \"2022-08-03T07:30:21.435000\", \"host\": \"Pedro01\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\it01-pedro\\\\downloads\\\\payload.exe\", \"pid\": 5572, \"src_ip\": \"192.168.56.43\", \"src_port\": 49928, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 37224, \"ts\": \"2022-08-03T07:30:21.724000\", \"host\": \"Pedro01\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\users\\\\it01-pedro\\\\downloads\\\\payload.exe\", \"pid\": 5572, \"src_ip\": \"192.168.56.43\", \"src_port\": 49929, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 37343, \"ts\": \"2022-08-03T07:30:22.947000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\IT01-Pedro\\\\Downloads\\\\payload.exe\", \"pid\": 5572, \"src_ip\": \"192.168.56.43\", \"src_port\": 49929, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pedro\"}\n{\"record_id\": 37661, \"ts\": \"2022-08-03T07:30:23.468000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Users\\\\IT01-Pedro\\\\Downloads\\\\payload.exe\", \"pid\": 5572, \"src_ip\": \"192.168.56.43\", \"src_port\": 49928, \"dst_ip\": \"192.168.56.40\", \"dst_port\": 8443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pedro\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        37041,
+        37224,
+        37343,
+        37661
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (46132, 46133, 46497, 46501) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 46132, \"ts\": \"2022-08-03T07:31:26.797000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"pid\": 7384, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\MiniNt\", \"details\": null, \"user\": \"pedro\"}\n{\"record_id\": 46133, \"ts\": \"2022-08-03T07:31:26.797000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\reg.exe\", \"pid\": 7384, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Control\\\\MiniNt\\\\(Default)\", \"details\": \"(Empty)\", \"user\": \"pedro\"}\n{\"record_id\": 46497, \"ts\": \"2022-08-03T07:31:32.247000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\ctfmon.exe\", \"pid\": 2272, \"target_object\": \"HKU\\\\S-1-5-21-968647429-258479840-2507984072-1002\\\\Software\\\\Microsoft\\\\Input\\\\Settings\", \"details\": null, \"user\": \"it01-pedro\"}\n{\"record_id\": 46501, \"ts\": \"2022-08-03T07:31:32.403000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\Explorer.EXE\", \"pid\": 4072, \"target_object\": \"HKU\\\\S-1-5-21-968647429-258479840-2507984072-1002\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\UserAssist\\\\{CEBFF5CD-ACE2-4F4F-9178-9926F41749EA}\\\\Count\\\\Zvpebfbsg.Jvaqbjf.Rkcybere\", \"details\": \"Binary Data\", \"user\": \"it01-pedro\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        46132,
+        46133,
+        46497,
+        46501
+      ]
+    }
+  ],
+  "findings": "Records 37343, 42261, 46118, 46133 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    37041,
+    37224,
+    37343,
+    37661,
+    42251,
+    42261,
+    42262,
+    42263,
+    46116,
+    46118,
+    46132,
+    46133,
+    46497,
+    46501,
+    47364,
+    47365
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "case_id": "test-39:E2",
+  "profile": "Profile of window SDWIN-220803205800: 47496 events. Request: A program from the Downloads folder on Pedro01 keeps calling out and is creating the MiniNt registry key to stop event logging. Stop process 5572 (payload.exe) on Pedro01. Target: {\"host\": \"Pedro01\", \"pid\": 5572}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (46490, 46491, 46492, 46493) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 46490, \"ts\": \"2022-08-03T07:31:31.824000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 888, \"target_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"target_pid\": 1048, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+6a685|c:\\\\windows\\\\system32\\\\lsm.dll+111b6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+76963|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\Windows\\\\Syst…[cut: 664 chars]\", \"user\": \"system\"}\n{\"record_id\": 46491, \"ts\": \"2022-08-03T07:31:31.824000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 888, \"target_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"target_pid\": 1048, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+6a685|c:\\\\windows\\\\system32\\\\lsm.dll+111b6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+76963|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\Windows\\\\Syst…[cut: 664 chars]\", \"user\": \"system\"}\n{\"record_id\": 46492, \"ts\": \"2022-08-03T07:31:31.825000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 888, \"target_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"target_pid\": 1048, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+6a685|c:\\\\windows\\\\system32\\\\lsm.dll+111b6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+76963|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\Windows\\\\Syst…[cut: 664 chars]\", \"user\": \"system\"}\n{\"record_id\": 46493, \"ts\": \"2022-08-03T07:31:31.830000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\system32\\\\svchost.exe\", \"source_pid\": 888, \"target_image\": \"C:\\\\Windows\\\\System32\\\\VBoxService.exe\", \"target_pid\": 1048, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\Windows\\\\SYSTEM32\\\\ntdll.dll+9c524|C:\\\\Windows\\\\System32\\\\KERNELBASE.dll+6a685|c:\\\\windows\\\\system32\\\\lsm.dll+111b6|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+76963|C:\\\\Windows\\\\System32\\\\RPCRT4.dll+da036|C:\\\\Windows\\\\Syst…[cut: 664 chars]\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        46490,
+        46491,
+        46492,
+        46493
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (37897, 37898, 37899, 37900) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 37897, \"ts\": \"2022-08-03T07:30:24.279000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\backgroundTaskHost.exe\", \"pid\": 4224, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{d4c920b6-b7b7-1808-610c-227748f139d8}\\\\LocalState\", \"details\": null, \"user\": \"it01-pedro\"}\n{\"record_id\": 37898, \"ts\": \"2022-08-03T07:30:24.279000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\backgroundTaskHost.exe\", \"pid\": 4224, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{d4c920b6-b7b7-1808-610c-227748f139d8}\\\\LocalState\", \"details\": null, \"user\": \"it01-pedro\"}\n{\"record_id\": 37899, \"ts\": \"2022-08-03T07:30:24.279000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\Windows\\\\system32\\\\backgroundTaskHost.exe\", \"pid\": 4224, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{d4c920b6-b7b7-1808-610c-227748f139d8}\\\\LocalState\", \"details\": null, \"user\": \"it01-pedro\"}\n{\"record_id\": 37900, \"ts\": \"2022-08-03T07:30:24.279000\", \"host\": \"Pedro01\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\Windows\\\\system32\\\\backgroundTaskHost.exe\", \"pid\": 4224, \"target_object\": \"\\\\REGISTRY\\\\A\\\\{d4c920b6-b7b7-1808-610c-227748f139d8}\\\\LocalState\\\\Placements\\\\SelectedPlacementIds\", \"details\": \"Binary Data\", \"user\": \"it01-pedro\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        37897,
+        37898,
+        37899,
+        37900
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (27849, 37754) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 27849, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Level\\\":\\\"4\\\",\\\"Keywords\\\":\\\"0x8000000000000000\\\",\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"Hostname\\\"…[cut: 1819 chars]\"}\n{\"record_id\": 37754, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 9, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Level\\\":\\\"4\\\",\\\"Keywords\\\":\\\"0x8000000000000000\\\",\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"Hostname\\\"…[cut: 911 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        27849,
+        37754
+      ]
+    }
+  ],
+  "findings": "Records 27849, 37754, 37899, 46492 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    27849,
+    37754,
+    37897,
+    37898,
+    37899,
+    37900,
+    46490,
+    46491,
+    46492,
+    46493
+  ]
+}
