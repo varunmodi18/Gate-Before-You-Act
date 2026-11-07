@@ -1,0 +1,56 @@
+{
+  "case_id": "test-30:E5",
+  "profile": "Profile of window SDWIN-201029001615: 2396 events. Request: A Python web server started from an elevated shell on WORKSTATION5 is serving files after the firewall was opened for python.exe. Stop process 10220 (python.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 10220}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (862, 1689, 1690, 2396) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 862, \"ts\": \"2020-10-29T13:16:10.220000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\netsh.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\netsh.exe\\\" advfirewall firewall add rule name=python.exe dir=in action=allow description=python.exe program=C:\\\\users\\\\wardog\\\\appdata\\\\local\\\\programs\\\\python\\\\python39\\\\python.exe enabl…[cut: 245 chars]\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 4756, \"ppid\": 9320, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=E7A3B17F625283E3064D91A988D0B1694BA3E9B8,MD5=79CBBF946E797103BED792740AEBFEC1,SHA256=90F0822D26680C8FFD703A080C876F87695580747A3704C169E39E1A8802EA38,IMPHASH=90B4317BE51850B8EF9F14EB56FB7DDC\"}\n{\"record_id\": 1689, \"ts\": \"2020-10-29T13:16:10.368000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python39\\\\python.exe\", \"command_line\": \"\\\"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python39\\\\python.exe\\\" -m http.server 8000\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 10220, \"ppid\": 9320, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 1690, \"ts\": \"2020-10-29T13:16:10.372000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python39\\\\python.exe\", \"command_line\": \"\\\"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python39\\\\python.exe\\\" -m http.server 8000\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 10220, \"ppid\": 9320, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=10C1898FEDB6D554571E429639F6EB6BD8DD37AD,MD5=ED482CBD4E382965DA964538424381EE,SHA256=9042DAA88B2D3879A51BFABC2D90D4A56DA05EBF184B6492A22A46FDC1C936A4,IMPHASH=F0EA749F47650B36D9712C2C487F984B\"}\n{\"record_id\": 2396, \"ts\": \"2020-10-29T13:16:00\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"command_line\": \"powershell.exe -NoProfile -File C:\\\\IT\\\\Start-PythonDocsServer.ps1\", \"parent_image\": \"C:\\\\Windows\\\\explorer.exe\", \"parent_command_line\": null, \"pid\": 9320, \"ppid\": 0, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        862,
+        1689,
+        1690,
+        2396
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (37, 860, 863, 864, 1691) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 37, \"ts\": \"2020-10-29T13:16:09.918000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 9320, \"target_image\": \"C:\\\\windows\\\\system32\\\\netsh.exe\", \"target_pid\": 11124, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": \"wardog\"}\n{\"record_id\": 860, \"ts\": \"2020-10-29T12:16:10.217000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2948, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 6860, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\fwbase.dll+3b35|c:\\\\windows\\\\system32\\\\fwbase.dll+3a89|c:\\\\windows\\\\system32\\\\mpssvc.dll+b907|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 863, \"ts\": \"2020-10-29T13:16:10.220000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 9320, \"target_image\": \"C:\\\\windows\\\\system32\\\\netsh.exe\", \"target_pid\": 4756, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": \"wardog\"}\n{\"record_id\": 864, \"ts\": \"2020-10-29T12:16:10.221000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5672, \"target_image\": \"C:\\\\windows\\\\system32\\\\netsh.exe\", \"target_pid\": 4756, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ceaf\", \"user\": null}\n{\"record_id\": 1691, \"ts\": \"2020-10-29T13:16:10.372000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 9320, \"target_image\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python39\\\\python.exe\", \"target_pid\": 10220, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": \"wardog\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        37,
+        860,
+        863,
+        864,
+        1691
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (184, 185, 195, 203) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 184, \"ts\": \"2020-10-29T13:16:10.170000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 2948, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\SharedAccess\\\\Parameters\\\\FirewallPolicy\\\\FirewallRules\", \"details\": null, \"user\": null}\n{\"record_id\": 185, \"ts\": \"2020-10-29T13:16:10.170000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 2948, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\SharedAccess\\\\Parameters\\\\FirewallPolicy\\\\FirewallRules\\\\{A6A35CAD-6E59-4C6C-ABAA-4F169DCF531B}\", \"details\": \"v2.30|Action=Allow|Active=TRUE|Dir=In|Protocol=6|App=C:\\\\users\\\\wardog\\\\appdata\\\\local\\\\programs\\\\python\\\\python39\\\\python.exe|Name=python.exe|Desc=python.exe|\", \"user\": null}\n{\"record_id\": 195, \"ts\": \"2020-10-29T12:16:10.173000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 2948, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\SharedAccess\\\\Epoch\\\\Epoch\", \"details\": \"DWORD (0x0000030b)\", \"user\": null}\n{\"record_id\": 203, \"ts\": \"2020-10-29T12:16:10.175000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 2996, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\SharedAccess\\\\Epoch\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        184,
+        185,
+        195,
+        203
+      ]
+    }
+  ],
+  "findings": "Records 37, 185, 1689, 1691 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    37,
+    184,
+    185,
+    195,
+    203,
+    860,
+    862,
+    863,
+    864,
+    1689,
+    1690,
+    1691,
+    2396
+  ]
+}

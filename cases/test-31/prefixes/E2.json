@@ -1,0 +1,30 @@
+{
+  "case_id": "test-31:E2",
+  "profile": "Profile of window SDWIN-201009183000: 37814 events. Request: A DLL was planted in Internet Explorer's folder on WORKSTATION6 from WORKSTATION5, and an IE started over DCOM spawned a notepad that is calling out. Contain host WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (21485, 22615, 31102, 37258) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 21485, \"channel\": \"Security\", \"event_id\": 4658, \"json\": \"{\\\"Channel\\\":\\\"Security\\\",\\\"RecordNumber\\\":243378,\\\"ObjectServer\\\":\\\"Security\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"SeverityValue\\\":2,\\\"ProcessId\\\":\\\"0x6ec\\\",\\\"Hostname\\\":\\\"WORKSTATION6.theshire.lo…[cut: 1305 chars]\"}\n{\"record_id\": 22615, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"Channel\\\":\\\"Security\\\",\\\"RecordNumber\\\":243746,\\\"TargetHandleId\\\":\\\"0x243c\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"SeverityValue\\\":2,\\\"ProcessId\\\":\\\"0x6ec\\\",\\\"Hostname\\\":\\\"WORKSTATION6.theshire.lo…[cut: 1341 chars]\"}\n{\"record_id\": 31102, \"channel\": \"System\", \"event_id\": 11, \"json\": \"{\\\"Channel\\\":\\\"System\\\",\\\"Domain\\\":\\\"NT AUTHORITY\\\",\\\"RecordNumber\\\":811,\\\"ProviderGuid\\\":\\\"{152FBE4B-C7AD-4F68-BADA-A4FCC1464F6C}\\\",\\\"SeverityValue\\\":2,\\\"MiniportNameLen\\\":\\\"33\\\",\\\"Hostname\\\":\\\"WORKSTATION6.theshire.local\\\"…[cut: 884 chars]\"}\n{\"record_id\": 37258, \"channel\": \"Security\", \"event_id\": 5158, \"json\": \"{\\\"Channel\\\":\\\"Security\\\",\\\"RecordNumber\\\":243868,\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"SeverityValue\\\":2,\\\"ProcessId\\\":\\\"1540\\\",\\\"Hostname\\\":\\\"WORKSTATION6.theshire.local\\\",\\\"ExecutionProcessID\\\":4…[cut: 1372 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        21485,
+        22615,
+        31102,
+        37258
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION6.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION6.theshire.local\", \"events\": 8}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 21485, 22615, 31102, 37258 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    21485,
+    22615,
+    31102,
+    37258
+  ]
+}

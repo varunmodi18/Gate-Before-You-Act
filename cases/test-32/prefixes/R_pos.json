@@ -1,0 +1,69 @@
+{
+  "case_id": "test-32:R_pos",
+  "profile": "Profile of window SDWIN-201022035214: 1553 events. Request: wardog's PowerShell on WORKSTATION5 dropped an HTA into the Startup folder and ran it with mshta, which started a shell. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (369, 371, 554, 557) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 369, \"ts\": \"2020-10-22T03:52:05.773000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\mshta.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\mshta.exe\\\" \\\"C:\\\\Users\\\\wardog\\\\AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Start Menu\\\\Programs\\\\Startup\\\\T1218.005.hta\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 9160, \"ppid\": 10848, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 371, \"ts\": \"2020-10-22T03:52:05.774000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\mshta.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\mshta.exe\\\" \\\"C:\\\\Users\\\\wardog\\\\AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Start Menu\\\\Programs\\\\Startup\\\\T1218.005.hta\\\"\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" \", \"pid\": 9160, \"ppid\": 10848, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=99A0A1B05E60A5F1FC8A068F953F0510E0230EFA,MD5=7C5C45D9F45694521548E99BA5D4E535,SHA256=229EBBA62347B77EA2FFAD93308E7052BDAE39A24EA828D6EF93FE694CA62197,IMPHASH=42DA177DE2FAA97C3DFAEC9562772A7F\"}\n{\"record_id\": 554, \"ts\": \"2020-10-22T03:52:06.155000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\cmd.exe\\\" /c calc.exe\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\mshta.exe\", \"parent_command_line\": null, \"pid\": 7144, \"ppid\": 9160, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": null}\n{\"record_id\": 557, \"ts\": \"2020-10-22T03:52:06.160000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"command_line\": \"\\\"C:\\\\Windows\\\\System32\\\\cmd.exe\\\" /c calc.exe\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\mshta.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\mshta.exe\\\" \\\"C:\\\\Users\\\\wardog\\\\AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Start Menu\\\\Programs\\\\Startup\\\\T1218.005.hta\\\"\", \"pid\": 7144, \"ppid\": 9160, \"user\": \"wardog\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=8DCA9749CD48D286950E7A9FA1088C937CBCCAD4,MD5=D7AB69FAD18D4A643D84A271DFC0DBDF,SHA256=FF79D3C4A0B7EB191783C323AB8363EBD1FD10BE58D8BCC96B07067743CA81D5,IMPHASH=272245E2988E1E430500B852C4FB5E18\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        369,
+        371,
+        554,
+        557
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (558, 559, 565, 566) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 558, \"ts\": \"2020-10-22T03:52:06.161000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\mshta.exe\", \"source_pid\": 9160, \"target_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"target_pid\": 7144, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\System32\\\\windows.storage.dll+136…[cut: 758 chars]\", \"user\": null}\n{\"record_id\": 559, \"ts\": \"2020-10-22T03:52:06.163000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 5672, \"target_image\": \"C:\\\\Windows\\\\System32\\\\cmd.exe\", \"target_pid\": 7144, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ceaf\", \"user\": null}\n{\"record_id\": 565, \"ts\": \"2020-10-22T03:52:06.179000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 2940, \"granted_access\": \"0x1410\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+1d207|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+fadd0|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+…[cut: 241 chars]\", \"user\": null}\n{\"record_id\": 566, \"ts\": \"2020-10-22T03:52:06.179000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 1072, \"target_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"target_pid\": 2940, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\Windows\\\\System32\\\\appresolver.dll+221c5|C:\\\\Windows\\\\System32\\\\appresolver.dll+1edcc|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+…[cut: 325 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        558,
+        559,
+        565,
+        566
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (39, 178, 214, 985) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 39, \"ts\": \"2020-10-22T03:52:03.612000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-10-08_063613\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3428, \"src_ip\": \"192.168.2.5\", \"src_port\": 52877, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 178, \"ts\": \"2020-10-22T03:52:05.504000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1928, \"src_ip\": \"192.168.2.5\", \"src_port\": 57272, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 53, \"protocol\": \"17\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 214, \"ts\": \"2020-10-22T03:52:05.514000\", \"host\": \"WORKSTATION5\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\windowspowershell\\\\v1.0\\\\powershell.exe\", \"pid\": 10848, \"src_ip\": \"192.168.2.5\", \"src_port\": 52878, \"dst_ip\": \"151.101.208.133\", \"dst_port\": 443, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 985, \"ts\": \"2020-10-22T03:52:06.658000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 10848, \"src_ip\": \"192.168.2.5\", \"src_port\": 52878, \"dst_ip\": \"151.101.208.133\", \"dst_port\": 443, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"wardog\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        39,
+        178,
+        214,
+        985
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (368, 639, 1275, 1501) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 368, \"ts\": \"2020-10-22T03:52:05.769000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"pid\": 10848, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Start Menu\\\\Programs\\\\Startup\\\\T1218.005.hta\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 639, \"ts\": \"2020-10-22T03:52:06.258000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\MSHTA.EXE-A970B441.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 1275, \"ts\": \"2020-10-22T03:52:08.959000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 1556, \"target_filename\": \"C:\\\\Windows\\\\Prefetch\\\\CALC.EXE-77FDF17F.pf\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 1501, \"ts\": \"2020-10-22T03:52:09.348000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\System32\\\\RuntimeBroker.exe\", \"pid\": 6080, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Roaming\\\\Microsoft\\\\Windows\\\\Recent\\\\CustomDestinations\\\\U41GTUJAPZRUK0QE97PI.temp\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        368,
+        639,
+        1275,
+        1501
+      ]
+    }
+  ],
+  "findings": "Records 368, 369, 558, 985 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    39,
+    178,
+    214,
+    368,
+    369,
+    371,
+    554,
+    557,
+    558,
+    559,
+    565,
+    566,
+    639,
+    985,
+    1275,
+    1501
+  ]
+}

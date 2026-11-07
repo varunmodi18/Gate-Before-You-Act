@@ -1,0 +1,50 @@
+{
+  "case_id": "test-19:E2",
+  "profile": "Profile of window SDWIN-190518201207: 1749 events. Request: An implant running as sbeavers on WORKSTATION6 is enumerating the Domain Admins group. Disable account sbeavers. Target: {\"account\": \"sbeavers\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (207, 399, 400, 401, 597) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 207, \"ts\": \"2020-09-21T08:09:02.858000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 399, \"ts\": \"2020-09-21T08:09:07.965000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 400, \"ts\": \"2020-09-21T08:09:08.964000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 880, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 704, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 401, \"ts\": \"2020-09-21T08:09:08.966000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 880, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 704, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 597, \"ts\": \"2020-09-21T08:09:17.065000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        207,
+        399,
+        400,
+        401,
+        597
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (1148, 1158, 1160, 1161) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1148, \"ts\": \"2020-09-21T08:09:34.428000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150914\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3192, \"src_ip\": \"172.18.39.5\", \"src_port\": 50276, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1158, \"ts\": \"2020-09-21T08:09:36.443000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150921\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3476, \"src_ip\": \"172.18.39.6\", \"src_port\": 57780, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1160, \"ts\": \"2020-09-21T08:09:36.443000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-09-17_150607\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3596, \"src_ip\": \"172.18.38.5\", \"src_port\": 49987, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 1161, \"ts\": \"2020-09-21T08:09:36.444000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"System\", \"pid\": 4, \"src_ip\": \"172.18.38.6\", \"src_port\": 49543, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 445, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1148,
+        1158,
+        1160,
+        1161
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (522) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 522, \"channel\": \"Microsoft-Windows-PowerShell/Operational\", \"event_id\": 4103, \"json\": \"{\\\"Keywords\\\":0,\\\"SeverityValue\\\":2,\\\"EventReceivedTime\\\":\\\"2020-09-21 04:09:16\\\",\\\"EventID\\\":4103,\\\"ProviderGuid\\\":\\\"{A0C1853B-5C40-4B15-8766-3CF1C58F985A}\\\",\\\"ExecutionProcessID\\\":5724,\\\"Channel\\\":\\\"Microsoft-Windows-…[cut: 6879 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        522
+      ]
+    }
+  ],
+  "findings": "Records 207, 522, 597, 1158 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    207,
+    399,
+    400,
+    401,
+    522,
+    597,
+    1148,
+    1158,
+    1160,
+    1161
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "case_id": "test-32:E2",
+  "profile": "Profile of window SDWIN-201022035214: 1553 events. Request: wardog's PowerShell on WORKSTATION5 dropped an HTA into the Startup folder and ran it with mshta, which started a shell. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1540, 1541, 1542, 1543) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1540, \"ts\": \"2020-10-22T03:52:12.145000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 1541, \"ts\": \"2020-10-22T03:52:12.145000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\backgroundTaskHost.exe\", \"target_pid\": 7612, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 1542, \"ts\": \"2020-10-22T03:52:13.156000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 4368, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n{\"record_id\": 1543, \"ts\": \"2020-10-22T03:52:13.156000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 944, \"target_image\": \"C:\\\\windows\\\\system32\\\\backgroundTaskHost.exe\", \"target_pid\": 7612, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37ea0|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+37929|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 638 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1540,
+        1541,
+        1542,
+        1543
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (63, 540, 541, 556, 1051) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 63, \"ts\": \"2020-10-22T03:52:05.411000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\SecurityHealthService.exe\", \"pid\": 7428, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows Security Health\\\\Health Advisor\\\\Storage Health\", \"details\": null, \"user\": null}\n{\"record_id\": 540, \"ts\": \"2020-10-22T03:52:06.121000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\mshta.exe\", \"pid\": 9160, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\Desktop\\\\NameSpace\\\\DelegateFolders\", \"details\": null, \"user\": null}\n{\"record_id\": 541, \"ts\": \"2020-10-22T03:52:06.121000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\mshta.exe\", \"pid\": 9160, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\SyncRootManager\", \"details\": null, \"user\": null}\n{\"record_id\": 556, \"ts\": \"2020-10-22T03:52:06.159000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": \"SetValue\", \"image\": \"C:\\\\windows\\\\system32\\\\mshta.exe\", \"pid\": 9160, \"target_object\": \"HKLM\\\\System\\\\CurrentControlSet\\\\Services\\\\bam\\\\State\\\\UserSettings\\\\S-1-5-21-3940915590-64593676-1414006259-500\\\\\\\\Device\\\\HarddiskVolume2\\\\Windows\\\\System32\\\\cmd.exe\", \"details\": \"Binary Data\", \"user\": null}\n{\"record_id\": 1051, \"ts\": \"2020-10-22T03:52:06.975000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\ApplicationFrameHost.exe\", \"pid\": 452, \"target_object\": \"HKU\\\\S-1-5-21-3940915590-64593676-1414006259-500_Classes\\\\Local Settings\\\\MrtCache\\\\C:%5CProgram Files%5CWindowsApps%5CMicrosoft.WindowsCalculator_10.2008.2.0_x64__8wekyb3d8bbwe%5Cmicrosoft.system.package…[cut: 277 chars]\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        63,
+        540,
+        541,
+        556,
+        1051
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (237) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 237, \"channel\": \"Security\", \"event_id\": 4656, \"json\": \"{\\\"Keywords\\\":\\\"0x8020000000000000\\\",\\\"Task\\\":\\\"12801\\\",\\\"ObjectServer\\\":\\\"Security\\\",\\\"TimeCreated\\\":\\\"2020-10-22T03:52:05.515Z\\\",\\\"RestrictedSidCount\\\":\\\"5\\\",\\\"SubjectUserSid\\\":\\\"S-1-5-19\\\",\\\"ObjectName\\\":\\\"\\\\\\\\REGISTRY\\\\\\\\MACHIN…[cut: 1610 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        237
+      ]
+    }
+  ],
+  "findings": "Records 63, 237, 1051, 1541 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    63,
+    237,
+    540,
+    541,
+    556,
+    1051,
+    1540,
+    1541,
+    1542,
+    1543
+  ]
+}

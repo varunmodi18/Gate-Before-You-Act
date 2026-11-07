@@ -1,0 +1,30 @@
+{
+  "case_id": "test-30:E2",
+  "profile": "Profile of window SDWIN-201029001615: 2395 events. Request: A Python web server started from an elevated shell on WORKSTATION5 is serving files after the firewall was opened for python.exe. Stop process 10220 (python.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 10220}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (647, 1026, 1473, 2013) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 647, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-29T12:16:10.193Z\\\",\\\"TimeCreated\\\":\\\"2020-10-29T12:16:10.193Z\\\",\\\"SubjectLogonId\\\":\\\"0x3e5\\\",\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"S…[cut: 930 chars]\"}\n{\"record_id\": 1026, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-29T12:16:10.321Z\\\",\\\"TimeCreated\\\":\\\"2020-10-29T12:16:10.321Z\\\",\\\"SubjectLogonId\\\":\\\"0x3e5\\\",\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"S…[cut: 930 chars]\"}\n{\"record_id\": 1473, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-29T12:16:10.343Z\\\",\\\"TimeCreated\\\":\\\"2020-10-29T12:16:10.343Z\\\",\\\"SubjectLogonId\\\":\\\"0x3e5\\\",\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"S…[cut: 930 chars]\"}\n{\"record_id\": 2013, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"@timestamp\\\":\\\"2020-10-29T12:16:13.178Z\\\",\\\"TimeCreated\\\":\\\"2020-10-29T12:16:13.178Z\\\",\\\"SubjectLogonId\\\":\\\"0x3e5\\\",\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-a5ba-3e3b0328c30d}\\\",\\\"S…[cut: 930 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        647,
+        1026,
+        1473,
+        2013
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"WORKSTATION5\", \"events\": 6}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 647, 1026, 1473, 2013 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    647,
+    1026,
+    1473,
+    2013
+  ]
+}

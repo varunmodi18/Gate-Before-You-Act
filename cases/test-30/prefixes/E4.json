@@ -1,0 +1,30 @@
+{
+  "case_id": "test-30:E4",
+  "profile": "Profile of window SDWIN-201029001615: 2058 events. Request: A Python web server started from an elevated shell on WORKSTATION5 is serving files after the firewall was opened for python.exe. Stop process 10220 (python.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 10220}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1684, 1685, 1686, 1691) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1684, \"ts\": \"2020-10-29T12:16:10.359000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2948, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 6860, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\fwbase.dll+3b35|c:\\\\windows\\\\system32\\\\fwbase.dll+3a89|c:\\\\windows\\\\system32\\\\mpssvc.dll+b907|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 1685, \"ts\": \"2020-10-29T12:16:10.359000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2948, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 4584, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\fwbase.dll+3b35|c:\\\\windows\\\\system32\\\\fwbase.dll+3a89|c:\\\\windows\\\\system32\\\\mpssvc.dll+b907|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 1686, \"ts\": \"2020-10-29T12:16:10.359000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2948, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 6860, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\fwbase.dll+3b35|c:\\\\windows\\\\system32\\\\fwbase.dll+3a89|c:\\\\windows\\\\system32\\\\mpssvc.dll+b907|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n{\"record_id\": 1691, \"ts\": \"2020-10-29T12:16:10.372000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"source_pid\": 9320, \"target_image\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python39\\\\python.exe\", \"target_pid\": 10220, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d934|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1bee3|C:\\\\windows\\\\assembly\\\\NativeImages_v4.0.30319…[cut: 1271 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1684,
+        1685,
+        1686,
+        1691
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION5' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n<</UNTRUSTED_LOG_DATA>>\n[no rows]",
+      "rows": 0,
+      "registered": []
+    }
+  ],
+  "findings": "Records 1691 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1684,
+    1685,
+    1686,
+    1691
+  ]
+}

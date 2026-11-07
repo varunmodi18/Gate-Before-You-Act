@@ -1,0 +1,162 @@
+[
+  {
+    "scenario_id": "dev-05",
+    "case_id": "dev-05",
+    "window_id": "SDWIN-190519005224",
+    "techniques": [
+      "T1049"
+    ],
+    "tactics": [
+      "TA0007"
+    ],
+    "split": "dev",
+    "reason": "no_coverable_chain",
+    "detail": "the attack is visible only in raw agent events and in logon/share records on the DC; no chain record with an acting process, so E5 cannot cover the chain and check (j) cannot hold",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-01",
+    "case_id": "test-01",
+    "window_id": "SDWIN-190301125905",
+    "techniques": [
+      "T1222.001"
+    ],
+    "tactics": [
+      "TA0005"
+    ],
+    "split": "test",
+    "reason": "no_acting_creation_record",
+    "detail": "the technique appears only in raw-only events; no creation record of the acting process, so check (j) cannot hold for E5",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-04",
+    "case_id": "test-04",
+    "window_id": "SDWIN-200806015757",
+    "techniques": [
+      "T1021.002"
+    ],
+    "tactics": [
+      "TA0008"
+    ],
+    "split": "test",
+    "reason": "no_process_creation",
+    "detail": "no process creation in the window; only logon, share and System records",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-07",
+    "case_id": "test-07",
+    "window_id": "SDWIN-190518221344",
+    "techniques": [
+      "T1055.001"
+    ],
+    "tactics": [
+      "TA0004"
+    ],
+    "split": "test",
+    "reason": "no_acting_creation_record",
+    "detail": "no attack process is created in the window, so check (j) cannot hold for E5",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-09",
+    "case_id": "test-09",
+    "window_id": "SDWIN-190319145126",
+    "techniques": [
+      "T1003.003"
+    ],
+    "tactics": [
+      "TA0006"
+    ],
+    "split": "test",
+    "reason": "prefix_overflow",
+    "detail": "the prefix builder's canned query for any cited creation record exceeds the SQL tool's result limit (long Sysmon rows), so no creation record can be cited and check (j) cannot hold",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-10",
+    "case_id": "test-10",
+    "window_id": "SDWIN-190518211052",
+    "techniques": [
+      "T1021.003"
+    ],
+    "tactics": [
+      "TA0002"
+    ],
+    "split": "test",
+    "reason": "evidence_budget",
+    "detail": "every attack creation record is over the 3,200-token evidence budget, so no creation record can be cited and check (j) cannot hold",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-11",
+    "case_id": "test-11",
+    "window_id": "SDWIN-200806022635",
+    "techniques": [
+      "T1021.002"
+    ],
+    "tactics": [
+      "TA0008"
+    ],
+    "split": "test",
+    "reason": "no_process_creation",
+    "detail": "no attack process is created; the attacker's records are logon/share only",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-18",
+    "case_id": "test-18",
+    "window_id": "SDWIN-200806030120",
+    "techniques": [
+      "T1021.002"
+    ],
+    "tactics": [
+      "TA0008"
+    ],
+    "split": "test",
+    "reason": "no_attack_process",
+    "detail": "only a legitimate service (IKEEXT) is started remotely; the attacker's records are logon/share with no acting process",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-26",
+    "case_id": "test-26",
+    "window_id": "SDWIN-200806130039",
+    "techniques": [
+      "T1069.002"
+    ],
+    "tactics": [
+      "TA0007"
+    ],
+    "split": "test",
+    "reason": "no_process_creation",
+    "detail": "no process-creation record in the window (in-memory LDAP query by an implant started before it)",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  },
+  {
+    "scenario_id": "test-36",
+    "case_id": "test-36",
+    "window_id": "SDWIN-201020013208",
+    "techniques": [
+      "T1056.002"
+    ],
+    "tactics": [
+      "TA0006"
+    ],
+    "split": "test",
+    "reason": "no_process_creation",
+    "detail": "no process-creation record in the window",
+    "decided": "agent-A while authoring (stop rule), 2026-11-07; kept by the team lead 2026-11-08",
+    "log": "cases/AUTHORING_LOG.md"
+  }
+]

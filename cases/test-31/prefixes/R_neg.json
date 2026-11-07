@@ -1,0 +1,69 @@
+{
+  "case_id": "test-31:R_neg",
+  "profile": "Profile of window SDWIN-201009183000: 37814 events. Request: A DLL was planted in Internet Explorer's folder on WORKSTATION6 from WORKSTATION5, and an IE started over DCOM spawned a notepad that is calling out. Contain host WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_create WHERE record_id IN (21010, 21161, 21268, 21579) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 21010, \"ts\": \"2020-10-09T22:30:54.751000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\SearchFilterHost.exe\", \"command_line\": \"\\\"C:\\\\windows\\\\system32\\\\SearchFilterHost.exe\\\" 0 768 772 780 8192 776 \", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\SearchIndexer.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\SearchIndexer.exe /Embedding\", \"pid\": 4296, \"ppid\": 4196, \"user\": \"system\", \"integrity_level\": \"Medium\", \"hashes\": \"SHA1=EE0F2B28EBEEB063C01D1399923A3C5E843FF4F7,MD5=92F1CBE1A106BC4F6A2B57A87076DA4A,SHA256=513009018A0D7455A0CBB21D1A1FF7258E5EA1AAB10AD1B56EC49CBA71902DBB,IMPHASH=837968E736EE58A7F0780D1DA007BB63\"}\n{\"record_id\": 21161, \"ts\": \"2020-10-09T22:30:58.901000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\", \"command_line\": \"\\\"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\\\" -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": \"C:\\\\windows\\\\system32\\\\svchost.exe -k DcomLaunch -p\", \"pid\": 9428, \"ppid\": 884, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=C4C1E9E0EF00E16C2FD2D114D50A0602C859005E,MD5=C50EEB216AB9F7E9B375270426C4DFD6,SHA256=826D59B40D332B10C06C4ACB34E41C60E5213E3A5049D14A250868D2075CFC65,IMPHASH=BF1B4238FCDBB117EDF39418CA0D205C\"}\n{\"record_id\": 21268, \"ts\": \"2020-10-09T22:30:58.902000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 1, \"image\": \"C:\\\\Windows\\\\System32\\\\notepad.exe\", \"command_line\": \"c:\\\\windows\\\\system32\\\\notepad.exe\", \"parent_image\": \"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\", \"parent_command_line\": \"\\\"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\\\" -Embedding\", \"pid\": 3532, \"ppid\": 9428, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": \"SHA1=C401CD335BA6A3BDAF8799FDC09CDC0721F06015,MD5=06E6C0482562459ADB462CA9008262F8,SHA256=E5D90BEEB6F13F4613C3153DABBD1466F4A062B7252D931F37210907A7F914F7,IMPHASH=E2D17AC7541817AA681AE8FF7734AD89\"}\n{\"record_id\": 21579, \"ts\": \"2020-10-09T22:30:58.907000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 4688, \"image\": \"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\", \"command_line\": \"\\\"C:\\\\Program Files\\\\Internet Explorer\\\\iexplore.exe\\\" -Embedding\", \"parent_image\": \"C:\\\\Windows\\\\System32\\\\svchost.exe\", \"parent_command_line\": null, \"pid\": 9428, \"ppid\": 884, \"user\": \"pgustavo\", \"integrity_level\": \"High\", \"hashes\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        21010,
+        21161,
+        21268,
+        21579
+      ]
+    },
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (22197, 22231, 22339, 22348) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 22197, \"ts\": \"2020-10-09T22:30:59.484000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-10-08_051622\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3392, \"src_ip\": \"172.18.39.6\", \"src_port\": 65081, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 22231, \"ts\": \"2020-10-09T22:30:59.485000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"C:\\\\Program Files (x86)\\\\Internet Explorer\\\\ielowutil.exe\", \"pid\": 7496, \"src_ip\": \"172.18.39.5\", \"src_port\": 51737, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 65077, \"protocol\": \"tcp\", \"direction\": \"inbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 22339, \"ts\": \"2020-10-09T22:30:59.486000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"c:\\\\windows\\\\system32\\\\notepad.exe\", \"pid\": 3532, \"src_ip\": \"172.18.39.6\", \"src_port\": 65080, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 22348, \"ts\": \"2020-10-09T22:30:59.486000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": 976, \"src_ip\": \"172.18.39.5\", \"src_port\": 51741, \"dst_ip\": \"172.18.39.6\", \"dst_port\": 135, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        22197,
+        22231,
+        22339,
+        22348
+      ]
+    },
+    {
+      "sql": "SELECT * FROM file WHERE record_id IN (12768, 12769, 12777, 12873) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 12768, \"ts\": \"2020-10-09T22:30:33.113000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Program Files\\\\WindowsApps\\\\Microsoft.Windows.Photos_2019.18114.19418.0_x64__8wekyb3d8bbwe\\\\Microsoft.Photos.exe\", \"pid\": 10308, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Packages\\\\Microsoft.Windows.Photos_8wekyb3d8bbwe\\\\Settings\\\\settings.dat.LOG1\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 12769, \"ts\": \"2020-10-09T22:30:33.115000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Program Files\\\\WindowsApps\\\\Microsoft.Windows.Photos_2019.18114.19418.0_x64__8wekyb3d8bbwe\\\\Microsoft.Photos.exe\", \"pid\": 10308, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Packages\\\\Microsoft.Windows.Photos_8wekyb3d8bbwe\\\\Settings\\\\settings.dat.LOG2\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 12777, \"ts\": \"2020-10-09T22:30:33.119000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"C:\\\\Windows\\\\SystemApps\\\\Microsoft.Windows.Cortana_cw5n1h2txyewy\\\\SearchUI.exe\", \"pid\": 9688, \"target_filename\": \"C:\\\\Users\\\\wardog\\\\AppData\\\\Local\\\\Packages\\\\Microsoft.Windows.Cortana_cw5n1h2txyewy\\\\LocalState\\\\ConstraintIndex\\\\Apps_{583dc7ea-df92-486c-9084-2d60f8e1252b}\\\\Apps.ft\", \"event_type\": \"FileCreate\", \"user\": null}\n{\"record_id\": 12873, \"ts\": \"2020-10-09T22:30:33.173000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 11, \"image\": \"System\", \"pid\": 4, \"target_filename\": \"C:\\\\Program Files\\\\Internet Explorer\\\\iertutil.dll\", \"event_type\": \"FileCreate\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        12768,
+        12769,
+        12777,
+        12873
+      ]
+    },
+    {
+      "sql": "SELECT * FROM share_access WHERE record_id IN (12883, 12885, 12888, 12890) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 12883, \"ts\": \"2020-10-09T22:30:33.177000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5140, \"subject_user\": \"pgustavo\", \"share_name\": \"\\\\\\\\*\\\\C$\", \"relative_target\": null, \"src_ip\": \"172.18.39.5\", \"access_mask\": \"0x1\"}\n{\"record_id\": 12885, \"ts\": \"2020-10-09T22:30:33.185000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5145, \"subject_user\": \"pgustavo\", \"share_name\": \"\\\\\\\\*\\\\C$\", \"relative_target\": \"Program Files\\\\Internet Explorer\", \"src_ip\": \"172.18.39.5\", \"access_mask\": \"0x80\"}\n{\"record_id\": 12888, \"ts\": \"2020-10-09T22:30:33.185000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5145, \"subject_user\": \"pgustavo\", \"share_name\": \"\\\\\\\\*\\\\C$\", \"relative_target\": \"Program Files\\\\Internet Explorer\\\\iertutil.dll\", \"src_ip\": \"172.18.39.5\", \"access_mask\": \"0x17019f\"}\n{\"record_id\": 12890, \"ts\": \"2020-10-09T22:30:33.185000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5145, \"subject_user\": \"pgustavo\", \"share_name\": \"\\\\\\\\*\\\\C$\", \"relative_target\": \"Program Files\\\\Internet Explorer\\\\iertutil.dll\", \"src_ip\": \"172.18.39.5\", \"access_mask\": \"0x2\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        12883,
+        12885,
+        12888,
+        12890
+      ]
+    }
+  ],
+  "findings": "Records 12873, 12888, 21268, 22339 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    12768,
+    12769,
+    12777,
+    12873,
+    12883,
+    12885,
+    12888,
+    12890,
+    21010,
+    21161,
+    21268,
+    21579,
+    22197,
+    22231,
+    22339,
+    22348
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "case_id": "test-19:E4",
+  "profile": "Profile of window SDWIN-190518201207: 1563 events. Request: An implant running as sbeavers on WORKSTATION6 is enumerating the Domain Admins group. Disable account sbeavers. Target: {\"account\": \"sbeavers\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (505, 506, 507, 537) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 505, \"ts\": \"2020-09-21T08:09:16.011000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 506, \"ts\": \"2020-09-21T08:09:16.011000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 507, \"ts\": \"2020-09-21T08:09:16.012000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 960, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3516, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 537, \"ts\": \"2020-09-21T08:09:16.031000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\net.exe\", \"source_pid\": 3892, \"target_image\": \"C:\\\\windows\\\\system32\\\\net1.exe\", \"target_pid\": 9656, \"granted_access\": \"0x1fffff\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d8e4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+59e1a|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+567b6|C:\\\\windows\\\\System32\\\\KERNEL32.DLL+1be93|C:\\\\windows\\\\system32\\\\net.exe+1939|C:\\\\windows…[cut: 363 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        505,
+        506,
+        507,
+        537
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION6.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n<</UNTRUSTED_LOG_DATA>>\n[no rows]",
+      "rows": 0,
+      "registered": []
+    }
+  ],
+  "findings": "Records 537 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    505,
+    506,
+    507,
+    537
+  ]
+}

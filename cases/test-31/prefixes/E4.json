@@ -1,0 +1,30 @@
+{
+  "case_id": "test-31:E4",
+  "profile": "Profile of window SDWIN-201009183000: 37124 events. Request: A DLL was planted in Internet Explorer's folder on WORKSTATION6 from WORKSTATION5, and an IE started over DCOM spawned a notepad that is calling out. Contain host WORKSTATION6.theshire.local. Target: {\"host\": \"WORKSTATION6.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM network WHERE record_id IN (21875, 22197, 22339, 22590) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 21875, \"ts\": \"2020-10-09T22:30:59.172000\", \"host\": \"MORDORDC.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windows\\\\system32\\\\lsass.exe\", \"pid\": 712, \"src_ip\": \"172.18.39.5\", \"src_port\": 51744, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 88, \"protocol\": \"6\", \"direction\": \"inbound\", \"user\": null}\n{\"record_id\": 22197, \"ts\": \"2020-10-09T22:30:59.484000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Security\", \"event_id\": 5156, \"image\": \"\\\\device\\\\harddiskvolume2\\\\windowsazure\\\\guestagent_2.7.41491.993_2020-10-08_051622\\\\guestagent\\\\windowsazureguestagent.exe\", \"pid\": 3392, \"src_ip\": \"172.18.39.6\", \"src_port\": 65081, \"dst_ip\": \"168.63.129.16\", \"dst_port\": 80, \"protocol\": \"6\", \"direction\": \"outbound\", \"user\": null}\n{\"record_id\": 22339, \"ts\": \"2020-10-09T22:30:59.486000\", \"host\": \"WORKSTATION6.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"c:\\\\windows\\\\system32\\\\notepad.exe\", \"pid\": 3532, \"src_ip\": \"172.18.39.6\", \"src_port\": 65080, \"dst_ip\": \"10.10.10.5\", \"dst_port\": 80, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"pgustavo\"}\n{\"record_id\": 22590, \"ts\": \"2020-10-09T22:30:59.490000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 3, \"image\": \"System\", \"pid\": 4, \"src_ip\": \"172.18.39.5\", \"src_port\": 51702, \"dst_ip\": \"172.18.38.5\", \"dst_port\": 445, \"protocol\": \"tcp\", \"direction\": \"outbound\", \"user\": \"system\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        21875,
+        22197,
+        22339,
+        22590
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'WORKSTATION6.theshire.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n<</UNTRUSTED_LOG_DATA>>\n[no rows]",
+      "rows": 0,
+      "registered": []
+    }
+  ],
+  "findings": "Records 22339 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    21875,
+    22197,
+    22339,
+    22590
+  ]
+}
