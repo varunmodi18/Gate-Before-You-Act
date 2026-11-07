@@ -1,0 +1,50 @@
+{
+  "case_id": "test-34:E2",
+  "profile": "Profile of window SDWIN-201219075059: 2657 events. Request: A PowerShell session on WORKSTATION5 pulled a script from GitHub and then rewrote a built-in scheduled task on WORKSTATION6 over RPC. Contain host WORKSTATION5.theshire.local. Target: {\"host\": \"WORKSTATION5.theshire.local\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (2301, 2322, 2323, 2324, 2343) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 2301, \"ts\": \"2020-12-19T07:50:46.560000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2384, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 772, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d784|C:\\\\windows\\\\System32\\\\RPCRT4.dll+2d354|C:\\\\windows\\\\System32\\\\combase.dll+be11b|c:\\\\windows\\\\system32\\\\windows.staterepository.dll+223f5|c:\\\\windows\\\\system32\\\\windows.statere…[cut: 930 chars]\", \"user\": null}\n{\"record_id\": 2322, \"ts\": \"2020-12-19T07:50:48.345000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 2724, \"target_image\": \"C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"target_pid\": 3284, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\SYSTEM32\\\\TWINAPI.dll+6cd3|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20880|C:\\\\windows\\\\system32\\\\twinui.pcshell.dll+20…[cut: 778 chars]\", \"user\": null}\n{\"record_id\": 2323, \"ts\": \"2020-12-19T07:50:48.346000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 2724, \"target_image\": \"C:\\\\Windows\\\\SystemApps\\\\InputApp_cw5n1h2txyewy\\\\WindowsInternal.ComposableShell.Experiences.TextInput.InputApp.exe\", \"target_pid\": 8140, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n{\"record_id\": 2324, \"ts\": \"2020-12-19T07:50:48.347000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\Explorer.EXE\", \"source_pid\": 2724, \"target_image\": \"C:\\\\Program Files\\\\Wireshark\\\\Wireshark.exe\", \"target_pid\": 7744, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|C:\\\\windows\\\\system32\\\\twinui.dll+72a89|C:\\\\windows\\\\system32\\\\twinui.dll+785b2|C:\\\\windows\\\\system32\\\\twinui.dll+1780b|C:\\\\windows\\\\s…[cut: 725 chars]\", \"user\": null}\n{\"record_id\": 2343, \"ts\": \"2020-12-19T07:50:49.022000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 1920, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 932, \"granted_access\": \"0x2000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9cbb4|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\sysmain.dll+7a8cb|c:\\\\windows\\\\system32\\\\sysmain.dll+52730|c:\\\\windows\\\\system32\\\\sysmain.dll+1c468|c:\\\\window…[cut: 491 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        2301,
+        2322,
+        2323,
+        2324,
+        2343
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (396, 397, 398, 399) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 396, \"ts\": \"2020-12-19T07:50:13.666000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\consent.exe\", \"pid\": 3468, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\", \"details\": null, \"user\": null}\n{\"record_id\": 397, \"ts\": \"2020-12-19T07:50:13.666000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\consent.exe\", \"pid\": 3468, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\SystemCertificates\", \"details\": null, \"user\": null}\n{\"record_id\": 398, \"ts\": \"2020-12-19T07:50:13.666000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\consent.exe\", \"pid\": 3468, \"target_object\": \"HKLM\\\\SOFTWARE\", \"details\": null, \"user\": null}\n{\"record_id\": 399, \"ts\": \"2020-12-19T07:50:13.666000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": \"CreateKey\", \"image\": \"C:\\\\windows\\\\system32\\\\consent.exe\", \"pid\": 3468, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\", \"details\": null, \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        396,
+        397,
+        398,
+        399
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (308) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 308, \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 7, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Sysmon\\\",\\\"ProviderGuid\\\":\\\"{5770385f-c22a-43e0-bf4c-06f5698ffbd9}\\\",\\\"Level\\\":\\\"4\\\",\\\"Keywords\\\":\\\"0x8000000000000000\\\",\\\"Channel\\\":\\\"Microsoft-Windows-Sysmon/Operational\\\",\\\"Hostname\\\"…[cut: 1801 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": [
+        308
+      ]
+    }
+  ],
+  "findings": "Records 308, 398, 2301, 2343 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    308,
+    396,
+    397,
+    398,
+    399,
+    2301,
+    2322,
+    2323,
+    2324,
+    2343
+  ]
+}
