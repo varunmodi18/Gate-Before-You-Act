@@ -1,0 +1,35 @@
+{
+  "case_id": "test-22:E2",
+  "profile": "Profile of window SDWIN-201021001911: 2366 events. Request: An elevated shell on WORKSTATION5 is changing the host firewall to accept inbound connections. Stop process 4160 (cmd.exe) on WORKSTATION5. Target: {\"host\": \"WORKSTATION5\", \"pid\": 4160}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (1185, 1205, 1206, 1226) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1185, \"ts\": \"2020-10-21T12:19:07.585000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 404, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1884, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+6af15|c:\\\\windows\\\\system32\\\\lsm.dll+1184f|c:\\\\windows\\\\system32\\\\lsm.dll+1172e|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\System3…[cut: 698 chars]\", \"user\": null}\n{\"record_id\": 1205, \"ts\": \"2020-10-21T12:19:07.587000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"source_pid\": 756, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1884, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9d154|C:\\\\windows\\\\System32\\\\RPCRT4.dll+2d354|C:\\\\windows\\\\system32\\\\lsasrv.dll+176b9|C:\\\\windows\\\\SYSTEM32\\\\SspiSrv.dll+1a72|C:\\\\windows\\\\System32\\\\RPCRT4.dll+76a63|C:\\\\windows\\\\Syste…[cut: 700 chars]\", \"user\": null}\n{\"record_id\": 1206, \"ts\": \"2020-10-21T12:19:07.587000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\lsass.exe\", \"source_pid\": 756, \"target_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"target_pid\": 1884, \"granted_access\": \"0x1478\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\system32\\\\lsasrv.dll+179a6|C:\\\\windows\\\\system32\\\\lsasrv.dll+1852f|C:\\\\windows\\\\system32\\\\lsasrv.dll+17814|C:\\\\windows\\\\SYSTEM32\\\\SspiSrv.dll+1a72|C:\\\\windows\\\\Syste…[cut: 737 chars]\", \"user\": null}\n{\"record_id\": 1226, \"ts\": \"2020-10-21T12:19:07.591000\", \"host\": \"WORKSTATION5\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 2948, \"target_image\": \"C:\\\\windows\\\\system32\\\\SecurityHealthService.exe\", \"target_pid\": 7428, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c584|C:\\\\windows\\\\System32\\\\KERNELBASE.dll+305fe|c:\\\\windows\\\\system32\\\\fwbase.dll+3b35|c:\\\\windows\\\\system32\\\\fwbase.dll+3a89|c:\\\\windows\\\\system32\\\\mpssvc.dll+b907|c:\\\\windows\\\\syst…[cut: 810 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        1185,
+        1205,
+        1206,
+        1226
+      ]
+    },
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (1291, 1778) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 1291, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"SubjectUserName\\\":\\\"LOCAL SERVICE\\\",\\\"TimeCreated\\\":\\\"2020-10-21 12:19:07.595\\\",\\\"SubjectLogonId\\\":\\\"0x3e5\\\",\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"TargetProcessId\\\":\\\"0x4\\\",\\\"SubjectUserSid\\\":\\\"S-1-5-19\\\",\\\"SourceHandle…[cut: 789 chars]\"}\n{\"record_id\": 1778, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"SubjectUserName\\\":\\\"LOCAL SERVICE\\\",\\\"TimeCreated\\\":\\\"2020-10-21 12:19:09.145\\\",\\\"SubjectLogonId\\\":\\\"0x3e5\\\",\\\"SubjectDomainName\\\":\\\"NT AUTHORITY\\\",\\\"TargetProcessId\\\":\\\"0x4\\\",\\\"SubjectUserSid\\\":\\\"S-1-5-19\\\",\\\"SourceHandle…[cut: 789 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 2,
+      "registered": [
+        1291,
+        1778
+      ]
+    }
+  ],
+  "findings": "Records 1206, 1291, 1778 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    1185,
+    1205,
+    1206,
+    1226,
+    1291,
+    1778
+  ]
+}
