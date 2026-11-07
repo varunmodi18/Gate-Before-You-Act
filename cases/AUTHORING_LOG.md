@@ -1158,3 +1158,16 @@ empty for adjudication).
   standard, `it.helpdesk` human admin, `system`/`network service`/`workstation5$` service
   accounts. Approval `grant`. Ticket CHG-2401 (WORKSTATION5, `it.helpdesk`, whoami|powershell,
   07:00–08:00 UTC) misses the account.
+
+### e2e-02 — `sdwin-201012183248` Covenant Wuauclt CreateRemoteThread Execution (T1218)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `contain_host`. Injection selected, no
+  eligible record (`prepare-e2e`).
+- **Chain (234):** the Covenant implant `GruntHTTP.exe` 3356 opens and starts `cmd.exe /c
+  wuauclt.exe /UpdateDeploymentProvider C:\ProgramData\SimpleInjection.dll /RunHandlerComServer`
+  PID 3148 (528/542; 544), which starts wuauclt 6208 (594/752; 595), which loads the DLL, starts
+  `notepad.exe` 2368 (610/765; 611) and creates a remote thread in it (614, Sysmon 8); the
+  notepad beacons to 10.10.10.5:80 (840, 860).
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  standard, `it.patching` human admin, service accounts. Approval `deny`. Ticket CHG-2402
+  (WORKSTATION5, `it.patching`, wuauclt, 22:00–23:00 UTC) misses the account.
