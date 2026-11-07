@@ -674,3 +674,20 @@ test or e2e cases. Windows are exactly those of `docs/TEAM_GUIDE.md` §3a.
 - **E5:** `time_shift` +900 s on the chain (into the ticket window); `set_user pgustavo` on the
   handle records. The cited connection and logon records keep 15:56 (not coverable, conventions).
 - **Set R:** toolset (without `kill_process` / with it).
+
+### test-19 — `SDWIN-190518201207` Empire Shell Net Domain Admins (T1069.002) — **STOPPED**
+
+- **Why (verifier budget):** the chain is clear: `sbeavers`' Empire PowerShell 5724 (started
+  before the window) starts `net.exe group "Domain Admins" /domain` PID 3892 (510, 672; handle
+  511), which starts `net1` PID 9656 (536, 676; handle 537). A scenario passing every non-label
+  validator check was built (disable `sbeavers`, admin; ticket missing the command; E5 with the
+  commands, an added PowerShell creation record, PID attribution for the Sysmon copies that carry
+  no `ProcessId`). But the verifier prompt for E1, E3, E5, R_pos and R_neg cannot be built:
+  `PromptBudgetError: reference 1813 > 1800` (1811 when E1 cites only 672, 676, 537). The reference
+  block is retrieved from the cited records' content (never the claim), at most 6 documents at
+  most 300 tokens each plus a header, so it can exceed `BUDGETS["reference"] = 1800` in
+  `gbya/gate/verifier.py`; the validator does not check this. Every evidence set for this chain
+  describes the same `net group` query, and choosing citations to change what retrieval returns is
+  not an author's choice (R1). Only pass/fail was checked; the retrieved documents were not read.
+  The scenario was imported into the local app.db; its files are left uncommitted and must not be
+  annotated.
