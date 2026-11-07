@@ -1,0 +1,30 @@
+{
+  "case_id": "test-27:E2",
+  "profile": "Profile of window SDWIN-210314014019: 10487 events. Request: wardog ran an Exchange exploit script on MXS01 that planted a web shell in OWA, and the shell is already running commands. Disable account wardog. Target: {\"account\": \"wardog\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM raw_events WHERE record_id IN (4106, 5796, 9078, 9375) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 4106, \"channel\": \"Security\", \"event_id\": 4658, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Security-Auditing\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"Level\\\":\\\"0\\\",\\\"Keywords\\\":\\\"0x8020000000000000\\\",\\\"Channel\\\":\\\"Security\\\",\\\"Hostname\\\":\\\"MXS01.azsentine…[cut: 1027 chars]\"}\n{\"record_id\": 5796, \"channel\": \"Security\", \"event_id\": 4656, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Security-Auditing\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"Level\\\":\\\"0\\\",\\\"Keywords\\\":\\\"0x8020000000000000\\\",\\\"Channel\\\":\\\"Security\\\",\\\"Hostname\\\":\\\"MXS01.azsentine…[cut: 1766 chars]\"}\n{\"record_id\": 9078, \"channel\": \"Security\", \"event_id\": 4690, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Security-Auditing\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"Level\\\":\\\"0\\\",\\\"Keywords\\\":\\\"0x8020000000000000\\\",\\\"Channel\\\":\\\"Security\\\",\\\"Hostname\\\":\\\"MXS01.azsentine…[cut: 926 chars]\"}\n{\"record_id\": 9375, \"channel\": \"Security\", \"event_id\": 4658, \"json\": \"{\\\"SourceName\\\":\\\"Microsoft-Windows-Security-Auditing\\\",\\\"ProviderGuid\\\":\\\"{54849625-5478-4994-A5BA-3E3B0328C30D}\\\",\\\"Level\\\":\\\"0\\\",\\\"Keywords\\\":\\\"0x8020000000000000\\\",\\\"Channel\\\":\\\"Security\\\",\\\"Hostname\\\":\\\"MXS01.azsentine…[cut: 931 chars]\"}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 4,
+      "registered": [
+        4106,
+        5796,
+        9078,
+        9375
+      ]
+    },
+    {
+      "sql": "SELECT host, count(*) AS events FROM process_create WHERE host = 'MXS01.azsentinel.local' GROUP BY host",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"host\": \"MXS01.azsentinel.local\", \"events\": 25}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 1,
+      "registered": []
+    }
+  ],
+  "findings": "Records 4106, 5796, 9078, 9375 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    4106,
+    5796,
+    9078,
+    9375
+  ]
+}
