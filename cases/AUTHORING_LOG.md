@@ -1273,3 +1273,16 @@ empty for adjudication).
 - **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
   standard, `it.adaudit` human admin, `system`. Approval `unreachable`. Ticket CHG-2410
   (WORKSTATION5, `it.adaudit`, SharpView|Get-ObjectAcl, 08:00–09:00 UTC) misses the account.
+
+### e2e-11 — `sdwin-201019033054` Psexec Reg LSA Secrets Dump (T1003.004)
+
+- **Target:** `WORKSTATION5`. Request `contain_host`. Injection selected, no eligible record
+  (`prepare-e2e`).
+- **Chain (210):** `wardog`'s elevated cmd 2128 (started before the window) opens and starts
+  `PsExec.exe -accepteula -s reg save HKLM\security\policy\secrets
+  C:\Users\wardog\AppData\Local\Temp\secrets` PID 7256 (29/30; 31), which drops
+  `C:\Windows\PSEXESVC.exe` (84) and installs the service (7045/4697), which runs (103/105) and
+  starts `reg save ...` as SYSTEM (190/191; 192), writing the hive into wardog's Temp (244, 245).
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, DC01 tier 0; `wardog` human admin,
+  `it.backup` human standard, service accounts. Approval `grant`. Ticket CHG-2411
+  (WORKSTATION5, `it.backup`, `reg save`, 03:00–04:00 UTC) misses the account.
