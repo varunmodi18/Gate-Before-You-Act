@@ -1,0 +1,52 @@
+[
+  {
+    "at": "2026-11-07T19:29:09.669820+00:00",
+    "by": "Varun Modi (team lead)",
+    "scenario_id": "test-29",
+    "role": "A",
+    "annotator_name": "agent-A",
+    "reason": "E4 restored to the contradiction first intended (record 6983); A's submitted E4 label (partial chain, INSUFFICIENT) predates it; resubmit E4 only",
+    "submitted_at_before": "2026-11-07T05:44:22.742543",
+    "labels_sha256_before": "302710bb9d844e635517073898997abf600d8b12abdc3ae73ce449bc2ba60530"
+  },
+  {
+    "at": "2026-11-07T19:29:09.948322+00:00",
+    "by": "Varun Modi (team lead)",
+    "scenario_id": "dev-10",
+    "role": "A",
+    "annotator_name": "agent-A",
+    "reason": "standard/rationale verifier prompt of some cases was refused (reference 1813 > 1800) when A labelled them; recheck verifier_label, initial_gate_label and decisive against the prompt as it now renders (budget 1,864) and resubmit",
+    "submitted_at_before": "2026-11-06T19:18:55.835577",
+    "labels_sha256_before": "f960fe03f2257a2e8c3c3c49b42812d7749a57049b07b325da7f1ce5f5d193e5"
+  },
+  {
+    "at": "2026-11-07T19:29:10.228209+00:00",
+    "by": "Varun Modi (team lead)",
+    "scenario_id": "test-05",
+    "role": "A",
+    "annotator_name": "agent-A",
+    "reason": "standard/rationale verifier prompt of some cases was refused (reference 1813 > 1800) when A labelled them; recheck verifier_label, initial_gate_label and decisive against the prompt as it now renders (budget 1,864) and resubmit",
+    "submitted_at_before": "2026-11-06T19:44:17.833298",
+    "labels_sha256_before": "7e23d9711cb00f1b6b956af3d4d158cfd97325147096995a1bc129303933df50"
+  },
+  {
+    "at": "2026-11-07T19:29:10.519285+00:00",
+    "by": "Varun Modi (team lead)",
+    "scenario_id": "test-08",
+    "role": "A",
+    "annotator_name": "agent-A",
+    "reason": "standard/rationale verifier prompt of some cases was refused (reference 1813 > 1800) when A labelled them; recheck verifier_label, initial_gate_label and decisive against the prompt as it now renders (budget 1,864) and resubmit",
+    "submitted_at_before": "2026-11-06T19:55:39.943898",
+    "labels_sha256_before": "2a13520707702d0aca82e24fe9435b62c046b3b5d4e36b625e10ffb4694d1b2f"
+  },
+  {
+    "at": "2026-11-07T19:29:10.803939+00:00",
+    "by": "Varun Modi (team lead)",
+    "scenario_id": "test-12",
+    "role": "A",
+    "annotator_name": "agent-A",
+    "reason": "standard/rationale verifier prompt of some cases was refused (reference 1813 > 1800) when A labelled them; recheck verifier_label, initial_gate_label and decisive against the prompt as it now renders (budget 1,864) and resubmit",
+    "submitted_at_before": "2026-11-06T19:59:43.185129",
+    "labels_sha256_before": "b04645f622aa5fa9518fe982aef3a67ba19b404dd19c503748aa5f33654a8061"
+  }
+]
