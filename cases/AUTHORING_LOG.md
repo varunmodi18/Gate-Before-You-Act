@@ -1237,3 +1237,15 @@ empty for adjudication).
 - **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, DC01 tier 0; `wardog` human admin,
   `it.inventory` human standard, `system`. Approval `grant`. Ticket CHG-2407 (WORKSTATION5,
   `it.inventory`, `reg query`, 11:00–12:00 UTC) misses the account.
+
+### e2e-08 — `sdwin-200805020926` Covenant DCSync (T1003.006)
+
+- **Target:** `WORKSTATION5.theshire.local`. Request `contain_host`. Injection selected, no
+  eligible record (`prepare-e2e`; the window has no process-creation record).
+- **Chain (33):** the Covenant implant `GruntHTTP.exe` 2064 on `pgustavo`'s Desktop (no creation
+  record in the window) connects to the DC's endpoint mapper and RPC port (89, 91, 136, 137); the
+  DC logs `pgustavo` exercising DS-Replication-Get-Changes and Get-Changes-All (4662: 120, 122,
+  124) after a network logon from 172.18.39.5 (109).
+- **Context:** WORKSTATION5 tier 2, WORKSTATION6 tier 2, MORDORDC tier 0; `pgustavo` human
+  **admin**, `it.directory` human admin, service accounts. Approval `deny`. Ticket CHG-2408
+  (WORKSTATION5, `pgustavo`, GruntHTTP, 07:00–08:00 UTC) misses the time.
