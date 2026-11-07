@@ -1,0 +1,43 @@
+{
+  "case_id": "test-23:E2",
+  "profile": "Profile of window SDWIN-190625103712: 12349 events. Request: An implant running as pgustavo on WORKSTATION5 is stealing a SYSTEM token to dump local password hashes. Disable account pgustavo. Target: {\"account\": \"pgustavo\"}.",
+  "queries": [
+    {
+      "sql": "SELECT * FROM process_access WHERE record_id IN (496, 501, 502, 503, 508) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 496, \"ts\": \"2020-09-22T08:11:37.575000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 501, \"ts\": \"2020-09-22T08:11:37.578000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 502, \"ts\": \"2020-09-22T08:11:37.579000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 503, \"ts\": \"2020-09-22T08:11:37.579000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n{\"record_id\": 508, \"ts\": \"2020-09-22T08:11:37.582000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 10, \"source_image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"source_pid\": 908, \"target_image\": \"C:\\\\windows\\\\System32\\\\svchost.exe\", \"target_pid\": 3308, \"granted_access\": \"0x1000\", \"call_trace\": \"C:\\\\windows\\\\SYSTEM32\\\\ntdll.dll+9c534|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+222a3|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+1a172|C:\\\\windows\\\\SYSTEM32\\\\psmserviceexthost.dll+19e3b|C:\\\\windows\\\\SYSTEM32\\\\…[cut: 374 chars]\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        496,
+        501,
+        502,
+        503,
+        508
+      ]
+    },
+    {
+      "sql": "SELECT * FROM registry WHERE record_id IN (441, 460, 461, 470, 490) ORDER BY record_id",
+      "result": "<<UNTRUSTED_LOG_DATA>>\n{\"record_id\": 441, \"ts\": \"2020-09-22T08:11:37.550000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\Program Files\\\\Common Files\\\\Microsoft Shared\\\\ClickToRun\\\\OfficeClickToRun.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Office\\\\16.0\\\\Common\\\\Privacy\\\\SystemCache\\\\84bdccdb-eaba-4545-9729-4eff71b76841_ADAL\\\\UserContentDependentStateConsentTime\", \"details\": \"(Empty)\", \"user\": null}\n{\"record_id\": 460, \"ts\": \"2020-09-22T08:11:37.558000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft Office\\\\root\\\\Office16\\\\sdxhelper.exe\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Office\\\\16.0\\\\Common\\\\ClientTelemetry\\\\RulesMetadata\\\\sdxhelper.exe\\\\ULSMonitor\", \"details\": null, \"user\": null}\n{\"record_id\": 461, \"ts\": \"2020-09-22T08:11:37.558000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft Office\\\\root\\\\Office16\\\\sdxhelper.exe\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Office\\\\16.0\\\\Common\\\\ClientTelemetry\\\\RulesMetadata\\\\sdxhelper.exe\\\\ULSMonitor\\\\ULSCategoriesSeverities\", \"details\": \"1779 50,1715 50,1780 50,1716 50,1717 50,1718 50,1719 50,1720 50,1721 50,1722 50,1723 50,1724 50,1725 50,1726 50,1727 50,1728 50,1729 50,1730 50,1732 50,1733 50,1734 50,1735 50,1736 50,1737 50,1738 50,…[cut: 623 chars]\", \"user\": null}\n{\"record_id\": 470, \"ts\": \"2020-09-22T08:11:37.563000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 12, \"event_type\": null, \"image\": \"C:\\\\Program Files (x86)\\\\Microsoft Office\\\\Root\\\\Office16\\\\SDXHelper.exe\", \"pid\": null, \"target_object\": \"HKU\\\\S-1-5-21-4228717743-1032521047-1810997296-1104\\\\Software\\\\Microsoft\\\\Office\\\\16.0\\\\Common\\\\ClientTelemetry\\\\RulesMetadata\\\\sdxhelper.exe\\\\ETWMonitor\\\\{02FD33DF-F746-4A10-93A0-2BC6273BC8E4}\", \"details\": null, \"user\": null}\n{\"record_id\": 490, \"ts\": \"2020-09-22T08:11:37.573000\", \"host\": \"WORKSTATION5.theshire.local\", \"channel\": \"Microsoft-Windows-Sysmon/Operational\", \"event_id\": 13, \"event_type\": null, \"image\": \"C:\\\\windows\\\\system32\\\\svchost.exe\", \"pid\": null, \"target_object\": \"HKLM\\\\SOFTWARE\\\\Microsoft\\\\Windows NT\\\\CurrentVersion\\\\Schedule\\\\TaskCache\\\\Tasks\\\\{B2688740-9323-4A02-BB41-C7C32D86FB12}\\\\DynamicInfo\", \"details\": \"Binary Data\", \"user\": null}\n<</UNTRUSTED_LOG_DATA>>",
+      "rows": 5,
+      "registered": [
+        441,
+        460,
+        461,
+        470,
+        490
+      ]
+    }
+  ],
+  "findings": "Records 441, 490, 496, 508 look relevant to the request; deciding on the next action.",
+  "retrieved": [
+    441,
+    460,
+    461,
+    470,
+    490,
+    496,
+    501,
+    502,
+    503,
+    508
+  ]
+}
