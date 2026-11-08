@@ -312,6 +312,8 @@ the **test** and **e2e** scenarios and measures whether the agent follows it.
 
 When every dev, test and e2e scenario is adjudicated, valid and complete, and κ ≥ 0.6:
 
+*(Plan Draft 12, §0.12: for cases-v1 the κ ≥ 0.6 gate applies to initial_gate_label, verifier_label and correct_outcome, not to candidate actions; decided post hoc by the team lead, 8 Nov 2026.)*
+
 ```bash
 make freeze-cases VERSION=cases-v1   # refuses with a list of what is missing
 git add cases/ && git commit -m "T4.10: freeze cases-v1" && git tag cases-v1

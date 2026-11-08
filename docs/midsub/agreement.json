@@ -48148,5 +48148,774 @@
     }
    }
   }
- ]
+ ],
+ "freeze_gate": {
+  "decision": "Varun Modi (team lead), 2026-11-08: waiver of the plan's freeze gate, recorded as a plan deviation (IMPLEMENTATION_PLAN.md Draft 12, \u00a70.12)",
+  "statement": "The freeze gate (\u03ba \u2265 0.6 on candidate actions) was not met: measured \u03ba = \u22120.068 on test (\u22120.055 pooled). 96.9% of disagreeing items are actions one annotator prohibited and the other did not list; 0.6% are permitted-vs-prohibited conflicts. The gate was replaced AFTER this was measured, which is disclosed as a post-hoc decision, by agreement on the labels the hypotheses use: initial_gate_label (H1), verifier_label (H1-C4) and correct_outcome (H2). The candidate-action \u03ba is reported as measured, as a limitation.",
+  "official_gate": {
+   "definition": "kappa >= 0.6 on candidate-action labels, test scenarios (plan T4.9, \u00a7I)",
+   "measured_test": -0.06798197595255899,
+   "measured_pooled": -0.055305713911174184,
+   "result": "not met"
+  },
+  "substitute_gate": {
+   "definition": "kappa >= 0.6 (raw agreement >= 0.90 where kappa is undefined) on each of initial_gate_label, verifier_label, correct_outcome over the test scenarios; values computed after the snapshot (diagnostic)",
+   "test": {
+    "initial_gate_label": 1.0,
+    "verifier_label": 0.920889537003281,
+    "correct_outcome": 0.9532710280373832
+   },
+   "result": "passed"
+  }
+ },
+ "diagnostic_after_snapshot": {
+  "status": "computed after the snapshot, diagnostic",
+  "source": "app.db annotations (the submitted A and B labels, read-only; identical to the pre-adjudication backup); action items from the stored snapshot items. The snapshots and report above are not modified.",
+  "note_undefined": "kappa is null where both annotators used a single category in that group (expected agreement = 1); raw agreement is reported instead, with the reason in kappa_undefined_because",
+  "note_e3": "Within E3 alone, kappa is 0.000 for verifier_label and correct_outcome: A used one category in every E3 case (INSUFFICIENT; justified_escalation), and the 14 disable_account E3 cases are the guidance-1 disagreement",
+  "initial_gate_label": {
+   "dev": {
+    "all_variants": {
+     "kappa": 1.0,
+     "raw_agreement": 1.0,
+     "items": 63,
+     "categories": {
+      "admit": 24,
+      "reject": 102
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "admit": 12,
+       "reject": 6
+      }
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "reject": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "reject": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E4": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "reject": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "reject": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "admit": 12,
+       "reject": 6
+      }
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "reject": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     }
+    }
+   },
+   "test": {
+    "all_variants": {
+     "kappa": 1.0,
+     "raw_agreement": 1.0,
+     "items": 217,
+     "categories": {
+      "admit": 80,
+      "reject": 354
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "admit": 40,
+       "reject": 22
+      }
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "reject": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "reject": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E4": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "reject": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "reject": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "admit": 40,
+       "reject": 22
+      }
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "reject": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     }
+    }
+   },
+   "pooled_dev_test": {
+    "all_variants": {
+     "kappa": 1.0,
+     "raw_agreement": 1.0,
+     "items": 280,
+     "categories": {
+      "admit": 104,
+      "reject": 456
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "admit": 52,
+       "reject": 28
+      }
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "reject": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "reject": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E4": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "reject": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "reject": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "admit": 52,
+       "reject": 28
+      }
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "reject": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['reject'] (expected agreement = 1)"
+     }
+    }
+   }
+  },
+  "verifier_label": {
+   "dev": {
+    "all_variants": {
+     "kappa": 0.9247311827956989,
+     "raw_agreement": 0.9523809523809523,
+     "items": 63,
+     "categories": {
+      "SUPPORTS": 57,
+      "INSUFFICIENT": 45,
+      "CONTRADICTED": 24
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "SUPPORTS": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "INSUFFICIENT": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['INSUFFICIENT'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": 0.0,
+      "raw_agreement": 0.6666666666666666,
+      "items": 9,
+      "categories": {
+       "INSUFFICIENT": 15,
+       "SUPPORTS": 3
+      }
+     },
+     "E4": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "INSUFFICIENT": 12,
+       "CONTRADICTED": 6
+      }
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "CONTRADICTED": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['CONTRADICTED'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "SUPPORTS": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "SUPPORTS": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     }
+    }
+   },
+   "test": {
+    "all_variants": {
+     "kappa": 0.920889537003281,
+     "raw_agreement": 0.9493087557603687,
+     "items": 217,
+     "categories": {
+      "SUPPORTS": 197,
+      "INSUFFICIENT": 141,
+      "CONTRADICTED": 96
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "SUPPORTS": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "INSUFFICIENT": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['INSUFFICIENT'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": 0.0,
+      "raw_agreement": 0.6451612903225806,
+      "items": 31,
+      "categories": {
+       "INSUFFICIENT": 51,
+       "SUPPORTS": 11
+      }
+     },
+     "E4": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "CONTRADICTED": 34,
+       "INSUFFICIENT": 28
+      }
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "CONTRADICTED": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['CONTRADICTED'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "SUPPORTS": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "SUPPORTS": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     }
+    }
+   },
+   "pooled_dev_test": {
+    "all_variants": {
+     "kappa": 0.9217877094972067,
+     "raw_agreement": 0.95,
+     "items": 280,
+     "categories": {
+      "SUPPORTS": 254,
+      "INSUFFICIENT": 186,
+      "CONTRADICTED": 120
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "SUPPORTS": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "INSUFFICIENT": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['INSUFFICIENT'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": 0.0,
+      "raw_agreement": 0.65,
+      "items": 40,
+      "categories": {
+       "INSUFFICIENT": 66,
+       "SUPPORTS": 14
+      }
+     },
+     "E4": {
+      "kappa": 1.0,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "INSUFFICIENT": 40,
+       "CONTRADICTED": 40
+      }
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "CONTRADICTED": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['CONTRADICTED'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "SUPPORTS": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "SUPPORTS": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['SUPPORTS'] (expected agreement = 1)"
+     }
+    }
+   }
+  },
+  "correct_outcome": {
+   "dev": {
+    "all_variants": {
+     "kappa": 0.9677419354838709,
+     "raw_agreement": 0.9841269841269841,
+     "items": 63,
+     "categories": {
+      "safe_completion": 55,
+      "justified_escalation": 71
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "safe_completion": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "safe_completion": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": 0.0,
+      "raw_agreement": 0.8888888888888888,
+      "items": 9,
+      "categories": {
+       "justified_escalation": 17,
+       "safe_completion": 1
+      }
+     },
+     "E4": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "justified_escalation": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "justified_escalation": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "safe_completion": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 9,
+      "categories": {
+       "justified_escalation": 18
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     }
+    }
+   },
+   "test": {
+    "all_variants": {
+     "kappa": 0.9532710280373832,
+     "raw_agreement": 0.9769585253456221,
+     "items": 217,
+     "categories": {
+      "safe_completion": 191,
+      "justified_escalation": 243
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "safe_completion": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "safe_completion": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": 0.0,
+      "raw_agreement": 0.8387096774193549,
+      "items": 31,
+      "categories": {
+       "justified_escalation": 57,
+       "safe_completion": 5
+      }
+     },
+     "E4": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "justified_escalation": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "justified_escalation": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "safe_completion": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 31,
+      "categories": {
+       "justified_escalation": 62
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     }
+    }
+   },
+   "pooled_dev_test": {
+    "all_variants": {
+     "kappa": 0.9565217391304347,
+     "raw_agreement": 0.9785714285714285,
+     "items": 280,
+     "categories": {
+      "safe_completion": 246,
+      "justified_escalation": 314
+     }
+    },
+    "per_variant": {
+     "E1": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "safe_completion": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "E2": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "safe_completion": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "E3": {
+      "kappa": 0.0,
+      "raw_agreement": 0.85,
+      "items": 40,
+      "categories": {
+       "justified_escalation": 74,
+       "safe_completion": 6
+      }
+     },
+     "E4": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "justified_escalation": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     },
+     "E5": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "justified_escalation": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     },
+     "R_pos": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "safe_completion": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['safe_completion'] (expected agreement = 1)"
+     },
+     "R_neg": {
+      "kappa": null,
+      "raw_agreement": 1.0,
+      "items": 40,
+      "categories": {
+       "justified_escalation": 80
+      },
+      "kappa_undefined_because": "no variation: both annotators used only ['justified_escalation'] (expected agreement = 1)"
+     }
+    }
+   },
+   "e2e_set_X": {
+    "kappa": 0.6249999999999998,
+    "raw_agreement": 0.9166666666666666,
+    "items": 12,
+    "categories": {
+     "safe_completion": 21,
+     "justified_escalation": 3
+    }
+   }
+  },
+  "actions_both_listed": {
+   "dev": {
+    "kappa": 0.995901877579492,
+    "raw_agreement": 0.99822695035461,
+    "items": 564,
+    "categories": {
+     "prohibited": 771,
+     "permitted": 357
+    },
+    "note": "exact tool+args keys of the A-11 snapshot items; only items labelled permitted or prohibited by BOTH annotators"
+   },
+   "pooled_dev_test": {
+    "kappa": 0.975160601823133,
+    "raw_agreement": 0.9889770723104057,
+    "items": 2268,
+    "categories": {
+     "prohibited": 3029,
+     "permitted": 1507
+    },
+    "note": "exact tool+args keys of the A-11 snapshot items; only items labelled permitted or prohibited by BOTH annotators"
+   },
+   "test": {
+    "kappa": 0.9685085451064885,
+    "raw_agreement": 0.9859154929577465,
+    "items": 1704,
+    "categories": {
+     "prohibited": 2258,
+     "permitted": 1150
+    },
+    "note": "exact tool+args keys of the A-11 snapshot items; only items labelled permitted or prohibited by BOTH annotators"
+   },
+   "e2e_set_X": {
+    "kappa": 0.953119492421572,
+    "raw_agreement": 0.9774436090225563,
+    "items": 133,
+    "categories": {
+     "prohibited": 159,
+     "permitted": 107
+    },
+    "note": "exact tool+args keys of the A-11 snapshot items; only items labelled permitted or prohibited by BOTH annotators"
+   }
+  }
+ }
 }

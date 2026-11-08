@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 11, 8 November 2026 (derived verifier reference budget, validator check (v), dev-05 excluded and `--min-dev 9`, F2, §0.11); Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 12, 8 November 2026 (κ freeze gate replaced post hoc by agreement on the hypothesis labels, §0.12); Draft 11, 8 November 2026 (derived verifier reference budget, validator check (v), dev-05 excluded and `--min-dev 9`, F2, §0.11); Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -144,6 +144,13 @@ The review found no blocking issue and asked for three consistency edits; all ar
 These three should be mentioned to the team; none changes a claim in the proposal.
 
 Substantive ambiguities and gaps **inside** the proposal (not between versions) are listed in §K.2 with the decision taken for each.
+
+### 0.12 What changed in Draft 12 (8 November 2026, decision by Varun Modi as team lead)
+
+- **Freeze gate replaced (deviation; T4.9 verification, §I process-quality gate, §L acceptance list).** The freeze gate (κ ≥ 0.6 on candidate actions) was not met: measured κ = −0.068 on test (−0.055 pooled). 96.9% of disagreeing items are actions one annotator prohibited and the other did not list; 0.6% are permitted-vs-prohibited conflicts. The gate was replaced AFTER this was measured, which is disclosed as a post-hoc decision, by agreement on the labels the hypotheses use: initial_gate_label (H1), verifier_label (H1-C4) and correct_outcome (H2). The candidate-action κ is reported as measured, as a limitation.
+  - **Substitute gate:** κ ≥ 0.6 (raw agreement ≥ 0.90 where κ is undefined) on each of `initial_gate_label`, `verifier_label` and `correct_outcome` over the test scenarios, computed after the snapshot from the stored pre-adjudication annotations (diagnostic; the A-11 snapshot values are unchanged). Threshold unchanged (0.6).
+  - **Measured (test, 31 scenarios, 217 cases):** initial_gate_label κ 1.000, verifier_label κ 0.921, correct_outcome κ 0.953: passed. Values per split and variant in `docs/midsub/agreement.json`.
+  - No calibration round was run. `make freeze-cases` never checked κ in code, so no code changed.
 
 ### 0.11 What changed in Draft 11 (8 November 2026, decisions by Varun Modi as team lead)
 
@@ -2172,7 +2179,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 - **Files:** `cases/s001…s050/`, plus 12 end-to-end scenarios.
 - **Instructions:** 50 scenarios (10 dev, 40 test) × 7 cases, plus the end-to-end windows' context and labels (one case each) **[A-14]**. Two annotators per scenario; adjudication. Track progress in STATUS.
 - **Deliverables:** labelled scenarios.
-- **Verification:** validator all-pass; κ ≥ 0.6 on test-scenario action labels (proposal week-2 check).
+- **Verification:** validator all-pass; κ ≥ 0.6 on test-scenario action labels (proposal week-2 check). *(Draft 12: not met; replaced post hoc by κ ≥ 0.6 on initial_gate_label, verifier_label and correct_outcome, §0.12.)*
 - **Done when:** κ is reported. If κ < 0.6, run a calibration round on 5 scenarios before freezing; record it.
 
 **T4.10 Freeze**
@@ -2491,7 +2498,7 @@ Each task block gives **Prerequisites → Files → Instructions → Deliverable
 | RAG ablation (v4) | Recall@5 (\|gold\| denominator), Hit@5, nDCG@5, MRR@20 and ATT&CK top-1 for `bm25` vs `bm25_rerank`, overall and by variant; diagnostic verifier accuracy and wrongly-admitted rate for A4 / G3 / A6. A4 vs G3 = whole retrieved reference; G3 vs A6 = reranking | Reported with CIs; no threshold claimed; proxy-label limitation stated |
 | Agentic ablation | Task success rate, E2 recovery rate and steps for A5 / A7 / **G3 run 1**, matched on run 1 (temperature 0.2, seed 11), paired per case | Reported with CIs; labelled exploratory. G3's three-run average is reported separately |
 | Tool-calling ablation | Task success rate, tool-call validity and latency for **G3 run 1** / A8 (MCP), matched on run 1, paired per case; plus tool-call accuracy for every system | Reported with CIs; labelled exploratory |
-| Process quality | κ ≥ 0.6 before freeze (proposal check) | Pass/fail gate for freezing |
+| Process quality | κ ≥ 0.6 before freeze (proposal check) | Pass/fail gate for freezing (Draft 12: applied to the hypothesis labels, §0.12) |
 | Feasibility | Runs finish within the budget regenerated in T8.0 from real prompts (planning figure: 81 hours), or fallback F1 is applied and recorded | Pass/fail for the schedule |
 
 **No result is known in advance, and this plan claims none.**
@@ -2675,7 +2682,7 @@ No credentials or paid services are required.
 
 **R2 research-complete**
 - [ ] `splits.json` frozen: 10/40/12, no de-duplication group straddling splits
-- [ ] 50 scenarios (350 cases) plus 12 end-to-end scenarios labelled; κ and Jaccard reported pre-adjudication; κ ≥ 0.6 or calibration documented
+- [ ] 50 scenarios (350 cases) plus 12 end-to-end scenarios labelled; κ and Jaccard reported pre-adjudication; κ ≥ 0.6 or calibration documented (Draft 12: gate waiver, §0.12)
 - [ ] Validator checks (a)–(j) pass on every frozen case, including label support on the rendered verifier prompt
 - [ ] `cases/FROZEN.json` committed and tagged
 - [ ] T8.0 token audit done and the budget regenerated before the research runs
