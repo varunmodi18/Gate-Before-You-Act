@@ -1,0 +1,5 @@
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T07:32:16+00:00; proportions, *_pp display only; cluster bootstrap over scenarios, B 10000, seed 2026, percentile 95% CI
+hypothesis,estimate,ci_low,ci_high,estimate_pp,ci_low_pp,ci_high_pp,n_scenarios,n_cases,target,target_pp,target_reached,statistically_supported,margin,margin_pp,decision
+H1,0.2903225806451613,0.20141129032258082,0.3870967741935484,29.0,20.1,38.7,31,124,0.15,15.0,True,True,,,
+H1_C4,0.16129032258064516,0.06451612903225806,0.27419354838709675,16.1,6.5,27.4,31,62,0.1,10.0,True,True,,,
+H2,0.3548387096774193,0.257168458781362,0.4587813620071684,35.5,25.7,45.9,31,98,,,,,0.1,10.0,harm_beyond_margin

@@ -1,0 +1,4 @@
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T07:32:16+00:00; proportions, *_pp display only; technique-level proxy relevance; Recall@5 ceiling = mean min(1, 5/|G|)
+mode,cases,sigma_n,excluded_empty_gold,recall_at_5,hit_at_5,ndcg_at_5,mrr_at_20,mean_gold_size,mean_recall_ceiling,attack_n,attack_top1
+bm25,217,189,28,0.006316581779495127,0.08465608465608465,0.01966408349618161,0.08151025485599667,25.185185185185187,0.4093640002519019,217,0.0
+bm25_rerank,217,189,28,0.007297518105700534,0.13227513227513227,0.027578519395452167,0.09649489986791573,25.185185185185187,0.4093640002519019,217,0.0
