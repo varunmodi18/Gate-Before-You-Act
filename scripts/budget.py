@@ -29,7 +29,8 @@ AUDIT = REPO / "docs" / "token_audit.json"
 OUT = REPO / "docs" / "compute_budget.md"
 PLANNING_H, AVAILABLE_H = 81.0, 112.0
 RETRY, ALLOWANCE = 1.10, 1.5
-TEST_SCENARIOS, CASES_PER_SCENARIO, E2E_WINDOWS = 40, 7, 12
+TEST_SCENARIOS, CASES_PER_SCENARIO, E2E_WINDOWS = 40, 7, 12  # plan sizes, before a freeze
+FROZEN = REPO / "cases" / "FROZEN.json"
 
 
 def _yaml(name: str) -> dict[str, Any]:
@@ -64,8 +65,16 @@ def pilot_calls(run_id: int | None) -> dict[str, float] | None:
     return {"proposer": prop / n, "verifier": ver / n, "investigator": inv / n, "episodes": n}
 
 
+def frozen_counts(path: Path = FROZEN) -> dict[str, int] | None:
+    """Scenarios per split of the frozen case set (F2 can shrink the test set), or None."""
+    if not path.is_file():
+        return None
+    return {str(k): int(v) for k, v in json.loads(path.read_text())["counts"].items()}
+
+
 def compute(audit: dict[str, Any], rates: dict[str, float], p2: dict[str, float] | None,
-            p3: dict[str, float] | None) -> dict[str, Any]:  # fmt: skip
+            p3: dict[str, float] | None,
+            counts: dict[str, int] | None = None) -> dict[str, Any]:  # fmt: skip
     from gbya.gate.config import load_configs
 
     configs = load_configs()
@@ -75,7 +84,9 @@ def compute(audit: dict[str, Any], rates: dict[str, float], p2: dict[str, float]
         systems2 = dict(f1["runs"])
     else:
         systems2 = dict(e2["systems"])
-    cases = TEST_SCENARIOS * CASES_PER_SCENARIO
+    test_scenarios = (counts or {}).get("test", TEST_SCENARIOS)
+    e2e_windows = (counts or {}).get("e2e", E2E_WINDOWS)
+    cases = test_scenarios * CASES_PER_SCENARIO
     pin = audit["proposer"]["all"]["mean"] or 0.0
     vin = audit["verifier"]["all"]["mean"] or 0.0
     iin = audit["investigator"]["all"]["mean"] or 0.0
@@ -83,7 +94,7 @@ def compute(audit: dict[str, Any], rates: dict[str, float], p2: dict[str, float]
     iout = max(audit["investigator"]["output_caps"].values())
     c4 = {sid for sid, c in configs.items() if "C4" in c.checks}
     eps2 = {sid: cases * runs for sid, runs in systems2.items()}
-    eps3 = {sid: E2E_WINDOWS * runs for sid, runs in e3["systems"].items()}
+    eps3 = {sid: e2e_windows * runs for sid, runs in e3["systems"].items()}
     prop2 = p2["proposer"] if p2 else 4.0
     ver2 = p2["verifier"] if p2 else 1.0
     inv3 = p3["investigator"] if p3 else 21.0  # proposal: ~25 calls in all per Exp 3 episode
@@ -114,6 +125,8 @@ def compute(audit: dict[str, Any], rates: dict[str, float], p2: dict[str, float]
                             "verifier_calls_per_episode": ver2,
                             "exp3_investigator_calls_per_episode": inv3,
                             "exp3_proposer_calls_per_episode": prop3,
+                            "test_scenarios": test_scenarios, "e2e_windows": e2e_windows,
+                            "scenario_counts": "frozen case set" if counts else "plan",
                             "source": {"exp2": "pilot" if p2 else "proposal",
                                        "exp3": "pilot" if p3 else "proposal"},
                             "outputs": "at the output caps (upper bound)"}}  # fmt: skip
@@ -166,7 +179,9 @@ def main(argv: list[str] | None = None) -> None:
     pilot = json.loads((REPO / "docs" / "pilot" / f"{args.profile}.json").read_text())
     ep = pilot["episodes_20"]
     rates = {"in": float(ep["input_tok_per_s"]), "out": float(ep["output_tok_per_s"])}
-    b = compute(audit, rates, pilot_calls(args.pilot_exp2), pilot_calls(args.pilot_exp3))
+    b = compute(
+        audit, rates, pilot_calls(args.pilot_exp2), pilot_calls(args.pilot_exp3), frozen_counts()
+    )
     args.out.write_text(markdown(audit, b))
     if args.apply:
         apply_limit(b["hours_with_allowance"])

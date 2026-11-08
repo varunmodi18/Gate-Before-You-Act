@@ -10,3 +10,4 @@ model_base_url: http://127.0.0.1:8001/v1
 worker_concurrency: 4         # matches the model server's 4 concurrent sequences (§F.8)
 worker_heartbeat_s: 10
 worker_stale_s: 60
+gpu_budget_hours: 84.3          # T8.0 regenerated budget (scripts/budget.py)

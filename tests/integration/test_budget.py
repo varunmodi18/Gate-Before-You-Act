@@ -51,3 +51,25 @@ def test_audit_and_budget(tmp_path: Path) -> None:
     cfg.write_text("env: dev\n")
     budget.apply_limit(12.5, cfg)
     assert "gpu_budget_hours: 12.5" in cfg.read_text()
+
+
+def test_budget_uses_the_frozen_scenario_counts(tmp_path: Path) -> None:
+    """F2 shrinks the test set: the budget counts the frozen scenarios, not the plan's 40."""
+    budget = script("budget")
+    frozen = tmp_path / "FROZEN.json"
+    assert budget.frozen_counts(frozen) is None
+    frozen.write_text('{"counts": {"dev": 9, "e2e": 12, "test": 31}}')
+    counts = budget.frozen_counts(frozen)
+    assert counts == {"dev": 9, "e2e": 12, "test": 31}
+    audit = {
+        "proposer": {"all": {"mean": 4000.0}, "output_cap": 440},
+        "verifier": {"all": {"mean": 2800.0}, "output_cap": 200},
+        "investigator": {"all": {"mean": 2900.0}, "output_caps": {"sqlgen": 500}},
+    }
+    plan = budget.compute(audit, {"in": 1229.2, "out": 55.4}, None, None)
+    b = budget.compute(audit, {"in": 1229.2, "out": 55.4}, None, None, counts)
+    assert plan["rows"][0]["calls"] == 40 * 7 * 4 * 3
+    assert b["rows"][0]["calls"] == 31 * 7 * 4 * 3  # cases x verifier variants x runs
+    assert b["rows"][3]["calls"] == plan["rows"][3]["calls"]  # e2e: 12 in both
+    assert b["assumptions"]["scenario_counts"] == "frozen case set"
+    assert b["assumptions"]["test_scenarios"] == 31

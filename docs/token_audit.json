@@ -1,0 +1,128 @@
+{
+  "tokenizer": "model:Qwen2.5-7B-Instruct-AWQ",
+  "scenarios": [
+    "dev-01",
+    "dev-02",
+    "dev-03",
+    "dev-04",
+    "dev-06",
+    "dev-07",
+    "dev-08",
+    "dev-09",
+    "dev-10"
+  ],
+  "cases": 63,
+  "investigated_windows": 12,
+  "proposer": {
+    "by_turn": {
+      "1": {
+        "n": 63,
+        "mean": 4283.3,
+        "p95": 5318,
+        "max": 5542
+      },
+      "2": {
+        "n": 63,
+        "mean": 5550.7,
+        "p95": 6789,
+        "max": 7013
+      },
+      "3": {
+        "n": 34,
+        "mean": 6170.9,
+        "p95": 6931,
+        "max": 7182
+      },
+      "4": {
+        "n": 29,
+        "mean": 6655.9,
+        "p95": 7199,
+        "max": 7199
+      }
+    },
+    "all": {
+      "n": 189,
+      "mean": 5409.4,
+      "p95": 6930,
+      "max": 7199
+    },
+    "output_cap": 400,
+    "limit": 7200
+  },
+  "verifier": {
+    "by_variant": {
+      "none": {
+        "n": 63,
+        "mean": 1434.0,
+        "p95": 1712,
+        "max": 1927
+      },
+      "rationale": {
+        "n": 63,
+        "mean": 3038.6,
+        "p95": 3432,
+        "max": 3655
+      },
+      "rerank": {
+        "n": 63,
+        "mean": 2914.4,
+        "p95": 3276,
+        "max": 3333
+      },
+      "standard": {
+        "n": 63,
+        "mean": 2939.5,
+        "p95": 3329,
+        "max": 3552
+      }
+    },
+    "all": {
+      "n": 252,
+      "mean": 2581.6,
+      "p95": 3363,
+      "max": 3655
+    },
+    "output_cap": 200,
+    "budget_errors": {},
+    "skipped": {}
+  },
+  "investigator": {
+    "by_step": {
+      "hypothesise": {
+        "n": 12,
+        "mean": 870.8,
+        "p95": 975,
+        "max": 975
+      },
+      "sqlgen": {
+        "n": 36,
+        "mean": 2135.6,
+        "p95": 2264,
+        "max": 2264
+      },
+      "technique_verifier": {
+        "n": 36,
+        "mean": 3715.8,
+        "p95": 4140,
+        "max": 4140
+      }
+    },
+    "all": {
+      "n": 84,
+      "mean": 2632.1,
+      "p95": 4119,
+      "max": 4140
+    },
+    "output_caps": {
+      "hypothesise": 500,
+      "sqlgen": 400,
+      "technique_verifier": 250
+    },
+    "context": 8192
+  },
+  "checks": {
+    "proposer_within_limit": true,
+    "verifier_within_budget": true,
+    "investigator_within_context": true
+  }
+}
