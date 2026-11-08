@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; Exp 1V diagnostic, every package
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T10:51:03+00:00; proportions, *_pp display only; Exp 1V diagnostic, every package
 verifier_variant,n,exact_accuracy,binary_accuracy,parse_errors,exact_accuracy_E1,exact_accuracy_E2,exact_accuracy_E3,exact_accuracy_E4,exact_accuracy_E5,exact_accuracy_R_neg,exact_accuracy_R_pos
 none,651,0.5345622119815668,0.5898617511520737,0,0.6451612903225806,0.6774193548387096,0.8387096774193549,0.2903225806451613,0.0,0.6451612903225806,0.6451612903225806
 rationale,651,0.6359447004608295,0.6543778801843319,0,0.8709677419354839,0.7096774193548387,0.9032258064516129,0.22580645161290322,0.0,0.8709677419354839,0.8709677419354839

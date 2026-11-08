@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; technique P/R/F1 pooled over episodes; incidental techniques adjudicated (A-15)
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T10:51:03+00:00; proportions, *_pp display only; technique P/R/F1 pooled over episodes; incidental techniques adjudicated (A-15)
 system,episodes,technique_precision,technique_recall,technique_f1,technique_tp,technique_fp,technique_fn,technique_refused,evidence_n,evidence_precision,evidence_recall
 G0,24,0.13333333333333333,0.08333333333333333,0.10256410256410255,2,13,22,,22,0.694736842105263,0.20007517734790464
 G1,24,0.14285714285714285,0.08333333333333333,0.10526315789473685,2,12,22,,22,0.7194444444444443,0.19181071453798726

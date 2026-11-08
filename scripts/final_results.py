@@ -308,6 +308,125 @@ def h2_adjudication_sensitivity(session: Any, run_id: int, eps: list[Any]) -> di
     }
 
 
+# ---- exploratory recovery run (team lead 2026-11-08) ---------------------------------------------
+
+RECOVERY_LABEL = "exp2-recovery-exploratory"
+STATE_CHANGING = ("isolate_host", "kill_process", "disable_account", "block_ip")
+
+
+def recovery_use(session: Any, run_id: int, systems: Iterable[str],
+                 run_idx: int = 1) -> list[dict[str, Any]]:  # fmt: skip
+    """Per system, from the stored traces: episodes with a C4 INSUFFICIENT on a state-changing
+    call; recovery queries (``sql_query`` proposed after the first INSUFFICIENT) and the episodes
+    with one; queries refused as RECOVERY_BUDGET_EXHAUSTED; episodes with a state-changing call
+    admitted after a recovery query, those that ended fulfilled, and how many of them ended as
+    safe completion or unsafe execution."""
+    from sqlalchemy import select
+
+    from gbya.store.models import Episode, Step
+
+    out = []
+    for system in systems:
+        k: Counter[str] = Counter()
+        eps = session.scalars(select(Episode).where(
+            Episode.run_id == run_id, Episode.system == system, Episode.run_idx == run_idx,
+            Episode.status == "done"))  # fmt: skip
+        for ep in eps:
+            k["episodes"] += 1
+            insufficient = queried = admitted = False
+            for st in session.scalars(select(Step).where(Step.episode_id == ep.id)
+                                      .order_by(Step.idx)):  # fmt: skip
+                p = st.payload or {}
+                if st.kind == "gate":
+                    d = p.get("decision") or {}
+                    if d.get("tool") in STATE_CHANGING:
+                        if d.get("verdict") == "insufficient":
+                            insufficient = True
+                        elif d.get("verdict") == "admitted" and queried:
+                            admitted = True
+                elif st.kind == "llm" and insufficient:
+                    if (p.get("proposal") or {}).get("tool") == "sql_query":
+                        k["recovery_queries"] += 1
+                        queried = True
+                elif st.kind == "tool" and p.get("error_code") == "RECOVERY_BUDGET_EXHAUSTED":
+                    k["refused_budget_exhausted"] += 1
+            k["episodes_insufficient"] += insufficient
+            k["episodes_with_recovery_query"] += queried
+            k["admitted_after_recovery"] += admitted
+            k["fulfilled_after_recovery"] += admitted and ep.terminal_state == "fulfilled"
+            k["admitted_after_recovery_safe_completion"] += (
+                admitted and ep.outcome == "safe_completion"
+            )
+            k["admitted_after_recovery_unsafe_execution"] += (
+                admitted and ep.outcome == "unsafe_execution"
+            )
+        out.append({"run_id": run_id, "system": system, "run_idx": run_idx,
+                    **{f: k[f] for f in ("episodes", "episodes_insufficient",
+                                         "episodes_with_recovery_query", "recovery_queries",
+                                         "refused_budget_exhausted", "admitted_after_recovery",
+                                         "fulfilled_after_recovery",
+                                         "admitted_after_recovery_safe_completion",
+                                         "admitted_after_recovery_unsafe_execution")}})  # fmt: skip
+    return out
+
+
+def recovery_run_section(session: Any, run_id: int, reference_run: int, registered_h2: Any,
+                         cmp: Callable[..., dict[str, Any]]) -> dict[str, Any]:  # fmt: skip
+    """The exploratory recovery run: recovery use (and the registered run's matched run 1 for
+    comparison), outcomes, task success and E2 recovery per system, A5 / A7 / G3 comparisons with
+    cluster-bootstrap CIs, and H2 on this run. Never replaces a registered number."""
+    from gbya.analysis import hypotheses as hy
+    from gbya.api.routers.analysis import episode_rows
+    from gbya.store.models import Run
+
+    run = session.get(Run, run_id)
+    spec = (run.config or {}).get("spec", {})
+    if spec.get("label") != RECOVERY_LABEL:
+        raise SystemExit(f"run {run_id} is not labelled {RECOVERY_LABEL}")
+    systems = list((run.config or {}).get("systems", {}))
+    res = get(f"/runs/{run_id}/results")
+    per_system = []
+    for system in systems:
+        m = res["by_system"][system]
+        e2 = m["e2_recovery"]
+        per_system.append({"system": system, "episodes": m["episodes"],
+                           **{o: m["outcome_rates"][o]["rate"] for o in OUTCOMES},
+                           "task_success": m["task_success"]["rate"],
+                           "e2_recovery_rate": e2["rate"], "e2_recovery_n": e2["n"],
+                           "e2_recovery_mean_proposals": e2["mean_proposals"]})  # fmt: skip
+    pairs = (("A5", "G3"), ("A7", "G3"), ("A5", "A7"))
+    comparisons = [cmp(run_id, a, b, mt, matched=1)
+                   for a, b in pairs for mt in ("task_success", *OUTCOMES)]  # fmt: skip
+    eps = episode_rows(session, run_id)
+    ref = [e for e in episode_rows(session, reference_run) if e.run_idx == 1]
+    return {
+        "exploratory": True,
+        "label": RECOVERY_LABEL,
+        "run_id": run_id,
+        "what": "Exp 2 with proposer prompt v2 (differs from v1 only in the lines that told the "
+        "agent to escalate when evidence is insufficient); G1, G3, A5, A7 x1 (run index "
+        "1) on the 31 test scenarios. Never replaces run 2.",
+        "proposer_prompt": (run.config or {}).get("proposer_prompt"),
+        "provenance": {
+            "git_sha": run.git_sha,
+            "config_hash": run.config_hash,
+            "case_set_hash": run.case_set_hash,
+            "model_id": run.model_id,
+            "model_file_sha256": run.model_file_sha256,
+        },
+        "recovery_use": recovery_use(session, run_id, systems),
+        "recovery_use_reference_run_matched_run_1": recovery_use(
+            session, reference_run, ["G1", "G3", "A5", "A7"]
+        ),
+        "per_system": per_system,
+        "comparisons": comparisons,
+        "h2_this_run": hy.h2(eps, B=B, seed=SEED).to_json(),
+        "h2_reference_run_matched_run_1": hy.h2(ref, B=B, seed=SEED).to_json(),
+        "h2_registered": registered_h2,
+        "results": res,
+    }
+
+
 # ---- taxonomy suggestions and example traces -----------------------------------------------------
 
 
@@ -625,6 +744,12 @@ def main() -> None:
     ap.add_argument("--exp1", type=int, required=True)
     ap.add_argument("--exp2", type=int, required=True)
     ap.add_argument("--exp3", type=int, required=True)
+    ap.add_argument(
+        "--exp2-recovery",
+        type=int,
+        default=None,
+        help=f"run id of the exploratory recovery run ({RECOVERY_LABEL})",
+    )
     args = ap.parse_args()
     from gbya.api.routers.analysis import episode_rows
     from gbya.config import get_settings
@@ -693,6 +818,9 @@ def main() -> None:
         )
         sugg, examples = taxonomy(session, [args.exp2, args.exp3])
         sens = h2_adjudication_sensitivity(session, args.exp2, eps2)
+        rec_run = (recovery_run_section(session, args.exp2_recovery, args.exp2,
+                                        hyp.get("H2"), cmp)
+                   if args.exp2_recovery else None)  # fmt: skip
 
     safety = []
     for exp in ("exp2", "exp3"):
@@ -729,6 +857,7 @@ def main() -> None:
         "hypotheses": hyp,
         "breakdowns_exploratory": brk,
         "h2_adjudication_sensitivity_exploratory": sens,
+        "exploratory_recovery_run": rec_run,
         "exp1": {"results": res["exp1"], "by_system_variant_objective": e1_table,
                  "verifier_eval": veval, "retrieval": retrieval},
         "exp2": {"results": res["exp2"], "outcomes": outcomes["exp2"],
@@ -798,6 +927,35 @@ def main() -> None:
         f"technique_gold revoked in the pinned ATT&CK bundle by its revoked-by relationships "
         f"only ({mapped or 'none'}), exploratory",
     )
+    if rec_run is not None:
+        rnote = (note.replace(str(ids), str({**ids, "exp2_recovery": args.exp2_recovery}))
+                 + f"; EXPLORATORY run {args.exp2_recovery} ({RECOVERY_LABEL}, proposer prompt "
+                 "v2); never replaces a registered number")  # fmt: skip
+        use = rec_run["recovery_use"] + rec_run["recovery_use_reference_run_matched_run_1"]
+        write_csv(
+            "recovery_run_exploratory_use.csv",
+            use,
+            rnote + "; recovery use from the traces, this run and run 2's matched run 1",
+        )
+        write_csv(
+            "recovery_run_exploratory_outcomes.csv",
+            rec_run["per_system"],
+            rnote + "; outcome rates, task success, E2 recovery per system",
+        )
+        crow = [{"a": c["result"]["a"], "b": c["result"]["b"], "metric": c["result"]["metric"],
+                 "rate_a": c["result"]["rate_a"], "rate_b": c["result"]["rate_b"],
+                 **c["result"]["difference"]}
+                for c in rec_run["comparisons"]]  # fmt: skip
+        h2rows = [{"scenario": name, **rec_run[key]} for name, key in (
+            ("this run (exploratory)", "h2_this_run"),
+            ("run 2 matched run 1 (exploratory reference)", "h2_reference_run_matched_run_1"),
+            ("registered (run 2, three runs)", "h2_registered"))]  # fmt: skip
+        write_csv(
+            "recovery_run_exploratory_comparisons.csv",
+            crow,
+            rnote + "; a - b on matched run 1, cluster bootstrap over scenarios",
+        )
+        write_csv("recovery_run_exploratory_h2.csv", h2rows, rnote + "; H2 = G3 - G1")
     write_csv("exp2_outcomes_by_objective.csv", e2_obj, note + "; episodes pooled over runs")
     write_csv("exp2_outcomes_by_variant.csv", e2_var, note + "; episodes pooled over runs")
     write_csv("exp3_outcomes.csv", e3_tab, note + "; episodes pooled over runs")

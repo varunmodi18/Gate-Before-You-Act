@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; exploratory sensitivity, not the registered analysis
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T10:51:03+00:00; proportions, *_pp display only; exploratory sensitivity, not the registered analysis
 scenario,estimate,ci_low,ci_high,estimate_pp,ci_low_pp,ci_high_pp,n_scenarios,n_cases,margin,margin_pp,decision
 as adjudicated (registered),0.3548387096774193,0.257168458781362,0.4587813620071684,35.5,25.7,45.9,31,98,0.1,10.0,harm_beyond_margin
 all adjudicated escalations qualifying,0.11559139784946236,0.061827956989247305,0.17921146953405015,11.6,6.2,17.9,31,98,0.1,10.0,inconclusive

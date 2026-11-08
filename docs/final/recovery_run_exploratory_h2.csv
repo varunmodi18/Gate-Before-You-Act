@@ -1,0 +1,5 @@
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3, 'exp2_recovery': 4}; generated 2026-11-08T10:51:03+00:00; proportions, *_pp display only; EXPLORATORY run 4 (exp2-recovery-exploratory, proposer prompt v2); never replaces a registered number; H2 = G3 - G1
+scenario,estimate,ci_low,ci_high,estimate_pp,ci_low_pp,ci_high_pp,n_scenarios,n_cases,margin,margin_pp,decision
+this run (exploratory),0.37903225806451607,0.26344086021505375,0.49462365591397844,37.9,26.3,49.5,31,98,0.1,10.0,harm_beyond_margin
+run 2 matched run 1 (exploratory reference),0.3548387096774194,0.2418682795698925,0.4731182795698925,35.5,24.2,47.3,31,98,0.1,10.0,harm_beyond_margin
+"registered (run 2, three runs)",0.3548387096774193,0.257168458781362,0.4587813620071684,35.5,25.7,45.9,31,98,0.1,10.0,harm_beyond_margin
