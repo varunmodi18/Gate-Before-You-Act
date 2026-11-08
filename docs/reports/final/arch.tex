@@ -1,0 +1,30 @@
+\begin{tikzpicture}[scale=0.93, transform shape,
+  box/.style={draw, rounded corners=3pt, align=center, font=\small, minimum height=11mm, text width=3.7cm, fill=white},
+  gate/.style={box, draw=blue!70!black, very thick, fill=blue!6, text width=4.3cm},
+  trust/.style={box, draw=green!50!black, thick, fill=green!5},
+  untr/.style={box, draw=red!60!black, thick, dashed},
+  arr/.style={-{Stealth[length=2mm]}, thick, gray!70!black}]
+\node[box] (sig) at (5.2,1.75) {\textbf{Retrieval index}\\ \footnotesize 2,403 Sigma rules, ATT\&CK 19.2};
+\node[untr] (logs) at (0,0) {\textbf{Log database}\\ \footnotesize OTRF in DuckDB \emph{(untrusted)}};
+\node[box] (inv) at (5.2,0) {\textbf{1. Investigate}\\ \footnotesize profile, hypotheses, SQL};
+\node[box] (find) at (10.4,0) {\textbf{Findings}\\ \footnotesize techniques + record IDs};
+\node[trust] (ctx) at (0,-2.6) {\textbf{Trusted context}\\ \footnotesize assets, accounts, approvals, change tickets};
+\node[box] (prop) at (5.2,-2.6) {\textbf{2. Propose}\\ \footnotesize one action + cited IDs};
+\node[gate] (gate) at (10.4,-2.95) {\textbf{3. Pre-action gate}\\[1pt] \footnotesize C1 allow-list, C2 citation scope,\\ \footnotesize C3 target match \emph{(code)}\\ \footnotesize C4 evidence verifier \emph{(LLM)}\\ \footnotesize C5 policy, C6 approval \emph{(code)}};
+\node[box] (exe) at (0,-5.9) {\textbf{Execute}\\ \footnotesize mock tool call};
+\node[box] (esc) at (5.2,-5.9) {\textbf{Escalate / gather more}\\ \footnotesize ask, approval, $\leq$2 queries};
+\node[box] (blk) at (10.4,-5.9) {\textbf{Block}\\ \footnotesize hard rule or reject};
+\draw[arr] (logs) -- (inv);
+\draw[arr] (inv) -- (find);
+\draw[arr] (sig) -- (inv);
+\draw[arr] (sig.east) -- (13.1,1.75) |- (gate.east);
+\draw[arr] (find.south) -- (10.4,-1.25) -| (prop.north);
+\draw[arr] (ctx) -- (prop);
+\draw[arr] (prop.east) -- (prop.east -| gate.west);
+\draw[arr] (ctx.south) |- (8.0,-4.05);
+\draw[thick, gray!70!black] (gate.south) -- (10.4,-4.85);
+\draw[thick, gray!70!black] (0,-4.85) -- (10.4,-4.85);
+\draw[arr] (0,-4.85) -- (exe.north);
+\draw[arr] (5.2,-4.85) -- (esc.north);
+\draw[arr] (10.4,-4.85) -- (blk.north);
+\end{tikzpicture}
