@@ -16,7 +16,7 @@ from gbya.retrieval import index as ix
 from gbya.retrieval import sources
 from gbya.retrieval.cache import RetrievalCache, from_row
 from gbya.retrieval.corpus import Doc
-from gbya.retrieval.gold import GoldMap
+from gbya.retrieval.gold import GoldMap, revoked_by
 from gbya.retrieval.metrics import (
     RankedCase,
     case_metrics,
@@ -218,3 +218,33 @@ def test_cache_hit_never_loads_the_reranker(cache_env: tuple) -> None:  # type: 
     wrong = RetrievalCache(factory, index, getter, reranker_id="expected@9")
     with pytest.raises(ix.RerankerUnavailable, match="not the expected"):
         wrong.retrieve("sc:E1", "other query", "bm25_rerank")
+
+
+def _pattern(sid: str, tid: str, revoked: bool = False) -> dict[str, Any]:
+    return {"type": "attack-pattern", "id": sid, "revoked": revoked,
+            "external_references": [{"source_name": "mitre-attack", "external_id": tid}]}  # fmt: skip
+
+
+def _rel(src: str, dst: str, kind: str = "revoked-by") -> dict[str, Any]:
+    return {"type": "relationship", "relationship_type": kind, "source_ref": src,
+            "target_ref": dst}  # fmt: skip
+
+
+def test_revoked_by_uses_only_the_bundles_relationships(tmp_path: Path) -> None:
+    """Exploratory gold view (2026-11-08): revoked techniques map through revoked-by only,
+    chains are followed, other relationships and non-revoked techniques are ignored, and a
+    bundle that is not the pinned file is refused."""
+    objects = [
+        _pattern("ap--a", "T1562.002", revoked=True), _pattern("ap--b", "T1685.001"),
+        _pattern("ap--c", "T1000", revoked=True), _pattern("ap--d", "T2000", revoked=True),
+        _pattern("ap--e", "T3000"), _pattern("ap--f", "T1003.001"), _pattern("ap--g", "T1003"),
+        _rel("ap--a", "ap--b"), _rel("ap--c", "ap--d"), _rel("ap--d", "ap--e"),
+        _rel("ap--f", "ap--g", "subtechnique-of"),
+    ]  # fmt: skip
+    bundle = tmp_path / "bundle.json"
+    bundle.write_text(json.dumps({"type": "bundle", "objects": objects}))
+    sha = __import__("hashlib").sha256(bundle.read_bytes()).hexdigest()
+    assert revoked_by(bundle, sha) == {"T1562.002": "T1685.001", "T1000": "T3000",
+                                       "T2000": "T3000"}  # fmt: skip
+    with pytest.raises(ValueError, match="pinned"):
+        revoked_by(bundle, "0" * 64)

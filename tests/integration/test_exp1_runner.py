@@ -43,7 +43,15 @@ from gbya.policy.engine import PolicyEngine, PolicyFile
 from gbya.retrieval import index as ix
 from gbya.retrieval import sources
 from gbya.store import db
-from gbya.store.models import GateDecisionRow, Job, JobItem, RetrievalRanking, Run, VerifierEval
+from gbya.store.models import (
+    Case,
+    GateDecisionRow,
+    Job,
+    JobItem,
+    RetrievalRanking,
+    Run,
+    VerifierEval,
+)
 
 MINI = Path(__file__).resolve().parents[1] / "fixtures" / "mini_window"
 FIX = Path(__file__).resolve().parents[1] / "fixtures" / "retrieval"
@@ -366,6 +374,54 @@ def test_retrieval_metrics_from_the_runs_stored_rankings(env: tuple[Settings, An
         bm["attack_n"] == 3 and 0 <= bm["recall_at_5"] <= 1 and bm["recall_at_5"] == bm["hit_at_5"]
     )
     assert set(body["modes"]["bm25"]["by_case_variant"]) == {"E1", "E3", "R_neg"}
+
+
+def test_retrieval_metrics_ignore_rows_of_other_queries(tmp_path: Path) -> None:
+    """Regression (2026-11-08): Exp 2/3 store their live retrievals under the same case id with the
+    agent's own citations. The endpoint took the latest row per case, so a later episode's query
+    replaced the package query in the Exp 1 metrics. It must use the package query's row only."""
+    from gbya.retrieval.gold import GoldMap
+    from gbya.retrieval.metrics import RankedCase, retrieval_report
+
+    settings = setup_env(tmp_path)
+    factory = db.make_sessionmaker(db.make_engine(settings.app_db_path))
+    small = {"verifier_variants": ["standard"], "verifier_runs": 1, "code_only": ["G0"],
+             "composed": ["G3"]}  # fmt: skip
+    with db.session_scope(factory) as s:
+        run_id = rn.create_exp1_run(s, settings, purpose="fixture", case_ids=CASES,
+                                    overrides=small).id  # fmt: skip
+    deps = rn.Deps(settings=settings, client=scripted(), counter=ApproxCounter())
+    assert rn.execute_run(factory, run_id, deps) == "completed"
+    client = TestClient(create_app(settings))
+    before = client.get(f"/api/v1/runs/{run_id}/retrieval").json()
+    assert before["other_query_rows_ignored"] == 0
+
+    gold = GoldMap.load(settings.data_dir / "index")
+    with db.session_scope(factory) as s:  # a later live retrieval of hm:E1 with another query
+        own = s.scalars(select(RetrievalRanking).where(RetrievalRanking.case_id == "hm:E1")).one()
+        tech = (s.get(Case, "hm:E1").labels or {})["technique_gold"]
+        g = gold.gold_rules(tech)
+        hit = bool({h["doc_id"] for h in own.sigma_ranking[:5]} & g)
+        s.add(RetrievalRanking(case_id="hm:E1", mode="bm25", query_hash="f" * 64,
+                               sigma_ranking=[] if hit else [{"doc_id": sorted(g)[0], "rank": 1,
+                                                               "bm25": 1.0, "rerank": None}],
+                               attack_ranking=[], index_sha256=own.index_sha256))  # fmt: skip
+    with factory() as s:  # the old rule (latest row per case) now gives a different metric
+        latest = []
+        for cid in CASES:
+            row = s.scalars(select(RetrievalRanking).where(RetrievalRanking.case_id == cid)
+                            .order_by(RetrievalRanking.id.desc())).first()  # fmt: skip
+            assert row is not None
+            latest.append(RankedCase(cid, cid.split(":")[1],
+                                     (s.get(Case, cid).labels or {})["technique_gold"], "bm25",
+                                     [h["doc_id"] for h in row.sigma_ranking], None))  # fmt: skip
+    old = retrieval_report(latest, gold)["bm25"]["overall"]["hit_at_5"]
+    assert old != before["modes"]["bm25"]["overall"]["hit_at_5"]
+
+    after = client.get(f"/api/v1/runs/{run_id}/retrieval").json()
+    assert after["modes"] == before["modes"]
+    assert after["other_query_rows_ignored"] == 1 and after["matched_by"] == "package query hash"
+    assert after["revoked_mapped"]["exploratory"] is True
 
 
 def test_research_run_refused_with_the_test_only_counter(tmp_path: Path) -> None:

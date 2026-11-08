@@ -8,13 +8,58 @@ Gold set G for a case with technique ``T``:
   its parent (``T1003``) — the plan's "parent technique if no sub-technique rule exists".
 * ``T`` is a technique (``T1003``): rules tagged ``T`` or any of its sub-techniques
   (``T1003.xxx``), since each of those is also a ``T`` rule in the ATT&CK hierarchy.
+
+``revoked_by`` (exploratory view, team lead 2026-11-08): a ``technique_gold`` that the pinned
+ATT&CK bundle marks revoked is mapped to its replacement through the bundle's own ``revoked-by``
+relationships, and nothing else (no hand mapping). The registered metrics keep the label as is.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
+
+MAX_REVOCATION_HOPS = 5
+
+
+def _external_id(obj: dict[str, object]) -> str | None:
+    for ref in obj.get("external_references") or []:  # type: ignore[attr-defined]
+        if isinstance(ref, dict) and ref.get("source_name") == "mitre-attack":
+            return str(ref.get("external_id"))
+    return None
+
+
+def revoked_by(bundle: Path, expected_sha256: str) -> dict[str, str]:
+    """Technique ID → replacement technique ID for every revoked attack-pattern, from the bundle's
+    ``revoked-by`` relationships (followed to a technique that is not revoked). Refuses a bundle
+    whose SHA-256 is not the pinned one."""
+    raw = bundle.read_bytes()
+    digest = hashlib.sha256(raw).hexdigest()
+    if digest != expected_sha256:
+        raise ValueError(f"{bundle.name}: sha256 {digest} != pinned {expected_sha256}")
+    objects = json.loads(raw)["objects"]
+    patterns = {o["id"]: o for o in objects if o.get("type") == "attack-pattern"}
+    target = {
+        o["source_ref"]: o["target_ref"]
+        for o in objects
+        if o.get("type") == "relationship" and o.get("relationship_type") == "revoked-by"
+        and not o.get("revoked") and o.get("source_ref") in patterns
+    }  # fmt: skip
+    out: dict[str, str] = {}
+    for sid, obj in patterns.items():
+        if not obj.get("revoked") or sid not in target or (tid := _external_id(obj)) is None:
+            continue
+        cur = target[sid]
+        for _ in range(MAX_REVOCATION_HOPS):
+            if not patterns.get(cur, {}).get("revoked") or cur not in target:
+                break
+            cur = target[cur]
+        new = _external_id(patterns[cur]) if cur in patterns else None
+        if new is not None and new != tid:
+            out[tid] = new
+    return out
 
 
 def parent(technique: str) -> str:

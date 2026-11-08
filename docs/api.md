@@ -87,7 +87,7 @@ Every path is under `/api/v1`. Errors use `{"error": {"code", "message", "hint",
 | GET | `/runs/{run_id}/progress` | Server-sent events: one ``progress`` event per second until the run is terminal. | `run_id` |  |
 | GET | `/runs/{run_id}/results` | Every FR-21 metric per system (T7.1; ``scoring/results.py``), with denominators; a metric whose labels or adjudications are pending is refused, not estimated. | `run_id` |  |
 | POST | `/runs/{run_id}/resume` | Queue the run again; failed units get a fresh set of attempts. | `run_id` |  |
-| GET | `/runs/{run_id}/retrieval` | Retrieval metrics by mode and case variant, from the stored rankings of the run's cases (§D.3): Recall@5, Hit@5, nDCG@5, MRR@20, ATT&CK top-1, mean \|G\|, exclusions. | `run_id` |  |
+| GET | `/runs/{run_id}/retrieval` | Exp 1 retrieval metrics by mode and case variant (§D.3): Recall@5, Hit@5, nDCG@5, MRR@20, ATT&CK top-1, mean \|G\|, exclusions. | `run_id` |  |
 | POST | `/runs/{run_id}/start` | Start | `run_id` |  |
 | GET | `/runs/{run_id}/taxonomy` | Error-taxonomy tag counts per system and the starred traces (T7.5). | `run_id` |  |
 | GET | `/runs/{run_id}/verifier-eval` | Exp 1V diagnostic accuracy by verifier variant and case variant (with denominators), and C4 invocation counts per gate configuration (§D.7.2). | `run_id` |  |

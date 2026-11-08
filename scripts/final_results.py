@@ -1,6 +1,7 @@
 """Final results export (plan T9.4): docs/final/results.json, tables as CSV, figures as SVG.
 
     uv run python scripts/final_results.py --exp1 1 --exp2 2 --exp3 3     # API on 127.0.0.1:8000
+    (another API address: GBYA_API_URL=http://127.0.0.1:8001/api/v1)
     node scripts/svg_to_png.mjs docs/final/figures                         # PNG next to each SVG
 
 Every headline number comes from the research endpoints, which refuse replay, non-research,
@@ -21,6 +22,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import subprocess
 import urllib.error
 import urllib.request
@@ -33,7 +35,7 @@ from typing import Any
 
 REPO = Path(__file__).resolve().parents[1]
 OUT = REPO / "docs" / "final"
-API = "http://127.0.0.1:8000/api/v1"
+API = os.environ.get("GBYA_API_URL", "http://127.0.0.1:8000/api/v1").rstrip("/")
 B, SEED = 10_000, 2026
 OBJECTIVES = ("contain_host", "stop_process", "disable_account")
 EXP2_ORDER = ("G0", "G1", "G2", "A1", "G3", "A5", "A7", "A8")
@@ -779,11 +781,20 @@ def main() -> None:
     write_csv("exp1_verifier_accuracy.csv", vrows, note + "; Exp 1V diagnostic, every package")
     rrows = []
     for mode, d in retrieval["modes"].items():
-        rrows.append({"mode": mode, **d["overall"]})
+        rrows.append({"view": "registered", "mode": mode, **d["overall"]})
+    revoked = retrieval.get("revoked_mapped") or {}
+    if revoked.get("available"):
+        for mode, d in revoked["modes"].items():
+            rrows.append({"view": "revoked_mapped_exploratory", "mode": mode, **d["overall"]})
+    mapped = "; ".join(f"{m['technique_gold']}->{m['mapped_to']} ({len(m['cases'])} cases)"
+                       for m in revoked.get("remapped", []))  # fmt: skip
     write_csv(
         "retrieval.csv",
         rrows,
-        note + "; technique-level proxy relevance; Recall@5 ceiling = mean min(1, 5/|G|)",
+        note + "; technique-level proxy relevance; Recall@5 ceiling = mean min(1, 5/|G|); "
+        "rankings of each case's Exp 1 package query only; view revoked_mapped_exploratory maps "
+        f"technique_gold revoked in the pinned ATT&CK bundle by its revoked-by relationships "
+        f"only ({mapped or 'none'}), exploratory",
     )
     write_csv("exp2_outcomes_by_objective.csv", e2_obj, note + "; episodes pooled over runs")
     write_csv("exp2_outcomes_by_variant.csv", e2_var, note + "; episodes pooled over runs")

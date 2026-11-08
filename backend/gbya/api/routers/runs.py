@@ -9,6 +9,8 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import AsyncIterator
+from dataclasses import replace
+from pathlib import Path
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Request
@@ -20,10 +22,12 @@ from sse_starlette.sse import EventSourceResponse
 from gbya.api.deps import get_deps, get_session, get_settings
 from gbya.config import Settings
 from gbya.errors import NotFound, Unprocessable
+from gbya.experiments.exp1 import load_case
 from gbya.experiments.exp2 import create_exp2_run, outcome_counts
 from gbya.experiments.exp2 import load_spec as load_exp2_spec
 from gbya.experiments.runner import (
     Deps,
+    case_query,
     create_exp1_run,
     load_spec,
     progress,
@@ -32,7 +36,8 @@ from gbya.experiments.runner import (
 from gbya.experiments.runs import research_eligible
 from gbya.gate.config import load_configs
 from gbya.gate.ticket_scope import agreement
-from gbya.retrieval.gold import GoldMap
+from gbya.retrieval.gold import GoldMap, revoked_by
+from gbya.retrieval.index import query_hash
 from gbya.retrieval.metrics import RankedCase, retrieval_report
 from gbya.scoring.verifier_eval import (
     C3Row,
@@ -334,29 +339,45 @@ def retrieval(
     session: Annotated[Session, Depends(get_session)],
     deps: Annotated[Deps, Depends(get_deps)],
 ) -> dict[str, Any]:
-    """Retrieval metrics by mode and case variant, from the stored rankings of the run's cases
-    (§D.3): Recall@5, Hit@5, nDCG@5, MRR@20, ATT&CK top-1, mean |G|, exclusions."""
+    """Exp 1 retrieval metrics by mode and case variant (§D.3): Recall@5, Hit@5, nDCG@5, MRR@20,
+    ATT&CK top-1, mean |G|, exclusions.
+
+    Each case's ranking is the stored row of **its package query** (rebuilt exactly as C4 builds
+    it, matched by query hash), never the latest row of the case: Exp 2/3 and the Console store
+    their live retrievals under the same case id with the agent's own citations, and those rows
+    must not enter the Exp 1 metrics (defect found 2026-11-08). ``modes`` is the registered view
+    (labels as annotated; empty gold sets excluded). ``revoked_mapped`` (exploratory) maps a
+    ``technique_gold`` that the pinned ATT&CK bundle marks revoked to its replacement through
+    the bundle's ``revoked-by`` relationships only."""
     run = _run(session, run_id)
+    if run.experiment != 1:
+        raise Unprocessable("Retrieval metrics are computed for Exp 1 runs only",
+                            code="NOT_EXP1")  # fmt: skip
     s = deps.settings
     index_dir = s.resolve(s.data_dir) / "index"
     if not (index_dir / "MANIFEST.json").is_file():
         raise Unprocessable("No retrieval index", code="NO_INDEX", hint="make index")
-    index_sha = str(deps.index().manifest["content_sha256"])
+    manifest = deps.index().manifest
+    index_sha = str(manifest["content_sha256"])
     gold = GoldMap.load(index_dir)
-    ranked, missing, rerankers = [], [], set()
+    ranked, missing, rerankers, ignored = [], [], set(), 0
     for cid in run.config.get("case_ids", []):
         case = session.get(Case, cid)
         if case is None:
             continue
         labels = case.labels or {}
+        qh = query_hash(case_query(load_case(session, cid, s), deps.requirements))
         for mode in ("bm25", "bm25_rerank"):
-            row = session.scalars(select(RetrievalRanking).where(
+            rows = session.scalars(select(RetrievalRanking).where(
                 RetrievalRanking.case_id == cid, RetrievalRanking.mode == mode,
                 RetrievalRanking.index_sha256 == index_sha,
-            ).order_by(RetrievalRanking.id.desc())).first()  # fmt: skip
-            if row is None:
+            ).order_by(RetrievalRanking.id.desc())).all()  # fmt: skip
+            own = [r for r in rows if r.query_hash == qh]
+            ignored += len(rows) - len(own)
+            if not own:
                 missing.append({"case_id": cid, "mode": mode})
                 continue
+            row = own[0]
             if row.reranker:
                 rerankers.add(row.reranker)
             ranked.append(RankedCase(
@@ -367,7 +388,38 @@ def retrieval(
     return {
         "run_id": run_id, "purpose": run.purpose, "research_eligible": research_eligible(run),
         "index_sha256": index_sha, "rerankers": sorted(rerankers), "missing": missing,
+        "matched_by": "package query hash", "other_query_rows_ignored": ignored,
         "modes": retrieval_report(ranked, gold),
+        "revoked_mapped": _revoked_view(ranked, gold, s.resolve(s.data_dir), manifest),
         "note": "Technique tags are proxy relevance labels: technique-level retrieval, not "
         "event-level relevance. Proportions.",
+    }  # fmt: skip
+
+
+def _revoked_view(ranked: list[RankedCase], gold: GoldMap, data_dir: Path,
+                  manifest: dict[str, Any]) -> dict[str, Any]:  # fmt: skip
+    """Exploratory view (b): gold mapped by the pinned bundle's ``revoked-by`` relationships."""
+    attack = manifest.get("attack") or {}
+    bundle = data_dir / "raw" / "attack" / str(attack.get("file", ""))
+    try:
+        mapping = revoked_by(bundle, str(attack.get("sha256", "")))
+    except (OSError, ValueError, KeyError) as exc:
+        return {"exploratory": True, "available": False, "reason": str(exc)}
+    remapped: dict[tuple[str, str], list[str]] = {}
+    cases = []
+    for c in ranked:
+        new = mapping.get(c.technique_gold or "")
+        if new is not None:
+            if c.mode == "bm25":
+                remapped.setdefault((str(c.technique_gold), new), []).append(c.case_id)
+            c = replace(c, technique_gold=new)
+        cases.append(c)
+    return {
+        "exploratory": True, "available": True,
+        "what": "technique_gold revoked in the pinned ATT&CK bundle mapped through its "
+        "revoked-by relationships only; registered metrics are in 'modes'",
+        "bundle": {"file": bundle.name, "sha256": attack.get("sha256")},
+        "remapped": [{"technique_gold": t, "mapped_to": n, "cases": sorted(ids)}
+                     for (t, n), ids in sorted(remapped.items())],
+        "modes": retrieval_report(cases, gold),
     }  # fmt: skip

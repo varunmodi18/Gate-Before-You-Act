@@ -3,7 +3,7 @@
 **Product:** GateBench, a research workbench with a web interface for building, running and analysing evidence-gated LLM security-agent experiments.
 **Source proposal:** "Gate Before You Act: Does Verifying Evidence Make an LLM Security Agent Act More Safely Than Policy Rules Alone?" (Team Simpletons, **Final Proposal, revised after TA feedback, 7 October 2026**; called "the final proposal" below. Earlier sections that say "proposal v4" refer to its predecessor, which differs only as listed in §0.6).
 **Audience:** a coding agent (and the four team members) implementing the product.
-**Plan status:** Draft 12, 8 November 2026 (κ freeze gate replaced post hoc by agreement on the hypothesis labels, §0.12); Draft 11, 8 November 2026 (derived verifier reference budget, validator check (v), dev-05 excluded and `--min-dev 9`, F2, §0.11); Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
+**Plan status:** Draft 13, 8 November 2026 (Exp 1 retrieval metrics read only the package query's rankings; exploratory gold view through ATT&CK `revoked-by`, §0.13); Draft 12, 8 November 2026 (κ freeze gate replaced post hoc by agreement on the hypothesis labels, §0.12); Draft 11, 8 November 2026 (derived verifier reference budget, validator check (v), dev-05 excluded and `--min-dev 9`, F2, §0.11); Draft 10, 26 October 2026 (research labels by AI agent sessions, §0.10); Draft 9, 13 October 2026 (team-lead decisions A–E before Exp 3 research runs: the scope rule for labels and an authored `scope`, the retrieved-but-not-cited measure, the investigator development round, the set X annotation path; see §0.9). Draft 8, 8 October 2026 (Node 22 replaces Node 20; §D.5.1 registration wording clarified; two `verifier_evals` columns; React Router 7.x; T0.3 serving settings; M1 data decisions incl. §D.2 eligibility; see §0.8). Draft 7 (7 October) aligned the plan with the final proposal. This copy in the repository is the authoritative plan; implementation progress is tracked in `STATUS.md`.
 
 ---
 
@@ -144,6 +144,11 @@ The review found no blocking issue and asked for three consistency edits; all ar
 These three should be mentioned to the team; none changes a claim in the proposal.
 
 Substantive ambiguities and gaps **inside** the proposal (not between versions) are listed in §K.2 with the decision taken for each.
+
+### 0.13 What changed in Draft 13 (8 November 2026, decisions by Varun Modi as team lead)
+
+- **Retrieval metrics read the package query's rankings only (§D.3; a defect fix, not a deviation).** `GET /runs/{id}/retrieval` took the latest stored ranking per case. Exp 2 and Exp 3 store their live retrievals (the agent's own citations) under the same case id, so for 152 of the 217 test cases the reported Exp 1 BM25 metrics came from an episode's query. The endpoint now rebuilds each case's package query exactly as C4 does and reads only rows with that query hash; it serves Exp 1 runs only. The verifier, its cache and the stored rankings are unchanged. Corrected BM25 on test: Recall@5 0.0039, Hit@5 0.063, nDCG@5 0.015, MRR@20 0.068 (was reported as 0.0063 / 0.085 / 0.020 / 0.082).
+- **Exploratory gold view (§D.3, addition).** The pinned ATT&CK 19.2 bundle revokes T1562.002 (→ T1685.001) and T1562.004 (→ T1686), so the 28 test cases labelled with them have an empty gold set. Retrieval metrics are reported (a) as registered (empty gold excluded) and (b), marked exploratory, with every revoked `technique_gold` mapped through the bundle's own `revoked-by` relationships (verified against the pinned SHA-256; never by hand). Labels are unchanged.
 
 ### 0.12 What changed in Draft 12 (8 November 2026, decision by Varun Modi as team lead)
 
@@ -645,6 +650,8 @@ No technique ID, claimed or gold, is part of the query. Values are tokenised on 
 - Metrics are reported overall **and by variant** (E1–E5, R±), for `bm25` and `bm25_rerank`, with a scenario-clustered bootstrap CI on the difference.
 - Retrieval metrics do not apply to the no-RAG system (A4). A4 is compared with G3 on verifier and gate performance only.
 - **Stated limitation:** technique tags are proxy relevance labels. A rule tagged with a broad technique is not necessarily relevant to the specific cited events, so these numbers measure technique-level retrieval, not event-level relevance.
+
+*Draft 13 notes (team lead, 8 Nov 2026).* The Exp 1 retrieval metrics use, for each case, the stored ranking whose query hash is the case's package query (rebuilt as C4 builds it); rankings stored by Exp 2/3 episodes or the Console under the same case id are ignored. Besides the registered view, an exploratory view maps a `technique_gold` that the pinned ATT&CK bundle marks revoked through the bundle's `revoked-by` relationships only (§0.13).
 
 **Investigation use (Exp 3):** the investigator queries with profile terms and candidate behaviour descriptions in `bm25` mode.
 
