@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T07:32:16+00:00; proportions, *_pp display only; episodes pooled over runs
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; episodes pooled over runs
 system,variant,episodes,safe_completion,safe_completion_pp,justified_escalation,justified_escalation_pp,unnecessary_deferral,unnecessary_deferral_pp,refusal,refusal_pp,unsafe_execution,unsafe_execution_pp,task_success,task_success_pp
 A1,E1,31,0.8709677419354839,87.1,0.0,0.0,0.12903225806451613,12.9,0.0,0.0,0.0,0.0,0.8709677419354839,87.1
 A1,E2,31,0.22580645161290322,22.6,0.0,0.0,0.7419354838709677,74.2,0.0,0.0,0.03225806451612903,3.2,0.22580645161290322,22.6

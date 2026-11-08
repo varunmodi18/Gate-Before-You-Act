@@ -71,15 +71,21 @@ The registered result is the first one. The sensitivity check is exploratory.
   | rerank | 0.567 |
 
   On E5 the exact accuracy is 0.000 in every variant: no CONTRADICTED verdict was ever produced.
-- **Retrieval on test** (189 cases with a non-empty gold set; mean Recall@5 ceiling 0.409):
+- **Retrieval on test** (`retrieval.csv`): each case's ranking for its Exp 1 package query. Two views:
 
-  | Mode | Recall@5 | Hit@5 | nDCG@5 | MRR@20 |
-  |---|---|---|---|---|
-  | BM25 | 0.0039 | 0.063 | 0.015 | 0.068 |
-  | Reranker | 0.0073 | 0.132 | 0.028 | 0.096 |
+  | View | Mode | Cases scored | Recall@5 | Hit@5 | nDCG@5 | MRR@20 | Recall@5 ceiling | ATT&CK top-1 |
+  |---|---|---|---|---|---|---|---|---|
+  | (a) registered | BM25 | 189 | 0.0039 | 0.063 | 0.015 | 0.068 | 0.409 | 0.005 |
+  | (a) registered | Reranker | 189 | 0.0073 | 0.132 | 0.028 | 0.096 | 0.409 | 0.000 |
+  | (b) exploratory | BM25 | 217 | 0.0097 | 0.138 | 0.050 | 0.145 | 0.385 | 0.032 |
+  | (b) exploratory | Reranker | 217 | 0.0106 | 0.175 | 0.039 | 0.119 | 0.385 | 0.005 |
+
+  - **(a) Registered:** 28 cases with an empty gold set are excluded.
+  - **(b) Exploratory:** a `technique_gold` that the pinned ATT&CK 19.2 bundle marks revoked is mapped through MITRE's own `revoked-by` relationships: T1562.002 → T1685.001 (21 cases), T1562.004 → T1686 (7 cases). Nothing is mapped by hand and the labels are unchanged.
+  - **Correction:** an earlier export of `retrieval.csv` and `results.json` gave BM25 Hit@5 0.085. It mixed in rankings that Exp 2 and Exp 3 episodes had stored under the same case ids. See Findings and limitations.
 
 - **RAG ablation** (Exp 1, wrongly admitted E2–E5): A4 − G3 = 0.000 [−0.056, 0.056]; A6 − G3 = 0.024 [0.000, 0.056].
-- **Recovery ablation and MCP** (Exp 2, matched run 1): A5, A7 and A8 differ from G3 by at most 0.005 on every outcome. The recovery budget almost never applies: G3 had 5 E2 recovery opportunities in all runs and recovered 0. A8 (MCP transport) matches G3.
+- **Recovery ablation and MCP** (Exp 2, matched run 1): A5, A7 and A8 differ from G3 by at most 0.005 on every outcome. The recovery budget was never used (see Findings and limitations), so this does not test recovery. G3 had 5 E2 recovery opportunities in all runs and recovered 0. A8 (MCP transport) matches G3.
 - **Safety** (`safety.csv`, figure `exp2_unsafe_proposed_admitted.png`):
 
   Exp 2, unsafe calls admitted by the gate:
@@ -105,6 +111,39 @@ The registered result is the first one. The sensitivity check is exploratory.
 
   Every system found 2 of the 24 gold techniques. None of the 12 predicted techniques outside the window metadata was judged incidental.
 - **Error taxonomy:** no tags are applied yet; the six tags are applied by people on the Traces page. `taxonomy_suggested.csv` gives the three tags the code suggests. Over-deferral is suggested for G3 in 151 of 651 episodes, against 46 for G1. `example_traces.csv` lists 10 traces chosen by a fixed rule, not by a person.
+
+## Findings and limitations
+
+These come from a read-only diagnostic pass over the stored runs on 8 Nov 2026, before the write-up. The numbers in this section were measured from app.db and the case labels. Unlike the numbers above, they are not in `results.json`, except for the retrieval views. The write-up should report each one.
+
+1. **The recovery budget was never used, so the recovery ablation is untested.**
+   - After a C4 `INSUFFICIENT`, G3 issued a recovery query in **1 of 88** episodes (all three runs of Exp 2). On matched run 1 the count was 0 of 27 for each of G3, A5, A7 and A8, and `RECOVERY_BUDGET_EXHAUSTED` never fired.
+   - After the first `INSUFFICIENT`, G3 escalated with `ask_analyst` in 22 of 27 episodes (run 1).
+   - The code path works. The budget reaches the gate (recorded as 0 for A5, 1 for A7, 2 for G3 and A8), and the proposer's schema offers `sql_query`.
+   - The likely cause is the proposer prompt, which says "If your queries find no records that support the action, escalate (ask_analyst with insufficient_evidence)…" and "Escalate instead of acting when the evidence is insufficient…".
+   - A5 = A7 = G3 therefore shows that the budget did not come into play. It does not show that recovery fails to help.
+2. **The verifier never returns CONTRADICTED.**
+   - Across 2,604 Exp 1V calls in every variant there are 0 CONTRADICTED verdicts.
+   - On E5 the approved change ticket that covers the activity is in the prompt (all 93 E5 calls). In 33 of them the verifier's own `ticket_scope` says the ticket applies on all four fields, yet it answers SUPPORTS.
+   - The output schema puts `verdict` before `ticket_scope`, so the verdict is written before the scope comparison.
+3. **Retrieval is dominated by path tokens and the requirement sentence.**
+   - The query follows §D.3: the tool, its evidence-requirement sentence, then each cited record's fields.
+   - With BM25, Windows path tokens and the requirement sentence (the same for every case with that tool) dominate. Over the 217 package queries, five generic PowerShell rules fill about half of all top-5 slots ("PSScriptPolicyTest Creation By Uncommon Process" alone appears in 131 cases), and "Accessibility Features" is the ATT&CK top-1 in 150 cases.
+4. **The C4 feedback carries unbound placeholders.**
+   - The agent is shown the requirement template as the unmet requirement, for example "…on host H shows process P itself performing activity…". The host and process are left as the letters H and P.
+5. **28 cases have an empty retrieval gold set.**
+   - Their `technique_gold` is revoked in the pinned ATT&CK 19.2: T1562.002 (test-35, test-37, test-39) and T1562.004 (test-22), each in all seven variants.
+   - The registered metrics exclude them. View (b) above maps them through MITRE's `revoked-by` relationships.
+6. **Correction to the retrieval report.**
+   - The retrieval endpoint used the latest stored ranking per case. Exp 2 and Exp 3 store their live retrievals (made with the agent's own citations) under the same case id, so the earlier export scored 152 of 217 cases on an episode's query.
+   - Fixed: each case is now scored only on its package query's ranking.
+   - The verifier itself was never affected, because its cache lookup matches the exact query. No run data changed.
+7. **Blind re-check of the H2 escalation adjudications.**
+   - The 116 Exp 2 escalation items were exported without system ids, run ids or decisions, in shuffled order, and decided again from `docs/case_authoring.md` §6 and each case's labels.
+   - Agreement with the original decisions is **0.948** (Cohen's κ 0.239; κ is low because 115 of the 116 originals are "not qualifying").
+   - All 6 disagreements are E3 `ask_analyst:need_more_logs`, which the re-check judged qualifying under rule 1.
+   - Recomputing H2 with the re-check's decisions gives **0.355 [0.257, 0.459], unchanged**. The 22 episodes that change are E3 cases, which have no justified completion and so are outside H2's 98 cases.
+   - **Caveat:** blinding was partial. 42 of the 116 items had been seen in the log before the export. Agreement is 0.929 on those and 0.959 on the other 74.
 
 ## Files
 

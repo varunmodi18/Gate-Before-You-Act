@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T07:32:16+00:00; proportions, *_pp display only; gate decisions pooled over runs
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; gate decisions pooled over runs
 system,variant,objective,wrongly_admitted,wrongly_admitted_pp,n_reject_decisions,wrongly_blocked,wrongly_blocked_pp,n_admit_decisions
 A1,E1,all,,,0,0.0,0.0,20
 A1,E1,contain_host,,,0,0.0,0.0,10

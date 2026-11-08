@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T07:32:16+00:00; proportions, *_pp display only; a - b, paired per case, cluster bootstrap
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; a - b, paired per case, cluster bootstrap
 ablation,run_id,a,b,metric,variants,rate_a,rate_b,diff_estimate,diff_ci_low,diff_ci_high,diff_estimate_pp,diff_ci_low_pp,diff_ci_high_pp,diff_n_scenarios,diff_n_cases,exploratory,matched_run
 rag,1,A4,G3,wrongly_admitted,"['E2', 'E3', 'E4', 'E5']",0.28225806451612906,0.28225806451612906,0.0,-0.056451612903225805,0.056451612903225805,0.0,-5.6,5.6,31,124,False,
 rag,1,A4,G3,wrongly_blocked,,0.4,0.35,0.05,0.0,0.15,5.0,0.0,15.0,20,40,False,

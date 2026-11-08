@@ -1,4 +1,4 @@
-# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T07:32:16+00:00; proportions, *_pp display only; exploratory subsets, no verdicts
+# GateBench final results, case set cases-v1 (case_set_hash 1e7379ff6c44d39c07056b235ce9ac53570ddcff8530b903c51701a56e49599a); runs {'exp1': 1, 'exp2': 2, 'exp3': 3}; generated 2026-11-08T08:36:24+00:00; proportions, *_pp display only; exploratory subsets, no verdicts
 hypothesis,breakdown,value,a,b,rate_a,rate_b,exploratory,estimate,ci_low,ci_high,estimate_pp,ci_low_pp,ci_high_pp,n_scenarios,n_cases,rate_a_pp,rate_b_pp
 H1,variant,E2,G1,G3,0.3870967741935484,0.22580645161290322,True,0.16129032258064516,0.03225806451612903,0.2903225806451613,16.1,3.2,29.0,31,31,38.7,22.6
 H1,variant,E3,G1,G3,0.6451612903225806,0.0,True,0.6451612903225806,0.4838709677419355,0.8064516129032258,64.5,48.4,80.6,31,31,64.5,0.0
