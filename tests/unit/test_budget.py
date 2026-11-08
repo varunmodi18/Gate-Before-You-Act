@@ -3,9 +3,11 @@ tests/integration/test_exp2_runner.py."""
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
-from gbya.config import Settings
+from gbya.config import REPO_ROOT, Settings
 from gbya.experiments.runner import project
 
 
@@ -30,5 +32,12 @@ def test_no_projection_before_a_unit_has_finished() -> None:
     assert project(elapsed_s=500, done=0, total=10, spent_other_h=0, limit_h=81) is None
 
 
-def test_default_limit_is_the_planning_figure() -> None:
-    assert Settings(_env_file=None).gpu_budget_hours == 81.0  # type: ignore[call-arg]
+def test_configured_limit_is_the_documented_t8_0_figure() -> None:
+    """The configured GPU budget (``config/app.yaml``) is the measured T8.0 figure that
+    ``docs/compute_budget.md`` documents (1.5x allowance included), set on purpose by the team lead
+    (2026-11-08). The document keeps the proposal's 81.0 h as the planning figure."""
+    text = (REPO_ROOT / "docs" / "compute_budget.md").read_text()
+    m = re.search(r"\*\*([\d.]+) h\*\* with it \(planning figure ([\d.]+) h", text)
+    assert m is not None, "docs/compute_budget.md no longer states the T8.0 figure"
+    assert Settings(_env_file=None).gpu_budget_hours == float(m.group(1))  # type: ignore[call-arg]
+    assert float(m.group(2)) == 81.0
