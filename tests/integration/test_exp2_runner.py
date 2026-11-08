@@ -221,6 +221,35 @@ def test_failed_write_leaves_no_partial_episode_and_is_redone(tmp_path: Path,
     assert count(settings, Episode, run_id) == 1
 
 
+def test_prompt_v2_run_records_its_prompt_and_proposes_with_it(tmp_path: Path) -> None:
+    """Exploratory recovery run (team lead 2026-11-08): a v2 run stores the version, its label and
+    both system-prompt hashes, and every proposer call uses the v2 system prompt; a default run's
+    stored spec has neither key, so registered configs and their hashes are unchanged."""
+    from gbya.agent.proposer import prompt_sha256, system_prompt
+
+    settings = build(tmp_path)
+    v2 = create(settings, case_ids=["mini:E1"],
+                overrides={"systems": {"G1": 1}, "proposer_prompt": "v2",
+                           "label": "exp2-recovery-exploratory"})  # fmt: skip
+    v1 = create(settings, case_ids=["mini:E1"], overrides={"systems": {"G1": 1}})
+    client = fake()
+    d = rn.Deps(settings=settings, client=client, counter=ApproxCounter())
+    assert rn.execute_run(factory_of(settings), v2, d) == "completed"
+    with db.session_scope(factory_of(settings)) as s:
+        r2, r1 = s.get(Run, v2), s.get(Run, v1)
+        assert r2 is not None and r1 is not None
+        c2, c1 = r2.config, r1.config
+    assert c2["spec"]["proposer_prompt"] == "v2"
+    assert c2["spec"]["label"] == "exp2-recovery-exploratory"
+    assert c2["proposer_prompt"] == {"version": "v2", "system_prompt_sha256": prompt_sha256("v2"),
+                                     "v1_system_prompt_sha256": prompt_sha256("v1")}  # fmt: skip
+    assert "proposer_prompt" not in c1["spec"] and "label" not in c1["spec"]
+    assert "proposer_prompt" not in c1
+    used = {c.messages[0]["content"] for c in client.calls
+            if c.messages[0]["role"] == "system" and "SOC responder" in c.messages[0]["content"]}  # fmt: skip
+    assert used == {system_prompt("v2")}
+
+
 # ---- adjudication queue and API ----------------------------------------------------------------------
 
 

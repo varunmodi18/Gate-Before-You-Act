@@ -360,6 +360,7 @@ class EpisodeRunner:
     retries: bool = True
     should_stop: Callable[[], bool] = lambda: False  # Console "Stop" (raises EpisodeStopped)
     prefix_label: str = PREFIX_LABEL  # Exp 3: LIVE_LABEL
+    prompt_version: str = "v1"  # proposer prompt (v2: exploratory recovery run only)
 
     def __post_init__(self) -> None:
         if self.dispatcher is None:
@@ -424,6 +425,7 @@ class EpisodeRunner:
             self.counter,
             self.caps.prompt_limit,
             self.prefix_label,
+            self.prompt_version,
         )
         self.truncations += len(prompt.truncations)
         res = self._call(prompt, reask=False)

@@ -63,6 +63,10 @@ class Exp2Spec(BaseModel):
     schedule: dict[int, Slot]
     systems: dict[str, int]  # system -> number of runs (run indices 1..n)
     fallback: Literal["F1"] | None = None
+    # Exploratory recovery run (team lead 2026-11-08): proposer prompt version and a run label.
+    # Left out of the stored spec when default, so registered runs' configs are unchanged.
+    proposer_prompt: Literal["v1", "v2"] = "v1"
+    label: str | None = Field(default=None, max_length=80)
 
     @model_validator(mode="after")
     def _check(self) -> Exp2Spec:
@@ -207,7 +211,7 @@ def make_dispatcher(
 
 def run_episode(
     case: Exp2Case, config: GateConfig, slot: Slot, deps: Deps,
-    factory: sessionmaker[Session] | None = None,
+    factory: sessionmaker[Session] | None = None, prompt_version: str = "v1",
 ) -> MemoryTrace:  # fmt: skip
     """One episode of ``config`` on the case, in memory. The verifier (if any) retrieves through
     the retrieval cache when a session factory is given."""
@@ -217,7 +221,7 @@ def run_episode(
         EpisodeRunner(
             client=deps.client, dispatcher=dispatcher, request=case.request,
             prefix=prefix_text(case.prefix), temperature=slot.temperature, seed=slot.seed,
-            trace=trace, counter=deps.counter,
+            trace=trace, counter=deps.counter, prompt_version=prompt_version,
         ).run()  # fmt: skip
         trace.transport = dispatcher.transport
         return trace
@@ -285,13 +289,23 @@ def create_exp2_run(
     counter_name = counter_name or _counter_name()
     if purpose == "research":
         refuse_research_tooling(prov["backend"], counter_name)
-    config = {
-        "spec": spec.model_dump(mode="json"),
+    spec_json = spec.model_dump(mode="json")
+    for key, default in (("proposer_prompt", "v1"), ("label", None)):
+        if spec_json[key] == default:
+            del spec_json[key]
+    config: dict[str, Any] = {
+        "spec": spec_json,
         "systems": systems,  # effective, after the fallback
         "fallback": spec.fallback,
         "case_ids": ids,
         "configs": {sid: configs[sid].model_dump() for sid in systems},
     }
+    if spec.proposer_prompt != "v1":  # provenance of the non-registered prompt
+        from gbya.agent.proposer import prompt_sha256
+
+        config["proposer_prompt"] = {"version": spec.proposer_prompt,
+                                     "system_prompt_sha256": prompt_sha256(spec.proposer_prompt),
+                                     "v1_system_prompt_sha256": prompt_sha256("v1")}  # fmt: skip
     run = create_run(
         session, experiment=2, config=config, config_hash=config_hash(config), purpose=purpose,
         case_ids=ids, replay=prov["backend"] == "replay",
@@ -311,6 +325,10 @@ def create_exp2_run(
 
 def run_items(run: Run) -> list[tuple[str, str, int]]:
     return plan_items(dict(run.config["systems"]), run.config["case_ids"])
+
+
+def prompt_version_of(run: Run) -> str:
+    return str(run.config["spec"].get("proposer_prompt", "v1"))
 
 
 def slot_of(run: Run, run_idx: int) -> Slot:

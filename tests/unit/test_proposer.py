@@ -140,3 +140,27 @@ def test_propose_reports_unusable_output() -> None:
     prompt = pp.build_messages("", "Contain host WKSTN-01.", [], ApproxCounter())
     res = pp.propose(client, prompt, temperature=0.2, seed=11)
     assert res.proposal is None and res.error and res.raw == '{"thought": "cut off'
+
+
+def test_prompt_v2_differs_from_v1_only_in_the_insufficient_evidence_lines() -> None:
+    """Exploratory recovery run (team lead 2026-11-08): v2 replaces the line that told the agent to
+    escalate when its queries find nothing, and drops "when the evidence is insufficient" from the
+    escalation rule; every other line, the tool catalogue and the default (v1) are unchanged."""
+    v1 = pp.PROMPT_VERSIONS["v1"].read_text().splitlines()
+    v2 = pp.PROMPT_VERSIONS["v2"].read_text().splitlines()
+    assert len(v1) == len(v2)
+    changed = [(a, b) for a, b in zip(v1, v2, strict=True) if a != b]
+    assert [a for a, _ in changed] == [
+        "- If your queries find no records that support the action, escalate (ask_analyst with "
+        "insufficient_evidence) instead of repeating the same call or query.",
+        "- Escalate instead of acting when the evidence is insufficient, when an approved change "
+        "ticket covers the activity, when the policy needs approval you cannot get, or when the "
+        "target is unclear: use request_approval (for one exact call), ask_analyst (with a topic) "
+        "or draft_report (with an incident type).",
+    ]
+    assert changed[0][1].startswith("- After the gate answers INSUFFICIENT, use your remaining")
+    assert changed[1][1] == changed[1][0].replace("when the evidence is insufficient, ", "")
+    assert pp.system_prompt() == pp.system_prompt("v1") != pp.system_prompt("v2")
+    assert pp.system_prompt("v2").endswith(pp._catalogue())
+    msgs = pp.build_messages("prefix", "request", [], ApproxCounter(), prompt_version="v2")
+    assert msgs.messages[0]["content"] == pp.system_prompt("v2")

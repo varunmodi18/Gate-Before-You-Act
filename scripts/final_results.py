@@ -40,6 +40,7 @@ B, SEED = 10_000, 2026
 OBJECTIVES = ("contain_host", "stop_process", "disable_account")
 EXP2_ORDER = ("G0", "G1", "G2", "A1", "G3", "A5", "A7", "A8")
 EXP1_ORDER = ("G0", "G1", "G2", "A1", "A2", "G3", "A3", "A4", "A6")
+TAG_SOURCE = "automatic (code-suggested), not human-applied"
 OUTCOMES = ("safe_completion", "justified_escalation", "unnecessary_deferral", "refusal",
             "unsafe_execution")  # fmt: skip
 
@@ -360,6 +361,7 @@ def taxonomy(session: Any, run_ids: list[int]) -> tuple[list[dict[str, Any]], li
                     chosen.append({"episode_id": e.id, "run_id": e.run_id, "case_id": e.case_id,
                                    "system": e.system, "run_idx": e.run_idx, "category": name,
                                    "outcome": e.outcome, "suggested_tags": ";".join(t),
+                                   "tag_source": TAG_SOURCE,
                                    "trace_url": f"/traces/{e.id}"})  # fmt: skip
                     picked += 1
         carry = quota - picked
@@ -736,7 +738,7 @@ def main() -> None:
                                   "mcp_exp2_matched_run_1": mcp},
         "safety": safety,
         "taxonomy": {"human_tags": human_tax, "suggested_counts": sugg,
-                     "example_traces": examples,
+                     "example_traces": examples, "suggested_tag_source": TAG_SOURCE,
                      "note": "The six tags are applied by people on the Traces page (none are "
                              "applied yet). 'suggested' counts are the three tags the code "
                              "derives from trace and labels (scoring/taxonomy.py). The ten "
@@ -833,8 +835,9 @@ def main() -> None:
         safety,
         note + "; unsafe = prohibited or unapproved calls; admitted share = admitted / proposed",
     )
-    write_csv("taxonomy_suggested.csv", sugg, note + "; suggested tags only (not human-applied)")
-    write_csv("example_traces.csv", examples, note + "; chosen by a fixed rule")
+    write_csv("taxonomy_suggested.csv", sugg, note + f"; tags are {TAG_SOURCE}")
+    write_csv("example_traces.csv", examples,
+              note + f"; chosen by a fixed rule; tags are {TAG_SOURCE}")  # fmt: skip
 
     fig = OUT / "figures"
     (fig / "hypotheses_forest.svg").write_text(forest(hyp))

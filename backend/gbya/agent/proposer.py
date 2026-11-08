@@ -19,6 +19,7 @@ latest gate feedback; log every truncation. Token counts use the model's own tok
 
 from __future__ import annotations
 
+import hashlib
 import json
 from collections.abc import Sequence
 from dataclasses import dataclass, field
@@ -36,6 +37,13 @@ from gbya.tools.registry import DESCRIPTIONS, AnalystTopic, IncidentType
 from gbya.tools.typed import ACCOUNT_PATTERN, HOSTNAME_PATTERN
 
 PROMPT_PATH = Path(__file__).with_name("prompts") / "proposer.md"
+# Prompt versions. v1 is the registered prompt (every research run before 2026-11-08 and every
+# default). v2 (team lead 2026-11-08, exploratory recovery run only) differs from v1 only in the
+# lines that told the agent to escalate when the evidence is insufficient.
+PROMPT_VERSIONS: dict[str, Path] = {
+    "v1": PROMPT_PATH,
+    "v2": PROMPT_PATH.with_name("proposer_v2.md"),
+}
 END_EPISODE = "end_episode"
 END_REASONS = ("awaiting_approval", "handed_off", "cannot_proceed")
 MAX_TOKENS = 400  # proposer output (§D.10.3)
@@ -154,8 +162,13 @@ def _catalogue() -> str:
     return "\n".join(lines)
 
 
-def system_prompt() -> str:
-    return PROMPT_PATH.read_text(encoding="utf-8").rstrip() + "\n" + _catalogue()
+def system_prompt(version: str = "v1") -> str:
+    return PROMPT_VERSIONS[version].read_text(encoding="utf-8").rstrip() + "\n" + _catalogue()
+
+
+def prompt_sha256(version: str = "v1") -> str:
+    """SHA-256 of the whole system prompt of ``version`` (instructions plus tool catalogue)."""
+    return hashlib.sha256(system_prompt(version).encode("utf-8")).hexdigest()
 
 
 # ---- messages and the history policy ------------------------------------------------------------
@@ -202,9 +215,10 @@ def build_messages(
     counter: TokenCounter,
     limit: int = PROMPT_LIMIT,
     prefix_label: str = PREFIX_LABEL,
+    prompt_version: str = "v1",
 ) -> Prompt:
     """Messages for the next proposal, reduced to ``limit`` tokens by the history policy."""
-    system = system_prompt()
+    system = system_prompt(prompt_version)
     head: list[Message] = [
         {"role": "system", "content": system},
         {"role": "user", "content": opening(prefix, request, prefix_label)},

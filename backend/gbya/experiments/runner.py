@@ -453,7 +453,8 @@ def run_exp2_item(
             run = s.get(Run, run_id)
             assert run is not None
             slot = exp2.slot_of(run, item.run_idx)
-        trace = exp2.run_episode(case, deps.configs[item.system], slot, deps, factory)
+            version = exp2.prompt_version_of(run)
+        trace = exp2.run_episode(case, deps.configs[item.system], slot, deps, factory, version)
         with session_scope(factory) as s:
             ji = s.get(JobItem, item.id)
             assert ji is not None
