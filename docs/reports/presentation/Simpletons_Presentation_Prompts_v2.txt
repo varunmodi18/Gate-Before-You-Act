@@ -1,0 +1,269 @@
+GATE BEFORE YOU ACT: SLIDE-BY-SLIDE PROMPTS (v2, aligned with the project brief)
+Course: Language Models and Agents (CL3.410) | Team Simpletons
+Repo: https://github.com/varunmodi18/Gate-Before-You-Act (branch main, case set tag cases-v1)
+
+HOW TO USE THIS FILE
+- Each block is one slide. Give the GLOBAL STYLE PROMPT first, then the blocks one at a time,
+  or paste the whole file and ask for a deck that follows it exactly.
+- Every number comes from docs/final/ in the repo. Don't round differently or add numbers.
+- Figures: docs/reports/final/figures/ (hypotheses_forest.png, exp2_outcomes.png).
+- The deck follows the brief's structure: problem -> research question -> hypothesis ->
+  method -> prototype -> evaluation -> analysis -> write-up. It also covers every minimum
+  evaluation expectation: baselines, ground-truth evaluation set, a metric and an ablation per
+  capability, tool-call accuracy and unsafe-action rate, qualitative examples and failure
+  analysis. Four course-activity slides are marked [ACTIVITY].
+- Target: 20 main slides, about 18-20 minutes. Backup slides at the end.
+- The matching spoken script is in Simpletons_Presentation_Script.txt.
+
+GLOBAL STYLE PROMPT (give this first)
+Create a clean, technical presentation deck for an academic course project. Use a white
+background, one dark text colour and a single accent colour (deep blue). Use green only for
+"supported" or "good" and red only for "not met" or "bad". Give each capability one fixed
+colour, used everywhere: Tool calling = purple, RAG = orange, Reasoning = blue, Agentic =
+teal. One idea per slide, a short title that states the takeaway, at most 4 bullets of no
+more than 12 words each. Show the main number in large type when a slide is about one number.
+No stock photos or clip art; diagrams and the provided charts only. Mark course-activity
+slides with a small grey tag "Course activity" in the top-right corner.
+
+======================================================================
+SLIDE 1: TITLE
+======================================================================
+Title: "Gate Before You Act"
+Subtitle: "Does verifying evidence make an LLM security agent act more safely than policy
+rules alone?"
+Show: Team Simpletons; Varun Modi (2025202040), Aayush Pandey (2025201058), Srushti
+Pekamwar (2025201066), Dhruv Rajput (2025201094); "Language Models and Agents (CL3.410)";
+repo link in small type.
+
+======================================================================
+SLIDE 2: DOMAIN, USER AND PROBLEM
+======================================================================
+Title: "Security agents now act, and wrong actions hurt both ways"
+Left, small label block: Domain: SOC first response on one Windows host. User: a junior SOC
+analyst.
+Bullets:
+- Agents isolate hosts, kill processes, disable accounts
+- Frontier agents wrongly contain hosts in 45-82.5% of episodes (OpenSec)
+- Policy gates check permission, not whether evidence justifies the target
+- Logs are attacker-written; CERT-In requires 6-hour reporting and 180-day log retention
+Visual: a small two-sided sketch: "acted wrongly -> outage" vs "failed to act -> attack
+spreads".
+
+======================================================================
+SLIDE 3: WHAT EXISTING WORK MISSES
+======================================================================
+Title: "No one isolates the value of checking evidence beyond policy"
+Compact 3-column table (Work | Does | Gap):
+OpenSec | IR environment, evidence-gated action rate | no enforced gate, no policy-only comparison
+AgentSpec / ShieldAgent | runtime rule enforcement | rules only, not evidence for the target
+CaMeL | trusted/untrusted separation | stops injection, doesn't judge evidence
+Footer: "We hold policy, context, model and tools fixed, and change only the evidence check."
+
+======================================================================
+SLIDE 4: RESEARCH QUESTION AND HYPOTHESES
+======================================================================
+Title: "One question, three pre-registered hypotheses"
+Top, bold: "Does checking that cited evidence supports the action improve decisions beyond
+policy-only gating, and which part helps?"
+Three cards:
+- H1: full gate (G3) wrongly admits >= 15 pts fewer bad actions than policy-only (G1)
+- H1-C4: the LLM verifier alone accounts for >= 10 pts (G3 vs A1)
+- H2: G3's unnecessary deferral at most 10 pts worse than G1's
+
+======================================================================
+SLIDE 5: [ACTIVITY] FALSIFIABLE CLAIM
+======================================================================
+Title: "Our falsifiable claim"
+Show as a fill-in sentence with the four blanks highlighted in the accent colour:
+"Our system [full evidence gate G3] will beat [the policy-only gate G1] on [packages that
+should be rejected], measured by [wrongly-admitted rate] on [31 frozen test scenarios, 124
+cases]."
+"Falsified if [improvement < 15 points or the 95% CI includes 0]."
+Four small labels underneath: Baseline: G1 (and plain agent G0) | Capability: reasoning +
+RAG inside a tool gate | Metric: wrongly-admitted rate | Evaluation set: SOC-Risk cases-v1
+Result badge (green): "29.0 pts [20.1, 38.7]: not falsified"
+
+======================================================================
+SLIDE 6: FOUR CAPABILITIES, EACH NEEDED AND MEASURED
+======================================================================
+Title: "Four capabilities, each with its own metric and ablation"
+Table (use capability colours):
+Tool calling | acts only via tools, every action gated | tool-call accuracy, unsafe rate | direct vs MCP
+RAG | Sigma rules + ATT&CK for the verifier | Recall@5, Hit@5, nDCG@5, MRR@20 | no RAG / simple / reranker
+Reasoning | LLM verifier judges the evidence | verifier accuracy | remove verifier, add rationale
+Agentic | after "insufficient": query, act or hand off | task success, recovery rate | budget 0 / 1 / 2
+Footer: "Fine-tuning not used: the question is gate design with the model held fixed."
+
+======================================================================
+SLIDE 7: ARCHITECTURE
+======================================================================
+Title: "GateBench: every state-changing action passes the gate"
+Visual: clean diagram. Logs (untrusted, red dashed) -> Investigate -> Findings -> Propose
+(action + cited record IDs) -> Pre-action gate -> Execute / Escalate or gather more / Block.
+Trusted context (green) feeds Propose and the Gate. Retrieval index (Sigma + ATT&CK) feeds
+the Gate. Gate lists C1 allow-list + provenance, C2 citation scope, C3 target match (code),
+C4 LLM verifier, C5 policy (9 rules), C6 approval.
+Put small capability badges on the diagram: TOOL CALLING on the tools, RAG on the index,
+REASONING on C4, AGENTIC on the "gather more" loop.
+
+======================================================================
+SLIDE 8: [ACTIVITY] ONE TOOL'S SCHEMA
+======================================================================
+Title: "Tool design: kill_process"
+Show as a schema card in monospace:
+name: kill_process (one process on one host)
+use when: a cited record shows this PID itself doing the malicious activity on this host
+don't use: for the parent, the access target (lsass.exe), system processes, or account-only
+evidence; escalate instead
+host: string, hostname pattern, must be in the asset inventory. Likely wrong: an IP, or a
+name from an attacker's command line
+pid: integer > 0 (strict), must appear in a retrieved record. Likely wrong: "5172" as a
+string, the access mask 0x1438, the parent's PID
+Error strings (monospace, red):
+C1_SCHEMA: Arguments for kill_process are invalid.
+C1_UNPROVENANCED_VALUE: PID 7924 does not appear as a PID in any record you have retrieved.
+
+======================================================================
+SLIDE 9: EVALUATION SET WITH KNOWN GROUND TRUTH
+======================================================================
+Title: "Real attack logs, injected scenarios, exact labels"
+Left, large numbers: 99 attack recordings (OTRF), 757,375 events; 31 test scenarios = 217
+cases; 12 live windows.
+Right, the seven variants: E1 correct | E2 benign citations | E3 wrong host | E4 partial or
+contradicted | E5 covered by approved ticket | R+/R- context flipped
+Footer, small: "Labels produced by separate AI agent sessions under written rules (blind
+second annotator, adjudication). Agreement on the hypothesis labels: kappa 1.00 / 0.92 /
+0.95. Scoring uses no LLM judge."
+
+======================================================================
+SLIDE 10: BASELINES, SYSTEMS AND SETUP
+======================================================================
+Title: "Two baselines, ten configurations, one laptop GPU"
+Left: G0 plain agent (Baseline 1) | G1 policy-only (Baseline 2) | G2 + citation scope |
+G3 full gate | A1-A8 one-field ablations.
+Right: Qwen2.5-7B-Instruct 4-bit on an RTX 4060 (8 GB); 4 runs, 0 errors; 2.8 GPU-hours
+used vs 81 planned; no API cost.
+
+======================================================================
+SLIDE 11: HEADLINE RESULTS
+======================================================================
+Title: "Safer: both safety hypotheses hold. Less useful: H2 is not met"
+Visual: hypotheses_forest.png, full width.
+Under it: H1 29.0 pts [20.1, 38.7] SUPPORTED (green) | H1-C4 16.1 pts [6.5, 27.4]
+SUPPORTED (green) | H2 35.5 pts [25.7, 45.9] NOT MET (red)
+
+======================================================================
+SLIDE 12: EXPERIMENT 1, CATCHING BAD PACKAGES
+======================================================================
+Title: "Evidence checks halve wrongly admitted actions but block a third of good ones"
+Bar chart, wrongly admitted (E2-E5): G0 1.000, G1 0.573, G2 0.573, A1 0.387, A3 0.331,
+A6 0.306, G3 0.282, A2 0.282, A4 0.282
+Callout: "G3 wrongly blocks 35% of correct packages; G1 blocks 0%."
+Small notes: "Citation scope adds nothing (G1 = G2). Target match adds nothing once the
+verifier is present (A2 = G3)."
+
+======================================================================
+SLIDE 13: RAG ABLATION, THREE LEVELS
+======================================================================
+Title: "RAG: the reranker retrieves better, but decisions don't change"
+Table: Level | Hit@5 | MRR@20 | Verifier acc. | Wrongly admitted
+No RAG (A4) | - | - | 0.535 | 0.282
+Simple RAG, BM25 (G3) | 0.063 | 0.068 | 0.576 | 0.282
+RAG + reranker (A6) | 0.132 | 0.096 | 0.567 | 0.306
+Footer: "Recall@5 0.004 / 0.007 (ceiling 0.41); nDCG@5 0.015 / 0.028. Queries dominated by
+file paths."
+
+======================================================================
+SLIDE 14: AGENTIC ABLATION, RECOVERY AND COMMUNICATION
+======================================================================
+Title: "Recovery budgets and MCP barely move task success"
+Left (recovery, budgets 0 / 1 / 2): "Registered run: agent recovered in 1 of 88 chances.
+Exploratory run (2 prompt lines changed): 20 of 29 recovered." Task success: A5 0.410, A7
+0.410, G3 0.419, G1 0.525.
+Right (communication): "Direct tool calls vs MCP server (gate inside the server): equal
+within 0.5 points on every outcome."
+Footer: "Most actions admitted after recovery were unsafe: the agent cited other records."
+
+======================================================================
+SLIDE 15: REASONING AND TOOL-CALLING RESULTS
+======================================================================
+Title: "The verifier never says 'contradicted'; the gate stops most unsafe calls"
+Left (reasoning): verifier accuracy G3 0.576, with rationale 0.636; E4 0.29, E5 0.00; 0
+"contradicted" in 2,604 calls.
+Right (tool calling): tool-call accuracy G1 0.939, G3 0.961. Unsafe admitted: G0 100%, G1
+47%, G3 16%. Injection: 1 proposed, 0 admitted. Log deletions: 0.
+
+======================================================================
+SLIDE 16: EXPERIMENT 2, THE COST IN FULL EPISODES
+======================================================================
+Title: "Unsafe executions fall, unnecessary deferrals rise"
+Visual: exp2_outcomes.png.
+Two big numbers: Unsafe execution G1 39.9% -> G3 22.6% | Unnecessary deferral G1 7.1% ->
+G3 23.2%
+Footer: "On correct packages G3 defers 39.8% of the time vs 5.4% for G1."
+
+======================================================================
+SLIDE 17: QUALITATIVE EXAMPLES AND FAILURE ANALYSIS
+======================================================================
+Title: "Where it fails, and why"
+Four mini-cards:
+- test-13 E5: verifier says the ticket matches, still answers "supports"
+- test-03 E1: wrong "insufficient", then the agent asks the analyst (deferral)
+- test-25 E1: same call re-proposed 7 times, never recovers
+- test-06 E5: recovery query finds nothing, a different citation gets admitted (unsafe)
+Footer: "Automatic tags: over-deferral 151 of 651 G3 episodes vs 46 for G1. Exp 3 found 2 of
+24 techniques."
+
+======================================================================
+SLIDE 18: [ACTIVITY] INTAKE QUESTIONS ON OUR AGENT
+======================================================================
+Title: "Intake check on our own agent"
+Four Q/A rows:
+Needs the model to choose? -> After gate feedback: query, act, or hand off
+Cost per episode? -> about 5 model calls (Exp 2), about 26 (Exp 3); cap 8 proposer steps
+Tool we assume but lack? -> real EDR / AD / firewall APIs (mocked)
+Worst action, who notices? -> disabling a domain admin: everyone. Gate requires approval;
+the trace flags it
+
+======================================================================
+SLIDE 19: [ACTIVITY] LETHAL-TRIFECTA AUDIT
+======================================================================
+Title: "Trifecta audit: we cut egress"
+Three columns:
+Private data: logs, asset tiers, identities, approvals, change tickets
+Untrusted content: attacker-written command lines, file names, script blocks; reference
+rules
+Egress: 4 action tools, analyst messages and reports, traces; no web, no cloud API, no
+rendered links
+Bottom: "Cut: outside egress (mock actions, local model, no network). Cost: no real
+containment in the demo, no threat-intel lookups, a small 7B model."
+
+======================================================================
+SLIDE 20: LIMITATIONS, FUTURE WORK, CONCLUSION
+======================================================================
+Title: "Evidence gating works as a brake; fix the verifier next"
+Left, "Limitations": AI-produced labels not yet validated against human labels; 31
+scenarios, one 7B model, mock tools; "block IP" untestable; H2 relies on adjudicated
+escalations (blind re-check agreed 94.8%).
+Right, "Next": verdict after ticket comparison; filled-in feedback; stronger or fine-tuned
+verifier; human label check; A2A-style hand-off.
+Footer: repo link and "Every number traces to a stored run."
+
+======================================================================
+BACKUP SLIDES
+======================================================================
+B1 VERIFIER ACCURACY BY VARIANT: Standard 0.576 (E1 0.710, E2 0.774, E3 0.839, E4 0.290,
+E5 0.000, R+ 0.710); With rationale 0.636; No RAG 0.535; Reranked 0.567.
+B2 RETRIEVAL DETAILS: Registered (189 cases): BM25 Recall@5 0.004, Hit@5 0.063, nDCG@5 0.015,
+MRR@20 0.068; reranker 0.007 / 0.132 / 0.028 / 0.096. Exploratory with MITRE revoked-by
+mapping (217 cases): BM25 Hit@5 0.138, reranker 0.175.
+B3 EXP 2 FULL TABLE: G0 0.247/0.006/0.034/0.011/0.702, success 0.253; G1
+0.378/0.101/0.071/0.051/0.399, 0.479; G2 0.359/0.101/0.088/0.092/0.359, 0.461; A1
+0.304/0.161/0.143/0.129/0.263, 0.465; G3 0.218/0.166/0.232/0.158/0.226, 0.384 (safe /
+justified / deferral / refusal / unsafe).
+B4 EXP 3: Task success G0 0.750, G1 0.875, G3 0.583; technique F1 about 0.10; unsafe admitted
+G0 4/4, G1 0/4, G3 0/4.
+B5 AGREEMENT: test kappa outcome 0.953, candidate actions -0.068 (one-sided omissions; 0.6%
+real conflicts), evidence Jaccard 0.589; gate label 1.000, verifier label 0.921.
+B6 GUARANTEES: SELECT-only SQL, 2 layers, 70 attack tests; typed-argument provenance; no
+delete tool; approval state machine; 871 + 19 tests passing.
