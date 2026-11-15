@@ -399,7 +399,7 @@ folder is not a git checkout. Every number was identical. The runs database itse
 
 ## 7. Tests
 
-| Command | What it runs | Result on a fresh clone of `main` (11 Nov 2026) |
+| Command | What it runs | Result on a fresh clone of `main` (re-measured 15 Nov 2026) |
 |---|---|---|
 | `make lint` | ruff (check + format), mypy, eslint, prettier, tsc | clean (13 s) |
 | `make test` | pytest without the `gpu` marker, then vitest | pytest **864 passed**, 7 skipped (they need the real OTRF data, the built index, the reranker or the model weights), 3 deselected (`gpu`); vitest **19 passed** (about 2 min) |
