@@ -20,7 +20,7 @@ follow it; the team moves them if needed and records the change in `STATUS.md`.
 
 - [x] **Week 1, 8–14 Oct** — code (M0–M7) ready; this guide.
 - [ ] **Wed 14 Oct** — shared server running (§2); **calibration**: dev-01 and dev-02 by all four
-      together (§3a), before anything else (`docs/TODAY.md`).
+      together (§3a), before anything else.
 - [ ] **Thu 15 – Fri 16 Oct** — dev-03 … dev-10 authored, annotated and adjudicated.
 - [ ] **Fri 16 – Sun 18 Oct** — all test scenarios and e2e windows **authored** (e2e: `make
       new-e2e`, `make prepare-e2e`, context check).
@@ -107,7 +107,7 @@ ssh-keygen -t ed25519 -C "<name>-gatebench"    # send ~/.ssh/id_ed25519.pub to V
 `hostname -I`):
 
 ```bash
-ssh -N -L 8000:127.0.0.1:8000 varun-modi@<laptop-ip>
+ssh -N -L 8000:127.0.0.1:8000 <user>@<laptop-ip>
 ```
 
 then open <http://127.0.0.1:8000> in your browser. The command prints nothing and keeps
@@ -120,7 +120,7 @@ on the machine, or invite them to the tailnet). Each teammate installs Tailscale
 machine, signs in, accepts the share, and then:
 
 ```bash
-ssh -N -L 8000:127.0.0.1:8000 varun-modi@<laptop-tailscale-name-or-100.x.y.z>
+ssh -N -L 8000:127.0.0.1:8000 <user>@<laptop-tailscale-name-or-100.x.y.z>
 ```
 
 and opens <http://127.0.0.1:8000>. Tailscale only carries the SSH connection; GateBench itself

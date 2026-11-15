@@ -9,6 +9,9 @@ models/
 *.pt
 results/
 logs/
+*.db
+*.db-wal
+*.db-shm
 
 # Environments and secrets
 .venv/
@@ -34,6 +37,12 @@ frontend/dist/
 frontend/test-results/
 frontend/playwright-report/
 .pnpm-store/
+
+# Scratch and backup files
+*.bak
+*.orig
+*.ipynb
+.ipynb_checkpoints/
 
 # Editors and OS
 .vscode/
