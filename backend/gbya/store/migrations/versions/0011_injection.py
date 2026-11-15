@@ -1,4 +1,4 @@
-"""0011_injection: the injection marker stored with each case (team lead, 14 Oct 2026).
+"""0011_injection: the injection marker stored with each case (team decision, 14 Oct 2026).
 
 Revision ID: 0011
 Revises: 0010

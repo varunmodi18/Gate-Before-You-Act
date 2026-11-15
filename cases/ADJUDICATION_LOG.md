@@ -1,13 +1,13 @@
 # Adjudication log — SOC-Risk case set (T4.9)
 
-**Adjudicator:** `agent-adjudicator` (a separate AI agent session; team lead decision 2026-10-26).
+**Adjudicator:** `agent-adjudicator` (a separate AI agent session; team decision 2026-10-26).
 It is not the author (`agent-A`) and not annotator B (`agent-B`); the Annotate API enforced this.
 **Date:** 2026-11-08. **Branch:** `cases-draft`. **Scenarios:** 52 (dev 9, test 31, e2e 12),
 all submitted by A and B.
 
 **Inputs and rules.** `docs/case_authoring.md` §5–§6 (rule A, labelling rules, verifier table),
 `docs/policy_table.md` / `policy/rules.yaml`, `policy/evidence_requirements.yaml`, plan §D.9,
-§D.11, §F.4, and the team lead's resolution guidance of 2026-11-08 (STATUS decisions log).
+§D.11, §F.4, and the team's resolution guidance of 2026-11-08 (STATUS decisions log).
 Every disagreement was decided by the rule named beside it. Nothing was decided by majority
 or by predicting what a model would do. The model, gates and experiments were not run. Scope,
 policy decisions, approval scripts and record roles come from the project's own functions

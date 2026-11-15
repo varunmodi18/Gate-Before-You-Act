@@ -9,7 +9,7 @@ Gold set G for a case with technique ``T``:
 * ``T`` is a technique (``T1003``): rules tagged ``T`` or any of its sub-techniques
   (``T1003.xxx``), since each of those is also a ``T`` rule in the ATT&CK hierarchy.
 
-``revoked_by`` (exploratory view, team lead 2026-11-08): a ``technique_gold`` that the pinned
+``revoked_by`` (exploratory view, team decision 2026-11-08): a ``technique_gold`` that the pinned
 ATT&CK bundle marks revoked is mapped to its replacement through the bundle's own ``revoked-by``
 relationships, and nothing else (no hand mapping). The registered metrics keep the label as is.
 """

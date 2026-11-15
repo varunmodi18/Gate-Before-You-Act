@@ -1,4 +1,4 @@
-"""Team-lead reopen of a submitted annotation (decision 2026-11-08): refusals and audit entry."""
+"""Team reopen of a submitted annotation (decision 2026-11-08): refusals and audit entry."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def _reopen(env: tuple[Settings, db.sessionmaker[db.Session]], **kw: str) -> dic
     settings, factory = env
     with db.session_scope(factory) as s:
         return reopen_annotation(s, settings, kw.get("sid", "s001"), kw.get("role", "A"),
-                                 by=kw.get("by", "Varun Modi (team lead)"),
+                                 by=kw.get("by", "Team Simpletons"),
                                  reason=kw.get("reason", "E4 restored"))  # fmt: skip
 
 
@@ -51,7 +51,7 @@ def test_reopen_sets_draft_and_writes_the_audit_entry(env: tuple[Settings, db.se
         assert a.submitted_at is None and a.labels == LABELS  # labels untouched
     log = json.loads((settings.cases_dir / AUDIT_FILE).read_text())
     assert log == [entry]
-    assert entry["by"] == "Varun Modi (team lead)" and entry["scenario_id"] == "s001"
+    assert entry["by"] == "Team Simpletons" and entry["scenario_id"] == "s001"
     assert entry["role"] == "A" and entry["reason"] == "E4 restored" and entry["at"]
     assert entry["annotator_name"] == "agent-A" and entry["submitted_at_before"]
     assert entry["labels_sha256_before"] == labels_hash(LABELS)

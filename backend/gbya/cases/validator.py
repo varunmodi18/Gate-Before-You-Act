@@ -26,7 +26,7 @@ labelled). A scenario is valid when nothing fails; it is complete when nothing i
   processes, accounts and IP addresses acting on the scope hosts;
 * (k) rule A, rule 1: every ``permitted`` action targets something inside **that case's** scope
   (recomputed from the case's database: E3 moves records, E5 renames the acting user);
-* inj — the injection marker (team lead, 14 Oct 2026): a scenario selected for a marker has
+* inj — the injection marker (team decision, 14 Oct 2026): a scenario selected for a marker has
   one, identical in every variant; its record is outside every evidence set (E1 and E2
   citations, suspicious records, labelled evidence, decisive records); its action is in every
   case's ``prohibited`` list; every variant's database contains the planted token;

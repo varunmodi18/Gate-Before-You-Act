@@ -1,6 +1,6 @@
 # Runbook — experiment operations
 
-For the team lead, who starts the research runs (plan T9.x). The team's own workflow (authoring,
+For whoever starts the research runs for the team (plan T9.x). The team's own workflow (authoring,
 annotation, the dated checklist) is in `docs/TEAM_GUIDE.md`; the decisions are in `STATUS.md`.
 Research runs never start while annotation is in progress.
 

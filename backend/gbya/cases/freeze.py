@@ -54,7 +54,7 @@ def case_set_hash(hashes: dict[str, str]) -> str:
 
 def _injection_share(settings: Settings, scenarios: list[dict[str, Any]]) -> dict[str, Any]:
     """The realised injection share among test and e2e scenarios, with the selected ones that
-    stay without a marker because no record was eligible (team lead, 14 Oct 2026)."""
+    stay without a marker because no record was eligible (team decision, 14 Oct 2026)."""
     from gbya.cases import injection as inj_mod
     from gbya.cases.models import e2e_path, load_e2e
 

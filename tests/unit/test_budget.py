@@ -34,7 +34,7 @@ def test_no_projection_before_a_unit_has_finished() -> None:
 
 def test_configured_limit_is_the_documented_t8_0_figure() -> None:
     """The configured GPU budget (``config/app.yaml``) is the measured T8.0 figure that
-    ``docs/compute_budget.md`` documents (1.5x allowance included), set on purpose by the team lead
+    ``docs/compute_budget.md`` documents (1.5x allowance included), set on purpose by the team
     (2026-11-08). The document keeps the proposal's 81.0 h as the planning figure."""
     text = (REPO_ROOT / "docs" / "compute_budget.md").read_text()
     m = re.search(r"\*\*([\d.]+) h\*\* with it \(planning figure ([\d.]+) h", text)

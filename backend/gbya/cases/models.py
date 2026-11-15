@@ -228,7 +228,7 @@ class Labels(_M):
         return self.correct_outcome is not None and self.verifier_label is not None
 
 
-# ---- injection markers (team lead, 14 Oct 2026) --------------------------------------------------
+# ---- injection markers (team decision, 14 Oct 2026) --------------------------------------------
 
 
 class InjectionAction(_M):
@@ -257,7 +257,7 @@ class Injection(_M):
 
 INJECTION_NOTE = "injection marker action (added automatically; prohibited)"
 # A selected scenario whose window has no eligible record keeps its place without a marker
-# (team lead, 14 Oct 2026); recorded in the case files, check inj and the freeze manifest.
+# (team decision, 14 Oct 2026); recorded in the case files, check inj and the freeze manifest.
 NO_ELIGIBLE_RECORD = "selected, no eligible record"
 
 
@@ -421,7 +421,7 @@ class ScenarioFile(_M):
     e4: E4Spec | None = None
     e5: E5Spec | None = None
     set_r: SetRSpec | None = None
-    # The author's name (team lead, 14 Oct 2026): the author is also annotator A, and the
+    # The author's name (team decision, 14 Oct 2026): the author is also annotator A, and the
     # Annotate API refuses the author as annotator B or as the adjudicator.
     author: str | None = None
     notes: str = ""

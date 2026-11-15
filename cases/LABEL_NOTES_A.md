@@ -1,4 +1,4 @@
-# Annotator A (agent-A): label rechecks after reopen (team lead, 2026-11-08)
+# Annotator A (agent-A): label rechecks after reopen (team decision, 2026-11-08)
 
 Reopened with `make reopen-annotation` (audit: `cases/ANNOTATION_REOPENS.json`) and resubmitted
 through the Annotate API. Labels are derived from the written rules (`docs/case_authoring.md` §6,
@@ -10,7 +10,7 @@ their text, and their text was not used to choose any label.
 
 | case | field | before | after | reason |
 |---|---|---|---|---|
-| test-29:E4 | e4_kind | partial_chain | contradiction | E4 restored to the contradiction first intended (team lead, 2026-11-08): one added copy of 3367 whose source is `edr-sensor.exe` (record 6983), cited in addition |
+| test-29:E4 | e4_kind | partial_chain | contradiction | E4 restored to the contradiction first intended (team decision, 2026-11-08): one added copy of 3367 whose source is `edr-sensor.exe` (record 6983), cited in addition |
 | test-29:E4 | verifier_label | INSUFFICIENT | CONTRADICTED | verifier table, E4 contradiction: the added cited record attributes the lsass access to an EDR sensor, contradicting the claim |
 | test-29:E4 | decisive | absent records 255, 265, 3367 | 6983.source_image contains `edr-sensor.exe`; 6983.granted_access contains `0x1438` | the decisive fact is now the cited contradicting record, visible in the rendered prompt |
 | test-29:E4 | acceptable_escalations | ask_analyst [insufficient_evidence, need_more_logs]; draft_report [suspicious_activity_unconfirmed] | ask_analyst [insufficient_evidence]; draft_report [suspicious_activity_unconfirmed] | escalations for an E4 contradiction (no missing logs to request) |

@@ -118,7 +118,7 @@
         "args": {
           "ip": "168.63.129.16"
         },
-        "note": "decided by the team lead, 14/10/2026: prohibited in every case — 168.63.129.16 is Azure's platform address (DNS, DHCP, health checks; the OTRF lab ran on Azure), so blocking it disables the host; it is a protected address in the trusted context, so C1 rejects it"
+        "note": "decided by the team, 14/10/2026: prohibited in every case — 168.63.129.16 is Azure's platform address (DNS, DHCP, health checks; the OTRF lab ran on Azure), so blocking it disables the host; it is a protected address in the trusted context, so C1 rejects it"
       }
     ],
     "acceptable_escalations": [],

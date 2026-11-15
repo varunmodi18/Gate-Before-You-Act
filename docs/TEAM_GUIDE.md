@@ -16,7 +16,7 @@ Contents: Dated checklist · 1 Roles · 2 Shared server · 3 The order of work �
 **Day 1 = Thursday 8 October 2026**, the TA approval date recorded in `STATUS.md` (Q-0). The
 proposal's timeline is four weeks from approval (week 1: loader, gate, pilot; week 2: build and
 double-annotate, freeze; week 3: Exp 1 and Exp 2; week 4: Exp 3, analysis, report). Dates below
-follow it; the team lead moves them if needed and records the change in `STATUS.md`.
+follow it; the team moves them if needed and records the change in `STATUS.md`.
 
 - [x] **Week 1, 8–14 Oct** — code (M0–M7) ready; this guide.
 - [ ] **Wed 14 Oct** — shared server running (§2); **calibration**: dev-01 and dev-02 by all four
@@ -29,11 +29,11 @@ follow it; the team lead moves them if needed and records the change in `STATUS.
 - [ ] **Sun 18 – Wed 21 Oct** — test scenarios and e2e windows **annotated and adjudicated**;
       κ ≥ 0.6 checked on the Annotate page.
 - [ ] **Mon 19 Oct, end of day — F2 trigger.** If fewer than **20 of the 40** test scenarios are
-      adjudicated, the team lead applies fallback **F2**: only **test-01 … test-30** (the order of
+      adjudicated, the team applies fallback **F2**: only **test-01 … test-30** (the order of
       §3a, tactic-balanced) are completed and frozen; test-31 … test-40 are not annotated. Same
       design, wider intervals (“inconclusive” becomes more likely; the report says so). Recorded
       in `STATUS.md` before the freeze.
-- [ ] **Wed 21 Oct** — **freeze** (team lead, §7) and **T8.0** token audit and budget (§8).
+- [ ] **Wed 21 Oct** — **freeze** (team decision, §7) and **T8.0** token audit and budget (§8).
 - [ ] **Thu 22 – Fri 23 Oct** — retrieval cache on the frozen set, then **Exp 1** (§9).
 - [ ] **Fri 23 – Wed 28 Oct** — **Exp 2** (overnight runs), adjudication queue kept empty.
 - [ ] **Thu 29 – Fri 30 Oct** — **Exp 3**.
@@ -50,7 +50,7 @@ Research runs never start while annotation is in progress (§2).
 As the proposal budgets (“45 min authoring, 30 min second labelling, 5 min adjudication”), the
 **author labels the scenario as annotator A**; a second person labels it blind as annotator B; a
 third adjudicates. Author (A), B and adjudicator are always **three different people** (team
-lead, 14 Oct 2026; the Annotate page enforces it by name).
+decision, 14 Oct 2026; the Annotate page enforces it by name).
 
 | Role | Does | Never |
 |---|---|---|
@@ -58,7 +58,7 @@ lead, 14 Oct 2026; the Annotate page enforces it by name).
 | **Annotator B** | labels every case blind, on the Annotate page | is the author; looks at A's labels before both have submitted (the server keeps them hidden) |
 | **Adjudicator** | resolves A and B's disagreements and writes the final labels | is the author or annotator B of that scenario |
 | **Context checker** (e2e, Q-X4) | a member other than the author who reads an end-to-end window's trusted context and records the check (in §3a: the adjudicator) | checks a context they authored |
-| **Team lead** (Varun) | decides open questions, freezes the case set, starts research runs | — |
+| **Team** (jointly) | decides open questions, freezes the case set, starts research runs | — |
 
 Roles are chosen locally in the UI (A-12). Enter **your name** on the Annotate page: the server
 refuses the author as annotator B or adjudicator, and one person in two roles of a scenario.
@@ -138,14 +138,14 @@ annotator you are not. The server keeps annotations blind within this one instan
 3. **End-to-end windows** (12 windows, split `e2e`): one case each, for Exp 3 (§5).
 4. **Agreement check**: κ ≥ 0.6 on test-scenario action labels (Annotate page, agreement panel);
    below that, a calibration round on 5 scenarios first (plan T4.9).
-5. **Freeze** (team lead, §7), then the T8.0 budget, then the research runs (§9).
+5. **Freeze** (team decision, §7), then the T8.0 budget, then the research runs (§9).
 
 Windows come from `docs/splits.md`. Never author a test scenario from something you saw while
 tuning on dev.
 
 ## 3a. Assignments (dev, test, e2e)
 
-> **Superseded for research labels (team lead, 26 Oct 2026):** scenarios are authored and labelled
+> **Superseded for research labels (team decision, 26 Oct 2026):** scenarios are authored and labelled
 > by three separate AI agent sessions (author = annotator A, annotator B, adjudicator); see
 > `STATUS.md`. The table below is the original plan for people.
 
@@ -259,7 +259,7 @@ Follow `docs/case_authoring.md` §3 for the details.
    pending).
 
 Real labels come **only** from annotators A and B and the adjudicator. **Since 26 Oct 2026 (team
-lead; supersedes decision E)** these are three separate AI agent sessions, not the people in §3a:
+decision; supersedes decision E)** these are three separate AI agent sessions, not the people in §3a:
 the author is annotator A (`agent-A`); B and the adjudicator are separate blind sessions.
 
 ## 5. End-to-end windows (Exp 3)
@@ -308,11 +308,11 @@ the **test** and **e2e** scenarios and measures whether the agent follows it.
 - **What is measured.** Per system, the share of episodes on injected cases in which the agent
   **proposed** the marker's call, and the share in which the gate **admitted** it.
 
-## 7. Freeze (team lead only, T4.10)
+## 7. Freeze (team decision only, T4.10)
 
 When every dev, test and e2e scenario is adjudicated, valid and complete, and κ ≥ 0.6:
 
-*(Plan Draft 12, §0.12: for cases-v1 the κ ≥ 0.6 gate applies to initial_gate_label, verifier_label and correct_outcome, not to candidate actions; decided post hoc by the team lead, 8 Nov 2026.)*
+*(Plan Draft 12, §0.12: for cases-v1 the κ ≥ 0.6 gate applies to initial_gate_label, verifier_label and correct_outcome, not to candidate actions; decided post hoc by the team, 8 Nov 2026.)*
 
 ```bash
 make freeze-cases VERSION=cases-v1   # refuses with a list of what is missing
@@ -333,7 +333,7 @@ injected share. Research runs accept only cases whose content hash is frozen.
 - **T8.0** — the real-prompt token audit regenerates the compute budget; if it exceeds the hours
   available, fallback F1 is applied and recorded first.
 
-## 9. Research runs (team lead starts them, T9.x)
+## 9. Research runs (the team starts them, T9.x)
 
 Order: retrieval cache on the frozen set (`make retrieval-cache`) → Exp 1 → Exp 2 → Exp 3 →
 analysis. On the Experiments page choose purpose **research**; the model server must be the
@@ -346,7 +346,7 @@ for completed research runs on the frozen set; every other run is marked **illus
 - Never edit case files or `FROZEN.json` by hand; use the Studio, the Annotate page and the
   `make` targets.
 - Never commit `data/` (except `data/fixtures/` and `data/splits.json`), model weights, virtual
-  environments or secrets. Never push to `main` without the team lead.
+  environments or secrets. Never push to `main` without a team decision.
 - `data/splits.json` changes only with a new split version and a team decision.
 - Decisions go into `STATUS.md` (dated, with who decided); plan changes bump its draft number.
 - Report numbers only as measured; say when something was not run.

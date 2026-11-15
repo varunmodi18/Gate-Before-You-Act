@@ -1,4 +1,4 @@
-"""Reopen one submitted annotation (team lead only; decision 2026-11-08).
+"""Reopen one submitted annotation (team decision only; decision 2026-11-08).
 
 ``make reopen-annotation SID=… ROLE=A BY="…" REASON="…"`` sets one submitted annotation back to
 draft, so that its annotator can correct and resubmit it through the Annotate API, instead of
@@ -47,7 +47,7 @@ def reopen_annotation(
     if role not in ("A", "B"):
         raise ReopenRefused(f"role must be A or B, not {role!r}")
     if not by.strip() or not reason.strip():
-        raise ReopenRefused("a reopen needs the team lead's name (BY) and a reason (REASON)")
+        raise ReopenRefused("a reopen needs who reopens it (BY) and a reason (REASON)")
     row = session.get(Scenario, sid)
     if row is None:
         raise ReopenRefused(f"no scenario {sid}")
@@ -96,10 +96,10 @@ def main(argv: list[str] | None = None) -> None:
     from gbya.config import get_settings
     from gbya.store.db import make_engine, make_sessionmaker, session_scope
 
-    ap = argparse.ArgumentParser(description="Reopen one submitted annotation (team lead only)")
+    ap = argparse.ArgumentParser(description="Reopen one submitted annotation (team decision only)")
     ap.add_argument("--sid", required=True)
     ap.add_argument("--role", required=True, choices=["A", "B"])
-    ap.add_argument("--by", required=True, help="the team lead's name")
+    ap.add_argument("--by", required=True, help="who reopens it (e.g. Team Simpletons)")
     ap.add_argument("--reason", required=True)
     args = ap.parse_args(argv)
     settings = get_settings()

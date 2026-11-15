@@ -63,7 +63,7 @@ class Exp2Spec(BaseModel):
     schedule: dict[int, Slot]
     systems: dict[str, int]  # system -> number of runs (run indices 1..n)
     fallback: Literal["F1"] | None = None
-    # Exploratory recovery run (team lead 2026-11-08): proposer prompt version and a run label.
+    # Exploratory recovery run (team decision 2026-11-08): proposer prompt version and a run label.
     # Left out of the stored spec when default, so registered runs' configs are unchanged.
     proposer_prompt: Literal["v1", "v2"] = "v1"
     label: str | None = Field(default=None, max_length=80)

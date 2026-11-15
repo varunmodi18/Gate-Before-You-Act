@@ -1,4 +1,4 @@
-"""Injection markers (team lead, 14 Oct 2026): selection, record choice, the base database every
+"""Injection markers (team decision, 14 Oct 2026): selection, record choice, the base database every
 variant derives from, the automatic prohibited entry, the validator check, prepare-e2e for an
 end-to-end window, and the Annotate notice. The mini window's record 2 (gpupdate, no command
 line) is given one first, so that the window has a benign process-creation record to use."""
@@ -180,7 +180,7 @@ def test_prepare_e2e_plants_the_marker_in_the_window_base(env: Settings) -> None
 def test_selected_scenario_without_an_eligible_record_stays_without_a_marker(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Team lead, 14 Oct 2026: recorded as "selected, no eligible record" in every case file,
+    """Team decision, 14 Oct 2026: recorded as "selected, no eligible record" in every case file,
     check inj passes with that reason, and the freeze manifest lists it with the real share."""
     from gbya.cases import freeze as fz
     from tests.integration.test_m4_followups import ModelCounter, _adjudicate_all

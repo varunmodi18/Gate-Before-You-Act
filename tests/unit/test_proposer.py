@@ -143,7 +143,7 @@ def test_propose_reports_unusable_output() -> None:
 
 
 def test_prompt_v2_differs_from_v1_only_in_the_insufficient_evidence_lines() -> None:
-    """Exploratory recovery run (team lead 2026-11-08): v2 replaces the line that told the agent to
+    """Exploratory recovery run (team decision 2026-11-08): v2 replaces the line that told the agent to
     escalate when its queries find nothing, and drops "when the evidence is insufficient" from the
     escalation rule; every other line, the tool catalogue and the default (v1) are unchanged."""
     v1 = pp.PROMPT_VERSIONS["v1"].read_text().splitlines()

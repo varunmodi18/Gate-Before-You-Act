@@ -48150,7 +48150,7 @@
   }
  ],
  "freeze_gate": {
-  "decision": "Varun Modi (team lead), 2026-11-08: waiver of the plan's freeze gate, recorded as a plan deviation (IMPLEMENTATION_PLAN.md Draft 12, \u00a70.12)",
+  "decision": "Team Simpletons, 2026-11-08: waiver of the plan's freeze gate, recorded as a plan deviation (IMPLEMENTATION_PLAN.md Draft 12, \u00a70.12)",
   "statement": "The freeze gate (\u03ba \u2265 0.6 on candidate actions) was not met: measured \u03ba = \u22120.068 on test (\u22120.055 pooled). 96.9% of disagreeing items are actions one annotator prohibited and the other did not list; 0.6% are permitted-vs-prohibited conflicts. The gate was replaced AFTER this was measured, which is disclosed as a post-hoc decision, by agreement on the labels the hypotheses use: initial_gate_label (H1), verifier_label (H1-C4) and correct_outcome (H2). The candidate-action \u03ba is reported as measured, as a limitation.",
   "official_gate": {
    "definition": "kappa >= 0.6 on candidate-action labels, test scenarios (plan T4.9, \u00a7I)",

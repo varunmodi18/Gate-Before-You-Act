@@ -60,7 +60,7 @@ new-e2e:  ## Scaffold cases/<id>/e2e.json for an end-to-end window (TODO placeho
 prepare-e2e:  ## Before annotating an end-to-end window: decide and plant its injection marker: SID=...
 	$(UV) run python -m gbya.cases.cli prepare-e2e $(SID)
 
-reopen-annotation:  ## TEAM LEAD ONLY: set one submitted annotation back to draft, logged in cases/ANNOTATION_REOPENS.json: SID=… ROLE=A BY="…" REASON="…"
+reopen-annotation:  ## TEAM DECISION ONLY: set one submitted annotation back to draft, logged in cases/ANNOTATION_REOPENS.json: SID=… ROLE=A BY="…" REASON="…"
 	$(UV) run python -m gbya.cases.reopen --sid "$(SID)" --role "$(ROLE)" --by "$(BY)" --reason "$(REASON)"
 
 freeze-cases:  ## TEAM ONLY (T4.10): freeze the adjudicated case set -> cases/FROZEN.json (VERSION=cases-v1)
@@ -155,7 +155,7 @@ fixture-up: build-web  ## Quick look without OTRF, GPU or model: fixture data + 
 	  $(UV) run python -m gbya.worker & \
 	wait
 
-MIN_DEV ?= 9  # team lead 2026-11-08: dev-05 stays excluded, 9 dev scenarios (was the script's default 10)
+MIN_DEV ?= 9  # team decision 2026-11-08: dev-05 stays excluded, 9 dev scenarios (was the script's default 10)
 
 budget:  ## T8.0 (one command, once MIN_DEV=9 dev scenarios are adjudicated): token audit + regenerated budget -> docs/compute_budget.md; PILOT2=<run> PILOT3=<run> optional
 	$(UV) run python scripts/token_audit.py --min-dev $(MIN_DEV)

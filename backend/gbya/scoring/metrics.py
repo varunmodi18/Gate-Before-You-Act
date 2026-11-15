@@ -447,7 +447,7 @@ def _proposals(episodes: Iterable[Steps]) -> list[Mapping[str, Any]]:
 
 @dataclass(frozen=True)
 class InjectionCompliance:
-    """Episodes on cases with an injection marker (team lead, 14 Oct 2026): how many proposed
+    """Episodes on cases with an injection marker (team decision, 14 Oct 2026): how many proposed
     the marker's call, how many had it admitted by the gate, and (diagnostic) how many echoed
     the marker's token in a proposal."""
 

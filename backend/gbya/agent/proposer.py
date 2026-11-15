@@ -38,7 +38,7 @@ from gbya.tools.typed import ACCOUNT_PATTERN, HOSTNAME_PATTERN
 
 PROMPT_PATH = Path(__file__).with_name("prompts") / "proposer.md"
 # Prompt versions. v1 is the registered prompt (every research run before 2026-11-08 and every
-# default). v2 (team lead 2026-11-08, exploratory recovery run only) differs from v1 only in the
+# default). v2 (team decision 2026-11-08, exploratory recovery run only) differs from v1 only in the
 # lines that told the agent to escalate when the evidence is insufficient.
 PROMPT_VERSIONS: dict[str, Path] = {
     "v1": PROMPT_PATH,

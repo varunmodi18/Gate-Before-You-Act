@@ -167,7 +167,7 @@ def starter(settings: Settings, window: Window, sid: str) -> ScenarioFile:
                 "network": {
                     "internal_cidrs": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"],
                     # Azure's platform address (DNS, DHCP, health checks): the OTRF
-                    # lab ran on Azure, so blocking it disables the host (team lead)
+                    # lab ran on Azure, so blocking it disables the host (team decision)
                     "protected_addresses": ["168.63.129.16"],
                 },
                 "approval_script": {"mode": "unreachable"},

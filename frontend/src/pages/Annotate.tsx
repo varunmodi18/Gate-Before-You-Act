@@ -1205,7 +1205,7 @@ function rememberName(name: string) {
   }
 }
 
-/** Team lead, 14 Oct 2026: the author is annotator A; the server refuses the author as
+/** Team decision, 14 Oct 2026: the author is annotator A; the server refuses the author as
  * annotator B or adjudicator, and the same person in two roles. */
 function NameField({
   value,

@@ -226,7 +226,7 @@ def test_hash_and_ipv6_provenance(tmp_path: Path) -> None:
 
 
 def test_azure_platform_address_is_protected_in_the_demo_context(env: ToolEnvironment) -> None:
-    """Team lead, 14 Oct 2026: 168.63.129.16 (Azure DNS, DHCP and health checks) is protected in
+    """Team decision, 14 Oct 2026: 168.63.129.16 (Azure DNS, DHCP and health checks) is protected in
     the demo contexts and the Studio starter, so C1 rejects blocking it before any provenance."""
     import json
 

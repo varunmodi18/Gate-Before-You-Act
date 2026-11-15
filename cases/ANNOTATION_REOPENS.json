@@ -1,7 +1,7 @@
 [
   {
     "at": "2026-11-07T19:29:09.669820+00:00",
-    "by": "Varun Modi (team lead)",
+    "by": "Team Simpletons",
     "scenario_id": "test-29",
     "role": "A",
     "annotator_name": "agent-A",
@@ -11,7 +11,7 @@
   },
   {
     "at": "2026-11-07T19:29:09.948322+00:00",
-    "by": "Varun Modi (team lead)",
+    "by": "Team Simpletons",
     "scenario_id": "dev-10",
     "role": "A",
     "annotator_name": "agent-A",
@@ -21,7 +21,7 @@
   },
   {
     "at": "2026-11-07T19:29:10.228209+00:00",
-    "by": "Varun Modi (team lead)",
+    "by": "Team Simpletons",
     "scenario_id": "test-05",
     "role": "A",
     "annotator_name": "agent-A",
@@ -31,7 +31,7 @@
   },
   {
     "at": "2026-11-07T19:29:10.519285+00:00",
-    "by": "Varun Modi (team lead)",
+    "by": "Team Simpletons",
     "scenario_id": "test-08",
     "role": "A",
     "annotator_name": "agent-A",
@@ -41,7 +41,7 @@
   },
   {
     "at": "2026-11-07T19:29:10.803939+00:00",
-    "by": "Varun Modi (team lead)",
+    "by": "Team Simpletons",
     "scenario_id": "test-12",
     "role": "A",
     "annotator_name": "agent-A",

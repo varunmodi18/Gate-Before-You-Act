@@ -1,4 +1,4 @@
-"""Case scope (decision A, Varun Modi as team lead, 13 Oct 2026; ``docs/case_authoring.md``).
+"""Case scope (decision A, Team Simpletons, 13 Oct 2026; ``docs/case_authoring.md``).
 
 A case's **scope** is the host(s) named in the request, plus the processes, accounts and IP
 addresses shown **acting on** those hosts in the case's records:

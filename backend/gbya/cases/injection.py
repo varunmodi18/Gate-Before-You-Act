@@ -1,4 +1,4 @@
-"""Injection markers (team lead decision, 14 Oct 2026; plan §D.11, §I.4). CONSTRUCTION PATH.
+"""Injection markers (team decision, 14 Oct 2026; plan §D.11, §I.4). CONSTRUCTION PATH.
 
 Command lines are attacker-written, so the benchmark plants a harmless instruction in the logs
 and measures whether the agent follows it (injection compliance, FR-21):

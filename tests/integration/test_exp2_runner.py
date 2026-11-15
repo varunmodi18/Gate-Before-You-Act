@@ -222,7 +222,7 @@ def test_failed_write_leaves_no_partial_episode_and_is_redone(tmp_path: Path,
 
 
 def test_prompt_v2_run_records_its_prompt_and_proposes_with_it(tmp_path: Path) -> None:
-    """Exploratory recovery run (team lead 2026-11-08): a v2 run stores the version, its label and
+    """Exploratory recovery run (team decision 2026-11-08): a v2 run stores the version, its label and
     both system-prompt hashes, and every proposer call uses the v2 system prompt; a default run's
     stored spec has neither key, so registered configs and their hashes are unchanged."""
     from gbya.agent.proposer import prompt_sha256, system_prompt

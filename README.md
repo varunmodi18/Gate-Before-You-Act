@@ -491,7 +491,7 @@ model server's state. Logs: `logs/api.log`, `logs/worker.log`, `logs/model.log`.
   reranker `BAAI/bge-reranker-base` at `2cfc18c9415c912f9d8155881c133215df768a70` (MIT).
 
 **How the labels were made.** Because of time constraints, the research scenarios were authored
-and labelled by **AI agent sessions**, not by people (team-lead decision, 26 Oct 2026):
+and labelled by **AI agent sessions**, not by people (team decision, 26 Oct 2026):
 
 - Annotator A, a first session, authored and labelled each scenario.
 - Annotator B, a separate session, labelled **blind**, without A's labels or notes.
@@ -507,7 +507,7 @@ Cohen's κ therefore measures **agreement between agents**, not between humans. 
 
 **κ-gate waiver.** The plan's freeze gate (κ ≥ 0.6 on candidate actions) was **not met**.
 - 96.9% of disagreeing items were actions one annotator prohibited and the other did not list.
-- After this was measured, the team lead replaced the gate by agreement on the labels the
+- After this was measured, the team replaced the gate by agreement on the labels the
   hypotheses use: κ 1.000 / 0.921 / 0.953 on test for `initial_gate_label` / `verifier_label` /
   `correct_outcome`. This is a disclosed post-hoc decision (plan Draft 12 §0.12).
 

@@ -1,4 +1,4 @@
-"""0012_annotator_name: who annotated (team lead, 14 Oct 2026: the author is annotator A; the
+"""0012_annotator_name: who annotated (team decision, 14 Oct 2026: the author is annotator A; the
 author is never annotator B or the adjudicator).
 
 Revision ID: 0012

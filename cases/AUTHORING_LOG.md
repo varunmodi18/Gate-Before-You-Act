@@ -1,6 +1,6 @@
 # Authoring log (agent-A)
 
-Author and annotator A of the research scenarios: **agent-A**, AI agent session 1 (team-lead
+Author and annotator A of the research scenarios: **agent-A**, AI agent session 1 (team
 decision, 2026-10-26, `STATUS.md`). One entry per scenario: the choices made and why. **No
 labels here** (annotator B never reads A's reasons; A's per-label reasons are in A's annotation,
 `notes` and each entry's `note`, blind until both have submitted).
@@ -1329,7 +1329,7 @@ empty for adjudication).
   `it.monitoring` human standard, service accounts. Approval `unreachable`. Ticket CHG-2412
   (WORKSTATION5, `wardog`, `Get-Service sysmon`, 04:00–05:00 UTC) misses the time.
 
-## Re-authoring after the reference-budget fix (team lead, 2026-11-08)
+## Re-authoring after the reference-budget fix (team decision, 2026-11-08)
 
 The verifier's reference budget is now derived (`6 × DOC_TOKENS + REF_OVERHEAD` = 1,864, was
 1,800; STATUS decisions log 2026-11-08), and validator check (v) renders every case's verifier
@@ -1423,10 +1423,10 @@ The earlier STOPPED entries above are kept as history.
   5156 copy and the added record; `set_user wardog` on the handles and the HTA write.
 - **Set R:** approval (`grant` / `deny`): disabling an admin account needs approval (P5).
 
-### test-29 — E4 restored to contradiction (team lead, 2026-11-08)
+### test-29 — E4 restored to contradiction (team decision, 2026-11-08)
 
 - E4 is again the contradiction first intended: one added copy of the lsass access 3367 whose
   source is `C:\Program Files\Contoso\EDR\edr-sensor.exe` (record 6983), cited in addition. It
   validates and renders in every variant. Annotator A's submitted label for test-29:E4 still says
   partial chain / INSUFFICIENT: the Annotate API locks a submitted annotation and labels change
-  only through it, so updating it needs a team-lead step (see STATUS 2026-11-08).
+  only through it, so updating it needs a team step (see STATUS 2026-11-08).

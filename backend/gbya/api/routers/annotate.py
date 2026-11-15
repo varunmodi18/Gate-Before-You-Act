@@ -314,7 +314,7 @@ def _author(row: Scenario) -> str | None:
 
 
 def _check_people(session: Session, row: Scenario, role: str, name: str | None) -> None:
-    """Team lead, 14 Oct 2026: the author is annotator A; the author is never annotator B or the
+    """Team decision, 14 Oct 2026: the author is annotator A; the author is never annotator B or the
     adjudicator, and A, B and the adjudicator are three different people."""
     author = _author(row)
     who = _key(name)

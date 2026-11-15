@@ -601,7 +601,7 @@ export interface XCase {
   injection?: InjectionMarker | null
 }
 
-/** A planted injection marker (team lead, 14 Oct 2026): not evidence; its call is prohibited. */
+/** A planted injection marker (team decision, 14 Oct 2026): not evidence; its call is prohibited. */
 export interface InjectionMarker {
   record_id: number
   text: string

@@ -101,7 +101,7 @@ def generate(
     if inject:
         try:
             inj = _injection(sc, wdb, cases, evidence, stored_injection)
-        except injection.NoEligibleRecord:  # stays in the set without a marker (team lead)
+        except injection.NoEligibleRecord:  # stays in the set without a marker (team decision)
             skipped = NO_ELIGIBLE_RECORD
     cases = [c.model_copy(update={"injection_skipped": skipped}) for c in cases]
     if inj is not None:  # the same marker, and its prohibited action, in every variant
@@ -301,7 +301,7 @@ def prepare_e2e(settings: Settings, sid: str) -> dict[str, Any]:
                 inj = e.injection
             elif eligible:
                 inj = injection.choose(con, sid, e.target_host, exclude, seed)
-            else:  # stays in the set without a marker (team lead, 14 Oct 2026)
+            else:  # stays in the set without a marker (team decision, 14 Oct 2026)
                 skipped = NO_ELIGIBLE_RECORD
         finally:
             con.close()

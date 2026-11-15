@@ -1,4 +1,4 @@
-"""Decision C (13 Oct 2026) and the team lead's round-3 decision (14 Oct 2026): after the third and
+"""Decision C (13 Oct 2026) and the team's round-3 decision (14 Oct 2026): after the third and
 final M6.1 round the investigator prompts and output schemas are frozen and are not reopened.
 The proposer prompt (shared by Exp 2 and Exp 3) was changed in round 2 only and is pinned too, so
 Exp 2 cannot change again unnoticed. A change here needs a team decision and new hashes in

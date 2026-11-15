@@ -308,7 +308,7 @@ def h2_adjudication_sensitivity(session: Any, run_id: int, eps: list[Any]) -> di
     }
 
 
-# ---- exploratory recovery run (team lead 2026-11-08) ---------------------------------------------
+# ---- exploratory recovery run (team decision 2026-11-08) ---------------------------------------
 
 RECOVERY_LABEL = "exp2-recovery-exploratory"
 STATE_CHANGING = ("isolate_host", "kill_process", "disable_account", "block_ip")

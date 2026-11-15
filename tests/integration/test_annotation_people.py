@@ -1,4 +1,4 @@
-"""Team lead, 14 Oct 2026: the author is annotator A; the author is never annotator B or the
+"""Team decision, 14 Oct 2026: the author is annotator A; the author is never annotator B or the
 adjudicator; A, B and the adjudicator are three different people. Names are honour-based
 (A-12); blindness is unchanged (B never sees A's labels before both submit)."""
 
