@@ -198,13 +198,18 @@ the team used (it leaves out the duplicate `pytorch_model.bin`).
 
 ### 5.6 Case set `cases-v1` (CPU, a few minutes; 6.0 GB of case databases)
 
-The case files on `main` are the frozen set. The only file that differs from the tag `cases-v1` is
-the run-adjudication log, which is not part of the case hash. Check this, rebuild the patched case
-databases and injection markers from the case files, and import:
+The case files on `main` are the frozen set: `cases/FROZEN.json` and everything the case hash
+covers (request, package, patch, context, toolset, labels, injection) are the same as at the tag
+`cases-v1`. Since the tag, only text outside the case hash has changed: the run-adjudication log
+(the run decisions were added), and the wording "team lead" → "team" (15 Nov 2026) in the `notes`
+field of 20 `scenario.json` files and in five logs (`ADJUDICATION_LOG.md`, `AUTHORING_LOG.md`,
+`LABEL_NOTES_A.md`, `ANNOTATION_REOPENS.json`, `EXCLUSIONS.json`). The hash printed at the end of
+this step confirms it. Check the manifest, rebuild the patched case databases and injection
+markers from the case files, and import:
 
 ```bash
 git fetch --tags
-git diff --quiet cases-v1 HEAD -- cases ':!cases/RUN_ADJUDICATION_LOG.md' && echo "cases/ = cases-v1"
+git diff --quiet cases-v1 HEAD -- cases/FROZEN.json && echo "FROZEN.json = cases-v1"
 for f in cases/*/scenario.json; do make generate-variants SID=$(basename $(dirname $f)); done   # 40 scenarios (dev + test)
 for f in cases/*/e2e.json;      do make prepare-e2e      SID=$(basename $(dirname $f)); done   # 12 end-to-end windows
 git status --porcelain cases/   # must print nothing: regeneration rewrites the case files identically
