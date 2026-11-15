@@ -20,6 +20,8 @@ All three runs share the same setup:
 
 Full provenance for each run is in `runs.csv` and `results.json`.
 
+Further exploratory runs (5–17, checklist and grounded verifier variants) were carried out after the reported runs. They are not reported and are not part of this repository.
+
 ## Hypotheses
 
 Cluster bootstrap over 31 scenarios, B = 10,000, seed 2026, percentile 95% CI. Values below are exactly as `POST /analysis/hypotheses` returns them.
@@ -252,6 +254,6 @@ With recovery queries encouraged, G3 still defers more than G1, by about the sam
 To regenerate, with the API running on the research app.db:
 
 ```bash
-uv run python scripts/final_results.py --exp1 1 --exp2 2 --exp3 3
-node scripts/svg_to_png.mjs docs/final/figures
+uv run python scripts/final_results.py --exp1 1 --exp2 2 --exp3 3 --exp2-recovery 4
+source ~/.nvm/nvm.sh && nvm use 22 && node scripts/svg_to_png.mjs docs/final/figures   # PNG next to each SVG (Playwright's Chromium)
 ```

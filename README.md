@@ -311,6 +311,12 @@ page. The analysis refuses to run until the queue is empty. Decide each item by
 
 ### 5.10 Regenerate `docs/final` (CPU, about 20 s)
 
+**The runs database is not in git.** `data/app.db` (cases, runs, episodes and adjudications) is
+git-ignored and is not distributed. From a clone alone you can **inspect** the committed tables
+and figures in `docs/final/`, but you cannot regenerate them. Regenerating needs a runs database,
+and the only way to get one is to re-run §5.1–5.9 on a GPU, including the run adjudication. A
+re-run samples new agent episodes, so compare its numbers with §6, not byte for byte.
+
 With the API running on the runs database:
 
 ```bash
@@ -332,6 +338,31 @@ H1-C4 and H2 cards.
 | H1 (G1 − G3) | 0.290 | [0.201, 0.387] | target 0.15 reached, statistically supported |
 | H1-C4 (A1 − G3) | 0.161 | [0.065, 0.274] | target 0.10 reached, statistically supported |
 | H2 (G3 − G1) | 0.355 | [0.257, 0.459] | `harm_beyond_margin` (margin 0.10) |
+
+**Where each reported number comes from.** Every file is in `docs/final/`; `results.json` holds
+the same values with the raw endpoint responses. Line 1 of each CSV is a comment with the case
+set, the run ids and the generation time.
+
+| Reported number | File (rows) | Run |
+|---|---|---|
+| Run provenance: units, errors, hours, git, config, case-set and model hashes | `runs.csv` | 1, 2, 3 |
+| H1, H1-C4, H2: estimate, 95% CI, threshold, verdict | `hypotheses.csv` | 1 (H1, H1-C4), 2 (H2) |
+| H2 with every adjudicated escalation counted as qualifying (exploratory) | `h2_adjudication_sensitivity.csv` | 2 |
+| Wrongly admitted on E2–E5 and wrongly blocked on E1 and R_pos, per system | `exp1_by_system_variant_objective.csv` (`variant` = `all`, `objective` = `all`) | 1 |
+| The same per variant and per objective | `exp1_by_system_variant_objective.csv` (other rows) | 1 |
+| H1, H1-C4 and H2 by variant and by objective (exploratory) | `breakdowns_exploratory.csv` | 1, 2 |
+| Verifier exact and binary accuracy per verifier variant, parse errors | `exp1_verifier_accuracy.csv` | 1 |
+| Retrieval: Recall@5, Hit@5, nDCG@5, MRR@20, ceiling, ATT&CK top-1; views (a) registered and (b) exploratory | `retrieval.csv` | 1 |
+| RAG ablation: A4 − G3, A6 − G3 | `ablations_exploratory.csv` (`ablation` = `rag`) | 1 |
+| Recovery ablation (A5, A7 vs G3) and MCP (A8 vs G3) | `ablations_exploratory.csv` (`ablation` = `recovery`, `mcp`) | 2, matched run 1 |
+| Exp 2 outcome rates and task success per system | `exp2_outcomes_by_objective.csv` (`objective` = `all`), `exp2_outcomes_by_variant.csv` | 2 |
+| Safety: unsafe calls proposed and admitted, injection, log deletion | `safety.csv` | 2, 3 |
+| Exp 3 outcome rates and task success | `exp3_outcomes.csv` | 3 |
+| Exp 3 technique precision, recall, F1 and cited-evidence precision and recall | `exp3_technique_evidence.csv` | 3 |
+| Error taxonomy: code-suggested tag counts and the 10 example traces | `taxonomy_suggested.csv`, `example_traces.csv` | 2, 3 |
+| Exploratory recovery run: recovery use, outcomes, A5 / A7 / G3 comparisons, H2 on that run | `recovery_run_exploratory_use.csv`, `_outcomes.csv`, `_comparisons.csv`, `_h2.csv` | 4 (reference: run 2, matched run 1) |
+| Figures in the report | `figures/*.svg` and `*.png` (also copied to `docs/reports/final/figures/`) | 1, 2, 3 |
+| Numbers under *Findings and limitations* (for example 1 of 88 recovery queries, 0 CONTRADICTED verdicts, the blind re-check) | measured directly from the runs database; recorded only in `docs/final/README.md` and `STATUS.md`, in no CSV | 1, 2 |
 
 **What is deterministic:**
 
